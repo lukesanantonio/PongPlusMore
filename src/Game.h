@@ -2,8 +2,8 @@
  * \file Game.h
  * \brief Contains the declaration of the Game class.
  */
-#ifndef ULTIMATE_PONG_H
-#define ULTIMATE_PONG_H
+#ifndef ULTIMATE_PONG_GAME_H
+#define ULTIMATE_PONG_GAME_H
 #include <memory>
 /*!
  * \brief Namespace encapsulating all pong related anything...
