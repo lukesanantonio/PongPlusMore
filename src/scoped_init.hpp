@@ -68,7 +68,7 @@ namespace pong
   private:
     /*!
      * \brief The assumed to be uninitialization functor set during
-     * construction.
+     * construction and run during destruction.
      */
     Functor2 func2_;
   };
