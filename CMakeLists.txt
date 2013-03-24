@@ -10,4 +10,5 @@ if(DOXYGEN_FOUND)
                     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                     COMMENT "Generating documentation with doxygen"
                     VERBATIM)
+  add_dependencies(doc ultimate_pong)
 endif(DOXYGEN_FOUND)
