@@ -1,3 +1,9 @@
+/*!
+ * \file Game.cpp
+ * \brief Contains the definitions of the Game class.
+ *
+ * This is where the main game loop is implemented.
+ */
 #include "Game.h"
 namespace pong
 {
