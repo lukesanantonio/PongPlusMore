@@ -2,8 +2,8 @@
  * \file scoped_init.hpp
  * \brief File containing the RAII style functor adapter.
  */
-#ifndef ULTIMATE_PONG_SCOPED_INIT_H
-#define ULTIMATE_PONG_SCOPED_INIT_H
+#ifndef ULTIMATE_PONG_SCOPED_INIT_HPP
+#define ULTIMATE_PONG_SCOPED_INIT_HPP
 namespace pong
 {
   /*!
