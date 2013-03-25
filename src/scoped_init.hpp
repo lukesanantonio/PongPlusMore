@@ -25,23 +25,42 @@ namespace pong
      * functors are required to be CopyConstructable, otherwise a compile
      * error will surface as a long template error (I assume).
      *
-     * \param[in] func1 Called immediately, then discarded.
-     * \param[in] func2 Stored, called on destruction.
+     * \param[in] func1 Called immediately, then discarded. Any thrown
+     * exceptions will be caught and rethrown.
+     * \param[in] func2 Stored, called on destruction. Should not throw,
+     * otherwise the destructor might throw, which most will not want.
      *
      * \note All arguments of these functor's operator() are encouraged, *erm*,
-     * required, to be binded before being passed in.
+     * required, to be binded before being passed in, that is because both
+     * functors are called without arguments.
      */
     scoped_init(Functor1 func1, Functor2 func2) : func2_(func2)
     {
-      func1();
+      try
+      {
+        func1();
+      }
+      catch(...)
+      {
+        throw;
+      }
     }
     
     /*!
-     * \brief Calls scoped_init::func2_ of the `this` object.
+     * \brief Calls scoped_init::func2_ of the `this` object. Exceptions, if
+     * any, *will be thrown,* to avoid this, catch exceptions in the function
+     * itself.
      */
     ~scoped_init()
     {
-      this->func2_();
+      try
+      {
+        this->func2_();
+      }
+      catch(...)
+      {
+        throw;
+      }
     }
     
     /*!
