@@ -2,7 +2,7 @@
  * \file Game.cpp
  * \brief Contains the definitions of the Game class.
  *
- * This is where the main game loop is implemented.
+ * This is where the main function and game loop are implemented.
  */
 #include "Game.h"
 #include <stdexcept>
