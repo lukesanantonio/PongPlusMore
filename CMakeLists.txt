@@ -11,4 +11,5 @@ if(DOXYGEN_FOUND)
                     COMMENT "Generating documentation with doxygen"
                     VERBATIM)
   add_dependencies(doc ultimate_pong)
+  set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES docs)
 endif(DOXYGEN_FOUND)
