@@ -82,7 +82,7 @@ namespace pong
     static std::shared_ptr<Game> instance_;
     
     /*!
-     * \brief The main surface created by SDL_SetVideoMode.
+     * \brief The main surface created by `SDL_SetVideoMode()`.
      */
     SDL_Surface* mainSurface_ = nullptr;
     

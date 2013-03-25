@@ -20,7 +20,7 @@ namespace pong
   }
   
   /*!
-   * \post Set's Game::mainSurface_ to the return of SDL_SetVideoMode.
+   * \post Set's Game::mainSurface_ to the return of `SDL_SetVideoMode()`.
    */
   void Game::initializeSDL()
   {
@@ -39,7 +39,8 @@ namespace pong
   }
   
   /*!
-   * \post Set's Game::mainSurface_ to `nullptr` after SDL_FreeSurface()'ing it.
+   * \post Set's Game::mainSurface_ to `nullptr` after `SDL_FreeSurface()`'ing
+   * it.
    */
   void Game::uninitializeSDL() noexcept
   {
