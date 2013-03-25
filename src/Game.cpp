@@ -16,6 +16,19 @@ namespace pong
     scoped_init<std::function<void ()>, std::function<void ()> >
                   SDLinit(std::bind(&Game::initializeSDL,   this),
                           std::bind(&Game::uninitializeSDL, this));
+    while(this->running_)
+    {
+      this->gameState_->update();
+      if(this->gameStateChanged_)
+      {
+        //the game state changed?
+        //alright, continue... but don't forget to prevent this loop from
+        //repeating the next iteration of the game loop.
+        this->gameStateChanged_ = false;
+        continue;
+      }
+      this->gameState_->render(this->mainSurface_);
+    }
     return 0;
   }
   

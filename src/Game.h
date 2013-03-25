@@ -47,6 +47,11 @@ namespace pong
      * returned.
      */
     void setGameState(std::shared_ptr<GameState> gamestate) noexcept;
+    
+    /*!
+     * \brief Make sures that the game loop stops on the next iteration.
+     */
+    inline void quitGame();
   private:
     /*!
      * \brief Default constructor using the default constructor behavior.
@@ -115,6 +120,13 @@ namespace pong
      * least once before it will have been GameState::render()'d.
      */
     bool gameStateChanged_ = false;
+    
+    /*!
+     * \brief True when the game is currently running.
+     *
+     * \sa Game::quitGame()
+     */
+    bool running_ = true;
   };
   
   inline Game* Game::getInstance()
@@ -128,6 +140,14 @@ namespace pong
       });
     }
     return Game::instance_.get();
+  }
+  
+  /*!
+   * \post Game::running_ == false of the `this` object.
+   */
+  inline void Game::quitGame()
+  {
+    this->running_ = false;
   }
 };
 #endif
