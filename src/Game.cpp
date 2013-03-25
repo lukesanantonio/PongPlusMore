@@ -40,7 +40,7 @@ namespace pong
   /*!
    * \post Set's Game::mainSurface_ to `nullptr` after SDL_FreeSurface()'ing it.
    */
-  void Game::uninitializeSDL()
+  void Game::uninitializeSDL() noexcept
   {
     //Free the surface.
     SDL_FreeSurface(this->mainSurface_);

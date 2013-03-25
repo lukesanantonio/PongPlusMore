@@ -41,11 +41,11 @@ namespace pong
     /*!
      * \brief Default constructor using the default constructor behavior.
      */
-    Game() = default;
+    Game() noexcept = default;
     /*!
      * \brief Default destructor using the default destructor behavior.
      */
-    ~Game() = default;
+    ~Game() noexcept = default;
     
     /*!
      * \brief Default copy constructor deleted to prevent use.
@@ -84,7 +84,7 @@ namespace pong
     /*!
      * \brief Uninitializes and undos everything which occurred in Game::init().
      */
-    void uninitializeSDL();
+    void uninitializeSDL() noexcept;
   };
   
   inline Game* Game::getInstance()
