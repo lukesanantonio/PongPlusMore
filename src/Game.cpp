@@ -33,6 +33,7 @@ namespace pong
                                                           SDL_DOUBLEBUF);
     if(!this->mainSurface_)
     {
+      SDL_Quit();
       throw std::runtime_error("Failed to set SDL video mode.");
     }
   }
