@@ -7,6 +7,7 @@
 #include "Game.h"
 #include <stdexcept>
 #include "scoped_init.hpp"
+#include "MenuGameState.h"
 namespace pong
 {
   std::shared_ptr<Game> Game::instance_ = nullptr;
@@ -16,6 +17,7 @@ namespace pong
     scoped_init<std::function<void ()>, std::function<void ()> >
                   SDLinit(std::bind(&Game::initializeSDL,   this),
                           std::bind(&Game::uninitializeSDL, this));
+    this->gameState_ = std::shared_ptr<GameState>(new MenuGameState);
     while(this->running_)
     {
       this->gameState_->update();

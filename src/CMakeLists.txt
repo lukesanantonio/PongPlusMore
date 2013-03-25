@@ -1,5 +1,5 @@
 find_package(SDL)
-add_executable(ultimate_pong Game.cpp)
+add_executable(ultimate_pong Game.cpp MenuGameState.cpp)
 target_link_libraries(ultimate_pong ${SDL_LIBRARY})
 include_directories(${SDL_INCLUDE_DIR})
 install(TARGETS ultimate_pong
