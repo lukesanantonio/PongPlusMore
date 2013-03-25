@@ -5,6 +5,7 @@
 #ifndef ULTIMATE_PONG_GAME_H
 #define ULTIMATE_PONG_GAME_H
 #include <memory>
+#include <SDL/SDL.h>
 /*!
  * \brief Namespace encapsulating all pong related anything...
  */
@@ -69,6 +70,21 @@ namespace pong
      * \brief The one instance of the Game class.
      */
     static std::shared_ptr<Game> instance_;
+    
+    /*!
+     * \brief The main surface created by SDL_SetVideoMode.
+     */
+    SDL_Surface* mainSurface_ = nullptr;
+    
+    /*!
+     * \brief Initializes SDL for our needs.
+     */
+    void initializeSDL();
+    
+    /*!
+     * \brief Uninitializes and undos everything which occurred in Game::init().
+     */
+    void uninitializeSDL();
   };
   
   inline Game* Game::getInstance()
