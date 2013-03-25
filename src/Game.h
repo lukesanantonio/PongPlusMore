@@ -6,6 +6,8 @@
 #define ULTIMATE_PONG_GAME_H
 #include <memory>
 #include <SDL/SDL.h>
+#include "GameState.h"
+
 /*!
  * \brief Namespace encapsulating all pong related anything...
  */
@@ -37,6 +39,14 @@ namespace pong
      * main function.
      */
     int run(int argc, char* argv[]);
+    
+    /*!
+     * \brief Sets the game state to the one passed in.
+     *
+     * \param gamestate The new game state to be used after this function has
+     * returned.
+     */
+    void setGameState(std::shared_ptr<GameState> gamestate) noexcept;
   private:
     /*!
      * \brief Default constructor using the default constructor behavior.
@@ -85,6 +95,26 @@ namespace pong
      * \brief Uninitializes and undos everything which occurred in Game::init().
      */
     void uninitializeSDL() noexcept;
+    
+    /*!
+     * \brief The current game state.
+     *
+     * GameState::render()'d and GameState::update()'d every iteration of the
+     * game loop.
+     *
+     * \sa Game::setGameState(std::shared_ptr<GameState>)
+     */
+    std::shared_ptr<GameState> gameState_;
+    
+    /*!
+     * \brief Whether or not the game state has been changed.
+     *
+     * If this is true, the game loop, will start over, or `'continue'` in C++
+     * terms, without going further.
+     * ie The game state is guaranteed to have been GameState::update()'d at
+     * least once before it will have been GameState::render()'d.
+     */
+    bool gameStateChanged_ = false;
   };
   
   inline Game* Game::getInstance()

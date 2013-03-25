@@ -52,6 +52,17 @@ namespace pong
     //Quit sdl.
     SDL_Quit();
   }
+  
+  /*!
+   * \post Game::gameStateChanged_ == true of the `this` object.
+   * \post Game::gameState_ == gamestate (parameter) of the `this` object.
+   */
+  void Game::setGameState(std::shared_ptr<GameState> gamestate) noexcept
+  {
+    //Satisfy both postconditions.
+    this->gameStateChanged_ = true;
+    this->gameState_ = gamestate;
+  }
 };
 
 int main(int argc, char* argv[])
