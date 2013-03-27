@@ -51,7 +51,7 @@ namespace pong
     /*!
      * \brief Make sures that the game loop stops on the next iteration.
      */
-    inline void quitGame();
+    inline void quitGame() noexcept;
   private:
     /*!
      * \brief Default constructor using the default constructor behavior.
@@ -145,7 +145,7 @@ namespace pong
   /*!
    * \post Game::running_ == false of the `this` object.
    */
-  inline void Game::quitGame()
+  inline void Game::quitGame() noexcept
   {
     this->running_ = false;
   }
