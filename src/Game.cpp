@@ -30,6 +30,7 @@ namespace pong
         continue;
       }
       this->gameState_->render(this->mainSurface_);
+      SDL_Flip(this->mainSurface_);
     }
     return 0;
   }
