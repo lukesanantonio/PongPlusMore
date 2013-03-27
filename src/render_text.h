@@ -13,8 +13,8 @@ namespace pong
    *
    * \note Should be used sparsly as each call requires a new FT_Library.
    *
-   * \param pixel_size Passed as the pixel height to `FT_Set_Pixel_Sizes()`.
    * \param text String of text to render.
+   * \param pixel_size Passed as the pixel height to `FT_Set_Pixel_Sizes()`.
    *
    * \returns An `SDL_Surface` with minimum bounds possible, of the text passed
    * in.
@@ -24,7 +24,7 @@ namespace pong
    *
    * \throws A runtime error if anything goes wrong.
    */
-  SDL_Surface* render_text(std::size_t pixel_size, const std::string& text);
+  SDL_Surface* render_text(const std::string& text, std::size_t pixel_size);
   
   /*!
    * \brief Blesses an SDL_Surface with a grayscale palette.

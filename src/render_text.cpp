@@ -20,8 +20,7 @@ namespace pong
     }
     SDL_SetColors(surface, colors, 0, num_colors);
   }
-  SDL_Surface* render_text(std::size_t pixel_size,
-                                           const std::string& text)
+  SDL_Surface* render_text(const std::string& text, std::size_t pixel_size)
   {
     FT_Library library = nullptr;
     FT_Face face = nullptr;
