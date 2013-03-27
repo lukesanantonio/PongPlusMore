@@ -41,8 +41,8 @@ namespace pong
      */
     MenuGameState& operator=(MenuGameState&&) = delete;
     
-    virtual void update();
-    virtual void render(SDL_Surface*) const noexcept;
+    virtual void update() override;
+    virtual void render(SDL_Surface*) const noexcept override;
   };
 };
 #endif
