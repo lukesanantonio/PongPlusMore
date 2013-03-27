@@ -34,8 +34,8 @@ namespace pong
    * otherwise.
    *
    * \param surface A reference to a surface of which to add a palette.
-   * \param num_colors The amount of shades of gray. The max should be 0xFF.
+   * \param num_colors The amount of shades of gray.
    */
-  void setupGrayscalePalette(SDL_Surface*& surface, uint8_t num_colors);
+  void setupGrayscalePalette(SDL_Surface*& surface, std::size_t num_colors);
 };
 #endif
