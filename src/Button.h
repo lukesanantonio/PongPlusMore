@@ -13,6 +13,8 @@ namespace pong
    *
    * That includes everything from a centered label to click detection based
    * on a provided signal-slot system.
+   *
+   * \todo Remove the x_ and y_ members in favor of a pong::vec.
    */
   class Button
   {
