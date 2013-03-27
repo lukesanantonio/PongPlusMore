@@ -116,8 +116,9 @@ namespace pong
      *
      * If this is true, the game loop, will start over, or `'continue'` in C++
      * terms, without going further.
-     * ie The game state is guaranteed to have been GameState::update()'d at
-     * least once before it will have been GameState::render()'d.
+     * Thus any given game state is guaranteed to have been
+     * GameState::update()'d at least once before it will have been
+     * GameState::render()'d.
      */
     bool gameStateChanged_ = false;
     
