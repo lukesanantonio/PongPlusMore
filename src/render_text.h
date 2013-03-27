@@ -37,5 +37,12 @@ namespace pong
    * \param num_colors The amount of shades of gray.
    */
   void setupGrayscalePalette(SDL_Surface*& surface, std::size_t num_colors);
+  
+  /*!
+   * \brief Inverts the palette of an SDL_Surface.
+   *
+   * \param Surface whose palette is to be inverted.
+   */
+  void invertPalette(SDL_Surface*& surface);
 };
 #endif

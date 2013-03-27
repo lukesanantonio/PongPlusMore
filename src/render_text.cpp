@@ -3,6 +3,8 @@
  * \brief Definitions for the crap needed to render text to an SDL_Surface*.
  */
 #include "render_text.h"
+#include <vector>
+#include <algorithm>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 namespace pong
@@ -125,5 +127,20 @@ namespace pong
     FT_Done_FreeType(library);
     
     return image;
+  }
+  
+  void invertPalette(SDL_Surface*& surface)
+  {
+    //Make our surface's palette easier to reference.
+    SDL_Palette* palette = surface->format->palette;
+    
+    //Get a vector of all the colors...
+    std::vector<SDL_Color> colors(palette->colors,
+                                  palette->colors + palette->ncolors);
+    //Reverse our colors.
+    std::reverse(colors.begin(), colors.end());
+    
+    //Set our palette to the reversed copy of the original.
+    SDL_SetColors(surface, &colors[0], 0, palette->ncolors);
   }
 };
