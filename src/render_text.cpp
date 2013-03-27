@@ -7,7 +7,7 @@
 #include FT_FREETYPE_H
 namespace pong
 {
-  void setupPalette(SDL_Surface*& surface, std::size_t num_colors)
+  void setupGrayscalePalette(SDL_Surface*& surface, uint8_t num_colors)
   {
     SDL_Color colors[num_colors];
     for(int i = 0; i < num_colors; ++i)
@@ -73,7 +73,8 @@ namespace pong
     {
       throw std::runtime_error("Failed to initialize text surface!");
     }
-    setupPalette(image, 256);
+    //Changed second argument from 256 to 0xff to silence the g++ warning.
+    setupGrayscalePalette(image, 0xff);
     
     int pen_x = 0;
     //Set pen_y to the baseline...
@@ -94,7 +95,7 @@ namespace pong
       {
         throw std::runtime_error("Failed to initialize glyph surface!");
       }
-      setupPalette(glyph, face->glyph->bitmap.num_grays);
+      setupGrayscalePalette(glyph, face->glyph->bitmap.num_grays);
       
       SDL_LockSurface(glyph);
       {
