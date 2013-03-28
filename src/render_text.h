@@ -41,7 +41,7 @@ namespace pong
   /*!
    * \brief Inverts the palette of an SDL_Surface.
    *
-   * \param Surface whose palette is to be inverted.
+   * \param surface whose palette is to be inverted.
    */
   void invertPalette(SDL_Surface*& surface);
 };
