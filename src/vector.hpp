@@ -9,12 +9,20 @@
 namespace pong
 {
   /*!
-   * \brief The wonderful, wonderful vector class.
+   * \brief Namespace for everything math related in pong.
+   *
+   * Collisions, vectors, etc.
    */
-  struct vector
+  namespace math
   {
-    int x = 0; //!< x (position | velocity | etc)
-    int y = 0; //!< y (position | velocity | etc)
+    /*!
+     * \brief The wonderful, wonderful vector class.
+     */
+    struct vector
+    {
+      int x = 0; //!< x (position | velocity | etc)
+      int y = 0; //!< y (position | velocity | etc)
+    };
   };
 };
 #endif
