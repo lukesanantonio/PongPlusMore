@@ -1,7 +1,3 @@
-/*!
- * \file Button.cpp
- * \brief Definitions for the button class.
- */
 #include "Button.h"
 namespace pong
 {

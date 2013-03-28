@@ -1,7 +1,3 @@
-/*!
- * \file MenuGameState.cpp
- * \brief Definitions for the menu game state.
- */
 #include "MenuGameState.h"
 #include "Game.h"
 namespace pong

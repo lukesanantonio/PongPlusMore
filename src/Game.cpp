@@ -1,9 +1,3 @@
-/*!
- * \file Game.cpp
- * \brief Contains the definitions of the Game class.
- *
- * This is where the main function and game loop are implemented.
- */
 #include "Game.h"
 #include <stdexcept>
 #include "scoped_init.hpp"
@@ -35,9 +29,6 @@ namespace pong
     return 0;
   }
   
-  /*!
-   * \post Set's Game::mainSurface_ to the return of `SDL_SetVideoMode()`.
-   */
   void Game::initializeSDL()
   {
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -54,10 +45,6 @@ namespace pong
     }
   }
   
-  /*!
-   * \post Set's Game::mainSurface_ to `nullptr` after `SDL_FreeSurface()`'ing
-   * it.
-   */
   void Game::uninitializeSDL() noexcept
   {
     //Free the surface.
@@ -70,10 +57,6 @@ namespace pong
     SDL_Quit();
   }
   
-  /*!
-   * \post Game::gameStateChanged_ == true of the `this` object.
-   * \post Game::gameState_ == gamestate (parameter) of the `this` object.
-   */
   void Game::setGameState(std::shared_ptr<GameState> gamestate) noexcept
   {
     //Satisfy both postconditions.

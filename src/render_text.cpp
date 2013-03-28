@@ -1,7 +1,3 @@
-/*!
- * \file render_text.cpp
- * \brief Definitions for the crap needed to render text to an SDL_Surface*.
- */
 #include "render_text.h"
 #include <vector>
 #include <algorithm>

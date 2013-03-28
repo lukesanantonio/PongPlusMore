@@ -33,11 +33,6 @@ namespace pong
       SDL_BlitSurface(this->cached_surface_, NULL, surface, &dest);
     }
   }
-  
-  /*!
-   * \post Label::cache_out_of_date_ == false of the `this` object.
-   * \post A call to pong::render_text.
-   */
   void Label::cacheSurface() const
   {
     //Do we need to free the surface first?
@@ -53,11 +48,6 @@ namespace pong
   {
     return this->cached_surface_;
   }
-  
-  /*
-   * \post Label::text_ == `text` (parameter) of the `this` object.
-   * \post Label::cache_out_of_date_ == `true` of the `this` object.
-   */
   void Label::setText(const std::string& text) noexcept
   {
     this->text_ = text;
@@ -67,11 +57,6 @@ namespace pong
   {
     return this->text_;
   }
-  
-  /*!
-   * \post Label::text_size_ == `text_size` (parameter) of the `this` object.
-   * \post Label::cache_out_of_date_ == `true` of the `this` object.
-   */
   void Label::setTextSize(std::size_t text_size) noexcept
   {
     this->text_size_ = text_size;
@@ -81,9 +66,6 @@ namespace pong
   {
     return this->text_size_;
   }
-  /*!
-   * \post Label::pos_ == `pos` (parameter) of the `this` object.
-   */
   void Label::setPosition(math::vector pos) noexcept
   {
     this->pos_ = pos;
