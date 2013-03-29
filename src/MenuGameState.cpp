@@ -19,7 +19,7 @@ namespace pong
       }
     }
   }
-  void MenuGameState::render(SDL_Surface* surface) const noexcept
+  void MenuGameState::render(SDL_Surface* surface) const
   {
   }
 };

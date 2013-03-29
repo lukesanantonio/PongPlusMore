@@ -22,9 +22,9 @@ namespace pong
      * \brief This function renders whatever it needs to render based off of
      * it's internal state set during GameState::update().
      *
-     * It should not modify the object, nor should it throw exceptions.
+     * It should not modify the object.
      */
-    virtual void render(SDL_Surface* surface) const noexcept = 0;
+    virtual void render(SDL_Surface* surface) const = 0;
   };
 };
 #endif
