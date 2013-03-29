@@ -1,3 +1,7 @@
+/*!
+ * \file Game.cpp
+ * \brief Definitions for anything in Game.h
+ */
 #include "Game.h"
 #include <stdexcept>
 #include "scoped_init.hpp"
@@ -11,24 +15,28 @@ namespace pong
     scoped_init<std::function<void ()>, std::function<void ()> >
                   SDLinit(std::bind(&Game::initializeSDL,   this),
                           std::bind(&Game::uninitializeSDL, this));
-    this->gameState_ = std::shared_ptr<GameState>(new MenuGameState);
+    
+    //Initially, go to the menu state.
+    this->game_state_ = std::shared_ptr<GameState>(new MenuGameState);
+    
     while(this->running_)
     {
-      this->gameState_->update();
-      if(this->gameStateChanged_)
+      this->game_state_->update();
+      if(this->game_state_changed_)
       {
-        //the game state changed?
-        //alright, continue... but don't forget to prevent this loop from
-        //repeating the next iteration of the game loop.
-        this->gameStateChanged_ = false;
+        //The game state has changed? Alright... Continue the loop from the
+        //beginning.
+        this->game_state_changed_ = false;
         continue;
       }
-      this->gameState_->render(this->mainSurface_);
-      SDL_Flip(this->mainSurface_);
-    }
+      
+      this->game_state_->render(this->main_surface_);
+      SDL_Flip(this->main_surface_);
+    } 
+    
+    //Return the error code.
     return 0;
   }
-  
   void Game::initializeSDL()
   {
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -36,35 +44,26 @@ namespace pong
       throw std::runtime_error("Failed to initialize SDL");
     }
     //Satisfy the post condition.
-    this->mainSurface_ = SDL_SetVideoMode(1000, 1000, 32, SDL_HWSURFACE |
-                                                          SDL_DOUBLEBUF);
-    if(!this->mainSurface_)
+    this->main_surface_ = SDL_SetVideoMode(1000, 1000, 32, SDL_HWSURFACE |
+                                                           SDL_DOUBLEBUF);
+    if(!this->main_surface_)
     {
       SDL_Quit();
       throw std::runtime_error("Failed to set SDL video mode.");
     }
   }
-  
   void Game::uninitializeSDL() noexcept
   {
-    //Free the surface.
-    SDL_FreeSurface(this->mainSurface_);
+    //Free the surface, satisfying one post condition.
+    SDL_FreeSurface(this->main_surface_);
     
-    //Satisfy the post condition.
-    this->mainSurface_ = nullptr;
+    //Satisfy another post condition.
+    this->main_surface_ = nullptr;
     
     //Quit sdl.
     SDL_Quit();
   }
-  
-  void Game::setGameState(std::shared_ptr<GameState> gamestate) noexcept
-  {
-    //Satisfy both postconditions.
-    this->gameStateChanged_ = true;
-    this->gameState_ = gamestate;
-  }
 };
-
 int main(int argc, char* argv[])
 {
   pong::Game* game = pong::Game::getInstance();
