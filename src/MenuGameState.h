@@ -1,12 +1,13 @@
 #ifndef ULTIMATE_PONG_MENU_GAME_STATE_H
 #define ULTIMATE_PONG_MENU_GAME_STATE_H
 #include "GameState.h"
+#include "Label.h"
 namespace pong
 {
   class MenuGameState : public GameState
   {
   public:
-    MenuGameState() noexcept = default;
+    MenuGameState() noexcept;
     ~MenuGameState() noexcept = default;
     MenuGameState(const MenuGameState&) = delete;
     MenuGameState(MenuGameState&&) = delete;
@@ -15,6 +16,8 @@ namespace pong
     
     virtual void update() override;
     virtual void render(SDL_Surface*) const override;
+  private:
+    Label title_;
   };
 };
 #endif
