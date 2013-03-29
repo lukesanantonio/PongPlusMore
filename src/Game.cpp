@@ -12,9 +12,9 @@ namespace pong
   
   int Game::run(int argc, char* argv[])
   {
-    scoped_init<std::function<void ()>, std::function<void ()> >
-                  SDLinit(std::bind(&Game::initializeSDL,   this),
-                          std::bind(&Game::uninitializeSDL, this));
+    this->initializeSDL();
+    scoped_init<std::function<void ()> >
+                               SDLinit(std::bind(&Game::uninitializeSDL, this));
     
     //Initially, go to the menu state.
     this->game_state_ = std::shared_ptr<GameState>(new MenuGameState);
