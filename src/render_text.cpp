@@ -1,3 +1,7 @@
+/*!
+ * \file render_text.cpp
+ * \brief Definitions for font related procedures (render_text.h).
+ */
 #include "render_text.h"
 #include <vector>
 #include <algorithm>
