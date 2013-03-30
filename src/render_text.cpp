@@ -99,10 +99,15 @@ namespace pong
       
       SDL_LockSurface(glyph);
       {
-        glyph->pitch = glyph->w * glyph->format->BytesPerPixel;
-        
-        memcpy(glyph->pixels, face->glyph->bitmap.buffer,
-               face->glyph->bitmap.rows * face->glyph->bitmap.width);
+        uint8_t* pixels = static_cast<uint8_t*>(glyph->pixels);
+        for(int i = 0; i < glyph->h; ++i)
+        {
+          for(int j = 0; j < glyph->w; ++j)
+          {
+            pixels[i * glyph->pitch + j] =
+                  face->glyph->bitmap.buffer[i * face->glyph->bitmap.width + j];
+          }
+        }
       }
       SDL_UnlockSurface(glyph);
       
