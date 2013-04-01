@@ -32,7 +32,7 @@ namespace pong
      * \brief Free's the text cache if necessary.
      */
     ~Label() noexcept;
-    
+
     /*!
      * \brief Deleted copy constructor.
      */
@@ -41,7 +41,7 @@ namespace pong
      * \brief Deleted move constructor.
      */
     Label(Label&&) = delete;
-    
+
     /*!
      * \brief Deleted copy assignment operator.
      */
@@ -50,7 +50,7 @@ namespace pong
      * \brief Deleted move assignment operator.
      */
     Label& operator=(Label&&) = delete;
-    
+
     /*!
      * \brief Renders an SDL_Surface containing the text of the Label onto the
      * passed in surface so that the top left corner of the text is at
@@ -59,7 +59,7 @@ namespace pong
      * \note This function will only regenerate the text surface if necessary.
      */
     void render(SDL_Surface* surface) const;
-    
+
     /*!
      * \brief Generates and caches the surface of rendered text.
      *
@@ -70,7 +70,7 @@ namespace pong
      * \post Label::cache_out_of_date == `false`
      */
     void generateSurface() const;
-    
+
     /*!
      * \brief Returns the width of the cached text surface.
      *
@@ -83,7 +83,7 @@ namespace pong
      * \returns Label::cached_surface_->h
      */
     inline std::size_t getSurfaceHeight() const;
-    
+
     /*!
      * \brief Sets the text of the label.
      *
@@ -96,7 +96,7 @@ namespace pong
      * \returns Label::text_
      */
     inline std::string text() const noexcept;
-    
+
     /*!
      * \brief Sets the text height of the label.
      *
@@ -109,7 +109,7 @@ namespace pong
      * \returns Label::text_height_
      */
     inline std::size_t text_height() const noexcept;
-    
+
     /*!
      * \brief Sets the position of the top left corner of the surface.
      *
@@ -129,21 +129,21 @@ namespace pong
      * \sa Label::text_height_
      */
     std::string text_;
-    
+
     /*!
      * \brief The height in pixels of the label (text).
      *
      * \sa Label::text_
      */
     std::size_t text_height_;
-    
+
     /*!
      * \brief The position of the top left corner of the label surface.
      *
      * \sa Label::cached_surface_
      */
     math::vector pos_;
-    
+
     /*!
      * \brief The surface rendered.
      *
@@ -153,7 +153,7 @@ namespace pong
      * \sa Label::cache_out_of_date_
      */
     mutable SDL_Surface* cached_surface_ = nullptr;
-    
+
     /*!
      * \brief True if the rendered text is out of date.
      *
@@ -161,7 +161,7 @@ namespace pong
      */
     mutable bool cache_out_of_date_ = true;
   };
-  
+
   inline std::size_t Label::getSurfaceWidth() const
   {
     this->generateSurface();
@@ -172,7 +172,7 @@ namespace pong
     this->generateSurface();
     return this->cached_surface_->h;
   }
-  
+
   inline void Label::text(const std::string& text) noexcept
   {
     this->text_ = text;
@@ -182,7 +182,7 @@ namespace pong
   {
     return this->text_;
   }
-  
+
   inline void Label::text_height(std::size_t text_height) noexcept
   {
     this->text_height_ = text_height;
@@ -192,7 +192,7 @@ namespace pong
   {
     return this->text_height_;
   }
-  
+
   inline void Label::position(math::vector pos) noexcept
   {
     this->pos_ = pos;

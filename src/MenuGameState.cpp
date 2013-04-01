@@ -12,7 +12,7 @@ namespace pong
   void MenuGameState::update()
   {
     Game* game = Game::getInstance();
-    
+
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {

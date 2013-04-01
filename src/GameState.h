@@ -17,7 +17,7 @@ namespace pong
      * \brief This function updates the internal state of the object.
      */
     virtual void update() = 0;
-    
+
     /*!
      * \brief This function renders whatever it needs to render based off of
      * it's internal state set during GameState::update().

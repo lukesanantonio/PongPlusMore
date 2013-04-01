@@ -30,7 +30,7 @@ namespace pong
      * *Luke*.
      */
     inline static Game* getInstance();
-    
+
     /*!
      * \brief Changes the current game state.
      *
@@ -43,7 +43,7 @@ namespace pong
      * *Luke*.
      */
     inline void setGameState(std::shared_ptr<GameState> game_state) noexcept;
-    
+
     /*!
      * \brief Sets up the game to exit on the next iteration of the main loop.
      *
@@ -55,7 +55,7 @@ namespace pong
      * you can screw yourself - *Luke*.
      */
     inline void quitGame() noexcept;
-    
+
     /*!
      * \brief Starts (and finishes) the *main game loop*.
      *
@@ -78,7 +78,7 @@ namespace pong
      * \brief Trivial destructor.
      */
     ~Game() noexcept = default;
-    
+
     /*!
      * \brief Deleted copy constructor.
      *
@@ -94,7 +94,7 @@ namespace pong
      * *Luke*.
      */
     Game(Game&&) noexcept = delete;
-    
+
     /*!
      * \brief Deleted copy assignment operator.
      *
@@ -103,7 +103,7 @@ namespace pong
      * pattern, you might as well screw yourself - *Luke*.
      */
     Game& operator=(const Game&) noexcept = delete;
-    
+
     /*!
      * \brief Deleted move assignment operator.
      *
@@ -111,7 +111,7 @@ namespace pong
      * yourself - *Luke*. That's why we disallow it.
      */
     Game& operator=(Game&&) noexcept = delete;
-    
+
     /*!
      * \brief The one Game instance.
      *
@@ -123,7 +123,7 @@ namespace pong
      * *Luke*.
      */
     static std::shared_ptr<Game> instance_;
-    
+
     /*!
      * \brief initializes SDL and creates a window.
      *
@@ -131,7 +131,7 @@ namespace pong
      * `SDL_SetVideoMode()`.
      */
     void initializeSDL();
-    
+
     /*!
      * \brief Undos everything done in Game::initializeSDL().
      *
@@ -139,14 +139,14 @@ namespace pong
      * it.
      */
     void uninitializeSDL() noexcept;
-    
+
     /*!
      * \brief The main surface from SDL. Created by 'setting the video mode'.
      *
      * \sa Game::initializeSDL()
      */
     SDL_Surface* main_surface_ = nullptr;
-    
+
     /*!
      * \brief The current game state.
      */
@@ -158,7 +158,7 @@ namespace pong
      * rendering.
      */
     bool game_state_changed_ = false;
-    
+
     /*!
      * \brief Set to false when the game is scheduled to end.
      *
@@ -166,7 +166,7 @@ namespace pong
      */
     bool running_ = true;
   };
-  
+
   inline Game* Game::getInstance()
   {
     if(!Game::instance_)

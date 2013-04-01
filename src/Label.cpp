@@ -19,17 +19,17 @@ namespace pong
       SDL_FreeSurface(this->cached_surface_);
     }
   }
-  
+
   void Label::render(SDL_Surface* surface) const
   {
     this->generateSurface();
     SDL_Rect dest;
     dest.x = pos_.x;
     dest.y = pos_.y;
-    
+
     SDL_BlitSurface(this->cached_surface_, NULL, surface, &dest);
   }
-  
+
   void Label::generateSurface() const
   {
     if(this->cache_out_of_date_)

@@ -22,7 +22,7 @@ namespace pong
      * \post scoped_init::func_ == `func` (parameter).
      */
     scoped_init(FunctorType func) : func_(func){}
-    
+
     /*!
      * \brief Calls scoped_init::func_ and throws any exceptions up the stack.
      *
@@ -43,7 +43,7 @@ namespace pong
         throw;
       }
     }
-    
+
     /*!
      * \brief Deleted copy constructor.
      */

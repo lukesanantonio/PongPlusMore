@@ -19,7 +19,7 @@ namespace pong
    * \param pixel_size The height in pixels to render the string of text at.
    */
   SDL_Surface* render_text(const std::string& text, std::size_t pixel_size);
-  
+
   /*!
    * \brief Sets up a grayscale palette for an SDL_Surface.
    *
@@ -28,7 +28,7 @@ namespace pong
    * \note For an 8-bit surface, this should not exceed 256.
    */
   void setupGrayscalePalette(SDL_Surface*& surface, std::size_t num_colors);
-  
+
   /*!
    * \brief Inverts the palette of the passed in surface.
    *

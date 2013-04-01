@@ -13,7 +13,7 @@ namespace pong
     MenuGameState(MenuGameState&&) = delete;
     MenuGameState& operator=(const MenuGameState&) = delete;
     MenuGameState& operator=(MenuGameState&&) = delete;
-    
+
     virtual void update() override;
     virtual void render(SDL_Surface*) const override;
   private:

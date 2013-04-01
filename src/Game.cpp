@@ -9,16 +9,16 @@
 namespace pong
 {
   std::shared_ptr<Game> Game::instance_ = nullptr;
-  
+
   int Game::run(int argc, char* argv[])
   {
     this->initializeSDL();
     scoped_init<std::function<void ()> >
                                SDLinit(std::bind(&Game::uninitializeSDL, this));
-    
+
     //Initially, go to the menu state.
     this->game_state_ = std::shared_ptr<GameState>(new MenuGameState);
-    
+
     while(this->running_)
     {
       this->game_state_->update();
@@ -29,11 +29,11 @@ namespace pong
         this->game_state_changed_ = false;
         continue;
       }
-      
+
       this->game_state_->render(this->main_surface_);
       SDL_Flip(this->main_surface_);
-    } 
-    
+    }
+
     //Return the error code.
     return 0;
   }
@@ -56,10 +56,10 @@ namespace pong
   {
     //Free the surface, satisfying one post condition.
     SDL_FreeSurface(this->main_surface_);
-    
+
     //Satisfy another post condition.
     this->main_surface_ = nullptr;
-    
+
     //Quit sdl.
     SDL_Quit();
   }
