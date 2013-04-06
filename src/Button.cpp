@@ -12,7 +12,10 @@ namespace pong
                  label_(text),
                  pos_(pos),
                  width_(width),
-                 height_(height) {}
+                 height_(height)
+  {
+    this->label_.invert(true);
+  }
   Button::~Button()
   {
     if(this->image_)
