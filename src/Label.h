@@ -12,6 +12,9 @@ namespace pong
 {
   /*!
    * \brief Class wrapping renderable text.
+   *
+   * It also features a cache which stores the rendered text and only
+   * regenerates it if necessary. Very useful.
    */
   class Label
   {
