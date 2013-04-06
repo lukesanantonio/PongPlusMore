@@ -8,10 +8,12 @@ namespace pong
 {
   Label::Label(const std::string& text,
                std::size_t text_height,
-               math::vector pos) noexcept :
+               math::vector pos,
+               bool invert) noexcept :
                text_(text),
                text_height_(text_height),
-               pos_(pos){}
+               pos_(pos),
+               invert_(invert) {}
   Label::~Label() noexcept
   {
     if(this->cached_surface_)
@@ -39,6 +41,10 @@ namespace pong
         SDL_FreeSurface(this->cached_surface_);
       }
       this->cached_surface_ = render_text(this->text_, this->text_height_);
+      if(this->invert_)
+      {
+        invertPalette(this->cached_surface_);
+      }
       this->cache_out_of_date_ = false;
     }
   }

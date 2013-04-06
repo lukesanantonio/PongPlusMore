@@ -24,10 +24,14 @@ namespace pong
      * pong::render_text.
      * \param pos The position of the top left corner where the surface will be
      * blitted.
+     * \param invert Whether or not the image should be inverted. (Inverting
+     * the image will make the text black. This is useful for button's
+     * basically.)
      */
     explicit Label(const std::string& text = "",
                    std::size_t text_height = 24,
-                   math::vector pos = math::vector()) noexcept;
+                   math::vector pos = math::vector(),
+                   bool invert = false) noexcept;
     /*!
      * \brief Free's the text cache if necessary.
      */
@@ -122,6 +126,19 @@ namespace pong
      * \returns Label::pos_
      */
     inline math::vector position() const noexcept;
+
+    /*!
+     * \brief Sets whether the image should be inverted or not.
+     *
+     * \post Invalidates the surface.
+     */
+    inline void invert(bool invert) noexcept;
+    /*!
+     * \brief Returns whether or not the image will be inverted when rendered.
+     *
+     * \returns Label::invert_
+     */
+    inline bool invert() const noexcept;
   private:
     /*!
      * \brief The text of the label.
@@ -160,6 +177,12 @@ namespace pong
      * \sa Label::cached_surface_
      */
     mutable bool cache_out_of_date_ = true;
+
+    /*!
+     * \brief Whether or not the text color should be inverted from the default
+     * white. (An inversion would make the text black on a white background.)
+     */
+    bool invert_ = false;
   };
 
   inline std::size_t Label::getSurfaceWidth() const
@@ -200,6 +223,16 @@ namespace pong
   inline math::vector Label::position() const noexcept
   {
     return this->pos_;
+  }
+
+  inline void Label::invert(bool invert) noexcept
+  {
+    this->invert_ = invert;
+    this->cache_out_of_date_ = true;
+  }
+  inline bool Label::invert() const noexcept
+  {
+    return this->invert_;
   }
 };
 #endif
