@@ -41,18 +41,22 @@ namespace pong
     ~Label() noexcept;
 
     /*!
-     * \brief Deleted copy constructor.
+     * \brief Copy constructor.
+     *
+     * Does not copy the cache.
      */
-    Label(const Label&) = delete;
+    Label(const Label&) noexcept;
     /*!
      * \brief Deleted move constructor.
      */
     Label(Label&&) = delete;
 
     /*!
-     * \brief Deleted copy assignment operator.
+     * \brief Copy assignment operator.
+     *
+     * Does not copy the cache.
      */
-    Label& operator=(const Label&) = delete;
+    Label& operator=(const Label&) noexcept;
     /*!
      * \brief Deleted move assignment operator.
      */

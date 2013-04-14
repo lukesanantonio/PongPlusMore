@@ -22,6 +22,22 @@ namespace pong
     }
   }
 
+  Label::Label(const Label& label) noexcept :
+               text_(label.text()),
+               text_height_(label.text_height()),
+               pos_(label.position()),
+               invert_(label.invert()) {}
+
+  Label& Label::operator=(const Label& label) noexcept
+  {
+    this->text(label.text());
+    this->text_height(label.text_height());
+
+    this->position(label.position());
+
+    this->invert(label.invert());
+  }
+
   void Label::render(SDL_Surface* surface) const
   {
     this->generateSurface();
