@@ -76,6 +76,61 @@ namespace pong
      * reason. The what message will explain where the error occured.
      */
     void generateImage() const;
+
+    /*!
+     * \brief Sets the internal label of the button.
+     *
+     * \note Does not automatically tell the label to invert it's palette.
+     * Either do it yourself or see no text! This is to avoid any possible
+     * confusion.
+     * \note Does not invalidate the cache.
+     */
+    inline void label(const Label& label);
+    /*!
+     * \brief Returns the internal label (a copy).
+     *
+     * \returns Button::label_
+     */
+    inline Label label() const;
+
+    /*!
+     * \brief Sets the internal position of the button.
+     *
+     * \note Does not invalidate the cache.
+     */
+    inline void position(const math::vector pos) noexcept;
+    /*!
+     * \brief Returns the internal position of the button.
+     *
+     * \returns Button::pos_
+     */
+    inline math::vector position() const noexcept;
+
+    /*!
+     * \brief Sets the width of the button to render.
+     *
+     * \note Does indeed invalidate the cache.
+     */
+    inline void width(std::size_t width) noexcept;
+    /*!
+     * \brief Returns the width of the button.
+     *
+     * \returns Button::width_
+     */
+    inline std::size_t width() const noexcept;
+
+    /*!
+     * \brief Sets the height of the button to render.
+     *
+     * \note Does indeed invalidate the cache.
+     */
+    inline void height(std::size_t height) noexcept;
+    /*!
+     * \brief Returns the height of the button
+     *
+     * \returns Button::height_
+     */
+    inline std::size_t height() const noexcept;
   private:
     /*!
      * \brief The internal label used to render the text onto the button.
@@ -114,5 +169,43 @@ namespace pong
      */
     mutable bool image_is_out_of_date_ = true;
   };
+
+  inline void Button::label(const Label& label)
+  {
+    this->label_ = label;
+  }
+  inline Label Button::label() const
+  {
+    return this->label_;
+  }
+
+  inline void Button::position(const math::vector pos) noexcept
+  {
+    this->pos_ = pos;
+  }
+  inline math::vector Button::position() const noexcept
+  {
+    return this->pos_;
+  }
+
+  inline void Button::width(std::size_t width) noexcept
+  {
+    this->width_ = width;
+    this->image_is_out_of_date_ = true;
+  }
+  inline std::size_t Button::width() const noexcept
+  {
+    return this->width_;
+  }
+
+  inline void Button::height(std::size_t height) noexcept
+  {
+    this->height_ = height;
+    this->image_is_out_of_date_ = true;
+  }
+  inline std::size_t Button::height() const noexcept
+  {
+    return this->height_;
+  }
 };
 #endif
