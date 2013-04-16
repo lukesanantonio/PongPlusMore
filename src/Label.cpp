@@ -40,10 +40,14 @@ namespace pong
 
   void Label::render(SDL_Surface* surface) const
   {
+    this->render(surface, this->pos_);
+  }
+  void Label::render(SDL_Surface* surface, math::vector pos) const
+  {
     this->generateSurface();
     SDL_Rect dest;
-    dest.x = pos_.x;
-    dest.y = pos_.y;
+    dest.x = pos.x;
+    dest.y = pos.y;
 
     SDL_BlitSurface(this->cached_surface_, NULL, surface, &dest);
   }

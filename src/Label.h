@@ -67,10 +67,17 @@ namespace pong
      * passed in surface so that the top left corner of the text is at
      * Label::pos_.
      *
-     * \note This function will only regenerate the text surface if necessary.
+     * Basically calls Label::render(SDL_Surface*, math::vector pos) with the
+     * second argument being Label::pos_.
      */
     void render(SDL_Surface* surface) const;
-
+    /*!
+     * \brief Renders the label at the position passed in, instead of the
+     * internally stored one.
+     *
+     * \note This function will only regenerate the text surface if necessary.
+     */
+    void render(SDL_Surface* surface, math::vector pos) const;
     /*!
      * \brief Generates and caches the surface of rendered text.
      *

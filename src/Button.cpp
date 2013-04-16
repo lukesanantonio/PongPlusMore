@@ -39,10 +39,9 @@ namespace pong
     math::vector label_pos;
     label_pos.x = (this->width_ / 2) - (this->label_.getSurfaceWidth() / 2);
     label_pos.y = (this->height_ / 2) - (this->label_.getSurfaceHeight() / 2);
-    this->label_.position(label_pos);
 
     //Render the label.
-    this->label_.render(surface);
+    this->label_.render(surface, label_pos);
   }
 
   void Button::generateImage() const
