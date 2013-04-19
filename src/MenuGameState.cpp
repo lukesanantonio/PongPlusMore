@@ -22,6 +22,7 @@ namespace pong
         case SDL_KEYDOWN:
         {
           game->quitGame();
+          break;
         }
       }
     }
