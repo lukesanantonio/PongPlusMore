@@ -36,6 +36,9 @@ namespace pong
     this->position(label.position());
 
     this->invert(label.invert());
+
+    //Just in case!
+    this->cache_out_of_date_ = true;
   }
 
   void Label::render(SDL_Surface* surface) const

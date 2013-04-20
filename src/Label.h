@@ -54,7 +54,7 @@ namespace pong
     /*!
      * \brief Copy assignment operator.
      *
-     * Does not copy the cache.
+     * Does not copy the cache, but invalidates it, just in case.
      */
     Label& operator=(const Label&) noexcept;
     /*!
