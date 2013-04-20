@@ -28,6 +28,24 @@ namespace pong
                pos_(label.position()),
                invert_(label.invert()) {}
 
+  Label::Label(Label&& label) noexcept :
+               text_(label.text()),
+               text_height_(label.text_height()),
+               pos_(label.position()),
+               invert_(label.invert()),
+               cache_out_of_date_(label.cache_out_of_date_)
+  {
+    //Point our cache to the cache of the object to be moved.
+    this->cached_surface_ = label.cached_surface_;
+
+    //Set the label to regenerate the cache if, for some strange reason, it
+    //needs to as well as set the cached surface of the object to be moved from
+    //to a nullptr to prevent it from being freed, which would screw everything
+    //up.
+    label.cache_out_of_date_ = true;
+    label.cached_surface_ = nullptr;
+  }
+
   Label& Label::operator=(const Label& label) noexcept
   {
     this->text(label.text());
@@ -39,6 +57,24 @@ namespace pong
 
     //Just in case!
     this->cache_out_of_date_ = true;
+  }
+
+  Label& Label::operator=(Label&& label) noexcept
+  {
+    this->text(label.text());
+    this->text_height(label.text_height());
+
+    this->position(label.position());
+
+    this->invert(label.invert());
+
+    //Now steal the objects cache:
+    this->cache_out_of_date_ = label.cache_out_of_date_;
+
+    this->cached_surface_ = label.cached_surface_;
+
+    label.cache_out_of_date_ = true;
+    label.cached_surface_ = nullptr;
   }
 
   void Label::render(SDL_Surface* surface) const

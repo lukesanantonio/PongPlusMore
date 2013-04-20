@@ -47,9 +47,11 @@ namespace pong
      */
     Label(const Label&) noexcept;
     /*!
-     * \brief Deleted move constructor.
+     * \brief Move constructor.
+     *
+     * Moves the cache from the object passed in, notably.
      */
-    Label(Label&&) = delete;
+    Label(Label&&) noexcept;
 
     /*!
      * \brief Copy assignment operator.
@@ -58,9 +60,11 @@ namespace pong
      */
     Label& operator=(const Label&) noexcept;
     /*!
-     * \brief Deleted move assignment operator.
+     * \brief Move assignment operator.
+     *
+     * Moves the cache from the other object to `this` one, notably.
      */
-    Label& operator=(Label&&) = delete;
+    Label& operator=(Label&&) noexcept;
 
     /*!
      * \brief Renders an SDL_Surface containing the text of the Label onto the
