@@ -97,12 +97,16 @@ namespace pong
      * \brief Returns the width of the cached text surface.
      *
      * \returns Label::cached_surface_->w
+     *
+     * \post Generates the cache if necessary.
      */
     inline std::size_t getSurfaceWidth() const;
     /*!
      * \brief Returns the height of the cached text surface.
      *
      * \returns Label::cached_surface_->h
+     *
+     * \post Generates the cache if necessary.
      */
     inline std::size_t getSurfaceHeight() const;
 
