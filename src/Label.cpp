@@ -73,6 +73,7 @@ namespace pong
 
     this->cached_surface_ = label.cached_surface_;
 
+    //Just in case!
     label.cache_out_of_date_ = true;
     label.cached_surface_ = nullptr;
   }
