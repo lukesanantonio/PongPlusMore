@@ -23,16 +23,16 @@ namespace pong
   }
 
   Label::Label(const Label& label) noexcept :
-               text_(label.text()),
-               text_height_(label.text_height()),
-               pos_(label.position()),
-               invert_(label.invert()) {}
+               text_(label.text_),
+               text_height_(label.text_height_),
+               pos_(label.pos_),
+               invert_(label.invert_) {}
 
   Label::Label(Label&& label) noexcept :
-               text_(label.text()),
-               text_height_(label.text_height()),
-               pos_(label.position()),
-               invert_(label.invert()),
+               text_(std::move(label.text_)),
+               text_height_(label.text_height_),
+               pos_(label.pos_),
+               invert_(label.invert_),
                cache_out_of_date_(label.cache_out_of_date_)
   {
     //Point our cache to the cache of the object to be moved.
@@ -48,12 +48,12 @@ namespace pong
 
   Label& Label::operator=(const Label& label) noexcept
   {
-    this->text(label.text());
-    this->text_height(label.text_height());
+    this->text(label.text_);
+    this->text_height(label.text_height_);
 
-    this->position(label.position());
+    this->position(label.pos_);
 
-    this->invert(label.invert());
+    this->invert(label.invert_);
 
     //Just in case!
     this->cache_out_of_date_ = true;
@@ -61,12 +61,12 @@ namespace pong
 
   Label& Label::operator=(Label&& label) noexcept
   {
-    this->text(label.text());
-    this->text_height(label.text_height());
+    this->text(std::move(label.text_));
+    this->text_height(label.text_height_);
 
-    this->position(label.position());
+    this->position(label.pos_);
 
-    this->invert(label.invert());
+    this->invert(label.invert_);
 
     //Now steal the objects cache:
     this->cache_out_of_date_ = label.cache_out_of_date_;
