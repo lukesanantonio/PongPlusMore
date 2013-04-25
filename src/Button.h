@@ -134,12 +134,8 @@ namespace pong
   private:
     /*!
      * \brief The internal label used to render the text onto the button.
-     *
-     * Mutable so that the render function can modify it's position. Every
-     * other field should not be modified without the client's knowledge,
-     * though.
      */
-    mutable Label label_;
+    Label label_;
 
     /*!
      * \brief The position of the top left corner of the button in SDL window
