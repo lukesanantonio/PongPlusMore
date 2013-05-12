@@ -1,6 +1,7 @@
 #include "MenuGameState.h"
 #include "Game.h"
 #include "render_text.h"
+#include "SinglePlayerGameState.h"
 namespace pong
 {
   MenuGameState::MenuGameState() noexcept : title_("Ultimate Pong", 110),
@@ -35,6 +36,11 @@ namespace pong
     this->multiplayer_.position({centerx, 500});
     this->quit_.position({centerx, 600});
 
+    this->singleplayer_.executeOnClick([]()
+    {
+      Game::getInstance()->setGameState(std::shared_ptr<GameState>(
+                                                    new SinglePlayerGameState));
+    });
     this->multiplayer_.executeOnClick([]()
     {
       Game::getInstance()->quitGame();
