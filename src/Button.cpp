@@ -9,8 +9,9 @@ namespace pong
   Button::Button(const std::string& text,
                  math::vector pos,
                  std::size_t width,
-                 std::size_t height) :
-                 label_(text),
+                 std::size_t height,
+                 std::size_t text_height) :
+                 label_(text, text_height),
                  pos_(pos),
                  width_(width),
                  height_(height)
