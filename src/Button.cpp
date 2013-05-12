@@ -3,6 +3,7 @@
  * \brief Contains definitions for the Button class.
  */
 #include "Button.h"
+#include "render_text.h"
 namespace pong
 {
   Button::Button(const std::string& text,
@@ -37,8 +38,10 @@ namespace pong
 
     //Find where to render the label!
     math::vector label_pos;
-    label_pos.x = (this->width_ / 2) - (this->label_.getSurfaceWidth() / 2);
-    label_pos.y = (this->height_ / 2) - (this->label_.getSurfaceHeight() / 2);
+    label_pos.x = center(this->pos_.x, this->width_,
+                         this->label_.getSurfaceWidth());
+    label_pos.y = center(this->pos_.y, this->height_,
+                         this->label_.getSurfaceHeight());
 
     //Render the label.
     this->label_.render(surface, label_pos);
