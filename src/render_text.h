@@ -37,18 +37,30 @@ namespace pong
   void invertPalette(SDL_Surface*& surface);
 
   /*!
-   * \brief Gets the point which is the center of begin to length.
+   * \brief Gets the point which should be the location of an object of
+   * `object_length` with the bounds which begin at `begin` and go on for
+   * `length`.
    *
    * \param begin The location where the line, etc begins.
    * \param length How far this line, etc, goes for, after `begin`.
+   * \param object_length The length of the object which needs to be centered.
    *
-   * \return The 1d center of point `begin` going on for `length` amount.
+   * \return The 1d point which should be the position of an object of length
+   * `object_length` if it needs to be centered in a line starting at point
+   * `begin` going on for `length` amount.
    *
-   * \note This is just a small helper, nothing special happens.
+   * \note Example: If begin==100, length==100, and object_length==50. This
+   * function returns 125. This would be the x or y point for on object of
+   * length 50 which needs to be centered within the bounds 100-200.
+   *
+   * \note Hope this is clear. Otherwise check out the source code. If you
+   * don't want to look at the source code the algorithm is exactly:
+   * \code begin + (length / 2) - (object_length / 2) \endcode
+   * This is what is returned.
    */
-  inline int center(int begin, std::size_t length)
+  inline int center(int begin, std::size_t length, std::size_t object_length)
   {
-    return begin + (length - begin) / 2;
+    return begin + (length / 2) - (object_length / 2);
   }
 };
 #endif
