@@ -35,5 +35,20 @@ namespace pong
    * \param surface Surface whose palette to invert.
    */
   void invertPalette(SDL_Surface*& surface);
+
+  /*!
+   * \brief Gets the point which is the center of begin to length.
+   *
+   * \param begin The location where the line, etc begins.
+   * \param length How far this line, etc, goes for, after `begin`.
+   *
+   * \return The 1d center of point `begin` going on for `length` amount.
+   *
+   * \note This is just a small helper, nothing special happens.
+   */
+  inline int center(int begin, std::size_t length)
+  {
+    return begin + (length - begin) / 2;
+  }
 };
 #endif
