@@ -81,4 +81,19 @@ namespace pong
       this->image_is_out_of_date_ = false;
     }
   }
+  boost::signals2::connection Button::executeOnClick(
+                        const boost::signals2::signal<void ()>::slot_type& slot)
+  {
+    return this->on_click_.connect(slot);
+  }
+  void Button::checkClick(math::vector point) const
+  {
+    //Check to see if the button occupies the point... Sooo:
+    if(point.x <= this->pos_.x + width_ && point.x >= this->pos_.x &&
+       point.y <= this->pos_.y + height_ && point.y >= this->pos_.y)
+    {
+      //Do everything on our to-do list.
+      this->on_click_();
+    }
+  }
 };

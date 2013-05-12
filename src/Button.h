@@ -5,6 +5,7 @@
 #ifndef ULTIMATE_PONG_BUTTON_H
 #define ULTIMATE_PONG_BUTTON_H
 #include <string>
+#include <boost/signals2.hpp>
 #include <SDL/SDL.h>
 #include "Label.h"
 #include "vector.hpp"
@@ -76,6 +77,25 @@ namespace pong
      * reason. The what message will explain where the error occured.
      */
     void generateImage() const;
+
+    /*!
+     * \brief Add a functor to the list of functions which need to be called
+     * if the button should be clicked on.
+     *
+     * \returns The connection returned by boost::signals2::signal::connect().
+     * \sa Button::checkClick()
+     * \sa Button::on_click_
+     */
+    boost::signals2::connection executeOnClick(
+                       const boost::signals2::signal<void ()>::slot_type& slot);
+    /*!
+     * \brief Checks if the button occupies the point passed in as a parameter.
+     * If it has, this function calls each function set to be called on click.
+     *
+     * \sa Button::on_click_
+     * \sa Button::executeOnClick()
+     */
+    void checkClick(math::vector point) const;
 
     /*!
      * \brief Sets the internal label of the button.
@@ -164,6 +184,14 @@ namespace pong
      * \sa Button::image_
      */
     mutable bool image_is_out_of_date_ = true;
+
+    /*!
+     * \brief This signal is emitted when the button is clicked on.
+     *
+     * \sa Button::executeOnClick()
+     * \sa Button::checkClick()
+     */
+    boost::signals2::signal<void ()> on_click_;
   };
 
   inline void Button::label(const Label& label)
