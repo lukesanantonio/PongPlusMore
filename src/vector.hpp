@@ -19,6 +19,11 @@ namespace pong
     struct vector
     {
       /*!
+       * \brief Constructor which is not only default but allows for brace
+       * initialization... It shouldn't break anything.
+       */
+      explicit vector(int x = 0, int y = 0) : x(x), y(y){}
+      /*!
        * \brief X value for anything imaginable.
        */
       int x = 0;
