@@ -3,11 +3,11 @@
 #include "render_text.h"
 namespace pong
 {
-  MenuGameState::MenuGameState() noexcept : title_("Ultimate Pong", 100)
+  MenuGameState::MenuGameState() noexcept : title_("Ultimate Pong", 110)
   {
     math::vector pos;
     pos.x = center(0, 1000, this->title_.getSurfaceWidth());
-    pos.y = 20;
+    pos.y = 40;
     this->title_.position(pos);
   }
   void MenuGameState::update()
