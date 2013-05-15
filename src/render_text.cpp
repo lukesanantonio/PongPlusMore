@@ -147,4 +147,23 @@ namespace pong
     //Set our palette to the reversed copy of the original.
     SDL_SetColors(surface, &colors[0], 0, palette->ncolors);
   }
+
+  SDL_Surface* generateRectangle(std::size_t width, std::size_t height,
+                                 SDL_Color color)
+  {
+    SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                                width, height, 8,
+                                                0, 0, 0, 0);
+    if(!surface)
+    {
+      throw std::runtime_error("Failed to create an SDL_Surface* with "
+                               "SDL_CreateRGBSurface().");
+    }
+    SDL_SetColors(surface, &color, 0, 1);
+    SDL_FillRect(surface, nullptr, SDL_MapRGB(surface->format,
+                                              color.r,
+                                              color.g,
+                                              color.b));
+    return surface;
+  }
 };

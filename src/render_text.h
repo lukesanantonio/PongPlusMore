@@ -62,5 +62,14 @@ namespace pong
   {
     return begin + (length / 2) - (object_length / 2);
   }
+
+  /*!
+   * \brief Generates a rectange SDL_Surface of any color, width, or height.
+   *
+   * \returns An SDL_Create(d)RGBSurface() which **needs to be
+   * SDL_FreeSurface()'d.**
+   */
+  SDL_Surface* generateRectangle(std::size_t width, std::size_t height,
+                                 SDL_Color color);
 };
 #endif

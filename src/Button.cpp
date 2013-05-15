@@ -58,28 +58,12 @@ namespace pong
         SDL_FreeSurface(this->image_);
       }
 
-      //Generate the right sized image.
-      this->image_ = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                          this->width_, this->height_, 8,
-                                          0, 0, 0, 0);
-      if(!this->image_)
-      {
-        throw std::runtime_error("Failed to create 8-bit image with"
-                                 "SDL_CreateRGBSurface in"
-                                 "Button::generateImage()");
-      }
-      //Generate the palette.
+      //Generate the rectangle.
       SDL_Color white;
-
       white.r = 0xff;
       white.g = 0xff;
       white.b = 0xff;
-
-      SDL_SetColors(this->image_, &white, 0, 1);
-
-      //Fill the surface.
-      SDL_FillRect(this->image_, NULL,
-                   SDL_MapRGB(this->image_->format, 0xff, 0xff, 0xff));
+      this->image_ = generateRectangle(this->width_, this->height_, white);
 
       //Don't do this again.
       this->image_is_out_of_date_ = false;
