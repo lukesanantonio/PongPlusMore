@@ -14,9 +14,26 @@ namespace pong
   {
   public:
     /*!
+     * \brief The interface to the real, private update function
+     * (GameState::update_private()).
+     */
+    inline void update()
+    {
+      this->update_private();
+    }
+    /*!
+     * \brief The interface to the real, private render function
+     * (GameState::render_private()).
+     */
+    inline void render(SDL_Surface* surface) const
+    {
+      this->render_private(surface);
+    }
+  private:
+    /*!
      * \brief This function updates the internal state of the object.
      */
-    virtual void update() = 0;
+    virtual void update_private() = 0;
 
     /*!
      * \brief This function renders whatever it needs to render based off of
@@ -24,7 +41,7 @@ namespace pong
      *
      * It should not modify the object.
      */
-    virtual void render(SDL_Surface* surface) const = 0;
+    virtual void render_private(SDL_Surface* surface) const = 0;
   };
 };
 #endif

@@ -15,8 +15,10 @@ namespace pong
     MenuGameState& operator=(const MenuGameState&) = delete;
     MenuGameState& operator=(MenuGameState&&) = delete;
 
-    virtual void update() override;
-    virtual void render(SDL_Surface*) const override;
+  private:
+    virtual void update_private() override;
+    virtual void render_private(SDL_Surface*) const override;
+
   private:
     Label title_;
     Button singleplayer_;

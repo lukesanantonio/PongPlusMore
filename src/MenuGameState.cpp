@@ -44,7 +44,7 @@ namespace pong
       Game::getInstance()->quitGame();
     });
   }
-  void MenuGameState::update()
+  void MenuGameState::update_private()
   {
     Game* game = Game::getInstance();
 
@@ -70,7 +70,7 @@ namespace pong
       }
     }
   }
-  void MenuGameState::render(SDL_Surface* surface) const
+  void MenuGameState::render_private(SDL_Surface* surface) const
   {
     this->title_.render(surface);
 
