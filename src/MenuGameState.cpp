@@ -43,32 +43,7 @@ namespace pong
     {
       Game::getInstance()->quitGame();
     });
-  }
-  void MenuGameState::update_private()
-  {
-    Game* game = Game::getInstance();
 
-    SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-      switch(event.type)
-      {
-        case SDL_QUIT:
-        case SDL_KEYDOWN:
-        {
-          game->quitGame();
-          break;
-        }
-        case SDL_MOUSEBUTTONUP:
-        {
-          math::vector pos = {event.button.x, event.button.y};
-          this->singleplayer_.checkClick(pos);
-          this->multiplayer_.checkClick(pos);
-          this->quit_.checkClick(pos);
-          break;
-        }
-      }
-    }
   }
   void MenuGameState::render_private(SDL_Surface* surface) const
   {
