@@ -9,6 +9,7 @@
 #include <SDL/SDL.h>
 #include "Label.h"
 #include "vector.hpp"
+#include "EventSignals.h"
 namespace pong
 {
   /*!
@@ -91,14 +92,12 @@ namespace pong
      */
     boost::signals2::connection executeOnClick(
                        const boost::signals2::signal<void ()>::slot_type& slot);
+
     /*!
-     * \brief Checks if the button occupies the point passed in as a parameter.
-     * If it has, this function calls each function set to be called on click.
-     *
-     * \sa Button::on_click_
-     * \sa Button::executeOnClick()
+     * \brief Adds necessary handlers to the event signals object so that when
+     * the user clicks the button will check and possibly emit another signal.
      */
-    void checkClick(math::vector point) const;
+    void addHandler(EventSignals& signals) const;
 
     /*!
      * \brief Sets the internal label of the button.
