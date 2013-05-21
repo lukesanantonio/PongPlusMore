@@ -14,32 +14,38 @@ namespace pong
     this->title_.position(pos);
 
     std::size_t width = 550;
-    this->singleplayer_.width(width);
-    this->multiplayer_.width(width);
-    this->quit_.width(width);
-
     std::size_t height = 75;
-    this->singleplayer_.height(height);
-    this->multiplayer_.height(height);
-    this->quit_.height(height);
-
     std::size_t text_height = 50;
+    pos.x = center(0, 1000, width);
+
+    pos.y = 375;
+    this->singleplayer_.position(pos);
+    this->singleplayer_.width(width);
+    this->singleplayer_.height(height);
     this->singleplayer_.text_height(text_height);
+
+    pos.y += 100;
+    this->multiplayer_.position(pos);
+    this->multiplayer_.width(width);
+    this->multiplayer_.height(height);
     this->multiplayer_.text_height(text_height);
+
+    pos.y += 100;
+    this->quit_.position(pos);
+    this->quit_.width(width);
+    this->quit_.height(height);
     this->quit_.text_height(text_height);
 
-    //Since every button has the same width we can get the center of one, and
-    //use it for all of them.
-    int centerx = center(0, 1000, width);
-    this->singleplayer_.position({centerx, 400});
-    this->multiplayer_.position({centerx, 500});
-    this->quit_.position({centerx, 600});
+    this->singleplayer_.addHandler(this->signals);
+    this->multiplayer_.addHandler(this->signals);
+    this->quit_.addHandler(this->signals);
 
-    this->multiplayer_.executeOnClick([]()
+    this->quit_.executeOnClick([this]()
     {
-      Game::getInstance()->quitGame();
+      this->signals.on_quit();
     });
-    this->quit_.executeOnClick([]()
+
+    this->signals.on_quit.connect([]()
     {
       Game::getInstance()->quitGame();
     });
