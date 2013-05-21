@@ -6,6 +6,7 @@ namespace pong
   MenuGameState::MenuGameState() noexcept : title_("Ultimate Pong", 110),
                                             singleplayer_("Singleplayer"),
                                             multiplayer_("Multiplayer"),
+                                            help_("Help"),
                                             quit_("Quit")
   {
     math::vector pos;
@@ -31,6 +32,12 @@ namespace pong
     this->multiplayer_.text_height(text_height);
 
     pos.y += 100;
+    this->help_.position(pos);
+    this->help_.width(width);
+    this->help_.height(height);
+    this->help_.text_height(text_height);
+
+    pos.y += 100;
     this->quit_.position(pos);
     this->quit_.width(width);
     this->quit_.height(height);
@@ -38,6 +45,7 @@ namespace pong
 
     this->singleplayer_.addHandler(this->signals);
     this->multiplayer_.addHandler(this->signals);
+    this->help_.addHandler(this->signals);
     this->quit_.addHandler(this->signals);
 
     this->quit_.executeOnClick([this]()
@@ -57,6 +65,7 @@ namespace pong
 
     this->singleplayer_.render(surface);
     this->multiplayer_.render(surface);
+    this->help_.render(surface);
     this->quit_.render(surface);
   }
 };
