@@ -151,13 +151,14 @@ namespace pong
      * \brief The current game state.
      */
     std::shared_ptr<GameState> game_state_ = nullptr;
+
     /*!
-     * \brief Whether or not the game state has been changed since *erm* it's
-     * been handled. This is changed to true in Game::setGameState() to tell
-     * the main loop to start again to give the game state an update before
-     * rendering.
+     * \brief Game state to be...
+     *
+     * This is nullptr when no GameState is "on deck".
+     * A nice, simple replacement for a game_state_changed_ variable.
      */
-    bool game_state_changed_ = false;
+    std::shared_ptr<GameState> game_state_to_be_ = nullptr;
 
     /*!
      * \brief Set to false when the game is scheduled to end.
@@ -185,12 +186,7 @@ namespace pong
   }
   inline void Game::setGameState(std::shared_ptr<GameState> game_state) noexcept
   {
-    if(!game_state)
-    {
-      return;
-    }
-    this->game_state_ = game_state;
-    this->game_state_changed_ = true;
+    this->game_state_to_be_ = game_state;
   }
 };
 #endif

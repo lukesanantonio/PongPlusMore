@@ -21,15 +21,17 @@ namespace pong
 
     while(this->running_)
     {
-      this->game_state_->update();
-      if(this->game_state_changed_)
+      //If there is a game state waiting.
+      if(this->game_state_to_be_)
       {
-        //The game state has changed? Alright... Continue the loop from the
-        //beginning.
-        this->game_state_changed_ = false;
-        continue;
+        //Change it
+        this->game_state_ = this->game_state_to_be_;
+
+        //Make sure this doesn't happen again.
+        this->game_state_to_be_ = nullptr;
       }
 
+      this->game_state_->update();
       this->game_state_->render(this->main_surface_);
       SDL_Flip(this->main_surface_);
     }
