@@ -15,6 +15,12 @@ namespace pong
   {
   public:
     /*!
+     * \brief Virtual destructor since we are going to delete using a
+     * pointer-to-base.
+     */
+    virtual ~GameState() = default;
+
+    /*!
      * \brief The interface to the real, private update function
      * (GameState::update_private()).
      */
