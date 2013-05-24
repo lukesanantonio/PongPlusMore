@@ -74,7 +74,7 @@ namespace pong
   {
     return this->on_click_.connect(slot);
   }
-  void Button::addHandler(EventSignals& signals) const
+  void Button::useSignals(EventSignals& signals) const
   {
     //Add the signal to be called when handling events.
     signals.on_mouse_click.connect([this](math::vector point)

@@ -43,10 +43,10 @@ namespace pong
     this->quit_.height(height);
     this->quit_.text_height(text_height);
 
-    this->singleplayer_.addHandler(this->signals);
-    this->multiplayer_.addHandler(this->signals);
-    this->help_.addHandler(this->signals);
-    this->quit_.addHandler(this->signals);
+    this->singleplayer_.useSignals(this->signals);
+    this->multiplayer_.useSignals(this->signals);
+    this->help_.useSignals(this->signals);
+    this->quit_.useSignals(this->signals);
 
     this->quit_.executeOnClick([this]()
     {

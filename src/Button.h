@@ -95,9 +95,10 @@ namespace pong
 
     /*!
      * \brief Adds necessary handlers to the event signals object so that when
-     * the user clicks the button will check and possibly emit another signal.
+     * the user clicks the mouse the button will check and possibly emit another
+     * signal.
      */
-    void addHandler(EventSignals& signals) const;
+    void useSignals(EventSignals& signals) const;
 
     /*!
      * \brief Sets the internal label of the button.
