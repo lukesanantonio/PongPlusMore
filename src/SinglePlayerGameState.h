@@ -1,6 +1,7 @@
 #ifndef ULTIMATE_PONG_SINGLE_PLAYER_GAME_STATE_H
 #define ULTIMATE_PONG_SINGLE_PLAYER_GAME_STATE_H
 #include "GameState.h"
+#include "Paddle.h"
 namespace pong
 {
   class SinglePlayerGameState : public GameState
