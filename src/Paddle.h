@@ -15,6 +15,12 @@ namespace pong
   class Paddle
   {
   public:
+    Paddle() = default;
+    virtual ~Paddle() = default;
+    Paddle(const Paddle&) = delete;
+    Paddle(Paddle&&) = delete;
+    Paddle& operator=(const Paddle&) = delete;
+    Paddle& operator=(Paddle&&) = delete;
     /*!
      * \brief Renders the paddle onto the surface at Paddle::pos_.
      */
