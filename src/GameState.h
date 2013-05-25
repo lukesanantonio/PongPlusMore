@@ -15,6 +15,10 @@ namespace pong
   {
   public:
     /*!
+     * \brief Default constructor executing default behavior.
+     */
+    GameState() = default;
+    /*!
      * \brief Virtual destructor since we are going to delete using a
      * pointer-to-base.
      */
