@@ -9,6 +9,10 @@
 #include "vector.hpp"
 namespace pong
 {
+  /*!
+   * \brief Simple structure grouping all the signals which are needed for a
+   * simple event system.
+   */
   struct EventSignals
   {
     boost::signals2::signal<void (math::vector)> on_mouse_click;
