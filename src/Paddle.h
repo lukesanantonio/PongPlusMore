@@ -7,6 +7,7 @@
 #define ULTIMATE_PONG_PADDLE_H
 #include <SDL/SDL.h>
 #include "vector.hpp"
+#include "PaddleController.hpp"
 namespace pong
 {
   /*!
