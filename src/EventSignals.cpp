@@ -1,3 +1,8 @@
+/*!
+ * \file EventSignals.cpp
+ * \brief File basically containing the main event-checking loop. This is where
+ * it happens.
+ */
 #include "EventSignals.h"
 namespace pong
 {

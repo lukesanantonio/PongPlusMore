@@ -1,3 +1,7 @@
+/*!
+ * \file EventSignals.h
+ * \brief File declaring a simple structure of `boost::signals2::signal`s
+ */
 #ifndef ULTIMATE_PONG_EVENT_SIGNALS_H
 #define ULTIMATE_PONG_EVENT_SIGNALS_H
 #include <SDL/SDL.h>
