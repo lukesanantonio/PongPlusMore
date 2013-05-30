@@ -5,7 +5,7 @@
 #include "Game.h"
 #include <stdexcept>
 #include "scoped_init.hpp"
-#include "MenuGameState.h"
+#include "GameStates/MenuGameState.h"
 namespace pong
 {
   std::shared_ptr<Game> Game::instance_ = nullptr;
