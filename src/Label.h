@@ -8,6 +8,7 @@
 #include <SDL/SDL.h>
 #include "vector.hpp"
 #include "render_text.h"
+#include "CachedSurface.h"
 namespace pong
 {
   /*!
@@ -16,7 +17,7 @@ namespace pong
    * It also features a cache which stores the rendered text and only
    * regenerates it if necessary. Very useful.
    */
-  class Label
+  class Label : public CachedSurface
   {
   public:
     /*!
@@ -38,7 +39,7 @@ namespace pong
     /*!
      * \brief Free's the text cache if necessary.
      */
-    ~Label() noexcept;
+    ~Label() noexcept = default;
 
     /*!
      * \brief Copy constructor.
@@ -82,21 +83,11 @@ namespace pong
      * \note This function will only regenerate the text surface if necessary.
      */
     void render(SDL_Surface* surface, math::vector pos) const;
-    /*!
-     * \brief Generates and caches the surface of rendered text.
-     *
-     * \note If the cache is up to date, this function is a no-op. Therefore
-     * this function can be called without worry of a bottleneck whenever an
-     * up to date surface is needed.
-     *
-     * \post Label::cache_out_of_date == `false`
-     */
-    void generateSurface() const;
 
     /*!
      * \brief Returns the width of the cached text surface.
      *
-     * \returns Label::cached_surface_->w
+     * \returns Label::cache()->w
      *
      * \post Generates the cache if necessary.
      */
@@ -104,7 +95,7 @@ namespace pong
     /*!
      * \brief Returns the height of the cached text surface.
      *
-     * \returns Label::cached_surface_->h
+     * \returns Label::cache()->h
      *
      * \post Generates the cache if necessary.
      */
@@ -184,44 +175,27 @@ namespace pong
     math::vector pos_;
 
     /*!
-     * \brief The surface rendered.
-     *
-     * Cached so that a call to pong::render_text isn't necessary every time
-     * the client calls Label::render().
-     *
-     * \sa Label::cache_out_of_date_
-     */
-    mutable SDL_Surface* cached_surface_ = nullptr;
-
-    /*!
-     * \brief True if the rendered text is out of date.
-     *
-     * \sa Label::cached_surface_
-     */
-    mutable bool cache_out_of_date_ = true;
-
-    /*!
      * \brief Whether or not the text color should be inverted from the default
      * white. (An inversion would make the text black on a white background.)
      */
     bool invert_ = false;
+
+    virtual SDL_Surface* generateCache_private() const override;
   };
 
   inline std::size_t Label::getSurfaceWidth() const
   {
-    this->generateSurface();
-    return this->cached_surface_->w;
+    return this->cache()->w;
   }
   inline std::size_t Label::getSurfaceHeight() const
   {
-    this->generateSurface();
-    return this->cached_surface_->h;
+    return this->cache()->h;
   }
 
   inline void Label::text(const std::string& text) noexcept
   {
     this->text_ = text;
-    this->cache_out_of_date_ = true;
+    this->invalidateCache();
   }
   inline std::string Label::text() const noexcept
   {
@@ -231,7 +205,7 @@ namespace pong
   inline void Label::text_height(std::size_t text_height) noexcept
   {
     this->text_height_ = text_height;
-    this->cache_out_of_date_ = true;
+    this->invalidateCache();
   }
   inline std::size_t Label::text_height() const noexcept
   {
@@ -250,7 +224,7 @@ namespace pong
   inline void Label::invert(bool invert) noexcept
   {
     this->invert_ = invert;
-    this->cache_out_of_date_ = true;
+    this->invalidateCache();
   }
   inline bool Label::invert() const noexcept
   {
