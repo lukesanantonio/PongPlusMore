@@ -34,7 +34,8 @@ namespace pong
                     math::vector pos = math::vector(),
                     std::size_t width = 0,
                     std::size_t height = 0,
-                    std::size_t text_height = 24);
+                    std::size_t text_height = 24,
+                    bool enabled = true);
     /*!
      * \brief Uninitializes the image if that hasn't been done already.
      */
@@ -153,6 +154,20 @@ namespace pong
      * \returns Button::height_
      */
     inline std::size_t height() const noexcept;
+
+    /*!
+     * \brief Sets whether the button can be clicked.
+     *
+     * \note Since the button will be greyed out when *disabled*, The cache
+     * needs to be invalidated.
+     */
+    inline void enabled(bool enabled) noexcept;
+    /*!
+     * \brief Returns whether or not the button is enabled or not.
+     *
+     * \returns Button::enabled_
+     */
+    inline bool enabled() const noexcept;
   private:
     /*!
      * \brief The internal label used to render the text onto the button.
@@ -172,6 +187,13 @@ namespace pong
      * \brief The height of the button.
      */
     std::size_t height_;
+
+    /*!
+     * \brief Whether or not the button can be clicked.
+     *
+     * \note Also, the button is rendered grayed out if this is false.
+     */
+    bool enabled_;
 
     /*!
      * \brief This signal is emitted when the button is clicked on.
@@ -237,6 +259,16 @@ namespace pong
   inline std::size_t Button::height() const noexcept
   {
     return this->height_;
+  }
+
+  inline void Button::enabled(bool enabled) noexcept
+  {
+    this->enabled_ = enabled;
+    this->invalidateCache();
+  }
+  inline bool Button::enabled() const noexcept
+  {
+    return this->enabled_;
   }
 };
 #endif

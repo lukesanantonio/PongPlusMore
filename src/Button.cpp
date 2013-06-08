@@ -10,11 +10,13 @@ namespace pong
                  math::vector pos,
                  std::size_t width,
                  std::size_t height,
-                 std::size_t text_height) :
+                 std::size_t text_height,
+                 bool enabled) :
                  label_(text, text_height),
                  pos_(pos),
                  width_(width),
-                 height_(height)
+                 height_(height),
+                 enabled_(enabled)
   {
     this->label_.invert(true);
   }
@@ -41,11 +43,20 @@ namespace pong
   SDL_Surface* Button::generateCache_private() const
   {
     //Generate the rectangle.
-    SDL_Color white;
-    white.r = 0xff;
-    white.g = 0xff;
-    white.b = 0xff;
-    SDL_Surface* image = generateRectangle(this->width_, this->height_, white);
+    SDL_Color color;
+    if(this->enabled_)
+    {
+      color.r = 0xff;
+      color.g = 0xff;
+      color.b = 0xff;
+    }
+    else
+    {
+      color.r = 0x55;
+      color.g = 0x55;
+      color.b = 0x55;
+    }
+    SDL_Surface* image = generateRectangle(this->width_, this->height_, color);
     return image;
   }
   boost::signals2::connection Button::executeOnClick(
@@ -58,12 +69,16 @@ namespace pong
     //Add the signal to be called when handling events.
     signals.on_mouse_click.connect([this](math::vector point)
     {
-      //Check to see if the button occupies the point... Sooo:
-      if(point.x <= this->pos_.x + width_ && point.x >= this->pos_.x &&
-         point.y <= this->pos_.y + height_ && point.y >= this->pos_.y)
+      //The button can only be clicked if it is enabled.
+      if(this->enabled_)
       {
-        //Do everything on our to-do list.
-        this->on_click_();
+        //Check to see if the button occupies the point... Sooo:
+        if(point.x <= this->pos_.x + width_ && point.x >= this->pos_.x &&
+           point.y <= this->pos_.y + height_ && point.y >= this->pos_.y)
+        {
+          //Do everything on our to-do list.
+          this->on_click_();
+        }
       }
     });
   }

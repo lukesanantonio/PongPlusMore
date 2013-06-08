@@ -25,18 +25,21 @@ namespace pong
     this->singleplayer_.width(width);
     this->singleplayer_.height(height);
     this->singleplayer_.text_height(text_height);
+    this->singleplayer_.enabled(false);
 
     pos.y += 100;
     this->multiplayer_.position(pos);
     this->multiplayer_.width(width);
     this->multiplayer_.height(height);
     this->multiplayer_.text_height(text_height);
+    this->multiplayer_.enabled(false);
 
     pos.y += 100;
     this->help_.position(pos);
     this->help_.width(width);
     this->help_.height(height);
     this->help_.text_height(text_height);
+    this->help_.enabled(false);
 
     pos.y += 100;
     this->quit_.position(pos);
