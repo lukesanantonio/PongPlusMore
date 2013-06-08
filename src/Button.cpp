@@ -46,11 +46,6 @@ namespace pong
     white.g = 0xff;
     white.b = 0xff;
     SDL_Surface* image = generateRectangle(this->width_, this->height_, white);
-    if(!image)
-    {
-      throw std::runtime_error("Failed to generate rectangle in"
-                               " `Button::generateCache_private()`!");
-    }
     return image;
   }
   boost::signals2::connection Button::executeOnClick(
