@@ -8,6 +8,12 @@ namespace pong
 {
   void Paddle::render(SDL_Surface* surface) const
   {
+    SDL_Rect dest;
+
+    dest.x = this->pos_.x;
+    dest.y = this->pos_.y;
+
+    SDL_BlitSurface(this->cache(), nullptr, surface, &dest);
   }
   SDL_Surface* Paddle::generateCache_private() const
   {
