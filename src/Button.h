@@ -10,12 +10,13 @@
 #include "Label.h"
 #include "vector.hpp"
 #include "EventSignals.h"
+#include "CachedSurface.h"
 namespace pong
 {
   /*!
    * \brief Class wrapping clickable button.
    */
-  class Button
+  class Button : public CachedSurface
   {
   public:
     /*!
@@ -37,7 +38,7 @@ namespace pong
     /*!
      * \brief Uninitializes the image if that hasn't been done already.
      */
-    ~Button() noexcept;
+    virtual ~Button() noexcept = default;
 
     /*!
      * \brief Deleted copy constructor.
@@ -64,23 +65,6 @@ namespace pong
      * there will be massive visual artifacts.
      */
     void render(SDL_Surface* surface) const;
-
-    /*!
-     * \brief Generates Button::image_, an all-white surface of width and height
-     * of Button::width_ and Button::height_ respectively.
-     *
-     * This function is here to allow for the client to specify generation when
-     * it's a good time, or not, this function is required, since it will be
-     * called when necessary.
-     *
-     * \post Button::image_is_out_of_date_ == false
-     * \post Button::image_->w == Button::width_
-     * \post Button::image_->h == Button::height_
-     *
-     * \throws std::runtime_error if SDL fails to create the surface for any
-     * reason. The what message will explain where the error occured.
-     */
-    void generateImage() const;
 
     /*!
      * \brief Add a functor to the list of functions which need to be called
@@ -190,26 +174,22 @@ namespace pong
     std::size_t height_;
 
     /*!
-     * \brief The cached image for the button. Regenerated when necessary, that
-     * is usually when the width or height of the button changes.
-     */
-    mutable SDL_Surface* image_ = nullptr;
-
-    /*!
-     * \brief Whether or not the all-white image used as the button itself needs
-     * to be regenerated.
-     *
-     * \sa Button::image_
-     */
-    mutable bool image_is_out_of_date_ = true;
-
-    /*!
      * \brief This signal is emitted when the button is clicked on.
      *
      * \sa Button::executeOnClick()
      * \sa Button::checkClick()
      */
     boost::signals2::signal<void ()> on_click_;
+
+    /*!
+     * \brief Generates the SDL_Surface which is actually rendered, an all-white
+     * surface of width and height of Button::width_ and Button::height_
+     * respectively.
+     *
+     * \throws std::runtime_error if SDL fails to create the surface for any
+     * reason. The what message will explain where the error occured.
+     */
+    virtual SDL_Surface* generateCache_private() const override;
   };
 
   inline void Button::label(const Label& label)
@@ -242,7 +222,7 @@ namespace pong
   inline void Button::width(std::size_t width) noexcept
   {
     this->width_ = width;
-    this->image_is_out_of_date_ = true;
+    this->invalidateCache();
   }
   inline std::size_t Button::width() const noexcept
   {
@@ -252,7 +232,7 @@ namespace pong
   inline void Button::height(std::size_t height) noexcept
   {
     this->height_ = height;
-    this->image_is_out_of_date_ = true;
+    this->invalidateCache();
   }
   inline std::size_t Button::height() const noexcept
   {

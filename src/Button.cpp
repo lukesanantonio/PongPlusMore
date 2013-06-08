@@ -18,24 +18,14 @@ namespace pong
   {
     this->label_.invert(true);
   }
-  Button::~Button()
-  {
-    if(this->image_)
-    {
-      SDL_FreeSurface(this->image_);
-    }
-  }
 
   void Button::render(SDL_Surface* surface) const
   {
-    //Generate our image if necessary.
-    this->generateImage();
-
     //Render image!
     SDL_Rect button_dest;
     button_dest.x = this->pos_.x;
     button_dest.y = this->pos_.y;
-    SDL_BlitSurface(this->image_, NULL, surface, &button_dest);
+    SDL_BlitSurface(this->cache(), NULL, surface, &button_dest);
 
     //Find where to render the label!
     math::vector label_pos;
@@ -48,26 +38,20 @@ namespace pong
     this->label_.render(surface, label_pos);
   }
 
-  void Button::generateImage() const
+  SDL_Surface* Button::generateCache_private() const
   {
-    if(this->image_is_out_of_date_)
+    //Generate the rectangle.
+    SDL_Color white;
+    white.r = 0xff;
+    white.g = 0xff;
+    white.b = 0xff;
+    SDL_Surface* image = generateRectangle(this->width_, this->height_, white);
+    if(!image)
     {
-      //Make sure we don't leak any memory.
-      if(this->image_)
-      {
-        SDL_FreeSurface(this->image_);
-      }
-
-      //Generate the rectangle.
-      SDL_Color white;
-      white.r = 0xff;
-      white.g = 0xff;
-      white.b = 0xff;
-      this->image_ = generateRectangle(this->width_, this->height_, white);
-
-      //Don't do this again.
-      this->image_is_out_of_date_ = false;
+      throw std::runtime_error("Failed to generate rectangle in"
+                               " `Button::generateCache_private()`!");
     }
+    return image;
   }
   boost::signals2::connection Button::executeOnClick(
                         const boost::signals2::signal<void ()>::slot_type& slot)
