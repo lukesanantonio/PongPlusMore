@@ -8,12 +8,13 @@
 #include <SDL/SDL.h>
 #include "vector.hpp"
 #include "PaddleController.hpp"
+#include "CachedSurface.h"
 namespace pong
 {
   /*!
    * \brief A concrete (base) class for paddles.
    */
-  class Paddle
+  class Paddle : public CachedSurface
   {
   public:
     Paddle() = default;
@@ -29,6 +30,8 @@ namespace pong
 
   private:
     math::vector pos_;
+
+    virtual SDL_Surface* generateCache_private() const override;
   };
 };
 #endif
