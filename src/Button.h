@@ -29,6 +29,7 @@ namespace pong
      * \param height The height of the button.
      * \param text_height The size of the text, passed directly into the Label
      * member's constructor.
+     * \param enabled Whether or not the button should be clickable.
      */
     explicit Button(const std::string& text = "",
                     math::vector pos = math::vector(),
