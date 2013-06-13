@@ -27,15 +27,12 @@ namespace pong
      * window space.
      * \param width The width of the button.
      * \param height The height of the button.
-     * \param text_height The size of the text, passed directly into the Label
-     * member's constructor.
      * \param enabled Whether or not the button should be clickable.
      */
     explicit Button(const std::string& text = "",
                     math::vector pos = math::vector(),
                     std::size_t width = 0,
                     std::size_t height = 0,
-                    std::size_t text_height = 24,
                     bool enabled = true);
     /*!
      * \brief Uninitializes the image if that hasn't been done already.
@@ -102,20 +99,6 @@ namespace pong
      */
     inline Label label() const;
 
-    /*!
-     * \brief Sets the text height of the label. Does invalidate the label
-     * cache, in theory, but we don't have to worry about that.
-     *
-     * \note This is just a helper for getting the label, changing the text
-     * size and setting it again with Button::label(const Label&).
-     */
-    inline void text_height(std::size_t text_height) noexcept;
-    /*!
-     * \brief Returns the text height of the label.
-     *
-     * \returns Button::label_::text_height()
-     */
-    inline std::size_t text_height() const noexcept;
 
     /*!
      * \brief Sets the internal position of the button.
@@ -224,14 +207,6 @@ namespace pong
     return this->label_;
   }
 
-  inline void Button::text_height(std::size_t text_height) noexcept
-  {
-    this->label_.text_height(text_height);
-  }
-  inline std::size_t Button::text_height() const noexcept
-  {
-    return this->label_.text_height();
-  }
 
   inline void Button::position(const math::vector pos) noexcept
   {
@@ -255,6 +230,7 @@ namespace pong
   inline void Button::height(std::size_t height) noexcept
   {
     this->height_ = height;
+    this->label_.text_height(this->height_ - 10);
     this->invalidateCache();
   }
   inline std::size_t Button::height() const noexcept

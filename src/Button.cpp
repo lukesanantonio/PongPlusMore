@@ -10,9 +10,8 @@ namespace pong
                  math::vector pos,
                  std::size_t width,
                  std::size_t height,
-                 std::size_t text_height,
                  bool enabled) :
-                 label_(text, text_height),
+                 label_(text, 24),
                  pos_(pos),
                  width_(width),
                  height_(height),
