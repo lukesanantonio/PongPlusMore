@@ -84,21 +84,16 @@ namespace pong
     void useSignals(EventSignals& signals) const;
 
     /*!
-     * \brief Sets the internal label of the button.
-     *
-     * \note Does not automatically tell the label to invert it's palette.
-     * Either do it yourself or see no text! This is to avoid any possible
-     * confusion.
+     * \brief Sets the text to be displayed on the button.
      * \note Does not invalidate the cache.
      */
-    inline void label(const Label& label);
+    inline void text(const std::string& text);
     /*!
-     * \brief Returns the internal label (a copy).
+     * \brief Returns the text displayed on the button as a string.
      *
-     * \returns Button::label_
+     * \returns Button::label_.text()
      */
-    inline Label label() const;
-
+    inline std::string text() const;
 
     /*!
      * \brief Sets the internal position of the button.
@@ -198,15 +193,14 @@ namespace pong
     virtual SDL_Surface* generateCache_private() const override;
   };
 
-  inline void Button::label(const Label& label)
+  inline void Button::text(const std::string& text)
   {
-    this->label_ = label;
+    this->label_.text(text);
   }
-  inline Label Button::label() const
+  inline std::string Button::text() const
   {
-    return this->label_;
+    return this->label_.text();
   }
-
 
   inline void Button::position(const math::vector pos) noexcept
   {
