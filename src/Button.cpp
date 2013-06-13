@@ -18,7 +18,6 @@ namespace pong
                  height_(height),
                  enabled_(enabled)
   {
-    this->label_.invert(true);
   }
 
   void Button::render(SDL_Surface* surface) const

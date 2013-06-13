@@ -8,24 +8,20 @@ namespace pong
 {
   Label::Label(const std::string& text,
                std::size_t text_height,
-               math::vector pos,
-               bool invert) noexcept :
+               math::vector pos) noexcept :
                text_(text),
                text_height_(text_height),
-               pos_(pos),
-               invert_(invert) {}
+               pos_(pos) {}
 
   Label::Label(const Label& label) noexcept :
                text_(label.text_),
                text_height_(label.text_height_),
-               pos_(label.pos_),
-               invert_(label.invert_) {}
+               pos_(label.pos_) {}
 
   Label::Label(Label&& label) noexcept :
                text_(std::move(label.text_)),
                text_height_(label.text_height_),
                pos_(label.pos_),
-               invert_(label.invert_),
                CachedSurface(std::move(label)){}
 
   Label& Label::operator=(const Label& label) noexcept
@@ -34,8 +30,6 @@ namespace pong
     this->text_height(label.text_height_);
 
     this->position(label.pos_);
-
-    this->invert(label.invert_);
 
     //Just to make sure, regenerate the cache.
     this->invalidateCache();
@@ -50,7 +44,6 @@ namespace pong
 
     this->position(label.pos_);
 
-    this->invert(label.invert_);
   }
 
   void Label::render(SDL_Surface* surface) const
@@ -69,10 +62,6 @@ namespace pong
   SDL_Surface* Label::generateCache_private() const
   {
     SDL_Surface* cached_surface = render_text(this->text_, this->text_height_);
-    if(this->invert_)
-    {
-      invertPalette(cached_surface);
-    }
     return cached_surface;
   }
 };
