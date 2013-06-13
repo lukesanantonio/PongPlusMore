@@ -20,7 +20,8 @@ namespace pong
     }
     SDL_SetColors(surface, colors, 0, num_colors);
   }
-  SDL_Surface* render_text(const std::string& text, std::size_t pixel_size)
+  SDL_Surface* render_text(const std::string& text, std::size_t pixel_size,
+                           SDL_Color text_color, SDL_Color background_color)
   {
     FT_Library library = nullptr;
     FT_Face face = nullptr;
@@ -52,7 +53,8 @@ namespace pong
     int width = 0;
     for(const char c : text)
     {
-      if(FT_Load_Char(face, c, FT_LOAD_RENDER))
+      if(FT_Load_Char(face, c, FT_LOAD_RENDER | FT_LOAD_MONOCHROME |
+                               FT_LOAD_TARGET_MONO))
       {
         throw std::runtime_error("Failed to FT_LOAD_RENDER: " +
                                  std::to_string(c) + "!");
@@ -74,14 +76,16 @@ namespace pong
     {
       throw std::runtime_error("Failed to initialize text surface!");
     }
-    setupGrayscalePalette(image, 256);
+    SDL_Color colors[] = {background_color, text_color};
+    SDL_SetColors(image, colors, 0, 2);
 
     int pen_x = 0;
     //Set pen_y to the baseline...
     int pen_y = max_top;
     for(const char c : text)
     {
-      if(FT_Load_Char(face, c, FT_LOAD_RENDER))
+      if(FT_Load_Char(face, c, FT_LOAD_RENDER | FT_LOAD_MONOCHROME |
+                               FT_LOAD_TARGET_MONO))
       {
         throw std::runtime_error("Failed to FT_LOAD_RENDER: " +
                                  std::to_string(c));
@@ -95,17 +99,22 @@ namespace pong
       {
         throw std::runtime_error("Failed to initialize glyph surface!");
       }
-      setupGrayscalePalette(glyph, face->glyph->bitmap.num_grays);
+      SDL_SetColors(glyph, colors, 0, 2);
 
       SDL_LockSurface(glyph);
       {
-        uint8_t* pixels = static_cast<uint8_t*>(glyph->pixels);
-        for(int i = 0; i < glyph->h; ++i)
+        //Each pixel, a full byte, will only use it's first bit. A horrible
+        //waste of memory, but I'm not sure if I can create an SDL_Surface*
+        //with 8 pixels per byte.
+        for(int row = 0; row < glyph->h; ++row)
         {
-          for(int j = 0; j < glyph->w; ++j)
+          for(int pix = 0; pix < glyph->w; ++pix)
           {
-            pixels[i * glyph->pitch + j] =
-                  face->glyph->bitmap.buffer[i * face->glyph->bitmap.width + j];
+            uint8_t* sdlByte =
+                static_cast<uint8_t*>(glyph->pixels) + row * glyph->pitch + pix;
+            *sdlByte = static_cast<bool>(
+                    face->glyph->bitmap.buffer[row * face->glyph->bitmap.pitch +
+                                             (pix / 8)] & (1 << (7 - pix % 8)));
           }
         }
       }

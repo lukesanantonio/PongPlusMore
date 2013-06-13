@@ -140,7 +140,7 @@ namespace pong
      * \note Since the button will be greyed out when *disabled*, The cache
      * needs to be invalidated.
      */
-    inline void enabled(bool enabled) noexcept;
+    void enabled(bool enabled) noexcept;
     /*!
      * \brief Returns whether or not the button is enabled or not.
      *
@@ -232,11 +232,6 @@ namespace pong
     return this->height_;
   }
 
-  inline void Button::enabled(bool enabled) noexcept
-  {
-    this->enabled_ = enabled;
-    this->invalidateCache();
-  }
   inline bool Button::enabled() const noexcept
   {
     return this->enabled_;

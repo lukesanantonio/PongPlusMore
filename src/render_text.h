@@ -18,7 +18,8 @@ namespace pong
    * \param text A string of text to render.
    * \param pixel_size The height in pixels to render the string of text at.
    */
-  SDL_Surface* render_text(const std::string& text, std::size_t pixel_size);
+  SDL_Surface* render_text(const std::string& text, std::size_t pixel_size,
+                           SDL_Color text_color, SDL_Color background_color);
 
   /*!
    * \brief Sets up a grayscale palette for an SDL_Surface.

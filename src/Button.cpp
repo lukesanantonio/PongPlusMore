@@ -17,6 +17,17 @@ namespace pong
                  height_(height),
                  enabled_(enabled)
   {
+    SDL_Color black;
+    black.r = 0x00;
+    black.g = 0x00;
+    black.b = 0x00;
+    this->label_.text_color(black);
+
+    SDL_Color white;
+    white.r = 0xff;
+    white.g = 0xff;
+    white.b = 0xff;
+    this->label_.back_color(white);
   }
 
   void Button::render(SDL_Surface* surface) const
@@ -79,5 +90,27 @@ namespace pong
         }
       }
     });
+  }
+
+  void Button::enabled(bool enabled) noexcept
+  {
+    this->enabled_ = enabled;
+
+    SDL_Color back_color;
+    if(this->enabled_)
+    {
+      back_color.r = 0xff;
+      back_color.g = 0xff;
+      back_color.b = 0xff;
+    }
+    else
+    {
+      back_color.r = 0x55;
+      back_color.g = 0x55;
+      back_color.b = 0x55;
+    }
+    this->label_.back_color(back_color);
+
+    this->invalidateCache();
   }
 };

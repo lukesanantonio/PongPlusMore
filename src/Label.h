@@ -28,10 +28,31 @@ namespace pong
      * pong::render_text.
      * \param pos The position of the top left corner where the surface will be
      * blitted.
+     * \note The text will be rendered monochrome in white. The background will
+     * be solid black.
      */
     explicit Label(const std::string& text = "",
                    std::size_t text_height = 24,
                    math::vector pos = math::vector()) noexcept;
+
+    /*!
+     * \brief Initializes a label with everything + a custom text and background
+     * color.
+     *
+     * \param text The text of the label.
+     * \param text_height The pixel size of the text.
+     * \param pos The position of the label when blitting.
+     * \see Label::render(SDL_Surface*)
+     * \param text_color The color of the text.
+     * \param back_color The color of the empty space (if any) in the generated
+     * SDL_Surface*.
+     */
+    Label(const std::string& text,
+          std::size_t text_height,
+          math::vector pos,
+          SDL_Color text_color,
+          SDL_Color back_color) noexcept;
+
     /*!
      * \brief Free's the text cache if necessary.
      */
@@ -136,6 +157,32 @@ namespace pong
      */
     inline math::vector position() const noexcept;
 
+    /*!
+     * \brief Sets the color of the text.
+     *
+     * \post Invalidates the cache.
+     */
+    inline void text_color(SDL_Color text_color) noexcept;
+    /*!
+     * \brief Returns the color of the text.
+     *
+     * \returns Label::text_color_
+     */
+    inline SDL_Color text_color() const noexcept;
+
+    /*!
+     * \brief Sets the color of the background of the image blitted.
+     *
+     * \post Invalidates the surface.
+     */
+    inline void back_color(SDL_Color back_color) noexcept;
+    /*!
+     * \brief Returns the color of the background of the image blitted.
+     *
+     * \returns Label::back_color_
+     */
+    inline SDL_Color back_color() const noexcept;
+
   private:
     /*!
      * \brief The text of the label.
@@ -158,6 +205,15 @@ namespace pong
      */
     math::vector pos_;
 
+    /*!
+     * \brief The color of the text in the SDL_Surface generated of the text.
+     */
+    SDL_Color text_color_;
+    /*!
+     * \brief The background color, (anything not text) in the SDL_Surface
+     * cached and rendered.
+     */
+    SDL_Color back_color_;
 
     virtual SDL_Surface* generateCache_private() const override;
   };
@@ -199,6 +255,24 @@ namespace pong
   {
     return this->pos_;
   }
+  inline void Label::text_color(SDL_Color text_color) noexcept
+  {
+    this->text_color_ = text_color;
+    this->invalidateCache();
+  }
+  inline SDL_Color Label::text_color() const noexcept
+  {
+    return this->text_color_;
+  }
 
+  inline void Label::back_color(SDL_Color back_color) noexcept
+  {
+    this->back_color_ = back_color;
+    this->invalidateCache();
+  }
+  inline SDL_Color Label::back_color() const noexcept
+  {
+    return this->back_color_;
+  }
 };
 #endif
