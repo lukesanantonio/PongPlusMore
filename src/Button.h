@@ -224,6 +224,7 @@ namespace pong
   inline void Button::height(std::size_t height) noexcept
   {
     this->height_ = height;
+    //Set the text height relative to the button height.
     this->label_.text_height(this->height_ - 10);
     this->invalidateCache();
   }

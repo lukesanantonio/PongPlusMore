@@ -13,6 +13,7 @@ namespace pong
                text_height_(text_height),
                pos_(pos)
   {
+    //Set defaults.
     //Text color default: white
     this->text_color_.r = 0xff;
     this->text_color_.g = 0xff;
@@ -88,6 +89,7 @@ namespace pong
 
   SDL_Surface* Label::generateCache_private() const
   {
+    //render the text with the specified colors.
     SDL_Surface* cached_surface = render_text(this->text_, this->text_height_,
                                               this->text_color_,
                                               this->back_color_);

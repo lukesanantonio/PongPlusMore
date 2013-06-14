@@ -17,6 +17,7 @@ namespace pong
                  height_(height),
                  enabled_(enabled)
   {
+    //Set the initial colors of the label.
     SDL_Color black;
     black.r = 0x00;
     black.g = 0x00;
@@ -96,6 +97,8 @@ namespace pong
   {
     this->enabled_ = enabled;
 
+    //Make sure to set the background color in the Label so it is consistent
+    //with the background of the button.
     SDL_Color back_color;
     if(this->enabled_)
     {
