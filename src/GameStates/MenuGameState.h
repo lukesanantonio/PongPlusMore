@@ -23,6 +23,7 @@ namespace pong
     Label title_;
     Button singleplayer_;
     Button multiplayer_;
+    Button options_;
     Button help_;
     Button quit_;
   };

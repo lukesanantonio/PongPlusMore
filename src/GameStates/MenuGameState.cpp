@@ -7,6 +7,7 @@ namespace pong
   MenuGameState::MenuGameState() noexcept : title_("Ultimate Pong", 110),
                                             singleplayer_("Singleplayer"),
                                             multiplayer_("Multiplayer"),
+                                            options_("Options"),
                                             help_("Help"),
                                             quit_("Quit")
   {
@@ -20,7 +21,7 @@ namespace pong
     std::size_t text_height = 50;
     pos.x = center(0, 1000, width);
 
-    pos.y = 375;
+    pos.y = 300;
     this->singleplayer_.position(pos);
     this->singleplayer_.width(width);
     this->singleplayer_.height(height);
@@ -31,6 +32,12 @@ namespace pong
     this->multiplayer_.width(width);
     this->multiplayer_.height(height);
     this->multiplayer_.enabled(false);
+
+    pos.y += 100;
+    this->options_.position(pos);
+    this->options_.width(width);
+    this->options_.height(height);
+    this->options_.enabled(false);
 
     pos.y += 100;
     this->help_.position(pos);
@@ -70,6 +77,7 @@ namespace pong
 
     this->singleplayer_.render(surface);
     this->multiplayer_.render(surface);
+    this->options_.render(surface);
     this->help_.render(surface);
     this->quit_.render(surface);
   }
