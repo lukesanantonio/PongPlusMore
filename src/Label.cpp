@@ -56,9 +56,6 @@ namespace pong
 
     this->position(label.pos_);
 
-    //Just to make sure, regenerate the cache.
-    this->invalidateCache();
-
     this->text_color(label.text_color_);
     this->back_color(label.back_color_);
   }
