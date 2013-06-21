@@ -1,4 +1,4 @@
 Ultimate Pong
 =============
 
-A pong clone with multiplayer written in C++11
+A pong clone with multiplayer written with C++11
