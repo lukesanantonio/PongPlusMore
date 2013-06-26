@@ -23,6 +23,16 @@ namespace pong
   class EventState
   {
   public:
+    EventState() noexcept = default;
+
+    EventState(const EventState&) noexcept = delete;
+    EventState(EventState&&) noexcept = delete;
+
+    EventState& operator=(const EventState&) noexcept = delete;
+    EventState& operator=(EventState&&) noexcept = delete;
+
+    ~EventState() noexcept = default;
+
     /*!
      * \brief Polls for events and updates internal state.
      */
