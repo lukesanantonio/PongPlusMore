@@ -72,7 +72,7 @@ namespace pong
      *
      * \returns EventState::lastClickPos_
      */
-    inline math::vector lastClickLocation() const noexcept;
+    inline math::vector lastClickPosition() const noexcept;
 
     /*!
      * \brief Returns whether or not the user has pressed the little 'x' button
@@ -80,7 +80,7 @@ namespace pong
      *
      * \returns EventState::quit_
      */
-    inline bool WindowHasBeenClosed() const noexcept;
+    inline bool windowHasBeenClosed() const noexcept;
   private:
     /*!
      * \brief Where the mouse is currently at...
@@ -139,11 +139,11 @@ namespace pong
   {
     return this->mouseClicked_;
   }
-  inline math::vector EventState::lastClickLocation() const noexcept
+  inline math::vector EventState::lastClickPosition() const noexcept
   {
     return this->lastClickPos_;
   }
-  inline bool EventState::WindowHasBeenClosed() const noexcept
+  inline bool EventState::windowHasBeenClosed() const noexcept
   {
     return this->quit_;
   }
