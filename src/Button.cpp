@@ -4,6 +4,7 @@
  */
 #include "Button.h"
 #include "render_text.h"
+#include "Game.h"
 namespace pong
 {
   Button::Button(const std::string& text,
@@ -74,23 +75,27 @@ namespace pong
   {
     return this->on_click_.connect(slot);
   }
-  void Button::useSignals(EventSignals& signals) const
+  void Button::update()
   {
-    //Add the signal to be called when handling events.
-    signals.on_mouse_click.connect([this](math::vector point)
+    Game* game = Game::getInstance();
+    if(game->events.mouseHasBeenClicked())
     {
-      //The button can only be clicked if it is enabled.
-      if(this->enabled_)
+      this->checkClick(game->events.lastClickPosition());
+    }
+  }
+  void Button::checkClick(math::vector point) const
+  {
+    //The button can only be clicked if it is enabled.
+    if(this->enabled_)
+    {
+      //Check to see if the button occupies the point... Sooo:
+      if(point.x <= this->pos_.x + width_ && point.x >= this->pos_.x &&
+         point.y <= this->pos_.y + height_ && point.y >= this->pos_.y)
       {
-        //Check to see if the button occupies the point... Sooo:
-        if(point.x <= this->pos_.x + width_ && point.x >= this->pos_.x &&
-           point.y <= this->pos_.y + height_ && point.y >= this->pos_.y)
-        {
-          //Do everything on our to-do list.
-          this->on_click_();
-        }
+        //Do everything on our to-do list.
+        this->on_click_();
       }
-    });
+    }
   }
 
   void Button::enabled(bool enabled) noexcept

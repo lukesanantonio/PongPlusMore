@@ -50,11 +50,6 @@ namespace pong
     this->quit_.width(width);
     this->quit_.height(height);
 
-    this->singleplayer_.useSignals(this->signals);
-    this->multiplayer_.useSignals(this->signals);
-    this->help_.useSignals(this->signals);
-    this->quit_.useSignals(this->signals);
-
     this->singleplayer_.executeOnClick([]()
     {
       Game::getInstance()->setGameState(std::shared_ptr<GameState>(
@@ -62,14 +57,24 @@ namespace pong
     });
     this->quit_.executeOnClick([this]()
     {
-      this->signals.on_quit();
-    });
-
-    this->signals.on_quit.connect([]()
-    {
       Game::getInstance()->quitGame();
     });
 
+  }
+  void MenuGameState::update_private()
+  {
+    //Check for Quit event.
+    if(Game::getInstance()->events.windowHasBeenClosed())
+    {
+      Game::getInstance()->quitGame();
+    }
+
+    //Check for collisions.
+    singleplayer_.update();
+    multiplayer_.update();
+    options_.update();
+    help_.update();
+    quit_.update();
   }
   void MenuGameState::render_private(SDL_Surface* surface) const
   {

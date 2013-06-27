@@ -5,7 +5,6 @@
 #ifndef ULTIMATE_PONG_GAME_STATE_H
 #define ULTIMATE_PONG_GAME_STATE_H
 #include <SDL/SDL.h>
-#include "EventSignals.h"
 namespace pong
 {
   /*!
@@ -30,7 +29,6 @@ namespace pong
      */
     inline void update()
     {
-      handleEvents(signals);
       this->update_private();
     }
     /*!
@@ -41,7 +39,6 @@ namespace pong
     {
       this->render_private(surface);
     }
-    EventSignals signals;
   private:
     /*!
      * \brief This function updates the internal state of the object.

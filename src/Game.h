@@ -7,6 +7,7 @@
 #include <memory>
 #include <SDL/SDL.h>
 #include "GameState.h"
+#include "EventState.h"
 /*!
  * \brief Contains any code written specifically for ultimate pong.
  */
@@ -69,6 +70,11 @@ namespace pong
      * They are guaranteed not to be modified by our function.
      */
     int run(int argc, char* argv[]);
+
+    /*!
+     * \brief The single state object.
+     */
+    EventState events;
   private:
     /*!
      * \brief Trivial constructor.

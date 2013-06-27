@@ -21,6 +21,9 @@ namespace pong
 
     while(this->running_)
     {
+      //Poll events...
+      events.pollEvents();
+
       //If there is a game state waiting.
       if(this->game_state_to_be_)
       {

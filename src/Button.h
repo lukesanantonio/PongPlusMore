@@ -9,7 +9,6 @@
 #include <SDL/SDL.h>
 #include "Label.h"
 #include "vector.hpp"
-#include "EventSignals.h"
 #include "CachedSurface.h"
 namespace pong
 {
@@ -77,12 +76,14 @@ namespace pong
                        const boost::signals2::signal<void ()>::slot_type& slot);
 
     /*!
-     * \brief Adds necessary handlers to the event signals object so that when
-     * the user clicks the mouse the button will check and possibly emit another
-     * signal.
+     * \brief Checks the global EventState for whether a click has occured
+     * within the Button.
+     *
+     * If so, then the button calls alls functors previously registered with
+     * Button::executeOnClick(
+     *                       const boost::signals2::signal<void ()>::slot_type&)
      */
-    void useSignals(EventSignals& signals) const;
-
+    void update();
     /*!
      * \brief Sets the text to be displayed on the button.
      * \note Does not invalidate the cache.
@@ -191,6 +192,15 @@ namespace pong
      * reason. The what message will explain where the error occured.
      */
     virtual SDL_Surface* generateCache_private() const override;
+
+    /*!
+     * \brief Checks whether the specified point is in the button, reacts to it
+     * accordingly.
+     *
+     * If Button::enabled_ and the point lies inside the Button, then call
+     * Button::on_click_::operator().
+     */
+    void checkClick(math::vector point) const;
   };
 
   inline void Button::text(const std::string& text)
