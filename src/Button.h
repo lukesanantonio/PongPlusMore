@@ -79,9 +79,8 @@ namespace pong
      * \brief Checks the global EventState for whether a click has occured
      * within the Button.
      *
-     * If so, then the button calls alls functors previously registered with
-     * Button::executeOnClick(
-     *                       const boost::signals2::signal<void ()>::slot_type&)
+     * If so, then the button calls all functors previously registered with
+     * the member function: Button::executeOnClick
      */
     void update();
     /*!
