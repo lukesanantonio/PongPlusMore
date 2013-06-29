@@ -71,7 +71,9 @@ namespace pong
   void MenuGameState::update_private()
   {
     //Check for Quit event.
-    if(Game::getInstance()->events.windowHasBeenClosed())
+    Game* game = Game::getInstance();
+    if(game->events.windowHasBeenClosed() or
+       game->events.keyHasBeenPressed())
     {
       Game::getInstance()->quitGame();
     }
