@@ -21,7 +21,7 @@ namespace pong
     color.r = 0xff;
     color.g = 0xff;
     color.b = 0xff;
-    SDL_Surface* cache = generateRectangle(100, 10, color);
+    SDL_Surface* cache = generateRectangle(this->width_, this->height_, color);
     return cache;
   }
   void Paddle::update()

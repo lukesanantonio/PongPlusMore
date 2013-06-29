@@ -50,6 +50,32 @@ namespace pong
     inline void position(math::vector pos) noexcept;
 
     /*!
+     * \brief Returns the width of the paddle.
+     *
+     * \returns Paddle::width_
+     */
+    inline std::size_t width() const noexcept;
+    /*!
+     * \brief Sets the width of the paddle for future rendering.
+     *
+     * \note Invalidates the cache.
+     */
+    inline void width(std::size_t width) noexcept;
+
+    /*!
+     * \brief Returns the height of the paddle.
+     *
+     * \returns Paddle::height_
+     */
+    inline std::size_t height() const noexcept;
+    /*!
+     * \brief Sets the height of the paddle for future rendering.
+     *
+     * \note Invalidates the cache.
+     */
+    inline void height(std::size_t height) noexcept;
+
+    /*!
      * \brief Returns the paddle controller.
      *
      * \return Paddle::controller_
@@ -65,6 +91,15 @@ namespace pong
      * \brief The position of the top left corner of the paddle.
      */
     math::vector pos_;
+
+    /*!
+     * \brief Width of the paddle.
+     */
+    std::size_t width_ = 120;
+    /*!
+     * \brief Height of the paddle.
+     */
+    std::size_t height_ = 20;
 
     /*!
      * The controller of the paddle.
@@ -83,6 +118,26 @@ namespace pong
   inline void Paddle::position(math::vector pos) noexcept
   {
     this->pos_ = pos;
+  }
+
+  inline std::size_t Paddle::width() const noexcept
+  {
+    return this->width_;
+  }
+  inline void Paddle::width(std::size_t width) noexcept
+  {
+    this->width_ = width;
+    this->invalidateCache();
+  }
+
+  inline std::size_t Paddle::height() const noexcept
+  {
+    return this->height_;
+  }
+  inline void Paddle::height(std::size_t height) noexcept
+  {
+    this->height_ = height;
+    this->invalidateCache();
   }
 
   inline PaddleController* Paddle::controller() const noexcept
