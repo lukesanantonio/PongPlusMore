@@ -21,6 +21,10 @@ namespace pong
 
     while(this->running_)
     {
+      //Clear the screen
+      SDL_FillRect(this->main_surface_, NULL,
+                   SDL_MapRGB(this->main_surface_->format, 0x00, 0x00, 0x00));
+
       //Poll events...
       events.pollEvents();
 
