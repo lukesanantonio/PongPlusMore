@@ -29,7 +29,7 @@ namespace pong
     this->singleplayer_.position(pos);
     this->singleplayer_.width(width);
     this->singleplayer_.height(height);
-    this->singleplayer_.enabled(false);
+    //this->singleplayer_.enabled(false);
 
     pos.y += 100;
     this->multiplayer_.position(pos);
@@ -64,6 +64,9 @@ namespace pong
       Game::getInstance()->quitGame();
     });
 
+    //Configure the mouse
+    SDL_WM_GrabInput(SDL_GRAB_OFF);
+    SDL_ShowCursor(SDL_ENABLE);
   }
   void MenuGameState::update_private()
   {
