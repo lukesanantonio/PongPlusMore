@@ -4,7 +4,6 @@
  */
 #ifndef ULTIMATE_PONG_PADDLE_CONTROLLER_HPP
 #define ULTIMATE_PONG_PADDLE_CONTROLLER_HPP
-#include "Paddle.h"
 namespace pong
 {
   class Paddle;
