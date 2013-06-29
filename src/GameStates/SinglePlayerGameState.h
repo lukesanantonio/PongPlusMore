@@ -1,3 +1,7 @@
+/*!
+ * \file SinglePlayerGameState.h
+ * \brief Contains declarations for the SinglePlayerGameState GameState.
+ */
 #ifndef ULTIMATE_PONG_SINGLE_PLAYER_GAME_STATE_H
 #define ULTIMATE_PONG_SINGLE_PLAYER_GAME_STATE_H
 #include "GameState.h"

@@ -1,3 +1,7 @@
+/*!
+ * \file MenuGameState.h
+ * \brief File containing declarations of the MenuGameState.
+ */
 #ifndef ULTIMATE_PONG_MENU_GAME_STATE_H
 #define ULTIMATE_PONG_MENU_GAME_STATE_H
 #include "GameState.h"
@@ -5,6 +9,9 @@
 #include "Button.h"
 namespace pong
 {
+  /*!
+   * \brief First game state shown, the menu.
+   */
   class MenuGameState : public GameState
   {
   public:

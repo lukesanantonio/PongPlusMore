@@ -1,3 +1,7 @@
+/*!
+ * \file MenuGameState.cpp
+ * \brief File containing definitions for the MenuGameState
+ */
 #include "MenuGameState.h"
 #include "Game.h"
 #include "render_text.h"
