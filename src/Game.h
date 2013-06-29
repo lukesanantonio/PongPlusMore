@@ -72,6 +72,19 @@ namespace pong
     int run(int argc, char* argv[]);
 
     /*!
+     * \brief Returns the width of the window.
+     *
+     * \returns Game::main_surface_::w
+     */
+    inline int width() const noexcept;
+    /*!
+     * \brief Returns the height of the window.
+     *
+     * \returns Game::main_surface_::h
+     */
+    inline int height() const noexcept;
+
+    /*!
      * \brief The single state object.
      */
     EventState events;
@@ -193,6 +206,15 @@ namespace pong
   inline void Game::setGameState(std::shared_ptr<GameState> game_state) noexcept
   {
     this->game_state_to_be_ = game_state;
+  }
+
+  inline int Game::width() const noexcept
+  {
+    return this->main_surface_->w;
+  }
+  inline int Game::height() const noexcept
+  {
+    return this->main_surface_->h;
   }
 };
 #endif
