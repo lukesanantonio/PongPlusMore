@@ -4,7 +4,7 @@
  */
 #include "SinglePlayerGameState.h"
 #include "Game.h"
-#include "PaddleControllers/MousePaddleController.hpp"
+#include "PaddleControllers/MousePaddleController.h"
 #include "GameStates/MenuGameState.h"
 namespace pong
 {
