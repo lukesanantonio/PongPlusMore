@@ -1,6 +1,6 @@
 /*!
  * \file render_text.cpp
- * \brief Definitions for font related procedures (render_text.h).
+ * \brief Definitions for everything in render_text.h.
  */
 #include "render_text.h"
 #include <vector>

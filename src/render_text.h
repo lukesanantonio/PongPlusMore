@@ -1,6 +1,9 @@
 /*!
  * \file render_text.h
- * \brief File declaring font related procedures.
+ * \brief File declaring font related procedures as well as free functions with
+ * the purpose of aiding SDL_Surface* creation.
+ *
+ * This filename is quite misleading, but at this point... eh.
  */
 #ifndef ULTIMATE_PONG_RENDER_TEXT_H
 #define ULTIMATE_PONG_RENDER_TEXT_H
