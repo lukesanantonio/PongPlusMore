@@ -11,7 +11,7 @@ namespace pong
     SDL_Rect dest;
     dest.x = this->pos_.x;
     dest.y = this->pos_.y;
-    SDL_BlitSurface(this->cache(), NULL, surface, NULL);
+    SDL_BlitSurface(this->cache(), NULL, surface, &dest);
   }
   SDL_Surface* Ball::generateCache_private() const
   {
