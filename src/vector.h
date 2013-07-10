@@ -39,6 +39,14 @@ namespace pong
       double y = 0;
     };
 
+    math::vector operator+(math::vector vec1, math::vector vec2);
+
+    math::vector operator*(double scalar, math::vector vec1);
+    inline math::vector operator*(math::vector vec1, double scalar)
+    {
+      return scalar * vec1;
+    }
+
     /*!
      * \brief Returns the unit vector of the passed in vector.
      */
