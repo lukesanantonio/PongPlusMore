@@ -8,7 +8,7 @@
 #include <boost/signals2.hpp>
 #include <SDL/SDL.h>
 #include "Label.h"
-#include "vector.hpp"
+#include "vector.h"
 #include "CachedSurface.h"
 namespace pong
 {

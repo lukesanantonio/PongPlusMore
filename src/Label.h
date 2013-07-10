@@ -6,7 +6,7 @@
 #define ULTIMATE_PONG_LABEL_H
 #include <string>
 #include <SDL/SDL.h>
-#include "vector.hpp"
+#include "vector.h"
 #include "render_text.h"
 #include "CachedSurface.h"
 namespace pong

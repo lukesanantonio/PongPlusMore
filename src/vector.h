@@ -1,9 +1,9 @@
 /*!
- * \file vector.hpp
+ * \file vector.h
  * \brief The header of a beautiful thing, a vector class.
  */
-#ifndef ULTIMATE_PONG_VECTOR_HPP
-#define ULTIMATE_PONG_VECTOR_HPP
+#ifndef ULTIMATE_PONG_VECTOR_H
+#define ULTIMATE_PONG_VECTOR_H
 namespace pong
 {
   /*!
@@ -22,7 +22,7 @@ namespace pong
        * \brief Constructor used for brace initialization with two values,
        * regular construction with two values, etc.
        */
-      vector(int x, int y) noexcept : x(x), y(y){}
+      vector(double x, double y) noexcept : x(x), y(y){}
       /*!
        * \brief The default constructor, basically provides the default points
        * (0, 0) without having to be explicit, used for empty brace
@@ -32,12 +32,14 @@ namespace pong
       /*!
        * \brief X value for anything imaginable.
        */
-      int x = 0;
+      double x = 0;
       /*!
        * \brief Y value for anything imaginable.
        */
-      int y = 0;
+      double y = 0;
     };
+
+    math::vector normalize(math::vector vec);
   };
 };
 #endif

@@ -5,7 +5,7 @@
 #ifndef ULTIMATE_PONG_EVENT_STATE_H
 #define ULTIMATE_PONG_EVENT_STATE_H
 #include <SDL/SDL.h>
-#include "vector.hpp"
+#include "vector.h"
 namespace pong
 {
   /*!

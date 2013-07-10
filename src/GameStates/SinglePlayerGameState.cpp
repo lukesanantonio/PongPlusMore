@@ -15,7 +15,10 @@ namespace pong
     this->bottomPaddle_.controller(std::shared_ptr<PaddleController>(
                                                     new MousePaddleController));
     this->bottomPaddle_.position(
-                    {0,static_cast<int>(Game::getInstance()->height()
+//                                    ,--This is casted to a double here to
+//                                   /   avoid narrowing conversion warnings. I
+//                                  \/   don't really like it but, eh.
+                    {0,static_cast<double>(Game::getInstance()->height()
                                         - this->bottomPaddle_.height())});
 
     //Configure the mouse.

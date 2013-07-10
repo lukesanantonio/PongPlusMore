@@ -7,7 +7,7 @@
 #define ULTIMATE_PONG_PADDLE_H
 #include <memory>
 #include <SDL/SDL.h>
-#include "vector.hpp"
+#include "vector.h"
 #include "PaddleController.hpp"
 #include "CachedSurface.h"
 namespace pong

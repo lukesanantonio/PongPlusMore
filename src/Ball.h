@@ -6,7 +6,7 @@
 #define ULTIMATE_PONG_BALL_H
 #include <cstddef> //For std::size_t
 #include "CachedSurface.h"
-#include "vector.hpp"
+#include "vector.h"
 namespace pong
 {
   /*!
