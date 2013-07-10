@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include "scoped_init.hpp"
 #include "GameStates/MenuGameState.h"
+#include "Timer.hpp"
 namespace pong
 {
   std::shared_ptr<Game> Game::instance_ = nullptr;
@@ -19,8 +20,12 @@ namespace pong
     //Initially, go to the menu state.
     this->game_state_ = std::shared_ptr<GameState>(new MenuGameState);
 
+    Timer<> timer;
+
+    //Loop every, say, 10 milliseconds.
     while(this->running_)
     {
+      if(!timer.hasBeen(std::chrono::milliseconds(10))) continue;
       //Cache the game state, so that it remains constant throughout the entire
       //loop iteration.
       std::shared_ptr<GameState> cached_game_state = this->game_state_;
@@ -34,6 +39,7 @@ namespace pong
       cached_game_state->update();
       cached_game_state->render(this->main_surface_);
       SDL_Flip(this->main_surface_);
+      timer.reset();
     }
 
     //Return the error code.
