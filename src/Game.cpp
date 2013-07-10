@@ -21,6 +21,9 @@ namespace pong
 
     while(this->running_)
     {
+      //Cache the game state, so that it remains constant throughout the entire
+      //loop iteration.
+      std::shared_ptr<GameState> cached_game_state = this->game_state_;
       //Clear the screen
       SDL_FillRect(this->main_surface_, NULL,
                    SDL_MapRGB(this->main_surface_->format, 0x00, 0x00, 0x00));
@@ -28,18 +31,8 @@ namespace pong
       //Poll events...
       events.pollEvents();
 
-      //If there is a game state waiting.
-      if(this->game_state_to_be_)
-      {
-        //Change it
-        this->game_state_ = this->game_state_to_be_;
-
-        //Make sure this doesn't happen again.
-        this->game_state_to_be_ = nullptr;
-      }
-
-      this->game_state_->update();
-      this->game_state_->render(this->main_surface_);
+      cached_game_state->update();
+      cached_game_state->render(this->main_surface_);
       SDL_Flip(this->main_surface_);
     }
 

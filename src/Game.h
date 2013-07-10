@@ -172,14 +172,6 @@ namespace pong
     std::shared_ptr<GameState> game_state_ = nullptr;
 
     /*!
-     * \brief Game state to be...
-     *
-     * This is nullptr when no GameState is "on deck".
-     * A nice, simple replacement for a game_state_changed_ variable.
-     */
-    std::shared_ptr<GameState> game_state_to_be_ = nullptr;
-
-    /*!
      * \brief Set to false when the game is scheduled to end.
      *
      * \sa Game::quitGame();
@@ -205,7 +197,7 @@ namespace pong
   }
   inline void Game::setGameState(std::shared_ptr<GameState> game_state) noexcept
   {
-    this->game_state_to_be_ = game_state;
+    this->game_state_ = game_state;
   }
 
   inline int Game::width() const noexcept
