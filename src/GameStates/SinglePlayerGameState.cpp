@@ -31,12 +31,10 @@ namespace pong
                         this->ball_.diameter());
     this->ball_.position(ball_pos);
 
-    //Set initial velocity of the ball.
-    math::vector ball_vec;
-    ball_vec.x = 0;
-    ball_vec.y = -2;
-    //Add the ball to our physics simulation.
-    this->world_->addBall(&this->ball_, ball_vec);
+    //                                         ,--Initial velocity of the ball.
+    //                                        /
+    //Add the ball to our physics simulation.\/
+    this->world_->addBall(&this->ball_, {0, -12});
 
     //Add the paddles to our physics simulation.
     this->world_->addPaddle(&this->topPaddle_);
