@@ -66,6 +66,12 @@ namespace pong
     SDL_Quit();
   }
 };
+
+/*!
+ * \brief The main function.
+ *
+ * Basically a wrapper of pong::Game::run.
+ */
 int main(int argc, char* argv[])
 {
   pong::Game* game = pong::Game::getInstance();
