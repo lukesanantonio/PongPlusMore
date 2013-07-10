@@ -6,11 +6,15 @@ namespace pong
   {
     math::vector normalize(math::vector vec)
     {
-      //Calculate length.
-      float length = std::sqrt(std::pow(vec.x, 2) + std::pow(vec.y, 2));
+      double length = math::length(vec);
       vec.x /= length;
       vec.y /= length;
       return vec;
+    }
+    double length(math::vector vec)
+    {
+      double length = std::sqrt(std::pow(vec.x, 2) + std::pow(vec.y, 2));
+      return length;
     }
   }
 };

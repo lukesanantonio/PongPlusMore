@@ -39,7 +39,15 @@ namespace pong
       double y = 0;
     };
 
+    /*!
+     * \brief Returns the unit vector of the passed in vector.
+     */
     math::vector normalize(math::vector vec);
+
+    /*!
+     * \brief Returns the length of the passed in vector.
+     */
+    double length(math::vector vec);
   };
 };
 #endif
