@@ -5,6 +5,7 @@
 #include "SinglePlayerGameState.h"
 #include "Game.h"
 #include "PaddleControllers/MousePaddleController.h"
+#include "PaddleControllers/UnbeatableAIPaddleController.h"
 #include "GameStates/MenuGameState.h"
 #include "render_text.h"
 #include "Physics/SimplePhysicsWorld.h"
@@ -12,7 +13,10 @@ namespace pong
 {
   SinglePlayerGameState::SinglePlayerGameState() :world_(new SimplePhysicsWorld)
   {
-    this->topPaddle_.controller(nullptr);
+    std::shared_ptr<UnbeatableAIPaddleController> ai(
+                                              new UnbeatableAIPaddleController);
+    ai->tracked_ball = &this->ball_;
+    this->topPaddle_.controller(ai);
 
     this->bottomPaddle_.controller(std::shared_ptr<PaddleController>(
                                                     new MousePaddleController));
