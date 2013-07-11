@@ -1,4 +1,5 @@
 #include "SimplePhysicsWorld.h"
+#include <cmath>
 namespace pong
 {
   bool checkCollision(const Ball* ball, const Paddle* paddle)
@@ -47,10 +48,35 @@ namespace pong
         //pixel.
         math::vector new_position = original_position + (x*normalized_velocity);
 
-        //Truncate to find the exact pixel coordinate.
         new_position.x = static_cast<int>(new_position.x);
-        new_position.y = static_cast<int>(new_position.y);
 
+        //Truncate to find the exact pixel coordinate. <-- Wrong!
+        //Truncation, in some cases, results in some positions being not
+        //calculated due to the fact that floating-point rounding errors rarely
+        //let the x<=length loop finish with x==length. That is because it is
+        //just a little over, making the statement false. Anyway since posiitons
+        //are truncated, some positions are never reached. An example: the
+        //ball's initial has a velocity of {0,-2}. Since truncation is basically
+        //rounding down, expected results occur when the ball is going up but
+        //not going down. That is because when going up round down results in
+        //the ball prefering the tile it will go into, since the ball is moving
+        //up, it makes sense to have the ball prefer the top pixel compared to
+        //a bottom pixel. However when the ball bounces having a velocity of
+        //{0, 2}, the ball ends up rounding itself to tiles where it has already
+        //gone. Resulting in some locations never being reached. This essetially
+        //makes the velocity {0,2} appear as {0,1}.
+        //
+        //To solve this, we floor() the y value when going up (y<0) and ceil()
+        //the value when going down (y>0).
+        if(normalized_velocity.y > 0)
+        {
+          new_position.y = ceil(new_position.y);
+        }
+        //Truncate by default!
+        else
+        {
+          new_position.y = floor(new_position.y);
+        }
         //Set the new position in the ball, we ain't going back, collision or
         //not.
         ball.ball->position(new_position);
