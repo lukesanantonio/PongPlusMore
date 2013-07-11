@@ -3,12 +3,31 @@ namespace pong
 {
   bool checkCollision(const Ball* ball, const Paddle* paddle)
   {
-    //Check to see if the ball is horizontally aligned.
-    if(paddle->position().y + paddle->height() > ball->position().y &&
+    //Check collisions on the top and bottom of the paddle.
+    if(
+      (paddle->position().y + paddle->height() > ball->position().y and
        paddle->position().y < ball->position().y)
+                            or
+      (paddle->position().y + paddle->height() >
+                                     ball->position().y + ball->diameter() and
+       paddle->position().y < ball->position().y + ball->diameter()))
     {
-      //Collision if the ball is vertically aligned.
-      return true;
+      //Check both the left and right sides of the ball and make sure at least
+      //one side is inside the paddle's left-right bounds. Confused? Check the
+      //code.
+
+      if(
+         (ball->position().x > paddle->position().x and
+          ball->position().x < paddle->position().x + paddle->width())
+                            or
+         (ball->position().x + ball->diameter() <
+                                    paddle->position().x + paddle->width() and
+          ball->position().x + ball->diameter() > paddle->position().x))
+      {
+        //We have a collision!
+        return true;
+      }
+
     }
     return false;
   }
