@@ -10,8 +10,14 @@ namespace pong
 
     this->balls_.push_back(ball_wrapper);
   }
-  void PhysicsWorld::addPaddle(const Paddle* paddle)
+  void PhysicsWorld::addPaddle(Paddle* paddle,
+                               std::shared_ptr<PaddleController> controller)
   {
-    this->paddles_.push_back(paddle);
+    PaddleWrapper paddle_wrapper;
+
+    paddle_wrapper.paddle = paddle;
+    paddle_wrapper.controller = controller;
+
+    this->paddles_.push_back(paddle_wrapper);
   }
 };

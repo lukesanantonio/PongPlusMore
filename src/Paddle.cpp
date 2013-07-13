@@ -24,11 +24,4 @@ namespace pong
     SDL_Surface* cache = generateRectangle(this->width_, this->height_, color);
     return cache;
   }
-  void Paddle::update()
-  {
-    //If the paddle controller is a nullptr, exit immediately, This function is
-    //a no-op.
-    if(!this->controller_) return;
-    this->controller_->update(this);
-  }
 };

@@ -6,9 +6,6 @@ namespace pong
   /*!
    * \brief This physics world is the no-frills, basic, nonultimate-pong, like
    * simulation.
-   *
-   * Not really that great performance wise, time is
-   * O(number of paddles * number of balls).
    */
   class SimplePhysicsWorld : public PhysicsWorld
   {

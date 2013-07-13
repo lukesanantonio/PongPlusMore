@@ -11,21 +11,25 @@
 #include "Physics/SimplePhysicsWorld.h"
 namespace pong
 {
-  SinglePlayerGameState::SinglePlayerGameState() :world_(new SimplePhysicsWorld)
+  SinglePlayerGameState::SinglePlayerGameState()
   {
-    std::shared_ptr<UnbeatableAIPaddleController> ai(
-                                              new UnbeatableAIPaddleController);
-    ai->tracked_ball = &this->ball_;
-    this->topPaddle_.controller(ai);
+    //Initialize paddles (positions, etc).
+    this->topPaddle_.position({0, 0});
 
-    this->bottomPaddle_.controller(std::shared_ptr<PaddleController>(
-                                                    new MousePaddleController));
     this->bottomPaddle_.position(
     //                                ,--This is casted to a double here to
     //                               /   avoid narrowing conversion warnings. I
     //                              \/   don't really like it but, eh.
                     {0,static_cast<double>(Game::getInstance()->height()
                                         - this->bottomPaddle_.height())});
+
+    //Initialize the physics world.
+    this->world_.addPaddle(&this->topPaddle_,
+                  std::make_shared<UnbeatableAIPaddleController>(&this->ball_));
+    this->world_.addPaddle(&this->bottomPaddle_,
+                           std::make_shared<MousePaddleController>());
+
+    this->world_.addBall(&this->ball_, {0, 5});
 
     //Set initial position of the ball. The center.
     math::vector ball_pos;
@@ -35,22 +39,9 @@ namespace pong
                         this->ball_.diameter());
     this->ball_.position(ball_pos);
 
-    //                                         ,--Initial velocity of the ball.
-    //                                        /
-    //Add the ball to our physics simulation.\/
-    this->world_->addBall(&this->ball_, {0, -12});
-
-    //Add the paddles to our physics simulation.
-    this->world_->addPaddle(&this->topPaddle_);
-    this->world_->addPaddle(&this->bottomPaddle_);
-
     //Configure the mouse.
     SDL_WM_GrabInput(SDL_GRAB_ON);
     SDL_ShowCursor(SDL_DISABLE);
-  }
-  SinglePlayerGameState::~SinglePlayerGameState()
-  {
-    delete this->world_;
   }
 
   void SinglePlayerGameState::update_private()
@@ -60,10 +51,7 @@ namespace pong
       Game::getInstance()->setGameState(std::shared_ptr<GameState>(
                                                             new MenuGameState));
     }
-
-    this->topPaddle_.update();
-    this->bottomPaddle_.update();
-    this->world_->step();
+    this->world_.step();
   }
   void SinglePlayerGameState::render_private(SDL_Surface* surface) const
   {

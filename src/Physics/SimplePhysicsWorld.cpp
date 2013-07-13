@@ -34,6 +34,14 @@ namespace pong
   }
   void SimplePhysicsWorld::step()
   {
+    //For now, just let the paddle controllers do their thing.
+    for(PaddleWrapper& wrapper : this->paddles_)
+    {
+      //Bail out if there isn't a controller.
+      if(!wrapper.controller) continue;
+      wrapper.controller->update(wrapper.paddle);
+    }
+#if 0
     for(BallWrapper& ball : this->balls_)
     {
       //Find every square pixel covered by the ray: ball.velocity.
@@ -82,10 +90,10 @@ namespace pong
         ball.ball->position(new_position);
 
         bool done = false;
-        for(const Paddle* paddle : this->paddles_)
+        for(PaddleWrapper& paddle : this->paddles_)
         {
           //Check collision with each paddle.
-          if(checkCollision(ball.ball, paddle))
+          if(checkCollision(ball.ball, paddle.paddle))
           {
              //We have a collision, which means it's time to turn around.
              //For now, just flip the y direction.
@@ -97,5 +105,6 @@ namespace pong
         if (done) break;
       }
     }
+#endif
   }
 };

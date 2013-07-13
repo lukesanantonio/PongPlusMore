@@ -8,12 +8,11 @@
 #include <memory>
 #include <SDL/SDL.h>
 #include "vector.h"
-#include "PaddleController.hpp"
 #include "CachedSurface.h"
 namespace pong
 {
   /*!
-   * \brief A concrete (base) class for paddles.
+   * \brief A concrete (base) class for paddles, though static.
    */
   class Paddle : public CachedSurface
   {
@@ -28,12 +27,6 @@ namespace pong
      * \brief Renders the paddle onto the surface at Paddle::pos_.
      */
     void render(SDL_Surface* surface) const;
-    /*!
-     * \brief Uses the Paddle controller to update the paddle's location.
-     *
-     * \note If Paddle::controller_ is a nullptr, this function is a no-op.
-     */
-    void update();
 
     /*!
      * \brief Returns the current position of the top left corner of the paddle.
@@ -74,18 +67,6 @@ namespace pong
      * \note Invalidates the cache.
      */
     inline void height(std::size_t height) noexcept;
-
-    /*!
-     * \brief Returns the paddle controller.
-     *
-     * \return Paddle::controller_
-     */
-    inline PaddleController* controller() const noexcept;
-    /*!
-     * \brief Sets the paddle controller.
-     */
-    inline void controller(std::shared_ptr<PaddleController>
-                                                           controller) noexcept;
   private:
     /*!
      * \brief The position of the top left corner of the paddle.
@@ -100,13 +81,6 @@ namespace pong
      * \brief Height of the paddle.
      */
     std::size_t height_ = 20;
-
-    /*!
-     * The controller of the paddle.
-     *
-     * \sa pong::PaddleController
-     */
-    std::shared_ptr<PaddleController> controller_ = nullptr;
 
     virtual SDL_Surface* generateCache_private() const override;
   };
@@ -138,16 +112,6 @@ namespace pong
   {
     this->height_ = height;
     this->invalidateCache();
-  }
-
-  inline PaddleController* Paddle::controller() const noexcept
-  {
-    return this->controller_.get();
-  }
-  inline void Paddle::controller(std::shared_ptr<PaddleController>
-                                                            controller) noexcept
-  {
-    this->controller_ = controller;
   }
 };
 #endif

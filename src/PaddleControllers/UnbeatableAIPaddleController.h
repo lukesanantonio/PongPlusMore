@@ -7,6 +7,8 @@ namespace pong
   class UnbeatableAIPaddleController : public PaddleController
   {
   public:
+    UnbeatableAIPaddleController(Ball* tracked = nullptr) :
+                                                         tracked_ball(tracked){}
     virtual void update(Paddle* paddle);
 
     /*!
