@@ -7,24 +7,24 @@
 #include "PaddleController.hpp"
 namespace pong
 {
-  struct BallWrapper
-  {
-    Ball* ball;
-    math::vector velocity;
-  };
-
-  struct PaddleWrapper
-  {
-    Paddle* paddle;
-    /*!
-     * A smart pointer because it is likely to be the only handle to the
-     * controller at most times. We avoid destruction this way.
-     */
-    std::shared_ptr<PaddleController> controller;
-  };
-
   class PhysicsWorld
   {
+  protected:
+    struct BallWrapper
+    {
+      Ball* ball;
+      math::vector velocity;
+    };
+
+    struct PaddleWrapper
+    {
+      Paddle* paddle;
+      /*!
+       * A smart pointer because it is likely to be the only handle to the
+       * controller at most times. We avoid destruction this way.
+       */
+      std::shared_ptr<PaddleController> controller;
+    };
   public:
     virtual ~PhysicsWorld() noexcept = default;
     /*!
