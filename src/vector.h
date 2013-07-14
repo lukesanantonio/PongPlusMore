@@ -41,6 +41,15 @@ namespace pong
 
     math::vector operator+(math::vector vec1, math::vector vec2);
 
+    inline math::vector operator-(math::vector vec1)
+    {
+      return {-vec1.x, -vec1.y};
+    }
+    inline math::vector operator-(math::vector vec1, math::vector vec2)
+    {
+      return vec1 + -vec2;
+    }
+
     math::vector operator*(double scalar, math::vector vec1);
     inline math::vector operator*(math::vector vec1, double scalar)
     {
