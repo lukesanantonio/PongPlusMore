@@ -16,9 +16,17 @@ namespace pong
 
     math::vector normalize(math::vector vec)
     {
+      //Calculate the length
       double length = math::length(vec);
+
+      //We don't want to divide by zero!
+      if(length == 0) return vec;
+
+      //Divide each value in the vector by the length!
       vec.x /= length;
       vec.y /= length;
+
+      //Return the new, normalized vector.
       return vec;
     }
     double length(math::vector vec)
