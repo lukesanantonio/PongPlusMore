@@ -5,45 +5,42 @@
 #include "render_text.h"
 #include <vector>
 #include <algorithm>
-#include <ft2build.h>
-#include FT_FREETYPE_H
+#include <string>
+#include "common.h"
 namespace pong
 {
-  void setupGrayscalePalette(SDL_Surface*& surface, std::size_t num_colors)
+  /*!
+   * \brief Initializes Freetype into FontRenderer::library_ and a face
+   * (FontRenderer::face_) ready to go for implementors of FontRenderer.
+   */
+  FontRenderer::FontRenderer()
   {
-    SDL_Color colors[num_colors];
-    for(int i = 0; i < num_colors; ++i)
+    if(FT_Init_FreeType(&this->library_))
     {
-      colors[i].r = i;
-      colors[i].g = i;
-      colors[i].b = i;
+      crash("Failed to initialize FreeType!");
     }
-    SDL_SetColors(surface, colors, 0, num_colors);
-  }
-  SDL_Surface* render_text(const std::string& text, std::size_t pixel_size,
-                           SDL_Color text_color, SDL_Color background_color)
-  {
-    FT_Library library = nullptr;
-    FT_Face face = nullptr;
-
-    if(FT_Init_FreeType(&library))
-    {
-      //Ba!
-      throw std::runtime_error("FreeType failed to initialize!");
-    }
-
-    if(FT_New_Face(library,
+    if(FT_New_Face(this->library_,
                    "/usr/share/fonts/truetype/ubuntu-font-family"
                                                             "/UbuntuMono-R.ttf",
                    0,
-                   &face))
+                   &this->face_))
     {
-      throw std::runtime_error("FreeType failed to load a new face!");
+      crash("Failed to initialize a FreeType face! Does the font file exist?");
     }
-
-    if(FT_Set_Pixel_Sizes(face, 0, pixel_size))
+  }
+  FontRenderer::~FontRenderer()
+  {
+    FT_Done_Face(this->face_);
+    FT_Done_FreeType(this->library_);
+  }
+  UniquePtrSurface MonoTextRenderer::render_text(const std::string& text,
+                                                 std::size_t pixel_size,
+                                                 SDL_Color text_color,
+                                                 SDL_Color background_color)
+  {
+    if(FT_Set_Pixel_Sizes(this->face_, 0, pixel_size))
     {
-      throw std::runtime_error("Failed to set pixel sizes in FreeType!");
+      crash("Failed to set FreeType pixel size!");
     }
 
     //Find surface height and surface width.
@@ -53,17 +50,18 @@ namespace pong
     int width = 0;
     for(const char c : text)
     {
-      if(FT_Load_Char(face, c, FT_LOAD_RENDER | FT_LOAD_MONOCHROME |
-                               FT_LOAD_TARGET_MONO))
+      if(FT_Load_Char(this->face_, c, FT_LOAD_RENDER | FT_LOAD_MONOCHROME |
+                                      FT_LOAD_TARGET_MONO))
       {
-        throw std::runtime_error("Failed to FT_LOAD_RENDER: " +
-                                 std::to_string(c) + "!");
+        crash(std::string("Failed to load char '") + c + "' while generating"
+        "bounds information for text surface.");
       }
 
-      max_top = std::max(max_top, face->glyph->bitmap_top);
+      max_top = std::max(max_top, this->face_->glyph->bitmap_top);
       max_bottom = std::max(max_bottom,
-                            face->glyph->bitmap.rows - face->glyph->bitmap_top);
-      width += face->glyph->advance.x / 64;
+                            this->face_->glyph->bitmap.rows
+                            - this->face_->glyph->bitmap_top);
+      width += this->face_->glyph->advance.x / 64;
     }
 
     int height = max_top + max_bottom;
@@ -72,10 +70,10 @@ namespace pong
     SDL_Surface* image = SDL_CreateRGBSurface(SDL_SWSURFACE,
                                               width, height, 8,
                                               0, 0, 0, 0);
-    if(!image)
-    {
-      throw std::runtime_error("Failed to initialize text surface!");
-    }
+
+    //Make sure we have a valid surface!
+    runtime_assert_surface(image, width, height);
+
     SDL_Color colors[] = {background_color, text_color};
     SDL_SetColors(image, colors, 0, 2);
 
@@ -84,21 +82,22 @@ namespace pong
     int pen_y = max_top;
     for(const char c : text)
     {
-      if(FT_Load_Char(face, c, FT_LOAD_RENDER | FT_LOAD_MONOCHROME |
-                               FT_LOAD_TARGET_MONO))
+      if(FT_Load_Char(this->face_, c, FT_LOAD_RENDER | FT_LOAD_MONOCHROME |
+                                      FT_LOAD_TARGET_MONO))
       {
-        throw std::runtime_error("Failed to FT_LOAD_RENDER: " +
-                                 std::to_string(c));
+        crash(std::string("Failed to load char: '") + c + "'");
       }
-      SDL_Surface* glyph = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                                face->glyph->bitmap.width,
-                                                face->glyph->bitmap.rows,
-                                                8,
-                                                0, 0, 0, 0);
-      if(!glyph)
-      {
-        throw std::runtime_error("Failed to initialize glyph surface!");
-      }
+      SDL_Surface* glyph = SDL_CreateRGBSurface(
+                                               SDL_SWSURFACE,
+                                               this->face_->glyph->bitmap.width,
+                                               this->face_->glyph->bitmap.rows,
+                                               8,
+                                               0, 0, 0, 0);
+
+      //Check that surface
+      runtime_assert_surface(glyph, this->face_->glyph->bitmap.width,
+                                    this->face_->glyph->bitmap.rows);
+
       SDL_SetColors(glyph, colors, 0, 2);
 
       SDL_LockSurface(glyph);
@@ -113,8 +112,9 @@ namespace pong
             uint8_t* sdlByte =
                 static_cast<uint8_t*>(glyph->pixels) + row * glyph->pitch + pix;
             *sdlByte = static_cast<bool>(
-                    face->glyph->bitmap.buffer[row * face->glyph->bitmap.pitch +
-                                             (pix / 8)] & (1 << (7 - pix % 8)));
+                    this->face_->glyph->bitmap.buffer
+                            [row * this->face_->glyph->bitmap.pitch + (pix / 8)]
+                            & (1 << (7 - pix % 8)));
           }
         }
       }
@@ -123,25 +123,43 @@ namespace pong
       //Okay, so we have a solid glyph image, now blit it to the main surface.
       SDL_Rect dest;
       dest.x = pen_x;
-      dest.y = pen_y - face->glyph->bitmap_top;
+      dest.y = pen_y - this->face_->glyph->bitmap_top;
       SDL_BlitSurface(glyph, NULL, image, &dest);
 
       //Free our temp glyph surface.
       SDL_FreeSurface(glyph);
 
       //Update pen_x
-      pen_x += face->glyph->advance.x / 64;
+      pen_x += this->face_->glyph->advance.x / 64;
     }
 
-    //We should be good, as in, we have our text... Now uninitialize FreeType
-    //and then return our image.
-
-    FT_Done_Face(face);
-    FT_Done_FreeType(library);
-
-    return image;
+    return UniquePtrSurface(image);
   }
 
+  /*!
+   * \brief Sets up a grayscale palette for an SDL_Surface.
+   *
+   * \param surface Surface to modify in-place.
+   * \param num_colors The amount of shades of gray to generate for the palette.
+   * \note For an 8-bit surface, this should not exceed 256.
+   */
+  void setupGrayscalePalette(SDL_Surface*& surface, std::size_t num_colors)
+  {
+    SDL_Color colors[num_colors];
+    for(unsigned int i = 0; i < num_colors; ++i)
+    {
+      colors[i].r = i;
+      colors[i].g = i;
+      colors[i].b = i;
+    }
+    SDL_SetColors(surface, colors, 0, num_colors);
+  }
+
+  /*!
+   * \brief Inverts the palette of the passed in surface.
+   *
+   * \param surface Surface whose palette to invert.
+   */
   void invertPalette(SDL_Surface*& surface)
   {
     //Make our surface's palette easier to reference.
@@ -157,22 +175,26 @@ namespace pong
     SDL_SetColors(surface, &colors[0], 0, palette->ncolors);
   }
 
-  SDL_Surface* generateRectangle(std::size_t width, std::size_t height,
+  /*!
+   * \brief Generates a rectange SDL_Surface of any color, width, or height.
+   *
+   * \returns An SDL_Create(d)RGBSurface() of the color passed in.
+   * \returns nullptr on error.
+   */
+  UniquePtrSurface generateRectangle(std::size_t width, std::size_t height,
                                  SDL_Color color)
   {
     SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
                                                 width, height, 8,
                                                 0, 0, 0, 0);
-    if(!surface)
-    {
-      throw std::runtime_error("Failed to create an SDL_Surface* with "
-                               "SDL_CreateRGBSurface().");
-    }
+
+    runtime_assert_surface(surface, width, height);
+
     SDL_SetColors(surface, &color, 0, 1);
     SDL_FillRect(surface, nullptr, SDL_MapRGB(surface->format,
                                               color.r,
                                               color.g,
                                               color.b));
-    return surface;
+    return UniquePtrSurface(surface);
   }
 };

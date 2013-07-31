@@ -5,40 +5,85 @@
  *
  * This filename is quite misleading, but at this point... eh.
  */
-#ifndef ULTIMATE_PONG_RENDER_TEXT_H
-#define ULTIMATE_PONG_RENDER_TEXT_H
+#pragma once
 #include <memory>
-#include <SDL/SDL.h>
+#include "SDL.h"
+#include <ft2build.h>
+#include FT_FREETYPE_H
 namespace pong
 {
   /*!
-   * \brief Renders a string of text at a specified pixel size.
-   *
-   * \returns An SDL_Surface pointer with the minimum bounds of the text at the
-   * pixel size passed in.
-   * \note The SDL_Surface* returned must be `SDL_FreeSurface()`'d manually.
-   *
-   * \param text A string of text to render.
-   * \param pixel_size The height in pixels to render the string of text at.
+   * \brief A simple deleter which frees `SDL_Surface`s - for use with smart
+   * pointers.
    */
-  SDL_Surface* render_text(const std::string& text, std::size_t pixel_size,
-                           SDL_Color text_color, SDL_Color background_color);
+  struct SurfaceDeleter
+  {
+    inline void operator()(SDL_Surface* surface)
+    {
+      SDL_FreeSurface(surface);
+    }
+  };
+  /*!
+   * \brief A unique_ptr which deletes an SDL_Surface* properly.
+   */
+  using UniquePtrSurface = std::unique_ptr<SDL_Surface, SurfaceDeleter>;
 
   /*!
-   * \brief Sets up a grayscale palette for an SDL_Surface.
-   *
-   * \param surface Surface to modify in-place.
-   * \param num_colors The amount of shades of gray to generate for the palette.
-   * \note For an 8-bit surface, this should not exceed 256.
+   * \brief A simple ABC for FontRenderers.
    */
+  class FontRenderer
+  {
+  public:
+    FontRenderer();
+
+    //We can't let our members be copied, they're pointers!
+    FontRenderer(const FontRenderer&) = delete;
+    FontRenderer& operator=(const FontRenderer&) = delete;
+
+    virtual ~FontRenderer();
+
+    /*!
+     * \brief Renders text and returns it as an SDL_Surface*.
+     *
+     * \param text Text to render!
+     * \param pixel_size Pixel size of which to render the text at, passed
+     * directly into FreeType.
+     * \param text_color The color to render the text.
+     * \param background_color The color to render the background of the
+     * surface.
+     *
+     * \returns A unique_ptr storing SDL_Surface, it's deleter is configured so
+     * that no memory is leaked if it is lost for some reason.
+     *
+     * \note Crash on error, anything fairly unrecoverable and serious.
+     *
+     */
+    virtual UniquePtrSurface render_text(const std::string& text,
+                                         std::size_t pixel_size,
+                                         SDL_Color text_color,
+                                         SDL_Color background_color) = 0;
+  protected:
+    FT_Library library_;
+    FT_Face    face_;
+  };
+
+  /*!
+   * \brief Renders text with no anti-aliasing.
+   */
+  class MonoTextRenderer : public FontRenderer
+  {
+    virtual UniquePtrSurface render_text(const std::string& text,
+                                         std::size_t pixel_size,
+                                         SDL_Color text_color,
+                                         SDL_Color background_color) override;
+  };
+
   void setupGrayscalePalette(SDL_Surface*& surface, std::size_t num_colors);
 
-  /*!
-   * \brief Inverts the palette of the passed in surface.
-   *
-   * \param surface Surface whose palette to invert.
-   */
   void invertPalette(SDL_Surface*& surface);
+
+  UniquePtrSurface generateRectangle(std::size_t width, std::size_t height,
+                                     SDL_Color color);
 
   /*!
    * \brief Gets the point which should be the location of an object of
@@ -57,23 +102,13 @@ namespace pong
    * function returns 125. This would be the x or y point for on object of
    * length 50 which needs to be centered within the bounds 100-200.
    *
-   * \note Hope this is clear. Otherwise check out the source code. If you
-   * don't want to look at the source code the algorithm is exactly:
+   * \note The algorithm is exactly:
    * \code begin + (length / 2) - (object_length / 2) \endcode
    * This is what is returned.
    */
-  inline int center(int begin, std::size_t length, std::size_t object_length)
+  constexpr int center(int begin, std::size_t length, std::size_t object_length)
   {
     return begin + (length / 2) - (object_length / 2);
   }
-
-  /*!
-   * \brief Generates a rectange SDL_Surface of any color, width, or height.
-   *
-   * \returns An SDL_Create(d)RGBSurface() which **needs to be
-   * SDL_FreeSurface()'d.**
-   */
-  SDL_Surface* generateRectangle(std::size_t width, std::size_t height,
-                                 SDL_Color color);
 };
-#endif
+

@@ -3,73 +3,100 @@
  * \brief Definitions for anything in Game.h
  */
 #include "Game.h"
-#include <stdexcept>
-#include "scoped_init.hpp"
-#include "GameStates/MenuGameState.h"
+#include <thread>
 #include "Timer.hpp"
 namespace pong
 {
-  std::shared_ptr<Game> Game::instance_ = nullptr;
-
-  int Game::run(int argc, char* argv[])
+  /*!
+   * \brief The game begins and ends within this function.
+   */
+  int Game::run(int, char*[])
   {
-    this->initializeSDL();
-    scoped_init<std::function<void ()> >
-                               SDLinit(std::bind(&Game::uninitializeSDL, this));
+    //Initialize Components!                           // .-Change this to
+    if(!this->initializeSDL()) { return 1; }           // | change the global
+    this->font_renderer_ =                             // | implementation!
+                        std::unique_ptr<FontRenderer>(new MonoTextRenderer);
+    Timer<> fps_timer;
 
-    //Initially, go to the menu state.
-    this->game_state_ = std::shared_ptr<GameState>(new MenuGameState);
-
-    Timer<> timer;
-
-    //Loop every, say, 10 milliseconds.
-    while(this->running_)
+    while(!this->game_state_stack_.empty())
     {
-      if(!timer.hasBeen(std::chrono::milliseconds(10))) continue;
-      //Cache the game state, so that it remains constant throughout the entire
-      //loop iteration.
-      std::shared_ptr<GameState> cached_game_state = this->game_state_;
-      //Clear the screen
-      SDL_FillRect(this->main_surface_, NULL,
-                   SDL_MapRGB(this->main_surface_->format, 0x00, 0x00, 0x00));
+      //Make sure the object stays alive!
+      std::shared_ptr<GameState> game_state = this->game_state_stack_.top();
 
-      //Poll events...
-      events.pollEvents();
+      SDL_Event event;
+      while(SDL_PollEvent(&event))
+      {
+        game_state->handleEvent(event);
+      }
 
-      cached_game_state->update();
-      cached_game_state->render(this->main_surface_);
-      SDL_Flip(this->main_surface_);
-      timer.reset();
+      if(fps_timer.hasBeen(std::chrono::milliseconds(10)))
+      {
+        game_state->update();
+        game_state->render(this->main_surface_);
+
+        fps_timer.reset();
+
+        //We have nothing to for a bit, though leave 5 milliseconds for
+        //handling events, after that it's show (render) time!
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+      }
     }
 
-    //Return the error code.
+    this->uninitializeSDL();
     return 0;
   }
-  void Game::initializeSDL()
+
+  /*!
+   * \brief Initializes SDL, the window, the surface, etc...
+   *
+   * If this function returns false, all memory that could be has been freed.
+   * It's time to bail out!
+   */
+  bool Game::initializeSDL()
   {
-    if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    if(SDL_Init(SDL_INIT_EVERYTHING |
+                SDL_INIT_NOPARACHUTE |
+                SDL_INIT_EVENTTHREAD) < 0)
     {
-      throw std::runtime_error("Failed to initialize SDL");
+      return false;
     }
-    //Satisfy the post condition.
-    this->main_surface_ = SDL_SetVideoMode(1000, 1000, 32, SDL_HWSURFACE |
+    this->main_surface_ = SDL_SetVideoMode(1000, 1000, 32, SDL_SWSURFACE |
                                                            SDL_DOUBLEBUF);
     if(!this->main_surface_)
     {
       SDL_Quit();
-      throw std::runtime_error("Failed to set SDL video mode.");
+      return false;
     }
+    return true;
   }
-  void Game::uninitializeSDL() noexcept
+
+  /*!
+   * \brief Cleans up SDL normally, as if everything had went fine during
+   * initialization.
+   */
+  void Game::uninitializeSDL()
   {
-    //Free the surface, satisfying one post condition.
     SDL_FreeSurface(this->main_surface_);
-
-    //Satisfy another post condition.
-    this->main_surface_ = nullptr;
-
-    //Quit sdl.
     SDL_Quit();
+  }
+
+  /*!
+   * \brief Push the game state to the top of the stack, it will become
+   * active starting at the next game loop.
+   *
+   * The unique pointer should have been `std::move`d into this function, since
+   * the Game wants sole ownership.
+   */
+  void Game::pushGameState(std::unique_ptr<GameState> gamestate)
+  {
+    this->game_state_stack_.push(std::move(gamestate));
+  }
+  /*!
+   * \brief Remove the top game state from
+   */
+  void Game::popGameState()
+  {
+    this->game_state_stack_.pop();
   }
 };
 
@@ -80,6 +107,6 @@ namespace pong
  */
 int main(int argc, char* argv[])
 {
-  pong::Game* game = pong::Game::getInstance();
-  return game->run(argc, argv);
+  pong::Game game;
+  return game.run(argc, argv);
 }

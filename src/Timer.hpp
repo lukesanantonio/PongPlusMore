@@ -1,5 +1,4 @@
-#ifndef ULTIMATE_PONG_TIMER_HPP
-#define ULTIMATE_PONG_TIMER_HPP
+#pragma once
 #include <chrono>
 namespace pong
 {
@@ -29,4 +28,3 @@ namespace pong
     this->time_before_ = std::chrono::high_resolution_clock::now();
   }
 }
-#endif

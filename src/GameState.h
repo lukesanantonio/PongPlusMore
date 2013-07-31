@@ -1,57 +1,37 @@
 /*!
  * \file GameState.h
- * \brief File containing the ABC for all game states.
+ * \brief GameState ABC.
  */
-#ifndef ULTIMATE_PONG_GAME_STATE_H
-#define ULTIMATE_PONG_GAME_STATE_H
-#include <SDL/SDL.h>
+#pragma once
+#include <vector>
+#include "RenderableEntity.h"
+#include "EventHandler.h"
 namespace pong
 {
-  /*!
-   * \brief ABC which all game states should publicly inherit from.
-   */
-  class GameState
+  class GameState : public EventHandler, public RenderableEntity
   {
   public:
     /*!
-     * \brief Default constructor executing default behavior.
+     * \brief Notifies the GameState of an event.
+     *
+     * A more specific kind of update function.
      */
-    GameState() = default;
-    /*!
-     * \brief Virtual destructor since we are going to delete using a
-     * pointer-to-base.
-     */
-    virtual ~GameState() = default;
+    virtual void handleEvent(const SDL_Event& event) override = 0;
 
     /*!
-     * \brief The interface to the real, private update function
-     * (GameState::update_private()).
+     * \brief Allows the GameState to update periodically and not necessarily
+     * event-based.
      */
-    inline void update()
-    {
-      this->update_private();
-    }
-    /*!
-     * \brief The interface to the real, private render function
-     * (GameState::render_private()).
-     */
-    inline void render(SDL_Surface* surface) const
-    {
-      this->render_private(surface);
-    }
+    virtual void update() = 0;
+
+    virtual void render(SDL_Surface*) const final override;
+
+    void addRenderableEntity(const RenderableEntity* entity);
+    void removeRenderableEntity(const RenderableEntity* entity);
   private:
     /*!
-     * \brief This function updates the internal state of the object.
+     * \brief The list of objects to render during GameState::render.
      */
-    virtual void update_private() = 0;
-
-    /*!
-     * \brief This function renders whatever it needs to render based off of
-     * it's internal state set during GameState::update().
-     *
-     * It should not modify the object.
-     */
-    virtual void render_private(SDL_Surface* surface) const = 0;
+    std::vector<const RenderableEntity*> render_queue_;
   };
 };
-#endif
