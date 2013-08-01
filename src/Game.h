@@ -38,7 +38,7 @@ namespace pong
     void pushGameState(std::unique_ptr<GameState>);
     void popGameState();
 
-    std::unique_ptr<FontRenderer> font_renderer_;
+    inline FontRenderer* font_renderer() const noexcept;
   private:
     Game() = default;
     ~Game() = default;
@@ -52,10 +52,23 @@ namespace pong
 
     SDL_Surface* main_surface_ = nullptr;
 
+    /*!
+     * \brief The default font renderer, global to all who have a pointer to
+     * the Game class.
+     *
+     * It need not be used at all!
+     */
+    std::unique_ptr<FontRenderer> font_renderer_ = nullptr;
+
     int run(int argc, char* argv[]);
 
     friend int ::main(int argc, char* argv[]);
 
     GameStateStack game_state_stack_;
   };
+
+  inline FontRenderer* Game::font_renderer() const noexcept
+  {
+    return this->font_renderer_.get();
+  }
 };
