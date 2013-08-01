@@ -26,6 +26,7 @@ namespace pong
    * Should the test fail (when !surface) pong::crash is called with a message
    * containing the surface width and height!
    *
+   * \param surface The surface to perform a runtime assertion on.
    * \param width The requested width during initialization...
    * \param height The requested height during initialization...
    */
