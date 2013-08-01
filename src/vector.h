@@ -2,8 +2,7 @@
  * \file vector.h
  * \brief The header of a beautiful thing, a vector class.
  */
-#ifndef ULTIMATE_PONG_VECTOR_H
-#define ULTIMATE_PONG_VECTOR_H
+#pragma once
 namespace pong
 {
   /*!
@@ -67,4 +66,3 @@ namespace pong
     double length(math::vector vec);
   };
 };
-#endif
