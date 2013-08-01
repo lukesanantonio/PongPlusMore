@@ -13,7 +13,8 @@ namespace pong
   }
 
   CachedSurface::CachedSurface(CachedSurface&& cache) :
-                               cache_(cache.cache_)
+                               cache_(cache.cache_) //Initialize our cache with
+                                                    //their cache...
   {
     cache.cache_ = nullptr;
   }
@@ -25,12 +26,20 @@ namespace pong
     //Set our cache to the other cache.
     this->cache_ = cache.cache_;
 
-    //Make sure the other object doesn't free it's cache. Since we are using it.
+    //Make sure the other object doesn't free its cache. Since we are using it.
     //Notice we are not `CachedSurface::freeCache()`ing the surface though,
-    //since that would uninitialize the memory.
+    //since that would free the precious memory!
     cache.cache_ = nullptr;
+
+    return *this;
   }
 
+  /*!
+   * \brief Generates the cache on demand.
+   *
+   * If the cache doesn't require anymore generation, no generation occurs.
+   * Feel free to use this function generously.
+   */
   void CachedSurface::generateCache() const
   {
     //Don't generate the cache unless we actually have to. That is only if the
@@ -40,6 +49,13 @@ namespace pong
       this->cache_ = this->generateCache_private();
     }
   }
+
+  /*!
+   * \brief Sets the cache to be regenerated next time it is required.
+   *
+   * \note Currently this function is implemented by `SDL_FreeSurface()`ing
+   * the cache on the spot.
+   */
   void CachedSurface::invalidateCache() const
   {
     //Free the surface to let other functions know it needs to be regenerated.
@@ -49,15 +65,28 @@ namespace pong
     this->freeCache();
   }
 
+  /*!
+   * \brief Returns the generated cache.
+   *
+   * If we haven't generated it yet, it is generated on the spot. If
+   * generation is expensive you can pick the optimal time to generate and
+   * call the CachedSurface::generateCache() function.
+   */
   SDL_Surface* CachedSurface::cache() const
   {
     this->generateCache();
     return this->cache_;
   }
 
+  /*!
+   * \brief `SDL_FreeSurface()`s `this->cache_` *if necessary*.
+   *
+   * Basically a housekeeping function to avoid code duplication. There really
+   * isn't a specific purpose in mind here.
+   */
   void CachedSurface::freeCache() const
   {
-    //Only SDL_FreeSurface the cache if it points to allocated memory.
+    //Only free the cache if it points to allocated memory.
     if(this->cache_)
     {
       SDL_FreeSurface(this->cache_);
