@@ -109,6 +109,7 @@ namespace pong
    * \returns Label::cache()->w
    *
    * \post Generates the cache if necessary.
+   * \warning This function requires a valid FontRenderer, otherwise it crashes.
    */
   inline std::size_t Label::getSurfaceWidth() const
   {
@@ -120,6 +121,7 @@ namespace pong
    * \returns Label::cache()->h
    *
    * \post Generates the cache if necessary.
+   * \warning This function requires a valid FontRenderer, otherwise it crashes.
    */
   inline std::size_t Label::getSurfaceHeight() const
   {
