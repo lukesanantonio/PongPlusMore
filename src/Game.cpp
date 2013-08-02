@@ -5,6 +5,7 @@
 #include "Game.h"
 #include <thread>
 #include "Timer.hpp"
+#include "GameStates/MenuGameState.h"
 namespace pong
 {
   /*!
@@ -17,6 +18,9 @@ namespace pong
     this->font_renderer_ =                             // | implementation!
                         std::unique_ptr<FontRenderer>(new MonoTextRenderer);
     Timer<> fps_timer;
+
+    //Set up our initial GameState: The menu.
+    this->pushGameState(std::unique_ptr<GameState>(new MenuGameState(this)));
 
     while(!this->game_state_stack_.empty())
     {
