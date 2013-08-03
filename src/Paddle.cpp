@@ -1,9 +1,8 @@
 /*!
  * \file Paddle.cpp
- * \brief Defines functions for the Paddle class and the PaddleSignals class.
+ * \brief Defines functions for the Paddle class.
  */
 #include "Paddle.h"
-#include "render_text.h"
 namespace pong
 {
   void Paddle::render(SDL_Surface* surface) const
@@ -13,15 +12,6 @@ namespace pong
     dest.x = this->pos_.x;
     dest.y = this->pos_.y;
 
-    SDL_BlitSurface(this->cache(), nullptr, surface, &dest);
-  }
-  SDL_Surface* Paddle::generateCache_private() const
-  {
-    SDL_Color color;
-    color.r = 0xff;
-    color.g = 0xff;
-    color.b = 0xff;
-    SDL_Surface* cache = generateRectangle(this->width_, this->height_, color);
-    return cache;
+    SDL_FillRect(surface, &dest, SDL_MapRGB(surface->format, 0xff, 0xff, 0xff));
   }
 };

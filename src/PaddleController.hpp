@@ -2,8 +2,7 @@
  * \file PaddleController.hpp
  * \brief Contains the declaration of the ABC for controlling a paddle.
  */
-#ifndef ULTIMATE_PONG_PADDLE_CONTROLLER_HPP
-#define ULTIMATE_PONG_PADDLE_CONTROLLER_HPP
+#pragma once
 namespace pong
 {
   class Paddle;
@@ -29,4 +28,3 @@ namespace pong
     virtual void update(Paddle* paddle) = 0;
   };
 };
-#endif
