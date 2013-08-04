@@ -8,6 +8,17 @@
 #include "EventHandler.h"
 namespace pong
 {
+  /*!
+   * \brief A signal to tell the Game what to do next!
+   */
+  enum class PostUpdateAction
+  {
+    DoNothing, //!< No rendering is necessary, don't clear the screen though!
+    Render, //!< Render, we still have crap to do!
+    ExitGameState, //!< Exit the GameState, ie Game::popGameState().
+    ExitGame //!< Exit the game!
+  };
+
   class GameState : public EventHandler, public RenderableEntity
   {
   public:
@@ -21,8 +32,11 @@ namespace pong
     /*!
      * \brief Allows the GameState to update periodically and not necessarily
      * event-based.
+     *
+     * \returns A signal to the Game telling it what to do next.
+     * \sa PostUpdateAction
      */
-    virtual void update() = 0;
+    virtual PostUpdateAction update() = 0;
 
     virtual void render(SDL_Surface*) const final override;
 

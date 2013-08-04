@@ -52,6 +52,8 @@ namespace pong
 
     SDL_Surface* main_surface_ = nullptr;
 
+    bool running_ = true;
+
     /*!
      * \brief The default font renderer, global to all who have a pointer to
      * the Game class.

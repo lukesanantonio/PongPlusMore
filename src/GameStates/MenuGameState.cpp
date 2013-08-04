@@ -88,7 +88,10 @@ namespace pong
     SDL_WM_GrabInput(SDL_GRAB_OFF);
     SDL_ShowCursor(SDL_ENABLE);
   }
-  void MenuGameState::update() {}
+  PostUpdateAction MenuGameState::update()
+  {
+    return PostUpdateAction::Render;
+  }
   void MenuGameState::handleEvent(const SDL_Event& event)
   {
     if(event.type == SDL_KEYUP)

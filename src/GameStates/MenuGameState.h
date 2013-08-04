@@ -22,7 +22,7 @@ namespace pong
     MenuGameState& operator=(const MenuGameState&) = delete;
     MenuGameState& operator=(MenuGameState&&) = delete;
 
-    virtual void update() override;
+    virtual PostUpdateAction update() override;
     virtual void handleEvent(const SDL_Event& event) override;
   private:
     Label title_;

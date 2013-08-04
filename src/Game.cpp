@@ -22,7 +22,8 @@ namespace pong
     //Set up our initial GameState: The menu.
     this->pushGameState(std::unique_ptr<GameState>(new MenuGameState(this)));
 
-    while(!this->game_state_stack_.empty())
+    //We *need* game states, and we *need* to be running
+    while(!this->game_state_stack_.empty() && this->running_)
     {
       //Make sure the object stays alive!
       std::shared_ptr<GameState> game_state = this->game_state_stack_.top();
@@ -35,13 +36,36 @@ namespace pong
 
       if(fps_timer.hasBeen(std::chrono::milliseconds(10)))
       {
-        SDL_FillRect(this->main_surface_, NULL,
+        switch(game_state->update())
+        {
+          case PostUpdateAction::DoNothing:
+          {
+            break;
+          }
+          case PostUpdateAction::Render:
+          {
+            //Clear
+            SDL_FillRect(this->main_surface_, NULL,
                      SDL_MapRGB(this->main_surface_->format, 0x00, 0x00, 0x00));
 
-        game_state->update();
-        game_state->render(this->main_surface_);
+            //Render
+            game_state->render(this->main_surface_);
 
-        SDL_Flip(this->main_surface_);
+            //Flip, three easy steps!
+            SDL_Flip(this->main_surface_);
+            break;
+          }
+          case PostUpdateAction::ExitGameState:
+          {
+            this->popGameState();
+            break;
+          }
+          case PostUpdateAction::ExitGame:
+          {
+            this->running_ = false;
+            break;
+          }
+        }
 
         fps_timer.reset();
 
