@@ -76,12 +76,9 @@ namespace pong
     });
 #endif
 
-    this->quit_.executeOnClick([this, game]()
+    this->quit_.executeOnClick([this]()
     {
-      //If the button is getting updated, we can assume we are on top of the
-      //stack! TODO: This seems fishy, even though it is valid! Do something
-      //about it!
-      game->popGameState();
+      this->pending_action_ = PostUpdateAction::ExitGameState;
     });
 
     //Configure the mouse
@@ -90,13 +87,20 @@ namespace pong
   }
   PostUpdateAction MenuGameState::update()
   {
-    return PostUpdateAction::Render;
+    //Basically, if we need to render, then make sure we only render once
+    //After a single render we have nothing to do, right?! (Yes, always yes)
+    if(this->pending_action_ == PostUpdateAction::Render)
+    {
+      this->pending_action_ = PostUpdateAction::DoNothing;
+      return PostUpdateAction::Render;
+    }
+    return this->pending_action_;
   }
   void MenuGameState::handleEvent(const SDL_Event& event)
   {
     if(event.type == SDL_KEYUP)
     {
-      this->game_->popGameState();
+      this->pending_action_ = PostUpdateAction::ExitGameState;
     }
 
     this->singleplayer_.handleEvent(event);

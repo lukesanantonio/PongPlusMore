@@ -33,6 +33,8 @@ namespace pong
     Button help_;
     Button quit_;
 
+    PostUpdateAction pending_action_ = PostUpdateAction::Render;
+
     Game* game_;
   };
 };
