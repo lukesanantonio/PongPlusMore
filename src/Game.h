@@ -9,6 +9,7 @@
 #include "SDL.h"
 #include "GameState.h"
 #include "render_text.h"
+#include "GameSettings.h"
 
 int main(int argc, char* argv[]);
 
@@ -47,7 +48,7 @@ namespace pong
     Game& operator=(const Game&) = delete;
     Game& operator=(Game&&) = delete;
 
-    bool initializeSDL();
+    bool initializeSDL(unsigned int width, unsigned int height);
     void uninitializeSDL();
 
     SDL_Surface* main_surface_ = nullptr;

@@ -13,8 +13,15 @@ namespace pong
    */
   int Game::run(int, char*[])
   {
-    //Initialize Components!                           // .-Change this to
-    if(!this->initializeSDL()) { return 1; }           // | change the global
+    //Load up GameSettings
+    GameSettings settings =
+                          loadSettings("/home/luke/.ultimate_pong/config.json");
+
+    //Initialize Components!
+    if(!this->initializeSDL(settings.width, settings.height)) { return 1; }
+
+                                                       // .-Change this to
+                                                       // | change the global
     this->font_renderer_ =                             // | implementation!
                         std::unique_ptr<FontRenderer>(new MonoTextRenderer);
     Timer<> fps_timer;
@@ -85,15 +92,15 @@ namespace pong
    * If this function returns false, all memory that could be has been freed.
    * It's time to bail out!
    */
-  bool Game::initializeSDL()
+  bool Game::initializeSDL(unsigned int width, unsigned int height)
   {
     if(SDL_Init(SDL_INIT_EVERYTHING |
                 SDL_INIT_NOPARACHUTE) < 0)
     {
       return false;
     }
-    this->main_surface_ = SDL_SetVideoMode(1000, 1000, 32, SDL_SWSURFACE |
-                                                           SDL_DOUBLEBUF);
+    this->main_surface_ = SDL_SetVideoMode(width, height, 32, SDL_SWSURFACE |
+                                                              SDL_DOUBLEBUF);
     if(!this->main_surface_)
     {
       SDL_Quit();
