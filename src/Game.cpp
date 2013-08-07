@@ -131,7 +131,7 @@ namespace pong
     this->game_state_stack_.push(std::move(gamestate));
   }
   /*!
-   * \brief Remove the top game state from
+   * \brief Remove the top game state from the stack.
    */
   void Game::popGameState()
   {
