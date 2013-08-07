@@ -88,8 +88,7 @@ namespace pong
   bool Game::initializeSDL()
   {
     if(SDL_Init(SDL_INIT_EVERYTHING |
-                SDL_INIT_NOPARACHUTE |
-                SDL_INIT_EVENTTHREAD) < 0)
+                SDL_INIT_NOPARACHUTE) < 0)
     {
       return false;
     }
