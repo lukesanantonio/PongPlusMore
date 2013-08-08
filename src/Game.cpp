@@ -40,11 +40,7 @@ namespace pong
       if(fps_timer.hasBeen(std::chrono::milliseconds(10)))
       {
         game_state->update();
-
-        SDL_FillRect(this->main_surface_, NULL,
-                     SDL_MapRGB(this->main_surface_->format, 0x00, 0x00, 0x00));
         game_state->render(this->main_surface_);
-        SDL_Flip(this->main_surface_);
 
         fps_timer.reset();
 
