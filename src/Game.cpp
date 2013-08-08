@@ -19,11 +19,7 @@ namespace pong
 
     //Initialize Components!
     if(!this->initializeSDL(settings.width, settings.height)) { return 1; }
-
-                                                       // .-Change this to
-                                                       // | change the global
-    this->font_renderer_ =                             // | implementation!
-                        std::unique_ptr<FontRenderer>(new MonoTextRenderer);
+    this->font_renderer_ = settings.font_renderer.get();
     Timer<> fps_timer;
 
     //Set up our initial GameState: The menu.

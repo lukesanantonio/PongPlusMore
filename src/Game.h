@@ -56,12 +56,14 @@ namespace pong
     bool running_ = true;
 
     /*!
-     * \brief The default font renderer, global to all who have a pointer to
-     * the Game class.
+     * \brief The font renderer implementation, obtained from the config file.
      *
-     * It need not be used at all!
+     * It should be used and passed along to member objects by GameStates!
+     *
+     * \note It can be cached, but not between GameStates, meaning it should be
+     * cached again every time a new GameState is constructed!
      */
-    std::unique_ptr<FontRenderer> font_renderer_ = nullptr;
+    FontRenderer* font_renderer_ = nullptr;
 
     int run(int argc, char* argv[]);
 
@@ -72,6 +74,6 @@ namespace pong
 
   inline FontRenderer* Game::font_renderer() const noexcept
   {
-    return this->font_renderer_.get();
+    return this->font_renderer_;
   }
 };
