@@ -39,6 +39,8 @@ namespace pong
     void pushGameState(std::unique_ptr<GameState>);
     void popGameState();
 
+    inline void quit() noexcept;
+
     inline FontRenderer* font_renderer() const noexcept;
   private:
     Game() = default;
@@ -71,6 +73,11 @@ namespace pong
 
     GameStateStack game_state_stack_;
   };
+
+  inline void Game::quit() noexcept
+  {
+    this->running_ = false;
+  }
 
   inline FontRenderer* Game::font_renderer() const noexcept
   {
