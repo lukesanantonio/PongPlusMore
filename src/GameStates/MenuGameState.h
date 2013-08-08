@@ -15,7 +15,7 @@ namespace pong
   class MenuGameState : public GameState
   {
   public:
-    MenuGameState(Game* game) noexcept;
+    MenuGameState(Game& game) noexcept;
     ~MenuGameState() noexcept = default;
     MenuGameState(const MenuGameState&) = delete;
     MenuGameState(MenuGameState&&) = delete;
@@ -33,6 +33,6 @@ namespace pong
     Button help_;
     Button quit_;
 
-    Game* game_;
+    Game& game_;
   };
 };

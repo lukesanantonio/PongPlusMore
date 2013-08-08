@@ -23,7 +23,7 @@ namespace pong
     Timer<> fps_timer;
 
     //Set up our initial GameState: The menu.
-    this->pushGameState(std::unique_ptr<GameState>(new MenuGameState(this)));
+    this->pushGameState(std::unique_ptr<GameState>(new MenuGameState(*this)));
 
     //We *need* game states, and we *need* to be running
     while(!this->game_state_stack_.empty() && this->running_)

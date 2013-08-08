@@ -7,7 +7,7 @@
 //#include "SinglePlayerGameState.h"
 namespace pong
 {
-  MenuGameState::MenuGameState(Game* game) noexcept :
+  MenuGameState::MenuGameState(Game& game) noexcept :
                                            title_("Ultimate Pong", 110),
                                            singleplayer_("Singleplayer"),
                                            multiplayer_("Multiplayer"),
@@ -16,7 +16,7 @@ namespace pong
                                            quit_("Quit"),
                                            game_(game)
   {
-    this->title_.font_renderer(game->font_renderer());
+    this->title_.font_renderer(game.font_renderer());
 
     math::vector pos;
     pos.x = center(0, 1000, this->title_.getSurfaceWidth());
@@ -32,34 +32,34 @@ namespace pong
     this->singleplayer_.width(width);
     this->singleplayer_.height(height);
     this->singleplayer_.enabled(false);
-    this->singleplayer_.font_renderer(game->font_renderer());
+    this->singleplayer_.font_renderer(game.font_renderer());
 
     pos.y += 100;
     this->multiplayer_.position(pos);
     this->multiplayer_.width(width);
     this->multiplayer_.height(height);
     this->multiplayer_.enabled(false);
-    this->multiplayer_.font_renderer(game->font_renderer());
+    this->multiplayer_.font_renderer(game.font_renderer());
 
     pos.y += 100;
     this->options_.position(pos);
     this->options_.width(width);
     this->options_.height(height);
     this->options_.enabled(false);
-    this->options_.font_renderer(game->font_renderer());
+    this->options_.font_renderer(game.font_renderer());
 
     pos.y += 100;
     this->help_.position(pos);
     this->help_.width(width);
     this->help_.height(height);
     this->help_.enabled(false);
-    this->help_.font_renderer(game->font_renderer());
+    this->help_.font_renderer(game.font_renderer());
 
     pos.y += 100;
     this->quit_.position(pos);
     this->quit_.width(width);
     this->quit_.height(height);
-    this->quit_.font_renderer(game->font_renderer());
+    this->quit_.font_renderer(game.font_renderer());
 
     this->addRenderableEntity(&this->title_);
     this->addRenderableEntity(&this->singleplayer_);
@@ -78,7 +78,7 @@ namespace pong
 
     this->quit_.executeOnClick([this]()
     {
-      this->game_->quit();
+      this->game_.quit();
     });
 
     //Configure the mouse
@@ -89,7 +89,7 @@ namespace pong
   {
     if(event.type == SDL_KEYUP)
     {
-      this->game_->quit();
+      this->game_.quit();
     }
 
     this->singleplayer_.handleEvent(event);
