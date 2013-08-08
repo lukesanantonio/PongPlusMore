@@ -39,36 +39,12 @@ namespace pong
 
       if(fps_timer.hasBeen(std::chrono::milliseconds(10)))
       {
-        switch(game_state->update())
-        {
-          case PostUpdateAction::DoNothing:
-          {
-            break;
-          }
-          case PostUpdateAction::Render:
-          {
-            //Clear
-            SDL_FillRect(this->main_surface_, NULL,
+        game_state->update();
+
+        SDL_FillRect(this->main_surface_, NULL,
                      SDL_MapRGB(this->main_surface_->format, 0x00, 0x00, 0x00));
-
-            //Render
-            game_state->render(this->main_surface_);
-
-            //Flip, three easy steps!
-            SDL_Flip(this->main_surface_);
-            break;
-          }
-          case PostUpdateAction::ExitGameState:
-          {
-            this->popGameState();
-            break;
-          }
-          case PostUpdateAction::ExitGame:
-          {
-            this->running_ = false;
-            break;
-          }
-        }
+        game_state->render(this->main_surface_);
+        SDL_Flip(this->main_surface_);
 
         fps_timer.reset();
 

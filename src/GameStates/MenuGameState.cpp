@@ -78,29 +78,18 @@ namespace pong
 
     this->quit_.executeOnClick([this]()
     {
-      this->pending_action_ = PostUpdateAction::ExitGameState;
+      this->game_->quit();
     });
 
     //Configure the mouse
     SDL_WM_GrabInput(SDL_GRAB_OFF);
     SDL_ShowCursor(SDL_ENABLE);
   }
-  PostUpdateAction MenuGameState::update()
-  {
-    //Basically, if we need to render, then make sure we only render once
-    //After a single render we have nothing to do, right?! (Yes, always yes)
-    if(this->pending_action_ == PostUpdateAction::Render)
-    {
-      this->pending_action_ = PostUpdateAction::DoNothing;
-      return PostUpdateAction::Render;
-    }
-    return this->pending_action_;
-  }
   void MenuGameState::handleEvent(const SDL_Event& event)
   {
     if(event.type == SDL_KEYUP)
     {
-      this->pending_action_ = PostUpdateAction::ExitGameState;
+      this->game_->quit();
     }
 
     this->singleplayer_.handleEvent(event);

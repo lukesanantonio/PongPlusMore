@@ -22,7 +22,7 @@ namespace pong
     MenuGameState& operator=(const MenuGameState&) = delete;
     MenuGameState& operator=(MenuGameState&&) = delete;
 
-    virtual PostUpdateAction update() override;
+    virtual void update() override {}
     virtual void handleEvent(const SDL_Event& event) override;
   private:
     Label title_;
@@ -32,8 +32,6 @@ namespace pong
     Button options_;
     Button help_;
     Button quit_;
-
-    PostUpdateAction pending_action_ = PostUpdateAction::Render;
 
     Game* game_;
   };
