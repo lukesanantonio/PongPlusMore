@@ -1,9 +1,8 @@
 /*!
  * \file Ball.cpp
- * \brief File containing the static ball class definitions.
+ * \brief File containing the definitions of the Ball class.
  */
 #include "Ball.h"
-#include "render_text.h"
 namespace pong
 {
   void Ball::render(SDL_Surface* surface) const
@@ -11,14 +10,10 @@ namespace pong
     SDL_Rect dest;
     dest.x = this->pos_.x;
     dest.y = this->pos_.y;
-    SDL_BlitSurface(this->cache(), NULL, surface, &dest);
-  }
-  SDL_Surface* Ball::generateCache_private() const
-  {
-    SDL_Color white;
-    white.r = 0xff;
-    white.g = 0xff;
-    white.b = 0xff;
-    return generateRectangle(this->diameter_, this->diameter_, white);
+    dest.w = this->diameter_;
+    dest.h = this->diameter_;
+
+
+    SDL_FillRect(surface, &dest, SDL_MapRGB(surface->format, 0xff, 0xff, 0xff));
   }
 };
