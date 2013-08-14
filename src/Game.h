@@ -61,6 +61,9 @@ namespace pong
     inline void quit() noexcept;
 
     inline FontRenderer* font_renderer() const noexcept;
+
+    inline int width() const noexcept;
+    inline int height() const noexcept;
   private:
     Game() = default;
     ~Game() = default;
@@ -101,5 +104,14 @@ namespace pong
   inline FontRenderer* Game::font_renderer() const noexcept
   {
     return this->font_renderer_;
+  }
+
+  inline int Game::width() const noexcept
+  {
+    return this->main_surface_->w;
+  }
+  inline int Game::height() const noexcept
+  {
+    return this->main_surface_->h;
   }
 };
