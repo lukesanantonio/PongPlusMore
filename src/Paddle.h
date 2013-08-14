@@ -46,11 +46,11 @@ namespace pong
     inline math::vector position() const noexcept;
     inline void position(math::vector pos) noexcept;
 
-    inline std::size_t width() const noexcept;
-    inline void width(std::size_t width) noexcept;
+    inline unsigned short width() const noexcept;
+    inline void width(unsigned short width) noexcept;
 
-    inline std::size_t height() const noexcept;
-    inline void height(std::size_t height) noexcept;
+    inline unsigned short height() const noexcept;
+    inline void height(unsigned short height) noexcept;
   private:
     /*!
      * \brief The position of the top left corner of the paddle.
@@ -60,11 +60,11 @@ namespace pong
     /*!
      * \brief Width of the paddle.
      */
-    std::size_t width_ = 120;
+    unsigned short width_ = 120;
     /*!
      * \brief Height of the paddle.
      */
-    std::size_t height_ = 20;
+    unsigned short height_ = 20;
   };
 
   /*!
@@ -92,14 +92,14 @@ namespace pong
    *
    * \returns Paddle::width_
    */
-  inline std::size_t Paddle::width() const noexcept
+  inline unsigned short Paddle::width() const noexcept
   {
     return this->width_;
   }
   /*!
    * \brief Sets the width of the paddle for future rendering.
    */
-  inline void Paddle::width(std::size_t width) noexcept
+  inline void Paddle::width(unsigned short width) noexcept
   {
     this->width_ = width;
   }
@@ -109,14 +109,14 @@ namespace pong
    *
    * \returns Paddle::height_
    */
-  inline std::size_t Paddle::height() const noexcept
+  inline unsigned short Paddle::height() const noexcept
   {
     return this->height_;
   }
   /*!
    * \brief Sets the height of the paddle for future rendering.
    */
-  inline void Paddle::height(std::size_t height) noexcept
+  inline void Paddle::height(unsigned short height) noexcept
   {
     this->height_ = height;
   }
