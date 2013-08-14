@@ -22,6 +22,7 @@
  * \brief Contains the declaration of the ABC for controlling a paddle.
  */
 #pragma once
+#include "SDL.h"
 namespace pong
 {
   class Paddle;
@@ -37,6 +38,14 @@ namespace pong
     PaddleController(PaddleController&&) = delete;
     PaddleController& operator=(const PaddleController&) = delete;
     PaddleController& operator=(PaddleController&&) = delete;
+
+    /*!
+     * \brief Notify the controller of an event.
+     *
+     * This will most likely be used to maintain the current state of some
+     * elements, such as where the mouse is at any given moment!
+     */
+    virtual void handleEvent(const SDL_Event&) noexcept = 0;
 
     /*!
      * \brief Generates a position and updates the Paddle accordingly.
