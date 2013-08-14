@@ -27,7 +27,7 @@
 namespace pong
 {
   MenuGameState::MenuGameState(Game& game) noexcept :
-                                           title_("Ultimate Pong", 110),
+                                           title_("Pong Plus More", 110),
                                            singleplayer_("Singleplayer"),
                                            multiplayer_("Multiplayer"),
                                            options_("Options"),
