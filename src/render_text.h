@@ -53,7 +53,13 @@ namespace pong
   class FontRenderer
   {
   public:
-    FontRenderer();
+    /*!
+     * \brief Constructs a font renderer (FT_Library and FT_Face) to render
+     * text with a font from a path.
+     *
+     * \param fontfile Font to load and render text with!
+     */
+    FontRenderer(const std::string& fontfile);
 
     //We can't let our members be copied, they're pointers!
     FontRenderer(const FontRenderer&) = delete;
@@ -91,6 +97,8 @@ namespace pong
    */
   class MonoTextRenderer : public FontRenderer
   {
+    using FontRenderer::FontRenderer;
+
     virtual UniquePtrSurface render_text(const std::string& text,
                                          std::size_t pixel_size,
                                          SDL_Color text_color,

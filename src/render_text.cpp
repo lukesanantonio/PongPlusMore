@@ -32,15 +32,14 @@ namespace pong
    * \brief Initializes Freetype into FontRenderer::library_ and a face
    * (FontRenderer::face_) ready to go for implementors of FontRenderer.
    */
-  FontRenderer::FontRenderer()
+  FontRenderer::FontRenderer(const std::string& fontfile)
   {
     if(FT_Init_FreeType(&this->library_))
     {
       crash("Failed to initialize FreeType!");
     }
     if(FT_New_Face(this->library_,
-                   "/usr/share/fonts/truetype/ubuntu-font-family"
-                                                            "/UbuntuMono-R.ttf",
+                   fontfile.c_str(),
                    0,
                    &this->face_))
     {

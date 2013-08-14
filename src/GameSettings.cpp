@@ -46,13 +46,18 @@ namespace pong
 
 
       //Load all the values, then deal with them!
-      Json::Value font_renderer_value = root["FontRenderer"];
+      Json::Value font_renderer_value = root["Font"]["Type"];
+      Json::Value font_file_value = root["Font"]["Path"];
       Json::Value width_value = root["Bounds"]["Width"];
       Json::Value height_value = root["Bounds"]["Height"];
 
       if(font_renderer_value == Json::Value::null)
       {
-        crash("No FontRenderer specified in config file!");
+        crash("No Font::Path specified in config file!");
+      }
+      if(font_file_value == Json::Value::null)
+      {
+        crash("No Font::Type specified in config file!");
       }
       if(width_value == Json::Value::null)
       {
@@ -66,7 +71,8 @@ namespace pong
       if(font_renderer_value.asString() == "Mono")
       {
         settings.font_renderer =
-                            std::unique_ptr<FontRenderer>(new MonoTextRenderer);
+                            std::unique_ptr<FontRenderer>(
+                            new MonoTextRenderer(font_file_value.asString()));
       }
       else
       {
