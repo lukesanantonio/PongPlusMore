@@ -34,7 +34,7 @@ namespace pong
   {
     //Load up GameSettings
     GameSettings settings =
-                          loadSettings("/home/luke/.ultimate_pong/config.json");
+                          loadSettings("/home/luke/.PpM/config.json");
 
     //Initialize Components!
     if(!this->initializeSDL(settings.width, settings.height)) { return 1; }
