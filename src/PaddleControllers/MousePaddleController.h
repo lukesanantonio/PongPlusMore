@@ -17,15 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ULTIMATE_PONG_MOUSE_PADDLE_CONTROLLER_H
-#define ULTIMATE_PONG_MOUSE_PADDLE_CONTROLLER_H
+#pragma once
 #include "PaddleController.hpp"
+#include "Game.h"
 namespace pong
 {
   class MousePaddleController : public PaddleController
   {
   public:
+    MousePaddleController(const Game& game) noexcept : game_(game) {}
+
+    virtual void handleEvent(const SDL_Event&) noexcept override {}
+
     virtual void update(Paddle*) override;
+  private:
+    const Game& game_;
   };
 }
-#endif
