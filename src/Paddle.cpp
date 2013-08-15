@@ -30,6 +30,8 @@ namespace pong
 
     dest.x = this->pos_.x;
     dest.y = this->pos_.y;
+    dest.w = this->width_;
+    dest.h = this->height_;
 
     SDL_FillRect(surface, &dest, SDL_MapRGB(surface->format, 0xff, 0xff, 0xff));
   }
