@@ -36,10 +36,8 @@ namespace pong
   public:
     Paddle() = default;
     virtual ~Paddle() = default;
-    Paddle(const Paddle&) = delete;
-    Paddle(Paddle&&) = delete;
-    Paddle& operator=(const Paddle&) = delete;
-    Paddle& operator=(Paddle&&) = delete;
+    Paddle(const Paddle&) = default;
+    Paddle& operator=(const Paddle&) = default;
 
     virtual void render(SDL_Surface*) const override;
 
