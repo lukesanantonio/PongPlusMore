@@ -33,6 +33,10 @@ namespace pong
   class Ball : public RenderableEntity
   {
   public:
+    Ball() noexcept = default;
+    Ball(const Ball&) noexcept = default;
+    Ball& operator=(const Ball&) noexcept = default;
+
     virtual void render(SDL_Surface*) const override;
 
     inline math::vector position() const noexcept;
