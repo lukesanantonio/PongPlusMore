@@ -23,13 +23,14 @@
  */
 #pragma once
 #include "SDL.h"
+#include "EventHandler.h"
 namespace pong
 {
   class Paddle;
   /*!
    * \brief ABC for controlling a paddle. Yay, an abstraction.
    */
-  struct PaddleController
+  struct PaddleController : public EventHandler
   {
   public:
     PaddleController() = default;
@@ -45,7 +46,7 @@ namespace pong
      * This will most likely be used to maintain the current state of some
      * elements, such as where the mouse is at any given moment!
      */
-    virtual void handleEvent(const SDL_Event&) noexcept = 0;
+    virtual void handleEvent(const SDL_Event&) noexcept override = 0;
 
     /*!
      * \brief Generates a position and updates the Paddle accordingly.
