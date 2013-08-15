@@ -30,52 +30,44 @@
 #include "Physics/SimplePhysicsWorld.h"
 namespace pong
 {
-  SinglePlayerGameState::SinglePlayerGameState()
+  SinglePlayerGameState::SinglePlayerGameState(Game& game) noexcept :
+                                                                 game_(game)
   {
     //Initialize paddles (positions, etc).
-    this->topPaddle_.position({0, 0});
+    this->topPaddle_.position({static_cast<double>(center(0, game.width(),
+                                                   this->topPaddle_.width())),
+                               0});
 
     this->bottomPaddle_.position(
     //                                ,--This is casted to a double here to
     //                               /   avoid narrowing conversion warnings. I
     //                              \/   don't really like it but, eh.
-                    {0,static_cast<double>(Game::getInstance()->height()
+                    {0,static_cast<double>(game.height()
                                         - this->bottomPaddle_.height())});
-
-    //Initialize the physics world.
-    this->world_.addPaddle(&this->topPaddle_,
-                  std::make_shared<UnbeatableAIPaddleController>(&this->ball_));
-    this->world_.addPaddle(&this->bottomPaddle_,
-                           std::make_shared<MousePaddleController>());
-
-    this->world_.addBall(&this->ball_, {0, 5});
 
     //Set initial position of the ball. The center.
     math::vector ball_pos;
-    ball_pos.x = center(0, Game::getInstance()->width(),
+    ball_pos.x = center(0, game.width(),
                         this->ball_.diameter());
-    ball_pos.y = center(0, Game::getInstance()->height(),
+    ball_pos.y = center(0, game.height(),
                         this->ball_.diameter());
     this->ball_.position(ball_pos);
+
+    //Add the objects to the render queue.
+    this->addRenderableEntity(&this->topPaddle_);
+    this->addRenderableEntity(&this->bottomPaddle_);
+    this->addRenderableEntity(&this->ball_);
 
     //Configure the mouse.
     SDL_WM_GrabInput(SDL_GRAB_ON);
     SDL_ShowCursor(SDL_DISABLE);
   }
 
-  void SinglePlayerGameState::update_private()
+  void SinglePlayerGameState::handleEvent(const SDL_Event& event) noexcept
   {
-    if(Game::getInstance()->events.keyHasBeenPressed())
+    if(event.type == SDL_KEYUP)
     {
-      Game::getInstance()->setGameState(std::shared_ptr<GameState>(
-                                                            new MenuGameState));
+      this->game_.popGameState();
     }
-    this->world_.step();
-  }
-  void SinglePlayerGameState::render_private(SDL_Surface* surface) const
-  {
-    this->topPaddle_.render(surface);
-    this->bottomPaddle_.render(surface);
-    this->ball_.render(surface);
   }
 };

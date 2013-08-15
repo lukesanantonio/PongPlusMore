@@ -21,34 +21,33 @@
  * \file SinglePlayerGameState.h
  * \brief Contains declarations for the SinglePlayerGameState GameState.
  */
-#ifndef ULTIMATE_PONG_SINGLE_PLAYER_GAME_STATE_H
-#define ULTIMATE_PONG_SINGLE_PLAYER_GAME_STATE_H
+#pragma once
 #include "GameState.h"
 #include "Paddle.h"
 #include "Ball.h"
-#include "Physics/SimplePhysicsWorld.h"
+#include "Game.h"
 
 namespace pong
 {
   class SinglePlayerGameState : public GameState
   {
   public:
-    SinglePlayerGameState();
+    SinglePlayerGameState(Game&) noexcept;
     SinglePlayerGameState(const SinglePlayerGameState&) = delete;
     SinglePlayerGameState(SinglePlayerGameState&&) = delete;
     SinglePlayerGameState& operator=(const SinglePlayerGameState&) = delete;
     SinglePlayerGameState& operator=(SinglePlayerGameState&&) = delete;
     virtual ~SinglePlayerGameState() = default;
-  private:
-    virtual void update_private() override;
-    virtual void render_private(SDL_Surface*) const override;
+
+    virtual void handleEvent(const SDL_Event&) noexcept override;
+
+    virtual void update() noexcept override {}
 
     Paddle topPaddle_;
     Paddle bottomPaddle_;
 
-    SimplePhysicsWorld world_;
-
     Ball ball_;
+
+    Game& game_;
   };
 };
-#endif

@@ -23,7 +23,7 @@
  */
 #include "MenuGameState.h"
 #include "render_text.h"
-//#include "SinglePlayerGameState.h"
+#include "SinglePlayerGameState.h"
 namespace pong
 {
   MenuGameState::MenuGameState(Game& game) noexcept :
@@ -50,7 +50,7 @@ namespace pong
     this->singleplayer_.position(pos);
     this->singleplayer_.width(width);
     this->singleplayer_.height(height);
-    this->singleplayer_.enabled(false);
+    this->singleplayer_.enabled(true);
     this->singleplayer_.font_renderer(game.font_renderer());
 
     pos.y += 100;
@@ -87,13 +87,11 @@ namespace pong
     this->addRenderableEntity(&this->help_);
     this->addRenderableEntity(&this->quit_);
 
-#if 0
-    this->singleplayer_.executeOnClick([]()
+    this->singleplayer_.executeOnClick([this]()
     {
-      Game::getInstance()->setGameState(std::shared_ptr<GameState>(
-                                                    new SinglePlayerGameState));
+      this->game_.pushGameState(std::unique_ptr<GameState>(
+                                       new SinglePlayerGameState(this->game_)));
     });
-#endif
 
     this->quit_.executeOnClick([this]()
     {
