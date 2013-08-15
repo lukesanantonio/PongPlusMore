@@ -89,14 +89,10 @@ namespace pong
     }
 
     SDL_Surface* icon = SDL_LoadBMP("/home/luke/.PpM/image/icon.bmp");
-
-    //Don't use pong::runtime_assert_surface in common.h, it's too generic!
-    if(!icon)
+    if(icon)
     {
-      SDL_Quit();
-      crash("Failed to load icon at /home/luke/.PpM/image/icon.bmp");
+      SDL_WM_SetIcon(icon, NULL);
     }
-    SDL_WM_SetIcon(icon, NULL);
 
     //Set other window parameters
     SDL_WM_SetCaption("Pong Plus More", "Pong Plus More");
