@@ -22,7 +22,6 @@
  * \brief Contains definitions for the Button class.
  */
 #include "Button.h"
-#include "render_text.h"
 namespace pong
 {
   /*!
