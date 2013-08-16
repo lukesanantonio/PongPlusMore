@@ -16,16 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-find_package(SDL REQUIRED)
+find_package(SDL2 REQUIRED)
 find_package(Freetype REQUIRED)
-add_executable(ppm Game.cpp GameState.cpp common.cpp render_text.cpp
-Label.cpp Button.cpp CachedSurface.cpp GameStates/MenuGameState.cpp Paddle.cpp
-GameSettings.cpp Ball.cpp PaddleControllers/MousePaddleController.cpp
-GameStates/SinglePlayerGameState.cpp jsoncpp/jsoncpp.cpp)
-target_link_libraries(ppm ${SDL_LIBRARY} ${FREETYPE_LIBRARIES})
+#add_executable(ppm Game.cpp)
+#target_link_libraries(ppm ${SDL2_LIBRARYS} ${FREETYPE_LIBRARIES})
 
-include_directories(${SDL_INCLUDE_DIR} ${FREETYPE_INCLUDE_DIRS}
+include_directories(${SDL2_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
 ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp)
 
-install(TARGETS ppm
-        RUNTIME DESTINATION bin)
+#install(TARGETS ppm
+#        RUNTIME DESTINATION bin)

@@ -18,6 +18,9 @@
 
 cmake_minimum_required(VERSION 2.8)
 project(PpM)
+
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
+
 add_subdirectory(src)
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
@@ -28,6 +31,6 @@ if(DOXYGEN_FOUND)
                     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                     COMMENT "Generating documentation with doxygen"
                     VERBATIM)
-  add_dependencies(doc ppm)
+#  add_dependencies(doc ppm)
   set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES docs)
 endif(DOXYGEN_FOUND)
