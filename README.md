@@ -18,15 +18,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 Pong Plus More (PpM)
-=============
+====================
 
 A pong clone full of surprises written with C++11
 
 Pong Plus More isn't just any pong clone. It will feature fairly funny easter
 eggs and trolls, paddles that have a mind of their own, and a multiplayer mode
 which supports all of this. It is released under the GPL so you'll be able to
-play PpM for free, though I haven't got a alpha out yet, so you'll just have to
-wait... Thanks for your interest!
+play PpM for free, though I haven't got an alpha out yet, so you'll just have
+to wait... Thanks for your interest! I am *sort of* managing the development
+with Trello, you can find my board, in all its glory, [here][1]. I can't
+imagine it very interesting, but it should soon be a solid snapshot of my
+progress thus far, though there are no guarantees! =D
 
 -
 Luke, '13
+
+[1]: <https://trello.com/b/6kkfz2kJ/pong-plus-more>
