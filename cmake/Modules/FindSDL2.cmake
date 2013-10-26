@@ -1,3 +1,5 @@
+# FindSDL2.cmake
+# Sets SDL2_LIBRARYS and SDL2_INCLUDE_DIRS
 find_package(PkgConfig QUIET)
 if(PKG_CONFIG_FOUND)
   pkg_check_modules(SDL2_PKG_CONFIG QUIET sdl2)
@@ -6,7 +8,7 @@ endif()
 find_package(Threads REQUIRED)
 
 find_path(SDL2_INCLUDE_DIRS "SDL.h" HINTS ${SDL2_PKG_CONFIG_INCLUDE_DIRS}
-          PATH_SUFFIXES SDL2 DOC "SDL include directory")
+          PATH_SUFFIXES SDL2 DOC "SDL2 include directory")
 
 find_library(SDL2_LIBRARY_TEMP "SDL2" HINTS ${SDL2_PKG_CONFIG_LIBRARY_DIRS}
              DOC "")
