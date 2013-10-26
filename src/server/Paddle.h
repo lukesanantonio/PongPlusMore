@@ -22,10 +22,13 @@
 #include "common/vector.h"
 namespace pong
 {
+  /*!
+   * \brief Used to identify a paddle to the server.
+   */
   using PaddleID = uint8_t;
   struct Paddle
   {
-    PaddleID id;
+    PaddleID id = 0;
     math::vector pos;
   };
 }
