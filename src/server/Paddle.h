@@ -28,7 +28,10 @@ namespace pong
   using PaddleID = uint8_t;
   struct Paddle
   {
-    PaddleID id = 0;
+    Paddle(PaddleID id = 0, math::vector pos = math::vector(),
+           uint16_t width = 0, uint16_t height = 0)
+         : id(id), pos(pos), width(width), height(height){}
+    PaddleID id;
     math::vector pos;
     uint16_t width, height;
   };
