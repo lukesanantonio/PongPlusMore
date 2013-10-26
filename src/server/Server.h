@@ -26,9 +26,12 @@ namespace pong
   {
     virtual ~Server() noexcept = default;
     /*!
-     * \brief Returns the key used to mess with a certain paddle.
+     * \brief A new paddle is added. The id is returned.
+     *
+     * \returns A non-zero integer which is the id of the paddle just paired.
+     * \sa PaddleID
      */
-    virtual PaddleID makeClient() = 0;
+    virtual PaddleID makePaddle() = 0;
 
     virtual void setPaddleDestination(PaddleID,
                                       decltype(Paddle::pos.x) x) noexcept = 0;
