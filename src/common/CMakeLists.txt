@@ -17,6 +17,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 add_library(ppmcommon vector.cpp jsoncpp/jsoncpp.cpp)
-target_include_directories(ppmcommon PUBLIC
-                           ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(ppmcommon PRIVATE
                            ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp)

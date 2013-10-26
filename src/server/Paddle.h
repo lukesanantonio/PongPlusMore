@@ -19,7 +19,7 @@
  */
 #pragma once
 #include <cstdint>
-#include "vector.h"
+#include "common/vector.h"
 namespace pong
 {
   using PaddleID = uint8_t;
