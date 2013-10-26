@@ -28,17 +28,6 @@
 namespace pong
 {
   /*!
-   * \brief Calls std::abort after displaying the why message!
-   *
-   * \note Does not return, ever!
-   */
-  [[noreturn]] void crash(const std::string& why)
-  {
-    std::cerr << "Crashing: " << why << std::endl;
-    std::abort();
-  }
-
-  /*!
    * \brief Performs a runtime assertion of a surface.
    *
    * Should the test fail (when !surface) pong::crash is called with a message

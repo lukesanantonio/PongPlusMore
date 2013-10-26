@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_subdirectory(client)
-add_subdirectory(common)
-add_subdirectory(server)
+add_library(ppmcommon vector.cpp jsoncpp/jsoncpp.cpp)
+target_include_directories(ppmcommon PUBLIC
+                           ${CMAKE_CURRENT_SOURCE_DIR}
+                           ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp)
