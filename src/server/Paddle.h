@@ -30,5 +30,6 @@ namespace pong
   {
     PaddleID id = 0;
     math::vector pos;
+    uint16_t width, height;
   };
 }
