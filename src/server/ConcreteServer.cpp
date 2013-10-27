@@ -33,7 +33,7 @@ namespace pong
     //Second client gets the second paddle.
     //Third+ clients get no paddle.
     if(id_impl_ == 1) std::get<0>(this->first_paddle_).id = 1;
-    if(id_impl_ == 2) std::get<0>(this->second_paddle_).id = 2;
+    else if(id_impl_ == 2) std::get<0>(this->second_paddle_).id = 2;
     else return 0;
     return id_impl_++;
   }
