@@ -16,5 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_library(ppmserv ConcreteServer.cpp)
+add_library(ppmserv ConcreteServer.cpp AIClient.cpp)
 target_link_libraries(ppmserv ppmcommon)
+
+add_executable(poip poip.cpp)
+target_link_libraries(poip ppmserv)
