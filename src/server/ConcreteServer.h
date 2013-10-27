@@ -32,6 +32,8 @@ namespace pong
     virtual void
     setPaddleDestination(PaddleID, decltype(Paddle::pos.x)) noexcept override;
 
+    virtual std::vector<Paddle> paddles() const noexcept override;
+
     virtual void step() override;
   private:
     using paddle_x_type = decltype(Paddle::pos.x);

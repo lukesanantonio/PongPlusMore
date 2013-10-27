@@ -19,6 +19,7 @@
  */
 #pragma once
 #include <cstdint>
+#include <vector>
 #include "Paddle.h"
 namespace pong
 {
@@ -35,6 +36,8 @@ namespace pong
 
     virtual void setPaddleDestination(PaddleID,
                                       decltype(Paddle::pos.x) x) noexcept = 0;
+
+    virtual std::vector<Paddle> paddles() const noexcept = 0;
 
     virtual void step() = 0;
 

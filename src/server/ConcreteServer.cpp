@@ -53,6 +53,11 @@ namespace pong
       std::get<1>(this->second_paddle_) = x;
     }
   }
+  std::vector<Paddle> ConcreteServer::paddles() const noexcept
+  {
+    return {std::get<0>(this->first_paddle_),
+            std::get<0>(this->second_paddle_)};
+  }
   void ConcreteServer::step()
   {
     std::get<0>(this->first_paddle_).pos.x = std::get<1>(this->first_paddle_);
