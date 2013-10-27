@@ -27,11 +27,12 @@ namespace pong
     ConcreteServer(uint16_t width, uint16_t height) noexcept;
     virtual ~ConcreteServer() noexcept = default;
 
-    virtual PaddleID makePaddle();
+    virtual PaddleID makePaddle() override;
 
-    virtual void setPaddleDestination(PaddleID,
-                                      decltype(Paddle::pos.x) x) noexcept;
-    virtual void step();
+    virtual void
+    setPaddleDestination(PaddleID, decltype(Paddle::pos.x)) noexcept override;
+
+    virtual void step() override;
   private:
     using paddle_x_type = decltype(Paddle::pos.x);
     std::pair<Paddle, paddle_x_type> first_paddle_;
