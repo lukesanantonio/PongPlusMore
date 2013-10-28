@@ -18,33 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include <utility>
-#include "Server.h"
+#include <cstdint>
+#include "common/vector.h"
 namespace pong
 {
-  struct ConcreteServer : public Server
+  using BallID = uint8_t;
+  struct Ball
   {
-    ConcreteServer(uint16_t width, uint16_t height) noexcept;
-    virtual ~ConcreteServer() noexcept = default;
-
-    virtual PaddleID makePaddle() override;
-
-    virtual void
-    setPaddleDestination(PaddleID, decltype(Paddle::pos.x)) noexcept override;
-
-    virtual std::vector<Paddle> paddles() const noexcept override;
-    virtual std::vector<Ball> balls() const noexcept override;
-
-    virtual void step() override;
-  private:
-    using paddle_x_type = decltype(Paddle::pos.x);
-    std::pair<Paddle, paddle_x_type> first_paddle_;
-    std::pair<Paddle, paddle_x_type> second_paddle_;
-    Ball ball_;
-
-    /*!
-     * \brief Used to implement makePaddle.
-     */
-    PaddleID id_impl_ = 1;
+    BallID id;
+    math::vector pos;
+    uint16_t diameter;
   };
 }

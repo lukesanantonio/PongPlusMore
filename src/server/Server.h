@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <vector>
 #include "Paddle.h"
+#include "Ball.h"
 namespace pong
 {
   struct Server
@@ -38,6 +39,7 @@ namespace pong
                                       decltype(Paddle::pos.x) x) noexcept = 0;
 
     virtual std::vector<Paddle> paddles() const noexcept = 0;
+    virtual std::vector<Ball> balls() const noexcept = 0;
 
     virtual void step() = 0;
 
