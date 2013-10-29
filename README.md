@@ -54,7 +54,7 @@ to add:
 FAQ
 ---
 
-#### Why Pong Luke? It's Pong! Who cares about Pong!
+#### Why Pong, Luke? It's Pong! Who cares about Pong!
 This game is basically a learning experience. If I happen to make a great game
 in the process, then great!
 
