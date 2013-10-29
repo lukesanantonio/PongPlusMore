@@ -25,8 +25,9 @@ namespace pong
                      first_paddle_({0, {0, 0}, 200, 30}, 0),
                      second_paddle_({0, {0, static_cast<double>(height - 30)},
                                      200, 30}, 0),
-                     ball_{1, {static_cast<double>(width / 2),
-                               static_cast<double>(height / 2)}, 25}{}
+                     ball_({1, {static_cast<double>(width / 2),
+                               static_cast<double>(height / 2)}, 25},
+                           {0,1}){}
 
   PaddleID ConcreteServer::makePaddle()
   {
@@ -62,12 +63,14 @@ namespace pong
   }
   std::vector<Ball> ConcreteServer::balls() const noexcept
   {
-    return {this->ball_};
+    return {std::get<0>(this->ball_)};
   }
   void ConcreteServer::step()
   {
     std::get<0>(this->first_paddle_).pos.x = std::get<1>(this->first_paddle_);
     std::get<0>(this->second_paddle_).pos.x =
                                              std::get<1>(this->second_paddle_);
+    std::get<0>(this->ball_).pos.x += std::get<1>(this->ball_).x;
+    std::get<0>(this->ball_).pos.y += std::get<1>(this->ball_).y;
   }
 };

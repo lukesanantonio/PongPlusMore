@@ -40,7 +40,7 @@ namespace pong
     using paddle_x_type = decltype(Paddle::pos.x);
     std::pair<Paddle, paddle_x_type> first_paddle_;
     std::pair<Paddle, paddle_x_type> second_paddle_;
-    Ball ball_;
+    std::pair<Ball, math::vector> ball_;
 
     /*!
      * \brief Used to implement makePaddle.
