@@ -40,10 +40,11 @@ Planned Features
 I hope Pong Plus More could someday be the go-to pong game for everyone! I plan
 to add:
 
- - Javascript scripting to control arbitrary paddles and a "Level Editor" to go
- with that!
+ - Scripting to control arbitrary paddles and a "Level Editor" to go with that!
    - The maps and scripts can be bundled into a package and distributed as a
    gamemode.
+   - Don't know about any particular scripting language... Possibly Javascript,
+   Python, or [any of these][2].
  - Complete Network Transparency. The scripting API will do the best job it can
  in allowing the developer to avoid special cases involved when a player
  abstraction isn't that great...
@@ -72,3 +73,4 @@ early alpha. An early alpha will include multiplayer support with flying
 paddles, at the least.
 
 [1]: <https://trello.com/b/6kkfz2kJ/pong-plus-more>
+[2]: <http://codeplea.com/game-scripting-languages>
