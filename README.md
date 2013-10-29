@@ -34,4 +34,41 @@ progress thus far, though there are no guarantees! =D
 -
 Luke, '13
 
+Planned Features
+----------------
+
+I hope Pong Plus More could someday be the go-to pong game for everyone! I plan
+to add:
+
+ - Javascript scripting to control arbitrary paddles and a "Level Editor" to go
+ with that!
+   - The maps and scripts can be bundled into a package and distributed as a
+   gamemode.
+ - Complete Network Transparency. The scripting API will do the best job it can
+ in allowing the developer to avoid special cases involved when a player
+ abstraction isn't that great...
+ - Configurable. It'd be nice if a player could change the resolution of their
+ pong game. So why not!
+ - Some other stuff that I can't remember at the moment.
+
+FAQ
+---
+
+#### Why Pong Luke? It's Pong! Who cares about Pong!
+This game is basically a learning experience. If I happen to make a great game
+in the process, then great!
+
+#### Why is the trello page so out of date
+You mean [this one][1]? Yeah, it's pretty bad now, but I am working on
+organizing it! Just sit tight and check back every so often...
+
+#### Luke, you've been working on this game since March, what's taking so long?
+I don't know, I am getting a bit too worried over design that I barely make any
+progress... However, recently I have been able to code and produce fairly
+alright code.
+
+Also I have set an unofficial deadline of March 4th, 2014 for an
+early alpha. An early alpha will include multiplayer support with flying
+paddles, at the least.
+
 [1]: <https://trello.com/b/6kkfz2kJ/pong-plus-more>
