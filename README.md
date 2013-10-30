@@ -72,5 +72,11 @@ Also I have set an unofficial deadline of March 4th, 2014 for an
 early alpha. An early alpha will include multiplayer support with flying
 paddles, at the least.
 
+#### Why the GPL, you seem like a reasonable guy, why not the MIT License?
+I thought about the MIT license or something similar (like the Zlib license).
+My conclusion was that I do believe in a more liberal license generally,
+however in this case, I really do think that any changes to PpM should benefit
+everyone. That's why I picked the GPL!
+
 [1]: <https://trello.com/b/6kkfz2kJ/pong-plus-more>
 [2]: <http://codeplea.com/game-scripting-languages>
