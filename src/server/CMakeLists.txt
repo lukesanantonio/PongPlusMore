@@ -18,6 +18,3 @@
 
 add_library(ppmserv ConcreteServer.cpp AIClient.cpp)
 target_link_libraries(ppmserv ppmcommon)
-
-add_executable(poip poip.cpp)
-target_link_libraries(poip ppmserv)
