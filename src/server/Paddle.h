@@ -24,6 +24,9 @@ namespace pong
 {
   /*!
    * \brief Used to identify a paddle to the server.
+   *
+   * \note A PaddleID of zero does not reference any paddle but remains
+   * semantically correct.
    */
   using PaddleID = uint8_t;
   struct Paddle
