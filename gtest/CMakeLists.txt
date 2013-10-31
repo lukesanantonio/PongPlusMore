@@ -1,3 +1,5 @@
+# Note: This file is not part of the Google C++ Testing Framework.
+#
 # PpM - Pong Plus More - A pong clone full of surprises written with C++11.
 # Copyright (C) 2013  Luke San Antonio
 #
@@ -16,27 +18,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Init CMake stuff.
-cmake_minimum_required(VERSION 2.8)
-project(PpM)
+# Build a static library of gtest. Declare its interface headers.
+add_library(gtest STATIC gtest/gtest-all.cc)
+target_include_directories(gtest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Make sure to show our FindSDL2.cmake some love.
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
-
-# Actually build our project, or at least declare it.
-add_subdirectory(gtest)
-add_subdirectory(jsoncpp)
-add_subdirectory(src)
-
-# Set up a custom 'doc' target.
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in
-                 ${CMAKE_BINARY_DIR}/Doxyfile)
-  add_custom_target(doc
-                    ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                    COMMENT "Generating documentation with doxygen"
-                    VERBATIM)
-  set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES docs)
-endif(DOXYGEN_FOUND)
+# Link in pthreads, or something else.
+find_package(Threads REQUIRED)
+target_link_libraries(gtest ${CMAKE_THREAD_LIBS_INIT})
