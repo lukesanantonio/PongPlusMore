@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Build a static library of gtest. Declare its interface headers.
-add_library(gtest STATIC gtest/gtest-all.cc)
+add_library(gtest STATIC EXCLUDE_FROM_ALL gtest/gtest-all.cc)
 target_include_directories(gtest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Link in pthreads, or something else.
