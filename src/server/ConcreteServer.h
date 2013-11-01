@@ -39,8 +39,9 @@ namespace pong
     virtual Ball getBallFromID(BallID) const noexcept override;
 
     virtual void step() override;
-  private:
+
     using paddle_x_type = decltype(Paddle::pos.x);
+  private:
     std::pair<Paddle, paddle_x_type> first_paddle_;
     std::pair<Paddle, paddle_x_type> second_paddle_;
     std::pair<Ball, math::vector> ball_;
