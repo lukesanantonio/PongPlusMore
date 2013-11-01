@@ -25,6 +25,8 @@ namespace pong
   using BallID = uint8_t;
   struct Ball
   {
+    Ball(BallID id = 0, math::vector pos = math::vector(),
+         uint16_t diameter = 0) : id(id), pos(pos), diameter(diameter){}
     BallID id;
     math::vector pos;
     uint16_t diameter;
