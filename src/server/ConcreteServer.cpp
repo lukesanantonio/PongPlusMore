@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <algorithm>
 #include "ConcreteServer.h"
 #include "common/center.hpp"
 namespace pong
@@ -56,14 +57,29 @@ namespace pong
       std::get<1>(this->second_paddle_) = x;
     }
   }
-  std::vector<Paddle> ConcreteServer::paddles() const noexcept
+  std::vector<PaddleID> ConcreteServer::paddles() const noexcept
   {
-    return {std::get<0>(this->first_paddle_),
-            std::get<0>(this->second_paddle_)};
+    //This function is fairly inefficient. TODO fix.
+    std::vector<PaddleID> paddles = {std::get<0>(this->first_paddle_).id,
+                                     std::get<0>(this->second_paddle_).id};
+    auto end = std::remove_if(paddles.begin(), paddles.end(), [](PaddleID id)
+    {
+      return id == 0 ? true : false;
+    });
+
+    paddles.erase(end, paddles.end());
+    //Move semantics!
+    return paddles;
   }
-  std::vector<Ball> ConcreteServer::balls() const noexcept
+  std::vector<BallID> ConcreteServer::balls() const noexcept
   {
-    return {std::get<0>(this->ball_)};
+    //At least we have move semantics.
+    std::vector<BallID> balls;
+    if(std::get<0>(this->ball_).id != 0)
+    {
+      balls.push_back(std::get<0>(this->ball_).id);
+    }
+    return balls;
   }
   Paddle ConcreteServer::getPaddleFromID(PaddleID id) const noexcept
   {

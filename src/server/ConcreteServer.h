@@ -32,8 +32,8 @@ namespace pong
     virtual void
     setPaddleDestination(PaddleID, decltype(Paddle::pos.x)) noexcept override;
 
-    virtual std::vector<Paddle> paddles() const noexcept override;
-    virtual std::vector<Ball> balls() const noexcept override;
+    virtual std::vector<PaddleID> paddles() const noexcept override;
+    virtual std::vector<BallID> balls() const noexcept override;
 
     virtual Paddle getPaddleFromID(PaddleID) const noexcept override;
     virtual Ball getBallFromID(BallID) const noexcept override;

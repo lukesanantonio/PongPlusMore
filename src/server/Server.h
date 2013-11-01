@@ -46,13 +46,13 @@ namespace pong
                                       decltype(Paddle::pos.x) x) noexcept = 0;
 
     /*!
-     * \brief Returns a vector of all the paddles that exist.
+     * \brief Returns a vector of all the paddle ids that exist.
      */
-    virtual std::vector<Paddle> paddles() const noexcept = 0;
+    virtual std::vector<PaddleID> paddles() const noexcept = 0;
     /*!
-     * \brief Returns a vector of all the balls that exist.
+     * \brief Returns a vector of all the balls ids that exist.
      */
-    virtual std::vector<Ball> balls() const noexcept = 0;
+    virtual std::vector<BallID> balls() const noexcept = 0;
 
     /*!
      * \brief Returns the paddle with the id of the one passed in.

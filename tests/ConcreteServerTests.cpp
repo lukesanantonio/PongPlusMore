@@ -62,3 +62,35 @@ TEST(ConcreteServerTest, PaddleIDsRegisteredWithPaddles)
   //Make sure a default paddle is void, unregistered, etc.
   EXPECT_EQ(third_id, server.getPaddleFromID(third_id).id);
 }
+TEST(ConcreteServerTest, PaddleListIsValid)
+{
+  //This asserts the fact that ConcreteServer::paddles only returns valid
+  //paddles, ie ones that have an id != 0.
+  pong::ConcreteServer server(1000, 1000);
+  server.makePaddle();
+
+  //Validate Server::paddles().
+  auto check = [&]()
+  {
+    for(auto id : server.paddles())
+    {
+      EXPECT_NE(0, id);
+    }
+  };
+
+  check();
+
+  server.makePaddle(); server.makePaddle();
+
+  check();
+}
+TEST(ConcreteServerTest, BallListIsValid)
+{
+  //This asserts the fact that ConcreteServer::balls only returns valid balls,
+  //id ones that have an id != 0.
+  pong::ConcreteServer server(1000, 1000);
+  for(auto id : server.balls())
+  {
+    EXPECT_NE(0, id);
+  }
+}
