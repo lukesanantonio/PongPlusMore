@@ -103,12 +103,4 @@ namespace pong
         return {};
     }
   }
-  void ConcreteServer::step()
-  {
-    std::get<0>(this->first_paddle_).pos.x = std::get<1>(this->first_paddle_);
-    std::get<0>(this->second_paddle_).pos.x =
-                                             std::get<1>(this->second_paddle_);
-    std::get<0>(this->ball_).pos.x += std::get<1>(this->ball_).x;
-    std::get<0>(this->ball_).pos.y += std::get<1>(this->ball_).y;
-  }
 };
