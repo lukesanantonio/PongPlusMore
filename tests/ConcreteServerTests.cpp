@@ -39,3 +39,26 @@ TEST(ConcreteServerTest, MakesPaddles)
   //Make sure the third paddle id is invalid.
   EXPECT_EQ(0, third);
 }
+TEST(ConcreteServerTest, RespectsPaddleClientRequests)
+{
+  pong::ConcreteServer server(1000, 1000);
+  pong::PaddleID id = server.makePaddle();
+
+  constexpr decltype(pong::Paddle::pos.x) x = 864;
+  server.setPaddleDestination(id, x);
+  server.step();
+  EXPECT_EQ(x, server.getPaddleFromID(id).pos.x);
+}
+TEST(ConcreteServerTest, PaddleIDsRegisteredWithPaddles)
+{
+  pong::ConcreteServer server(1000, 1000);
+  pong::PaddleID first_id = server.makePaddle(),
+                 second_id = server.makePaddle(),
+                 third_id = server.makePaddle();
+
+  EXPECT_EQ(first_id, server.getPaddleFromID(first_id).id);
+  EXPECT_EQ(second_id, server.getPaddleFromID(second_id).id);
+
+  //Make sure a default paddle is void, unregistered, etc.
+  EXPECT_EQ(third_id, server.getPaddleFromID(third_id).id);
+}
