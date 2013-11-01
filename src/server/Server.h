@@ -41,6 +41,9 @@ namespace pong
     virtual std::vector<Paddle> paddles() const noexcept = 0;
     virtual std::vector<Ball> balls() const noexcept = 0;
 
+    virtual Paddle getPaddleFromID(PaddleID) const noexcept = 0;
+    virtual Ball getBallFromID(BallID) const noexcept = 0;
+
     virtual void step() = 0;
 
     inline bool isRunning() noexcept {return !this->quit_;}

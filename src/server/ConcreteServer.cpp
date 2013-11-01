@@ -65,6 +65,28 @@ namespace pong
   {
     return {std::get<0>(this->ball_)};
   }
+  Paddle ConcreteServer::getPaddleFromID(PaddleID id) const noexcept
+  {
+    switch(id)
+    {
+      case 1:
+        return std::get<0>(this->first_paddle_);
+      case 2:
+        return std::get<0>(this->second_paddle_);
+      default:
+        return {};
+    }
+  }
+  Ball ConcreteServer::getBallFromID(BallID id) const noexcept
+  {
+    switch(id)
+    {
+      case 1:
+        return std::get<0>(this->ball_);
+      default:
+        return {};
+    }
+  }
   void ConcreteServer::step()
   {
     std::get<0>(this->first_paddle_).pos.x = std::get<1>(this->first_paddle_);
