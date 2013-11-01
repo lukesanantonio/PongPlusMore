@@ -28,7 +28,7 @@ namespace pong
    */
   inline void crash(const std::string& why) [[noreturn]]
   {
-    std::cerr << "Crashing..." << why << std::endl;
+    std::cerr << "Crashing..." << " " << why << std::endl;
     std::abort();
   }
 }
