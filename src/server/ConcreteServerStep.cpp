@@ -20,12 +20,42 @@
 #include "ConcreteServer.h"
 namespace pong
 {
+  namespace
+  {
+    void stepBall(Ball& ball, const math::vector& vel)
+    {
+      ball.pos.x += vel.x;
+      ball.pos.y += vel.y;
+    }
+    void stepBall(std::pair<Ball, math::vector>& pair)
+    {
+      stepBall(std::get<0>(pair), std::get<1>(pair));
+    }
+
+    void stepPaddle(Paddle& paddle, ConcreteServer::paddle_x_type x)
+    {
+      paddle.pos.x = x;
+    }
+    void stepPaddle(std::pair<Paddle, ConcreteServer::paddle_x_type>& pair)
+    {
+      stepPaddle(std::get<0>(pair), std::get<1>(pair));
+    }
+  }
   void ConcreteServer::step()
   {
-    std::get<0>(this->first_paddle_).pos.x = std::get<1>(this->first_paddle_);
-    std::get<0>(this->second_paddle_).pos.x =
-                                             std::get<1>(this->second_paddle_);
-    std::get<0>(this->ball_).pos.x += std::get<1>(this->ball_).x;
-    std::get<0>(this->ball_).pos.y += std::get<1>(this->ball_).y;
+    //Don't stand for dealing with freakin' pairs.
+    //Just reference the values with local variables.
+    Paddle& first_paddle = std::get<0>(this->first_paddle_);
+    Paddle& second_paddle = std::get<0>(this->second_paddle_);
+
+    //Move the paddles.
+    stepPaddle(this->first_paddle_);
+    stepPaddle(this->second_paddle_);
+
+    //Get the paddle
+    Ball& ball = std::get<0>(this->ball_);
+
+    //Get the ball moving.
+    stepBall(this->ball_);
   }
 };
