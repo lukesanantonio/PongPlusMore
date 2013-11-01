@@ -45,10 +45,5 @@ namespace pong
     virtual Ball getBallFromID(BallID) const noexcept = 0;
 
     virtual void step() = 0;
-
-    inline bool isRunning() noexcept {return !this->quit_;}
-    inline void quit() noexcept {this->quit_ = true;}
-  private:
-    bool quit_ = false;
   };
 }
