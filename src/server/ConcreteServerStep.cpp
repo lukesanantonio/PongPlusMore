@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <cmath>
 #include "ConcreteServer.h"
 namespace pong
 {
@@ -39,6 +40,70 @@ namespace pong
     void stepPaddle(std::pair<Paddle, ConcreteServer::paddle_x_type>& pair)
     {
       stepPaddle(std::get<0>(pair), std::get<1>(pair));
+    }
+
+    /*!
+     * \brief Returns whether the third parameter is in between the first two
+     * parameters.
+     */
+    bool isIn(int left, int right, int check)
+    {
+      return std::min(left, right) <= check && check <= std::max(left, right);
+    }
+
+    //                       .- Ball
+    //----------------------##------------------------
+    //----------------------##------------------------
+    //------------------##########--------------------
+    //------------------##########--------------------
+    //                       *- Paddle
+    // This scenario returns true.
+    // ...
+    //
+    //                             .- Ball
+    //----------------------------##
+    //------------------############------------------
+    //------------------##########--------------------
+    //                      *- Paddle
+    // This scenario will also return true.
+    // ...
+    // Intersection does not return true.
+    // etc.
+    bool paddleIsBesideBall(const Paddle& paddle, const Ball& ball)
+    {
+      //We have four types of collisions to check for.
+      //Paddle-Top to Ball-Bottom.
+      //Paddle-Bottom to Ball-Top.
+      //Paddle-Left to Ball-Right.
+      //Paddle-Right to Ball-Left.
+
+      //Using in to automatically truncate. This may blow up in our face later.
+      int paddle_top = paddle.pos.y;
+      int paddle_bottom = paddle.pos.y + paddle.height;
+      int paddle_left = paddle.pos.x;
+      int paddle_right = paddle.pos.x + paddle.width;
+      int ball_bottom = ball.pos.y + ball.diameter;
+      int ball_top = ball.pos.y;
+      int ball_right = ball.pos.x + ball.diameter;
+      int ball_left = ball.pos.x;
+
+      if(isIn(paddle_left, paddle_right, ball_left) ||
+         isIn(paddle_left, paddle_right, ball_right))
+      {
+        if(paddle_top - 1 == ball_bottom || paddle_bottom + 1 == ball_top)
+        {
+          return true;
+        }
+      }
+      if(isIn(paddle_top, paddle_bottom, ball_top) ||
+         isIn(paddle_top, paddle_bottom, ball_bottom))
+      {
+        if(paddle_left - 1 == ball_right || paddle_right + 1 == ball_left)
+        {
+          return true;
+        }
+      }
+      return false;
     }
   }
   void ConcreteServer::step()
