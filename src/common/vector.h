@@ -22,6 +22,7 @@
  * \brief The header of a beautiful thing, a vector class.
  */
 #pragma once
+#include <cmath>
 namespace pong
 {
   /*!
@@ -83,5 +84,14 @@ namespace pong
      * \brief Returns the length of the passed in vector.
      */
     double length(math::vector vec);
+
+    inline bool operator==(const vector& left, const vector& right)
+    {
+      return left.x == right.x && left.y == right.y;
+    }
+    inline vector truncate(vector vec)
+    {
+      return {std::trunc(vec.x), std::trunc(vec.y)};
+    }
   };
 };
