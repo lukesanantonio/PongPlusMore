@@ -18,7 +18,7 @@
 
 # Add the executable which runs every test.
 add_executable(PpM_Tests EXCLUDE_FROM_ALL
-               ConcreteServerTests.cpp
+               ConcreteServerTests.cpp ConcreteServerStepUtilTests.cpp
                ${CMAKE_SOURCE_DIR}/gtest/gtest/gtest_main.cc)
 
 # Make sure it has the entirety of the pong support library.
