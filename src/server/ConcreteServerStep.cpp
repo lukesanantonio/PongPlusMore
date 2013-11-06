@@ -67,7 +67,8 @@ namespace pong
   // ...
   // Intersection does not return true.
   // etc.
-  bool paddleIsBesideBall(const Paddle& paddle, const Ball& ball)
+  enum class CollisionSide {Top_Bottom, Left_Right, None};
+  CollisionSide paddleIsBesideBall(const Paddle& paddle, const Ball& ball)
   {
     //We have four types of collisions to check for.
     //Paddle-Top to Ball-Bottom.
@@ -92,7 +93,7 @@ namespace pong
     {
       if(paddle_top - 1 == ball_bottom || paddle_bottom + 1 == ball_top)
       {
-        return true;
+        return CollisionSide::Top_Bottom;
       }
     }
     if(isIn(paddle_top, paddle_bottom, ball_top) ||
@@ -102,10 +103,10 @@ namespace pong
     {
       if(paddle_left - 1 == ball_right || paddle_right + 1 == ball_left)
       {
-        return true;
+        return CollisionSide::Left_Right;
       }
     }
-    return false;
+    return CollisionSide::None;
   }
 
   void ConcreteServer::step()
