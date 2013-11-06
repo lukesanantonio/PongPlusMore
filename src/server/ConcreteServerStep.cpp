@@ -86,7 +86,9 @@ namespace pong
     int ball_left = ball.pos.x;
 
     if(isIn(paddle_left, paddle_right, ball_left) ||
-       isIn(paddle_left, paddle_right, ball_right))
+       isIn(paddle_left, paddle_right, ball_right) ||
+       (ball_left <= paddle_left + paddle.width / 2 &&
+        paddle_right - paddle.width / 2 <= ball_right))
     {
       if(paddle_top - 1 == ball_bottom || paddle_bottom + 1 == ball_top)
       {
@@ -94,7 +96,9 @@ namespace pong
       }
     }
     if(isIn(paddle_top, paddle_bottom, ball_top) ||
-       isIn(paddle_top, paddle_bottom, ball_bottom))
+       isIn(paddle_top, paddle_bottom, ball_bottom) ||
+       (ball_top <= paddle_top + paddle.height / 2 &&
+        paddle_bottom - paddle.height / 2 <= ball_bottom))
     {
       if(paddle_left - 1 == ball_right || paddle_right + 1 == ball_left)
       {
