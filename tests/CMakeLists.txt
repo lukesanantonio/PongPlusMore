@@ -24,7 +24,7 @@ add_executable(PpM_Tests EXCLUDE_FROM_ALL
 # Make sure it has the entirety of the pong support library.
 # gtest headers come built-in when linking to the gtest target.
 target_include_directories(PpM_Tests PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(PpM_Tests ppmcommon ppmserv gtest)
+target_link_libraries(PpM_Tests ppmserv gtest)
 
 # Now, add a check target which will automagically build the run-all testing
 # executable if it has too.

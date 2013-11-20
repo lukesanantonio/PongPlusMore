@@ -23,11 +23,13 @@
 namespace pong
 {
   ConcreteServer::ConcreteServer(uint16_t width, uint16_t height) noexcept :
-                     first_paddle_({0, {0, 0}, 200, 30}, 0),
-                     second_paddle_({0, {0, static_cast<double>(height - 30)},
+                     //TODO Fix this, now!
+                     first_paddle_( Paddle{0, {0,0}, 200, 30}, 0),
+                     second_paddle_(Paddle{0,
+                                    {0,static_cast<uint16_t>(height - 30)},
                                      200, 30}, 0),
-                     ball_({1, {static_cast<double>(width / 2),
-                               static_cast<double>(height / 2)}, 25},
+                     ball_(Ball{1, {static_cast<uint16_t>(width / 2),
+                                static_cast<uint16_t>(height / 2)}, 25},
                            {0,1}){}
 
   PaddleID ConcreteServer::makePaddle()
@@ -90,7 +92,7 @@ namespace pong
       case 2:
         return std::get<0>(this->second_paddle_);
       default:
-        return {};
+        return Paddle();
     }
   }
   Ball ConcreteServer::getBallFromID(BallID id) const noexcept
@@ -100,7 +102,7 @@ namespace pong
       case 1:
         return std::get<0>(this->ball_);
       default:
-        return {};
+        return Ball();
     }
   }
 };

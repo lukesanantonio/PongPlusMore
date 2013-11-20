@@ -22,6 +22,7 @@
  * \brief The header of a beautiful thing, a vector class.
  */
 #pragma once
+#include <cstdint>
 #include <cmath>
 namespace pong
 {
@@ -35,61 +36,116 @@ namespace pong
     /*!
      * \brief A simple vector class.
      */
+    template <typename point_type = uint16_t>
     struct vector
     {
       /*!
        * \brief Constructor used for brace initialization with two values,
        * regular construction with two values, etc.
        */
-      vector(double x, double y) noexcept : x(x), y(y){}
+      vector(point_type x, point_type y) noexcept : x(x), y(y){}
       /*!
        * \brief The default constructor, basically provides the default points
        * (0, 0) without having to be explicit, used for empty brace
        * initialization and more.
+       *
+       * This function makes constructing a vector from points an all or
+       * nothing deal. To construct a vector with its x value makes no sense.
        */
       vector() noexcept : vector(0, 0){}
+
+      /*!
+       * \brief Any-Compatible-Type conversion/copy constructor.
+       */
+      template <typename pt2>
+      vector(const vector<pt2>& vec) : vector(vec.x, vec.y) {};
+
       /*!
        * \brief X value for anything imaginable.
        */
-      double x = 0;
+      point_type x = 0;
       /*!
        * \brief Y value for anything imaginable.
        */
-      double y = 0;
+      point_type y = 0;
     };
 
-    math::vector operator+(math::vector vec1, math::vector vec2);
-
-    inline math::vector operator-(math::vector vec1)
+    template <typename point_type>
+    inline vector<point_type> operator+(const vector<point_type>& lhs,
+                                        const vector<point_type>& rhs)
     {
-      return {-vec1.x, -vec1.y};
-    }
-    inline math::vector operator-(math::vector vec1, math::vector vec2)
-    {
-      return vec1 + -vec2;
+      return {lhs.x + rhs.x, lhs.y + rhs.y};
     }
 
-    math::vector operator*(double scalar, math::vector vec1);
-    inline math::vector operator*(math::vector vec1, double scalar)
+    template <typename point_type>
+    inline vector<point_type> operator-(const vector<point_type>& vec)
     {
-      return scalar * vec1;
+      return {-vec.x, -vec.y};
+    }
+    template <typename point_type>
+    inline vector<point_type> operator-(const vector<point_type>& lhs,
+                                        const vector<point_type>& rhs)
+    {
+      return lhs + -rhs;
+    }
+
+    template <typename point_type>
+    inline vector<point_type> operator*(const vector<point_type>& lhs,
+                                        double scalar)
+    {
+      return {static_cast<point_type>(lhs.x * scalar),
+              static_cast<point_type>(lhs.y * scalar)};
+    }
+
+    template <typename point_type>
+    inline vector<point_type> operator*(double scalar,
+                                        const vector<point_type>& rhs)
+    {
+      return rhs * scalar;
     }
 
     /*!
      * \brief Returns the unit vector of the passed in vector.
      */
-    math::vector normalize(math::vector vec);
+    template <typename point_type,
+              class = typename std::enable_if<
+                              std::is_floating_point<point_type>::value>::type>
+    vector<point_type> normalize(vector<point_type> vec)
+    {
+      //Calculate the length
+      point_type length = length(vec);
+
+      //We don't want to divide by zero!
+      if(length == 0) return vec;
+
+      //Divide each value in the vector by the length!
+      vec.x /= length;
+      vec.y /= length;
+
+      //Return the new, normalized vector.
+      return vec;
+    }
 
     /*!
      * \brief Returns the length of the passed in vector.
      */
-    double length(math::vector vec);
-
-    inline bool operator==(const vector& left, const vector& right)
+    template <typename point_type,
+              class = typename std::enable_if<
+                              std::is_floating_point<point_type>::value>::type>
+    point_type length(const vector<point_type>& vec)
     {
-      return left.x == right.x && left.y == right.y;
+      point_type length = std::sqrt(std::pow(vec.x, 2) + std::pow(vec.y, 2));
+      return length;
     }
-    inline vector truncate(vector vec)
+
+    template <typename point_type>
+    inline bool operator==(const vector<point_type>& lhs,
+                           const vector<point_type>& rhs)
+    {
+      return lhs.x == rhs.x && lhs.y == rhs.y;
+    }
+    template <typename point_type>
+    inline vector<point_type> truncate(const vector<point_type>& vec)
     {
       return {std::trunc(vec.x), std::trunc(vec.y)};
     }

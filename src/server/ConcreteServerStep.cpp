@@ -21,12 +21,12 @@
 #include "ConcreteServer.h"
 namespace pong
 {
-  void stepBall(Ball& ball, const math::vector& vel)
+  void stepBall(Ball& ball, const decltype(Ball::pos)& vel)
   {
     ball.pos.x += vel.x;
     ball.pos.y += vel.y;
   }
-  void stepBall(std::pair<Ball, math::vector>& pair)
+  void stepBall(std::pair<Ball, math::vector<uint16_t> >& pair)
   {
     stepBall(std::get<0>(pair), std::get<1>(pair));
   }
@@ -77,14 +77,14 @@ namespace pong
     //Paddle-Right to Ball-Left.
 
     //Using in to automatically truncate. This may blow up in our face later.
-    int paddle_top = paddle.pos.y;
-    int paddle_bottom = paddle.pos.y + paddle.height;
-    int paddle_left = paddle.pos.x;
-    int paddle_right = paddle.pos.x + paddle.width;
-    int ball_bottom = ball.pos.y + ball.diameter;
-    int ball_top = ball.pos.y;
-    int ball_right = ball.pos.x + ball.diameter;
-    int ball_left = ball.pos.x;
+    uint16_t paddle_top = paddle.pos.y;
+    uint16_t paddle_bottom = paddle.pos.y + paddle.height;
+    uint16_t paddle_left = paddle.pos.x;
+    uint16_t paddle_right = paddle.pos.x + paddle.width;
+    uint16_t ball_bottom = ball.pos.y + ball.diameter;
+    uint16_t ball_top = ball.pos.y;
+    uint16_t ball_right = ball.pos.x + ball.diameter;
+    uint16_t ball_left = ball.pos.x;
 
     if(isIn(paddle_left, paddle_right, ball_left) ||
        isIn(paddle_left, paddle_right, ball_right) ||
