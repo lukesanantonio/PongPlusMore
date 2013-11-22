@@ -34,5 +34,20 @@ TEST(ConcreteServerStepUtilTest, isInTest)
 }
 TEST(ConcreteServerStepUtilTest, cornerCollision)
 {
-  //TODO test this.
+  //TODO Move to the generic test file.
+  pong::Paddle p{1, {0, 0}, 50, 50};
+  pong::Ball b{1, {50, 50}, 5};
+
+  EXPECT_EQ(pong::CollisionSide::Corner, paddleIsBesideBall(p, b));
+
+  ++b.pos.x; ++b.pos.y;
+
+  EXPECT_EQ(pong::CollisionSide::None, paddleIsBesideBall(p, b));
+
+  p.pos.x = 50;
+  p.pos.y = 50;
+  b.pos.x = 45;
+  b.pos.y = 45;
+
+  EXPECT_EQ(pong::CollisionSide::Corner, paddleIsBesideBall(p, b));
 }
