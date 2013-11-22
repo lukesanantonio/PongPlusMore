@@ -71,7 +71,7 @@ namespace pong
   // ...
   // Intersection does not return true.
   // etc.
-  #if 0
+
   CollisionSide paddleIsBesideBall(const Paddle& paddle, const Ball& ball)
                                                                        noexcept
   {
@@ -82,15 +82,16 @@ namespace pong
     //Paddle-Right to Ball-Left.
     //Corner-to-Corner cases.
 
-    //Using in to automatically truncate. This may blow up in our face later.
-    uint16_t paddle_top = paddle.pos.y;
-    uint16_t paddle_bottom = paddle.pos.y + paddle.height - 1;
-    uint16_t paddle_left = paddle.pos.x;
-    uint16_t paddle_right = paddle.pos.x + paddle.width - 1;
-    uint16_t ball_bottom = ball.pos.y + ball.diameter - 1;
-    uint16_t ball_top = ball.pos.y;
-    uint16_t ball_right = ball.pos.x + ball.diameter - 1;
-    uint16_t ball_left = ball.pos.x;
+    //Subtracting one from the other, calculated values is necessary so that
+    //the width doesn't include points one more than they should.
+    int16_t paddle_top = paddle.pos.y;
+    int16_t paddle_bottom = paddle.pos.y + paddle.height - 1;
+    int16_t paddle_left = paddle.pos.x;
+    int16_t paddle_right = paddle.pos.x + paddle.width - 1;
+    int16_t ball_bottom = ball.pos.y + ball.diameter - 1;
+    int16_t ball_top = ball.pos.y;
+    int16_t ball_right = ball.pos.x + ball.diameter - 1;
+    int16_t ball_left = ball.pos.x;
 
     if(isIn(paddle_left, paddle_right, ball_left) ||
        isIn(paddle_left, paddle_right, ball_right) ||
@@ -113,7 +114,7 @@ namespace pong
       }
     }
 
-    //Check each corner individually.
+    //Check the corners.
     if(paddle_top - 1 == ball_bottom || paddle_bottom + 1 == ball_top)
     {
       if(ball_left - 1 == paddle_right || ball_right + 1 == paddle_left)
@@ -124,7 +125,6 @@ namespace pong
 
     return CollisionSide::None;
   }
-#endif
 
   void ConcreteServer::step()
   {
