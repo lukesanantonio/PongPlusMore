@@ -83,12 +83,12 @@ namespace pong
 
     //Using in to automatically truncate. This may blow up in our face later.
     uint16_t paddle_top = paddle.pos.y;
-    uint16_t paddle_bottom = paddle.pos.y + paddle.height;
+    uint16_t paddle_bottom = paddle.pos.y + paddle.height - 1;
     uint16_t paddle_left = paddle.pos.x;
-    uint16_t paddle_right = paddle.pos.x + paddle.width;
-    uint16_t ball_bottom = ball.pos.y + ball.diameter;
+    uint16_t paddle_right = paddle.pos.x + paddle.width - 1;
+    uint16_t ball_bottom = ball.pos.y + ball.diameter - 1;
     uint16_t ball_top = ball.pos.y;
-    uint16_t ball_right = ball.pos.x + ball.diameter;
+    uint16_t ball_right = ball.pos.x + ball.diameter - 1;
     uint16_t ball_left = ball.pos.x;
 
     if(isIn(paddle_left, paddle_right, ball_left) ||
