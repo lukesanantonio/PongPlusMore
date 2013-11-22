@@ -22,6 +22,7 @@
  * \brief The header of a beautiful thing, a vector class.
  */
 #pragma once
+#include <type_traits>
 #include <cstdint>
 #include <cmath>
 namespace pong
