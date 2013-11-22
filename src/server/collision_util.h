@@ -32,6 +32,7 @@ namespace pong
   {
     Top_Bottom,
     Left_Right,
+    Corner,
     None
   };
 

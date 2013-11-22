@@ -32,3 +32,7 @@ TEST(ConcreteServerStepUtilTest, isInTest)
   EXPECT_EQ(true, pong::isIn(5, 18, 18));
   EXPECT_EQ(true, pong::isIn(5, 18, 5));
 }
+TEST(ConcreteServerStepUtilTest, cornerCollision)
+{
+  //TODO test this.
+}
