@@ -24,12 +24,12 @@ namespace pong
 {
   namespace
   {
-    void stepBall(Ball& ball, const decltype(Ball::pos)& vel)
+    void stepBall(Ball& ball, const math::vector<>& vel)
     {
       ball.pos.x += vel.x;
       ball.pos.y += vel.y;
     }
-    void stepBall(std::pair<Ball, math::vector<uint16_t> >& pair)
+    void stepBall(std::pair<Ball, math::vector<> >& pair)
     {
       stepBall(std::get<0>(pair), std::get<1>(pair));
     }
@@ -38,8 +38,7 @@ namespace pong
     {
       paddle.pos.x = x;
     }
-    void stepPaddle(std::pair<Paddle,
-                                     ConcreteServer::paddle_x_type>& pair)
+    void stepPaddle(std::pair<Paddle, ConcreteServer::paddle_x_type>& pair)
     {
       stepPaddle(std::get<0>(pair), std::get<1>(pair));
     }
@@ -72,6 +71,7 @@ namespace pong
   // ...
   // Intersection does not return true.
   // etc.
+  #if 0
   CollisionSide paddleIsBesideBall(const Paddle& paddle, const Ball& ball)
                                                                        noexcept
   {
@@ -124,6 +124,7 @@ namespace pong
 
     return CollisionSide::None;
   }
+#endif
 
   void ConcreteServer::step()
   {

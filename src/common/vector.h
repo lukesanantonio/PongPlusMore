@@ -37,7 +37,7 @@ namespace pong
     /*!
      * \brief A simple vector class.
      */
-    template <typename point_type = uint16_t>
+    template <typename point_type = int16_t>
     struct vector
     {
       /*!

@@ -22,14 +22,14 @@
 #include "common/center.hpp"
 namespace pong
 {
-  ConcreteServer::ConcreteServer(uint16_t width, uint16_t height) noexcept :
+  ConcreteServer::ConcreteServer(int16_t width, int16_t height) noexcept :
                      //TODO Fix this, now!
                      first_paddle_( Paddle{0, {0,0}, 200, 30}, 0),
                      second_paddle_(Paddle{0,
-                                    {0,static_cast<uint16_t>(height - 30)},
+                                    {0,static_cast<int16_t>(height - 30)},
                                      200, 30}, 0),
-                     ball_(Ball{1, {static_cast<uint16_t>(width / 2),
-                                static_cast<uint16_t>(height / 2)}, 25},
+                     ball_(Ball{1, {static_cast<int16_t>(width / 2),
+                                static_cast<int16_t>(height / 2)}, 25},
                            {0,1}){}
 
   PaddleID ConcreteServer::makePaddle()
@@ -44,7 +44,7 @@ namespace pong
     return id_impl_++;
   }
   void ConcreteServer::setPaddleDestination(PaddleID id,
-                                            decltype(Paddle::pos.x) x) noexcept
+                                            paddle_x_type x) noexcept
   {
     //A kind of cool, hidden feature of using two ifs rather than an if-else:
     //If neither paddle has been claimed by a client, one can make both move
