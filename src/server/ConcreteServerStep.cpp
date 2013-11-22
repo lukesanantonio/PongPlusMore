@@ -18,33 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <cmath>
+#include "collision_util.h"
 #include "ConcreteServer.h"
 namespace pong
 {
-  void stepBall(Ball& ball, const decltype(Ball::pos)& vel)
+  namespace
   {
-    ball.pos.x += vel.x;
-    ball.pos.y += vel.y;
-  }
-  void stepBall(std::pair<Ball, math::vector<uint16_t> >& pair)
-  {
-    stepBall(std::get<0>(pair), std::get<1>(pair));
-  }
+    void stepBall(Ball& ball, const decltype(Ball::pos)& vel)
+    {
+      ball.pos.x += vel.x;
+      ball.pos.y += vel.y;
+    }
+    void stepBall(std::pair<Ball, math::vector<uint16_t> >& pair)
+    {
+      stepBall(std::get<0>(pair), std::get<1>(pair));
+    }
 
-  void stepPaddle(Paddle& paddle, ConcreteServer::paddle_x_type x)
-  {
-    paddle.pos.x = x;
-  }
-  void stepPaddle(std::pair<Paddle, ConcreteServer::paddle_x_type>& pair)
-  {
-    stepPaddle(std::get<0>(pair), std::get<1>(pair));
+    void stepPaddle(Paddle& paddle, ConcreteServer::paddle_x_type x)
+    {
+      paddle.pos.x = x;
+    }
+    void stepPaddle(std::pair<Paddle,
+                                     ConcreteServer::paddle_x_type>& pair)
+    {
+      stepPaddle(std::get<0>(pair), std::get<1>(pair));
+    }
   }
 
   /*!
    * \brief Returns whether the third parameter is in between the first two
    * parameters.
    */
-  bool isIn(int left, int right, int check)
+  bool isIn(int left, int right, int check) noexcept
   {
     return std::min(left, right) <= check && check <= std::max(left, right);
   }
@@ -67,8 +72,8 @@ namespace pong
   // ...
   // Intersection does not return true.
   // etc.
-  enum class CollisionSide {Top_Bottom, Left_Right, None};
   CollisionSide paddleIsBesideBall(const Paddle& paddle, const Ball& ball)
+                                                                       noexcept
   {
     //We have four types of collisions to check for.
     //Paddle-Top to Ball-Bottom.
