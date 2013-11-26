@@ -167,7 +167,45 @@ namespace pong
     //Get the paddle
     Ball& ball = std::get<0>(this->ball_);
 
-    //Get the ball moving.
-    stepBall(this->ball_);
+    math::vector<double> velocity_left = std::get<1>(this->ball_);
+
+    for(double i = 0; i < math::length(velocity_left); i += .1)
+    {
+      decltype(ball.pos) next_position = velocity_left * i;
+      Ball ball_copy(ball.id, next_position, ball.diameter);
+
+      auto first_paddle_collision_result =
+                                   paddleIsBesideBall(first_paddle, ball_copy);
+      if(CollisionSide::None != first_paddle_collision_result)
+      {
+        if(CollisionSide::Top == first_paddle_collision_result ||
+           CollisionSide::Bottom == first_paddle_collision_result)
+        {
+          //Flip the y component of the original velocity vector.
+          std::get<1>(this->ball_).y = -std::get<1>(this->ball_).y;
+          velocity_left.y = -velocity_left.y;
+        }
+        else if(CollisionSide::Left == first_paddle_collision_result ||
+           CollisionSide::Right == first_paddle_collsion_result)
+        {
+          std::get<1>(this->ball_).x = -std::get<1>(this->ball_).x;
+          velocity_left.x = -velocity_left.x;
+        }
+        //Corner case!
+        else
+        {
+          std::get<1>(this->ball_) = -std::get<1>(this->ball_);
+          velocity_left = -velocity_left;
+        }
+
+        //Subtract what we already have done.
+        velocity_left = velocity_left - i * velocity_left;
+
+        //Reset i.
+        i = 0.0;
+        continue;
+      }
+      //Okay no, collision, then just keep moving.
+    }
   }
 };
