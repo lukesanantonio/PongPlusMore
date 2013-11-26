@@ -30,9 +30,14 @@ namespace pong
 {
   enum class CollisionSide
   {
-    Top_Bottom,
-    Left_Right,
-    Corner,
+    Top,
+    Bottom,
+    Left,
+    Right,
+    TopLeftCorner,
+    TopRightCorner,
+    BottomLeftCorner,
+    BottomRightCorner,
     None
   };
 

@@ -72,6 +72,9 @@ namespace pong
   // Intersection does not return true.
   // etc.
 
+  //Ignore above, this function returns where the ball is, in relation to the
+  //paddle, a result of CollisionSide::TopLeftCorner means the *ball* is
+  //located above and left of the paddle!
   CollisionSide paddleIsBesideBall(const Paddle& paddle, const Ball& ball)
                                                                        noexcept
   {
@@ -98,9 +101,13 @@ namespace pong
        (ball_left <= paddle_left + paddle.width / 2 &&
         paddle_right - paddle.width / 2 <= ball_right))
     {
-      if(paddle_top - 1 == ball_bottom || paddle_bottom + 1 == ball_top)
+      if(paddle_top - 1 == ball_bottom)
       {
-        return CollisionSide::Top_Bottom;
+        return CollisionSide::Top;
+      }
+      else if(paddle_bottom + 1 == ball_top)
+      {
+        return CollisionSide::Bottom;
       }
     }
     if(isIn(paddle_top, paddle_bottom, ball_top) ||
@@ -108,18 +115,38 @@ namespace pong
        (ball_top <= paddle_top + paddle.height / 2 &&
         paddle_bottom - paddle.height / 2 <= ball_bottom))
     {
-      if(paddle_left - 1 == ball_right || paddle_right + 1 == ball_left)
+      if(paddle_left - 1 == ball_right)
       {
-        return CollisionSide::Left_Right;
+        return CollisionSide::Left;
+      }
+      else if(paddle_right + 1 == ball_left)
+      {
+        return CollisionSide::Right;
       }
     }
 
     //Check the corners.
-    if(paddle_top - 1 == ball_bottom || paddle_bottom + 1 == ball_top)
+    //TODO This will do for now, but fix the code duplication somehow.
+    if(paddle_top - 1 == ball_bottom)
     {
-      if(ball_left - 1 == paddle_right || ball_right + 1 == paddle_left)
+      if(ball_left - 1 == paddle_right)
       {
-        return CollisionSide::Corner;
+        return CollisionSide::TopRightCorner;
+      }
+      if(ball_right + 1 == paddle_left)
+      {
+        return CollisionSide::TopLeftCorner;
+      }
+    }
+    else if(paddle_bottom + 1 == ball_top)
+    {
+      if(ball_left - 1 == paddle_right)
+      {
+        return CollisionSide::BottomRightCorner;
+      }
+      if(ball_right + 1 == paddle_left)
+      {
+        return CollisionSide::BottomLeftCorner;
       }
     }
 
