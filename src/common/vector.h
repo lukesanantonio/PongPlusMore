@@ -75,13 +75,15 @@ namespace pong
     inline vector<point_type> operator+(const vector<point_type>& lhs,
                                         const vector<point_type>& rhs)
     {
-      return {lhs.x + rhs.x, lhs.y + rhs.y};
+      return {static_cast<point_type>(lhs.x + rhs.x),
+              static_cast<point_type>(lhs.y + rhs.y)};
     }
 
     template <typename point_type>
     inline vector<point_type> operator-(const vector<point_type>& vec)
     {
-      return {-vec.x, -vec.y};
+      return {static_cast<point_type>(-vec.x),
+              static_cast<point_type>(-vec.y)};
     }
     template <typename point_type>
     inline vector<point_type> operator-(const vector<point_type>& lhs,
