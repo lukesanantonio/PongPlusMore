@@ -186,7 +186,7 @@ namespace pong
           velocity_left.y = -velocity_left.y;
         }
         else if(CollisionSide::Left == first_paddle_collision_result ||
-           CollisionSide::Right == first_paddle_collsion_result)
+           CollisionSide::Right == first_paddle_collision_result)
         {
           std::get<1>(this->ball_).x = -std::get<1>(this->ball_).x;
           velocity_left.x = -velocity_left.x;
