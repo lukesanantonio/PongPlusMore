@@ -26,7 +26,7 @@ namespace pong
    *
    * \note Does not return, ever!
    */
-  inline void crash(const std::string& why) [[noreturn]]
+  [[noreturn]] inline void crash(const std::string& why)
   {
     std::cerr << "Crashing..." << " " << why << std::endl;
     std::abort();
