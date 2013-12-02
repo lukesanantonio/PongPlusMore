@@ -15,3 +15,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+find_package(SDL2 REQUIRED)
+add_executable(ppm ppm.cpp)
+message(STATUS ${SDL2_LIBRARIES})
+target_link_libraries(ppm ${SDL2_LIBRARIES})
+target_include_directories(ppm PRIVATE ${SDL2_INCLUDE_DIRS})
