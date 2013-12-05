@@ -152,5 +152,25 @@ namespace pong
     {
       return {std::trunc(vec.x), std::trunc(vec.y)};
     }
+
+    /*!
+     * \brief Rotates the vector passed in then returns the result.
+     *
+     * \param rotation_degrees The amount of degrees to rotate in radians.
+     * The rotations go clockwise.
+     */
+    template <typename point_type, typename int_type>
+    inline vector<point_type> rotate(const vector<point_type>& vec,
+                                     int_type rotation_degrees)
+    {
+      vector<point_type> rot_vec;
+
+      rot_vec.x = vec.x * std::cos(rotation_degrees) -
+                  vec.y * std::sin(rotation_degrees);
+      rot_vec.y = vec.x * std::sin(rotation_degrees) +
+                  vec.y * std::cos(rotation_degrees);
+
+      return rot_vec;
+    }
   };
 };
