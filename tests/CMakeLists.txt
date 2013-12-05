@@ -19,11 +19,12 @@
 # Add the executable which runs every test.
 add_executable(PpM_Tests EXCLUDE_FROM_ALL
                ConcreteServerTests.cpp ConcreteServerStepUtilTests.cpp
-               ${CMAKE_SOURCE_DIR}/gtest/gtest/gtest_main.cc)
+               ${CMAKE_CURRENT_SOURCE_DIR}/../gtest/gtest/gtest_main.cc)
 
 # Make sure it has the entirety of the pong support library.
 # gtest headers come built-in when linking to the gtest target.
-target_include_directories(PpM_Tests PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(PpM_Tests PUBLIC
+                           ${CMAKE_CURRENT_SOURCE_DIR}/../src)
 target_link_libraries(PpM_Tests ppmserv gtest)
 
 # Now, add a check target which will automagically build the run-all testing
