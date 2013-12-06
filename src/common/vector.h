@@ -71,6 +71,12 @@ namespace pong
       point_type y = 0;
     };
 
+    template <typename point_type1, typename point_type2>
+    inline bool operator==(const vector<point_type1>& lhs,
+                           const vector<point_type2>& rhs)
+    {
+      return (lhs.x == rhs.x) && (lhs.y == rhs.y);
+    }
     template <typename point_type>
     inline vector<point_type> operator+(const vector<point_type>& lhs,
                                         const vector<point_type>& rhs)
