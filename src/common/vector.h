@@ -204,5 +204,5 @@ namespace pong
 
       return rot_vec;
     }
-  };
-};
+  }
+}
