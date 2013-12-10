@@ -64,38 +64,38 @@ Here's how you do it:
 
 #### Prerequisites
 On Arch:
-> sudo pacman -S --needed base-devel cmake sdl2 git
+
+    $ sudo pacman -S --needed base-devel cmake sdl2 git
 
 On Dpkg-Based systems (Debian, Ubuntu) - Debian Squeeze (oldstable) and Wheezy
 (stable) may or may not work as the clang is old and gcc is at 4.7, which I'm
 pretty sure won't work. Ubuntu should work fine though.
-> sudo apt-get install build-essential cmake libsdl2-dev git
+
+    $ sudo apt-get install build-essential cmake libsdl2-dev git
 
 On Yum-Based systems (Fedora) - Fedora should compile it fine, but I'm not
 sure about Red Hat.
-> sudo yum install gcc gcc-c++ make cmake SDL2-devel git
+
+    $ sudo yum install gcc gcc-c++ make cmake SDL2-devel git
 
 #### Compiling
 
 ##### Linux:
 Get the source:
-> $ mkdir -p ~/build/PpM
->
-> $ cd ~/build/PpM
->
-> $ git clone https://github.com/thee-l/PpM.git
+
+    $ mkdir -p ~/build/PpM
+    $ cd ~/build/PpM
+    $ git clone https://github.com/thee-l/PpM.git
 
 Build it:
 
-> $ mkdir build && cd build
->
-> $ cmake ../PpM/
->
-> $ make -j4
+    $ mkdir build && cd build
+    $ cmake ../PpM/
+    $ make -j4
 
 Enjoy it:
 
-> $ ./src/client/PpM #Enjoy
+    $ ./src/client/PpM
 
 ##### Mac OS X:
 The steps should work similar to how it's built on Linux. The hard part is
