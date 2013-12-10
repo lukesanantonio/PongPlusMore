@@ -52,6 +52,62 @@ to add:
  pong game. So why not!
  - Some other stuff that I can't remember at the moment.
 
+
+Building
+--------
+Probably the biggest thing that might be a problem when building is the C++11
+support. It seems like most Linux distributions come with a fairly recent GCC
+compiler version these days, so it might not be a problem for you. I have GCC
+4.8.2 and Clang 3.3 on Arch Linux and it compiles fine.
+
+Here's how you do it:
+
+#### Prerequisites
+On Arch:
+> sudo pacman -S --needed base-devel cmake sdl2 git
+
+On Dpkg-Based systems (Debian, Ubuntu) - Debian Squeeze (oldstable) and Wheezy
+(stable) may or may not work as the clang is old and gcc is at 4.7, which I'm
+pretty sure won't work. Ubuntu should work fine though.
+> sudo apt-get install build-essential cmake libsdl2-dev git
+
+On Yum-Based systems (Fedora) - Fedora should compile it fine, but I'm not
+sure about Red Hat.
+> sudo yum install gcc gcc-c++ make cmake SDL2-devel git
+
+#### Compiling
+
+##### Linux:
+Get the source:
+> $ mkdir -p ~/build/PpM
+>
+> $ cd ~/build/PpM
+>
+> $ git clone https://github.com/thee-l/PpM.git
+
+Build it:
+
+> $ mkdir build && cd build
+>
+> $ cmake ../PpM/
+>
+> $ make -j4
+
+Enjoy it:
+
+> $ ./src/client/PpM #Enjoy
+
+##### Mac OS X:
+The steps should work similar to how it's built on Linux. The hard part is
+getting the dependencies.
+
+##### Windows
+Pfft. Have fun, man! Hint: It is possible.
+
+Prebuilt Binaries
+-----------------
+Coming Soon - Luke
+
 FAQ
 ---
 
