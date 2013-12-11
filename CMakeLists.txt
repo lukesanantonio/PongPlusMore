@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 2.8)
 project(PpM)
 
 # Make sure to show our FindSDL2.cmake some love.
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 # Actually build our project, or at least declare it.
 add_subdirectory(gtest)
@@ -32,11 +32,11 @@ add_subdirectory(tests)
 # Set up a custom 'doc' target.
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
-  configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in
-                 ${CMAKE_BINARY_DIR}/Doxyfile)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
   add_custom_target(doc
-                    ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                     COMMENT "Generating documentation with doxygen"
                     VERBATIM)
   set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES docs)
