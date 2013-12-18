@@ -122,14 +122,14 @@ namespace pong
     vector<point_type> normalize(vector<point_type> vec)
     {
       //Calculate the length
-      point_type len = length(vec);
+      point_type length = length(vec);
 
       //We don't want to divide by zero!
-      if(len == 0) return vec;
+      if(length == 0) return vec;
 
       //Divide each value in the vector by the length!
-      vec.x /= len;
-      vec.y /= len;
+      vec.x /= length;
+      vec.y /= length;
 
       //Return the new, normalized vector.
       return vec;
