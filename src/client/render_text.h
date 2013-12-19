@@ -29,19 +29,9 @@
 #include "SDL.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include "sdl_cache.hpp"
 namespace pong
 {
-  /*!
-   * \brief A simple deleter which frees `SDL_Surface`s - for use with smart
-   * pointers.
-   */
-  struct SurfaceDeleter
-  {
-    inline void operator()(SDL_Surface* surface)
-    {
-      SDL_FreeSurface(surface);
-    }
-  };
   /*!
    * \brief A unique_ptr which deletes an SDL_Surface* properly.
    */
