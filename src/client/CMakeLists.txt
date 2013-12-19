@@ -17,7 +17,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 find_package(SDL2 REQUIRED)
+find_package(Freetype REQUIRED)
+
+add_library(ppmclient STATIC Button.cpp Label.cpp render_text.cpp
+                             CachedSurface.cpp)
+
+target_link_libraries(ppmclient ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
+target_include_directories(ppmclient PUBLIC ${SDL2_INCLUDE_DIRS}
+                                            ${FREETYPE_INCLUDE_DIRS})
+
 add_executable(ppm ppm.cpp)
-message(STATUS ${SDL2_LIBRARIES})
-target_link_libraries(ppm ${SDL2_LIBRARIES})
-target_include_directories(ppm PRIVATE ${SDL2_INCLUDE_DIRS})
+target_link_libraries(ppm ppmclient)
