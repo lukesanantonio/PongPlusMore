@@ -24,7 +24,7 @@
 #pragma once
 #include <string>
 #include "SDL.h"
-#include "CachedSurface.h"
+#include "sdl_cache.hpp"
 #include "common/vector.h"
 #include "render_text.h"
 namespace pong
@@ -32,7 +32,7 @@ namespace pong
   /*!
    * \brief Class wrapping renderable text.
    */
-  class Label : public CachedSurface
+  class Label : public Surface_Cache
   {
   public:
     explicit Label(const std::string& text = "",
@@ -58,8 +58,7 @@ namespace pong
     Label& operator=(const Label&) noexcept;
     Label& operator=(Label&&) noexcept;
 
-    void render(SDL_Surface* surface) const;
-    void render(SDL_Surface* surface, math::vector<int16_t> pos) const;
+    void render(SDL_Renderer* renderer) const;
 
     inline int16_t getSurfaceWidth() const;
     inline int16_t getSurfaceHeight() const;
@@ -118,7 +117,7 @@ namespace pong
      */
     FontRenderer* font_renderer_ = nullptr;
 
-    virtual SDL_Surface* generateCache_private() const override;
+    virtual ptr_type generateCache_private() const override;
   };
 
   /*!

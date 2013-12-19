@@ -93,7 +93,7 @@ namespace pong
    * Does not copy the cache.
    */
   Label::Label(const Label& label) noexcept :
-               CachedSurface(),
+               Surface_Cache(),
                text_(label.text_),
                text_height_(label.text_height_),
                pos_(label.pos_),
@@ -105,7 +105,7 @@ namespace pong
    * Moves the cache from the object passed in, notably.
    */
   Label::Label(Label&& label) noexcept :
-               CachedSurface(std::move(label)),
+               Surface_Cache(std::move(label)),
                text_(std::move(label.text_)),
                text_height_(label.text_height_),
                pos_(label.pos_),
@@ -137,7 +137,7 @@ namespace pong
    */
   Label& Label::operator=(Label&& label) noexcept
   {
-    CachedSurface::operator=(std::move(label));
+    Surface_Cache::operator=(std::move(label));
 
     this->text(std::move(label.text_));
     this->text_height(label.text_height_);
@@ -151,35 +151,23 @@ namespace pong
   }
 
   /*!
-   * \brief Renders an SDL_Surface containing the text of the Label onto the
-   * passed in surface so that the top left corner of the text is at
-   * Label::pos_.
-   *
-   * Basically calls Label::render(SDL_Surface*, math::vector<int16_t> pos)
-   * with the
-   * second argument being Label::pos_.
+   * \brief Renders the label using the passed in renderer.
    */
-  void Label::render(SDL_Surface* surface) const
+  void Label::render(SDL_Renderer* renderer) const
   {
-    this->render(surface, this->pos_);
-  }
+    SDL_Texture* texture=SDL_CreateTextureFromSurface(renderer, this->cache());
+    if(!texture) crash("Failed to create texture from Label surface!");
 
-  /*!
-   * \brief Renders the label at the position passed in, instead of the
-   * internally stored one.
-   *
-   * \note This function will only regenerate the text surface if necessary.
-   */
-  void Label::render(SDL_Surface* surface, math::vector<int16_t> pos) const
-  {
     SDL_Rect dest;
-    dest.x = pos.x;
-    dest.y = pos.y;
-
-    SDL_BlitSurface(this->cache(), NULL, surface, &dest);
+    dest.x = this->pos_.x;
+    dest.y = this->pos_.y;
+    dest.w = this->getSurfaceWidth();
+    dest.h = this->getSurfaceHeight();
+    SDL_RenderCopy(renderer, texture, NULL, &dest);
+    SDL_DestroyTexture(texture);
   }
 
-  SDL_Surface* Label::generateCache_private() const
+  Label::ptr_type Label::generateCache_private() const
   {
     if(!this->font_renderer_)
       crash("Label: \"" + this->text_ + "\""
@@ -187,11 +175,9 @@ namespace pong
 
 
     //render the text with the specified colors.
-    UniquePtrSurface cached_surface =
-                          this->font_renderer_->render_text(this->text_,
-                                                            this->text_height_,
-                                                            this->text_color_,
-                                                            this->back_color_);
-    return cached_surface.release();
+    return this->font_renderer_->render_text(this->text_,
+                                             this->text_height_,
+                                             this->text_color_,
+                                             this->back_color_);
   }
 };
