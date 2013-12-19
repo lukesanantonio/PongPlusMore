@@ -19,12 +19,8 @@
 find_package(SDL2 REQUIRED)
 find_package(Freetype REQUIRED)
 
-add_library(ppmclient STATIC Button.cpp Label.cpp render_text.cpp
-                             CachedSurface.cpp)
-
-target_link_libraries(ppmclient ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
-target_include_directories(ppmclient PUBLIC ${SDL2_INCLUDE_DIRS}
-                                            ${FREETYPE_INCLUDE_DIRS})
-
 add_executable(ppm ppm.cpp)
-target_link_libraries(ppm ppmclient)
+
+target_link_libraries(ppm ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
+target_include_directories(ppm PUBLIC ${SDL2_INCLUDE_DIRS}
+                                      ${FREETYPE_INCLUDE_DIRS})
