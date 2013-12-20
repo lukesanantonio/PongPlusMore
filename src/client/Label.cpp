@@ -166,6 +166,15 @@ namespace pong
     SDL_RenderCopy(renderer, texture, NULL, &dest);
     SDL_DestroyTexture(texture);
   }
+  void Label::render(SDL_Surface* surface) const
+  {
+    SDL_Rect dest;
+    dest.x = this->pos_.x;
+    dest.y = this->pos_.y;
+    dest.w = this->getSurfaceWidth();
+    dest.h = this->getSurfaceHeight();
+    SDL_BlitSurface(this->cache(), NULL, surface, &dest);
+  }
 
   Label::ptr_type Label::generateCache_private() const
   {

@@ -59,6 +59,7 @@ namespace pong
     Label& operator=(Label&&) noexcept;
 
     void render(SDL_Renderer* renderer) const;
+    void render(SDL_Surface* surface) const;
 
     inline int16_t getSurfaceWidth() const;
     inline int16_t getSurfaceHeight() const;
