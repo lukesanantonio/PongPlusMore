@@ -87,21 +87,22 @@ namespace pong
   }
 
   /*!
-   * \brief Renders everything onto the surface so that the top left corner
-   * of the button is at Button::pos_
+   * \brief Renders the button with the label using the rendering context
+   * passed in.
    *
    * Also renders the text centered on the button, if the button is too small
    * there may be visual artifacts.
    */
-  void Button::render(SDL_Surface* surface) const
+  void Button::render(SDL_Renderer* renderer) const
   {
-    //Render image!
+    //Calculate bounds.
     SDL_Rect button_rect;
     button_rect.x = this->pos_.x;
     button_rect.y = this->pos_.y;
     button_rect.w = this->width_;
     button_rect.h = this->height_;
 
+    //Choose button color.
     SDL_Color color;
     if(this->enabled_)
     {
@@ -115,18 +116,40 @@ namespace pong
       color.g = 0x55;
       color.b = 0x55;
     }
-    SDL_FillRect(surface, &button_rect, SDL_MapRGB(surface->format,
-                                                   color.r, color.g, color.b));
+    color.a = 0xff;
+
+    //Get our previous draw color.
+    SDL_Color prev_color;
+    if(SDL_GetRenderDrawColor(renderer, &prev_color.r,
+                                        &prev_color.g,
+                                        &prev_color.b,
+                                        &prev_color.a))
+    {
+      prev_color.r = 0xff;
+      prev_color.g = 0xff;
+      prev_color.b = 0xff;
+      prev_color.a = 0xff;
+    }
+
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderFillRect(renderer, &button_rect);
+
+    //Return to our old draw color.
+    SDL_SetRenderDrawColor(renderer, prev_color.r,
+                                     prev_color.g,
+                                     prev_color.b,
+                                     prev_color.a);
 
     //Find where to render the label!
     math::vector<int16_t> label_pos;
     label_pos.x = center(this->pos_.x, this->width_,
-                         this->label_.getSurfaceWidth());
+                         this->label_.getSurfaceWidth()) + this->pos_.x;
     label_pos.y = center(this->pos_.y, this->height_,
-                         this->label_.getSurfaceHeight());
+                         this->label_.getSurfaceHeight()) + this->pos_.y;
+    this->label_.position(label_pos);
 
     //Render the label.
-    this->label_.render(surface, label_pos);
+    this->label_.render(renderer);
   }
 
   /*!

@@ -50,7 +50,7 @@ namespace pong
     Button& operator=(const Button&) = delete;
     Button& operator=(Button&&) = delete;
 
-    void render(SDL_Surface*) const;
+    void render(SDL_Renderer*) const;
 
     boost::signals2::connection executeOnClick(
                       const boost::signals2::signal<void ()>::slot_type& slot);
@@ -77,8 +77,11 @@ namespace pong
   private:
     /*!
      * \brief The internal label used to render the text onto the button.
+     *
+     * \note Marked mutable so we can change it's rendering position when
+     * rendering (const function).
      */
-    Label label_;
+    mutable Label label_;
 
     /*!
      * \brief The position of the top left corner of the button in SDL window
