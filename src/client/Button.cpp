@@ -143,9 +143,9 @@ namespace pong
     //Find where to render the label!
     math::vector<int16_t> label_pos;
     label_pos.x = center(this->pos_.x, this->width_,
-                         this->label_.getSurfaceWidth()) + this->pos_.x;
+                         this->label_.getSurfaceWidth());
     label_pos.y = center(this->pos_.y, this->height_,
-                         this->label_.getSurfaceHeight()) + this->pos_.y;
+                         this->label_.getSurfaceHeight());
     this->label_.position(label_pos);
 
     //Render the label.
