@@ -22,7 +22,7 @@
  * \brief File containing Cache_Base instantiations for SDL.
  */
 #pragma once
-#include "cache.hpp"
+#include "common/Cache_Base.hpp"
 #include "SDL.h"
 namespace pong
 {
