@@ -30,7 +30,7 @@ namespace pong
    * This class is basically an implementation detail, it only works if it's
    * derived from.
    */
-  template <class Type, class Deleter>
+  template <class Type, class Deleter = std::default_delete<Type> >
   class Cache_Base
   {
   public:
