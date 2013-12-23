@@ -22,6 +22,7 @@
  * \brief GameState ABC.
  */
 #pragma once
+#include "SDL.h"
 #include <vector>
 namespace pong
 {
