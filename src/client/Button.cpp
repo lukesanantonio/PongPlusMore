@@ -80,10 +80,21 @@ namespace pong
     this->label_.text_color(black);
 
     SDL_Color white;
-    white.r = 0xff;
-    white.g = 0xff;
-    white.b = 0xff;
+    if(enabled)
+    {
+      white.r = 0xff;
+      white.g = 0xff;
+      white.b = 0xff;
+    }
+    else
+    {
+      white.r = 0x55;
+      white.g = 0x55;
+      white.b = 0x55;
+    }
     this->label_.back_color(white);
+
+    this->label_.text_height(this->height_ - 10);
   }
 
   /*!
