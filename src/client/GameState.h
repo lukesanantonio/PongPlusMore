@@ -29,6 +29,8 @@ namespace pong
   class GameState
   {
   public:
+    virtual ~GameState() {}
+
     /*!
      * \brief Notifies the GameState of an event.
      *
