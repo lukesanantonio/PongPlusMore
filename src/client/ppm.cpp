@@ -21,8 +21,9 @@
 #include <iostream>
 #include "SDL.h"
 #include "common/crash.hpp"
-#include "client/render_text.h"
-#include "client/Button.h"
+#include "client/Game.h"
+#include "client/GameStates/MenuGameState.h"
+
 int main(int argc, char** argv)
 {
   using pong::crash;
@@ -46,28 +47,27 @@ int main(int argc, char** argv)
     crash("Failed to create an SDL_Renderer*!");
   }
 
-  pong::MonoTextRenderer font_renderer("/home/luke/.sokoban/Sokoban.ttf");
-  pong::Button button("Hello World!", {100, 100}, 100, 100, true, &font_renderer);
+  pong::Game game;
+  game.width = 1000;
+  game.height = 1000;
+  game.font_renderer.reset(
+                  new pong::MonoTextRenderer("/home/luke/.fonts/Railway.ttf"));
+  game.game_state.reset(new pong::MenuGameState(game));
 
-  pong::Button enable("Enable?", {0, 0}, 50, 50, true, &font_renderer);
-  enable.executeOnClick([&button](){ button.enabled(!button.enabled()); });
-
-  bool running = true;
-  button.executeOnClick([&running]() { running = false; });
-
-  SDL_SetRenderDrawColor(renderer, 0x00, 0xff, 0x00, 0xff);
-  while(running)
+  while(!game.exiting)
   {
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
-      button.handleEvent(event);
-      enable.handleEvent(event);
+      game.game_state->handleEvent(event);
     }
+    game.game_state->update();
 
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xff);
     SDL_RenderClear(renderer);
-    button.render(renderer);
-    enable.render(renderer);
+
+    game.game_state->render(renderer);
+
     SDL_RenderPresent(renderer);
   }
 
