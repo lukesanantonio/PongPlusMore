@@ -56,17 +56,24 @@ int main(int argc, char** argv)
 
   while(!game.exiting)
   {
+    // Make a link to the game state so it doesn't all of a sudden become a
+    // nullptr.
+    std::shared_ptr<pong::GameState> game_state = game.game_state;
+
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
-      game.game_state->handleEvent(event);
+      game_state->handleEvent(event);
     }
-    game.game_state->update();
+    game_state->update();
+
+    // If the game state is different from our cache... Don't render.
+    if(game_state != game.game_state) continue;
 
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xff);
     SDL_RenderClear(renderer);
 
-    game.game_state->render(renderer);
+    game_state->render(renderer);
 
     SDL_RenderPresent(renderer);
   }
