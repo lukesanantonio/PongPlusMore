@@ -28,6 +28,22 @@
 #include "server/Ball.h"
 namespace pong
 {
-  void render(SDL_Renderer* renderer, const Paddle& paddle);
-  void render(SDL_Renderer* renderer, const Ball& ball);
+  template <typename int_type>
+  static void render_rect(SDL_Renderer* renderer,
+                          int_type x, int_type y,
+                          int_type w, int_type h)
+  {
+    SDL_Rect rect{x, y, w, h};
+    SDL_RenderFillRect(renderer, &rect);
+  }
+  inline void render(SDL_Renderer* renderer, const Paddle& paddle)
+  {
+    render_rect(renderer, paddle.pos.x, paddle.pos.y,
+                          paddle.width, paddle.height);
+  }
+  inline void render(SDL_Renderer* renderer, const Ball& ball)
+  {
+    render_rect(renderer, ball.pos.x, ball.pos.y,
+                          ball.diameter, ball.diameter);
+  }
 }
