@@ -28,12 +28,19 @@
 #include "server/Ball.h"
 namespace pong
 {
-  template <typename int_type>
+  template <typename pos_type,
+            typename int_type>
   static void render_rect(SDL_Renderer* renderer,
-                          int_type x, int_type y,
+                          pos_type x, pos_type y,
                           int_type w, int_type h)
   {
-    SDL_Rect rect{x, y, w, h};
+    SDL_Rect rect;
+    // Set the rectangle this way to avoid those damn narrowing conversion
+    // errors.
+    rect.x = x;
+    rect.y = y;
+    rect.w = w;
+    rect.h = h;
     SDL_RenderFillRect(renderer, &rect);
   }
   inline void render(SDL_Renderer* renderer, const Paddle& paddle)
