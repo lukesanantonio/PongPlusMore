@@ -51,6 +51,11 @@ to add:
  - Configurable. It'd be nice if a player could change the resolution of their
  pong game. So why not!
  - Some other stuff that I can't remember at the moment.
+ - Awesome Portability and Compatibility
+   - I at least want Pong Plus More to run on my Raspberry Pi so I can get it
+   on my TV.
+   - It would be pretty cool to work with the Wii remote tilt function.
+   - Joystick/Controller support is a must.
 
 
 Building
