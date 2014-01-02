@@ -32,12 +32,12 @@ namespace pong
   struct Paddle
   {
     explicit Paddle(PaddleID id = 0,
-                    math::vector<> pos = math::vector<>(),
+                    math::vector<long double> pos =math::vector<long double>(),
                     int16_t width = 0,
                     int16_t height = 0)
              : id(id), pos(pos), width(width), height(height){}
     PaddleID id;
-    math::vector<> pos;
+    math::vector<long double> pos;
     int16_t width, height;
   };
 }

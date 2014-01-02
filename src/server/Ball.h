@@ -26,11 +26,11 @@ namespace pong
   struct Ball
   {
     explicit Ball(BallID id = 0,
-                  math::vector<> pos = math::vector<>(),
+                  math::vector<long double> pos = math::vector<long double>(),
                   int16_t diameter = 0)
              : id(id), pos(pos), diameter(diameter){}
     BallID id;
-    math::vector<> pos;
+    math::vector<long double> pos;
     int16_t diameter;
   };
 }

@@ -24,13 +24,9 @@ namespace pong
 {
   ConcreteServer::ConcreteServer(int16_t width, int16_t height) noexcept :
                      //TODO Fix this, now!
-                     first_paddle_( Paddle{0, {0,0}, 200, 30}, 0),
-                     second_paddle_(Paddle{0,
-                                    {0,static_cast<int16_t>(height - 30)},
-                                     200, 30}, 0),
-                     ball_(Ball{1, {static_cast<int16_t>(width / 2),
-                                static_cast<int16_t>(height / 2)}, 25},
-                           {0,1}){}
+                     first_paddle_(Paddle(0, {0,0}, 200, 30), 0),
+                     second_paddle_(Paddle(0, {0,height - 30.0}, 200, 30), 0),
+                     ball_(Ball{1, {width / 2.0, height / 2.0}, 20}, {0,1}){}
 
   PaddleID ConcreteServer::makePaddle()
   {
