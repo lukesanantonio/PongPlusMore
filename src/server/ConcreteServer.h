@@ -28,7 +28,7 @@ namespace pong
   public:
     using paddle_x_type = decltype(Paddle::pos.x);
 
-    ConcreteServer(int16_t width, int16_t height) noexcept;
+    ConcreteServer(int width, int height) noexcept;
     virtual ~ConcreteServer() noexcept = default;
 
     virtual PaddleID makePaddle() override;
