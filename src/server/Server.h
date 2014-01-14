@@ -26,5 +26,6 @@ namespace pong
 {
   struct Server
   {
+    virtual PaddleID connect() = 0;
   };
 }
