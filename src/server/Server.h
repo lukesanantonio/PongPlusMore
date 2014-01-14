@@ -30,5 +30,7 @@ namespace pong
     virtual PaddleID connect() = 0;
     virtual void setPaddle(PaddleID, const Paddle&) = 0;
     virtual Paddle getPaddle(PaddleID) = 0;
+
+    virtual std::vector<Paddle> paddles() noexcept = 0;
   };
 }

@@ -30,6 +30,11 @@ namespace pong
     virtual PaddleID connect() override;
     virtual void setPaddle(PaddleID, const Paddle&) override;
     virtual Paddle getPaddle(PaddleID) override;
+
+    inline virtual std::vector<Paddle> paddles() noexcept override
+    {
+      return this->world_.paddles;
+    }
   private:
     World world_;
     PaddleID id_counter_ = 0;
