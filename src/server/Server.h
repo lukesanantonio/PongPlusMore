@@ -26,48 +26,5 @@ namespace pong
 {
   struct Server
   {
-    virtual ~Server() noexcept = default;
-    /*!
-     * \brief A new paddle is added. The id is returned.
-     *
-     * \returns A non-zero integer which is the id of the paddle just paired.
-     * \sa PaddleID
-     */
-    virtual PaddleID makePaddle() = 0;
-
-    /*!
-     * \brief Requests a paddle x location for a given PaddleID.
-     *
-     * The request won't be fulfilled until a call to Server::step, so it can
-     * be changed at any time before a step.
-     * \note Should the paddle id be 0, this function is a no-op.
-     */
-    virtual void setPaddleDestination(PaddleID,
-                                      decltype(Paddle::pos.x) x) noexcept = 0;
-
-    /*!
-     * \brief Returns a vector of all the paddle ids that exist.
-     */
-    virtual std::vector<PaddleID> paddles() const noexcept = 0;
-    /*!
-     * \brief Returns a vector of all the balls ids that exist.
-     */
-    virtual std::vector<BallID> balls() const noexcept = 0;
-
-    /*!
-     * \brief Returns the paddle with the id of the one passed in.
-     */
-    virtual Paddle getPaddleFromID(PaddleID) const noexcept = 0;
-    /*!
-     * \brief Returns the ball with the id of the one passed in.
-     */
-    virtual Ball getBallFromID(BallID) const noexcept = 0;
-
-    /*!
-     * \brief Steps the pong simulation.
-     *
-     * \post All requested paddle locations are fulfilled.
-     */
-    virtual void step() = 0;
   };
 }

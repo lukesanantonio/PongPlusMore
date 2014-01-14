@@ -16,33 +16,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/*!
- * \file collision_util.h
- * \brief Collision helper functions, implemented in ConcreteServerStep.cpp.
  *
- * TODO move the implementations to their own file.
+ * \file collision_util.h
+ * \brief Collision helper functions.
  */
 #pragma once
-#include "Paddle.h"
-#include "Ball.h"
 namespace pong
 {
-  enum class CollisionSide
+  inline bool isIn(int left, int right, int check) noexcept
   {
-    Top,
-    Bottom,
-    Left,
-    Right,
-    TopLeftCorner,
-    TopRightCorner,
-    BottomLeftCorner,
-    BottomRightCorner,
-    None
-  };
-
-  bool isIn(int left, int right, int check) noexcept;
-
-  CollisionSide paddleIsBesideBall(const Paddle& paddle, const Ball& ball)
-                                                                      noexcept;
+    return std::min(left, right) <= check && check <= std::max(left, right);
+  }
 }
