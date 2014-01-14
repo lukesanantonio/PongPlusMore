@@ -20,8 +20,7 @@ find_package(SDL2 REQUIRED)
 find_package(Freetype REQUIRED)
 
 add_library(ppmclient STATIC render_text.cpp Label.cpp Button.cpp
-                             GameStates/MenuGameState.cpp
-                             GameStates/PlayGameState.cpp)
+                             GameStates/MenuGameState.cpp)
 
 target_link_libraries(ppmclient ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
 target_include_directories(ppmclient PUBLIC ${SDL2_INCLUDE_DIRS}
