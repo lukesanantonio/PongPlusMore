@@ -36,13 +36,13 @@ namespace pong
   {
   public:
     explicit Label(const std::string& text = "",
-                   int16_t text_height = 24,
-                   math::vector<int16_t> pos = math::vector<int16_t>(),
+                   int text_height = 24,
+                   math::vector<int> pos = math::vector<int>(),
                    FontRenderer* font_renderer = nullptr) noexcept;
 
     Label(const std::string& text,
-          int16_t text_height,
-          math::vector<int16_t> pos,
+          int text_height,
+          math::vector<int> pos,
           SDL_Color text_color,
           SDL_Color back_color,
           FontRenderer* font_renderer) noexcept;
@@ -61,17 +61,17 @@ namespace pong
     void render(SDL_Renderer* renderer) const;
     void render(SDL_Surface* surface) const;
 
-    inline int16_t getSurfaceWidth() const;
-    inline int16_t getSurfaceHeight() const;
+    inline int getSurfaceWidth() const;
+    inline int getSurfaceHeight() const;
 
     inline void text(const std::string& text) noexcept;
     inline std::string text() const noexcept;
 
-    inline void text_height(int16_t text_height) noexcept;
-    inline int16_t text_height() const noexcept;
+    inline void text_height(int text_height) noexcept;
+    inline int text_height() const noexcept;
 
-    inline void position(math::vector<int16_t> pos) noexcept;
-    inline math::vector<int16_t> position() const noexcept;
+    inline void position(math::vector<int> pos) noexcept;
+    inline math::vector<int> position() const noexcept;
 
     inline void text_color(SDL_Color text_color) noexcept;
     inline SDL_Color text_color() const noexcept;
@@ -94,14 +94,14 @@ namespace pong
      *
      * \sa Label::text_
      */
-    int16_t text_height_;
+    int text_height_;
 
     /*!
      * \brief The position of the top left corner of the label surface.
      *
      * \sa Label::cached_surface_
      */
-    math::vector<int16_t> pos_;
+    math::vector<int> pos_;
 
     /*!
      * \brief The color of the text in the SDL_Surface generated of the text.
@@ -130,7 +130,7 @@ namespace pong
    * \warning This function requires a valid FontRenderer, otherwise it
    * crashes.
    */
-  inline int16_t Label::getSurfaceWidth() const
+  inline int Label::getSurfaceWidth() const
   {
     return this->cache()->w;
   }
@@ -143,7 +143,7 @@ namespace pong
    * \warning This function requires a valid FontRenderer, otherwise it
    * crashes.
    */
-  inline int16_t Label::getSurfaceHeight() const
+  inline int Label::getSurfaceHeight() const
   {
     return this->cache()->h;
   }
@@ -173,7 +173,7 @@ namespace pong
    *
    * \post Invalidates the surface.
    */
-  inline void Label::text_height(int16_t text_height) noexcept
+  inline void Label::text_height(int text_height) noexcept
   {
     this->text_height_ = text_height;
     this->invalidateCache();
@@ -183,7 +183,7 @@ namespace pong
    *
    * \returns Label::text_height_
    */
-  inline int16_t Label::text_height() const noexcept
+  inline int Label::text_height() const noexcept
   {
     return this->text_height_;
   }
@@ -193,7 +193,7 @@ namespace pong
    *
    * Does not invalidate the surface.
    */
-  inline void Label::position(math::vector<int16_t> pos) noexcept
+  inline void Label::position(math::vector<int> pos) noexcept
   {
     this->pos_ = pos;
   }
@@ -202,7 +202,7 @@ namespace pong
    *
    * \returns Label::pos_
    */
-  inline math::vector<int16_t> Label::position() const noexcept
+  inline math::vector<int> Label::position() const noexcept
   {
     return this->pos_;
   }

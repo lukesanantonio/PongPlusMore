@@ -37,9 +37,9 @@ namespace pong
   {
   public:
     explicit Button(const std::string& text = "",
-                    math::vector<int16_t> pos = math::vector<int16_t>(),
-                    int16_t width = 0,
-                    int16_t height = 0,
+                    math::vector<int> pos = math::vector<int>(),
+                    int width = 0,
+                    int height = 0,
                     bool enabled = true,
                     FontRenderer* font_renderer = nullptr);
 
@@ -60,14 +60,14 @@ namespace pong
     inline void text(const std::string& text);
     inline std::string text() const;
 
-    inline void position(const math::vector<int16_t> pos) noexcept;
-    inline math::vector<int16_t> position() const noexcept;
+    inline void position(const math::vector<int> pos) noexcept;
+    inline math::vector<int> position() const noexcept;
 
-    inline void width(int16_t width) noexcept;
-    inline int16_t width() const noexcept;
+    inline void width(int width) noexcept;
+    inline int width() const noexcept;
 
-    inline void height(int16_t height) noexcept;
-    inline int16_t height() const noexcept;
+    inline void height(int height) noexcept;
+    inline int height() const noexcept;
 
     void enabled(bool enabled) noexcept;
     inline bool enabled() const noexcept;
@@ -87,17 +87,17 @@ namespace pong
      * \brief The position of the top left corner of the button in SDL window
      * space.
      */
-    math::vector<int16_t> pos_;
+    math::vector<int> pos_;
 
     /*!
      * \brief The width of the button.
      */
-    int16_t width_;
+    int width_;
 
     /*!
      * \brief The height of the button.
      */
-    int16_t height_;
+    int height_;
 
     /*!
      * \brief Whether or not the button can be clicked.
@@ -134,7 +134,7 @@ namespace pong
   /*!
    * \brief Sets the internal position of the button.
    */
-  inline void Button::position(const math::vector<int16_t> pos) noexcept
+  inline void Button::position(const math::vector<int> pos) noexcept
   {
     this->pos_ = pos;
   }
@@ -143,7 +143,7 @@ namespace pong
    *
    * \returns Button::pos_
    */
-  inline math::vector<int16_t> Button::position() const noexcept
+  inline math::vector<int> Button::position() const noexcept
   {
     return this->pos_;
   }
@@ -151,7 +151,7 @@ namespace pong
   /*!
    * \brief Sets the width of the button to render.
    */
-  inline void Button::width(int16_t width) noexcept
+  inline void Button::width(int width) noexcept
   {
     this->width_ = width;
   }
@@ -160,7 +160,7 @@ namespace pong
    *
    * \returns Button::width_
    */
-  inline int16_t Button::width() const noexcept
+  inline int Button::width() const noexcept
   {
     return this->width_;
   }
@@ -168,7 +168,7 @@ namespace pong
   /*!
    * \brief Sets the height of the button to render.
    */
-  inline void Button::height(int16_t height) noexcept
+  inline void Button::height(int height) noexcept
   {
     this->height_ = height;
     //Set the text height relative to the button height.
@@ -179,7 +179,7 @@ namespace pong
    *
    * \returns Button::height_
    */
-  inline int16_t Button::height() const noexcept
+  inline int Button::height() const noexcept
   {
     return this->height_;
   }

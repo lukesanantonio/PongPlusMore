@@ -28,15 +28,15 @@ namespace pong
   /*!
    * \brief Checks whether the specified point is in the button.
    */
-  static bool checkClick(Button* button, math::vector<int16_t> point)
+  static bool checkClick(Button* button, math::vector<int> point)
   {
     //The button can only be clicked if it is enabled.
     if(button->enabled())
     {
       //Cache the parameters...
-      math::vector<int16_t> pos = button->position();
-      int16_t width = button->width();
-      int16_t height = button->height();
+      math::vector<int> pos = button->position();
+      int width = button->width();
+      int height = button->height();
 
       //Check to see if the button occupies the point... Sooo:
       if(point.x <= pos.x + width  && point.x >= pos.x &&
@@ -61,9 +61,9 @@ namespace pong
    * the internal label: Button::label_
    */
   Button::Button(const std::string& text,
-                 math::vector<int16_t> pos,
-                 int16_t width,
-                 int16_t height,
+                 math::vector<int> pos,
+                 int width,
+                 int height,
                  bool enabled,
                  FontRenderer* font_renderer) :
                  label_(text, 24, {0,0}, font_renderer),
@@ -152,7 +152,7 @@ namespace pong
                                      prev_color.a);
 
     //Find where to render the label!
-    math::vector<int16_t> label_pos;
+    math::vector<int> label_pos;
     label_pos.x = center(this->pos_.x, this->width_,
                          this->label_.getSurfaceWidth());
     label_pos.y = center(this->pos_.y, this->height_,
@@ -190,7 +190,7 @@ namespace pong
     {
       if(event.button.button == SDL_BUTTON_LEFT)
       {
-        math::vector<int16_t> point;
+        math::vector<int> point;
         point.x = event.button.x;
         point.y = event.button.y;
 

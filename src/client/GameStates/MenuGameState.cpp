@@ -33,14 +33,14 @@ namespace pong
     FontRenderer* font_renderer = &(*game.font_renderer);
     this->title_.font_renderer(font_renderer);
 
-    this->title_.position({center<int16_t>(0, game.width,
-                                           this->title_.getSurfaceWidth()),
+    this->title_.position({center(0, game.width,
+                                  this->title_.getSurfaceWidth()),
                            15});
 
-    int16_t width = 750;
-    int16_t height = 90;
-    int16_t position_x = center<int16_t>(0, game.width, width);
-    int16_t starting_y = 280;
+    int width = 750;
+    int height = 90;
+    int position_x = center(0, game.width, width);
+    int starting_y = 280;
 
     for(Button* button : {&singleplayer_, &multiplayer_, &options_, &quit_})
     {

@@ -40,8 +40,8 @@ namespace pong
    * be solid black.
    */
   Label::Label(const std::string& text,
-               int16_t text_height,
-               math::vector<int16_t> pos,
+               int text_height,
+               math::vector<int> pos,
                FontRenderer* font_renderer) noexcept :
                text_(text),
                text_height_(text_height),
@@ -75,8 +75,8 @@ namespace pong
    * not be deleted at any time!
    */
   Label::Label(const std::string& text,
-               int16_t text_height,
-               math::vector<int16_t> pos,
+               int text_height,
+               math::vector<int> pos,
                SDL_Color text_color,
                SDL_Color back_color,
                FontRenderer* font_renderer) noexcept :

@@ -74,7 +74,7 @@ namespace pong
      *
      */
     virtual UniquePtrSurface render_text(const std::string& text,
-                                         int16_t pixel_size,
+                                         int pixel_size,
                                          SDL_Color text_color,
                                          SDL_Color background_color) = 0;
   protected:
@@ -90,16 +90,16 @@ namespace pong
     using FontRenderer::FontRenderer;
 
     virtual UniquePtrSurface render_text(const std::string& text,
-                                         int16_t pixel_size,
+                                         int pixel_size,
                                          SDL_Color text_color,
                                          SDL_Color background_color) override;
   };
 
-  void setupGrayscalePalette(SDL_Surface*& surface, int16_t num_colors);
+  void setupGrayscalePalette(SDL_Surface*& surface, int num_colors);
 
   void invertPalette(SDL_Surface*& surface);
 
-  UniquePtrSurface generateRectangle(int16_t width, int16_t height,
+  UniquePtrSurface generateRectangle(int width, int height,
                                      SDL_Color color);
 };
 

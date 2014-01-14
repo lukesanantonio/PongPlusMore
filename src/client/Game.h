@@ -27,7 +27,7 @@ namespace pong
   struct Game
   {
     std::unique_ptr<FontRenderer> font_renderer;
-    int16_t width, height;
+    int width, height;
     std::shared_ptr<GameState> game_state;
     bool exiting = false;
   };

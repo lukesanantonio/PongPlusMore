@@ -62,7 +62,7 @@ namespace pong
     }
   }
   UniquePtrSurface MonoTextRenderer::render_text(const std::string& text,
-                                                 int16_t pixel_size,
+                                                 int pixel_size,
                                                  SDL_Color text_color,
                                                  SDL_Color background_color)
   {
@@ -172,7 +172,7 @@ namespace pong
    * palette.
    * \note For an 8-bit surface, this should not exceed 256.
    */
-  void setupGrayscalePalette(SDL_Surface*& surface, int16_t num_colors)
+  void setupGrayscalePalette(SDL_Surface*& surface, int num_colors)
   {
     SDL_Color colors[num_colors];
     for(unsigned int i = 0; i < num_colors; ++i)
@@ -210,7 +210,7 @@ namespace pong
    * \returns An SDL_Create(d)RGBSurface() of the color passed in.
    * \returns nullptr on error.
    */
-  UniquePtrSurface generateRectangle(int16_t width, int16_t height,
+  UniquePtrSurface generateRectangle(int width, int height,
                                      SDL_Color color)
   {
     SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
