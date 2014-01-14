@@ -17,16 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include <vector>
-#include "Paddle.h"
+#include "World.h"
+#include <algorithm>
 namespace pong
 {
-  struct World
-  {
-    std::vector<Paddle> paddles;
-  };
-
   decltype(World::paddles)::iterator findPaddleByID(World& world,
-                                                    PaddleID id);
+                                                    PaddleID id)
+  {
+    return std::find_if(world.paddles.begin(), world.paddles.end(),
+       [&](const Paddle& paddle) {return paddle.id == id;});
+  }
 }
