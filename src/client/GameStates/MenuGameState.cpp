@@ -20,6 +20,7 @@
 #include "MenuGameState.h"
 #include "common/crash.hpp"
 #include "common/center.hpp"
+#include "PaddleGameState.h"
 
 namespace pong
 {
@@ -52,6 +53,11 @@ namespace pong
       button->enabled(true);
       starting_y += height + 50;
     }
+
+    this->singleplayer_.executeOnClick([&]()
+    {
+      game.game_state = std::make_shared<PaddleGameState>();
+    });
 
     this->quit_.executeOnClick([&]()
     {
