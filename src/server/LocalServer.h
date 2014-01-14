@@ -25,8 +25,8 @@ namespace pong
   struct LocalServer : public Server
   {
     virtual PaddleID connect() override;
-    virtual void setPaddle(PaddleID, const Paddle&) override;
-    virtual Paddle getPaddle(PaddleID) override;
+    virtual Paddle& getPaddle(PaddleID) override;
+    virtual const Paddle& getPaddle(PaddleID) const override;
 
     inline virtual std::vector<Paddle> paddles() noexcept override
     {

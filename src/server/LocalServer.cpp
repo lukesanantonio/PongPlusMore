@@ -28,11 +28,11 @@ namespace pong
     this->world_.paddles.emplace_back(id_counter_);
     return id_counter_;
   }
-  void LocalServer::setPaddle(PaddleID id, const Paddle& paddle)
+  Paddle& LocalServer::getPaddle(PaddleID id)
   {
-    findPaddleByID(this->world_, id) = paddle;
+    return findPaddleByID(this->world_, id);
   }
-  Paddle LocalServer::getPaddle(PaddleID id)
+  const Paddle& LocalServer::getPaddle(PaddleID id) const
   {
     return findPaddleByID(this->world_, id);
   }

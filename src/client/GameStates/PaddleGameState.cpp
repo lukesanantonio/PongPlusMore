@@ -35,10 +35,8 @@ namespace pong
       case SDL_MOUSEMOTION:
       {
         if(!this->top_) break;
-        // TODO this is ugly code, maybe a reference to a paddle would be
-        // cleaner.
-        Paddle paddle{this->top_, {event.motion.x, event.motion.y}, 200, 75};
-        this->server_.setPaddle(this->top_, paddle);
+        this->server_.getPaddle(this->top_).pos =
+                                              {event.motion.x, event.motion.y};
         break;
       }
       case SDL_QUIT:
