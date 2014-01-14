@@ -44,13 +44,7 @@ namespace pong
 
     virtual void step() override;
   private:
-    std::pair<Paddle, paddle_x_type> first_paddle_;
-    std::pair<Paddle, paddle_x_type> second_paddle_;
+    std::vector<std::pair<Paddle, paddle_x_type> > paddles_;
     Ball ball_;
-
-    /*!
-     * \brief Used to implement makePaddle.
-     */
-    PaddleID id_impl_ = 1;
   };
 }

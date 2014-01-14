@@ -23,51 +23,42 @@
 namespace pong
 {
   ConcreteServer::ConcreteServer(int width, int height) noexcept :
-                     //TODO Fix this, now!
-                     first_paddle_(Paddle(0, {0,0}, 200, 30), 0),
-                     second_paddle_(Paddle(0, {0, height - 30}, 200, 30), 0),
                      ball_(1, { width / 2, height / 2 }, {0, 0}, 20)
   {}
 
   PaddleID ConcreteServer::makePaddle()
   {
-    //This horrible function returns 1 then 2 then 0.
-    //First client gets the first paddle.
-    //Second client gets the second paddle.
-    //Third+ clients get no paddle.
-    if(id_impl_ == 1) std::get<0>(this->first_paddle_).id = 1;
-    else if(id_impl_ == 2) std::get<0>(this->second_paddle_).id = 2;
-    else return 0;
-    return id_impl_++;
+    if(this->paddles_.size() >= 2)
+    {
+      return 0;
+    }
+
+    this->paddles_.emplace_back(Paddle(this->paddles_.size(), {0, 0}, 200, 75),
+                                0);
+    return std::get<0>(this->paddles_.back()).id;
   }
   void ConcreteServer::setPaddleDestination(PaddleID id,
                                             paddle_x_type x) noexcept
   {
-    //A kind of cool, hidden feature of using two ifs rather than an if-else:
-    //If neither paddle has been claimed by a client, one can make both move
-    //to the same place at the same time! Usefullness: None. Reason: Crap
-    //design with this paddle business.
-    if(std::get<0>(this->first_paddle_).id == id)
+    for(auto& pair : this->paddles_)
     {
-      std::get<1>(this->first_paddle_) = x;
-    }
-    if(std::get<0>(this->second_paddle_).id == id)
-    {
-      std::get<1>(this->second_paddle_) = x;
+      if(std::get<0>(pair).id == id)
+      {
+        std::get<1>(pair) = x;
+      }
     }
   }
   std::vector<PaddleID> ConcreteServer::paddles() const noexcept
   {
     //This function is fairly inefficient. TODO fix.
-    std::vector<PaddleID> paddles = {std::get<0>(this->first_paddle_).id,
-                                     std::get<0>(this->second_paddle_).id};
-    auto end = std::remove_if(paddles.begin(), paddles.end(), [](PaddleID id)
+    std::vector<PaddleID> paddles(this->paddles_.size());
+    std::transform(this->paddles_.begin(), this->paddles_.end(),
+                   paddles.begin(),
+    [](const std::pair<Paddle, int>& pair)
     {
-      return id == 0 ? true : false;
+      return std::get<0>(pair).id;
     });
 
-    paddles.erase(end, paddles.end());
-    //Move semantics!
     return paddles;
   }
   std::vector<BallID> ConcreteServer::balls() const noexcept
@@ -76,15 +67,7 @@ namespace pong
   }
   Paddle ConcreteServer::getPaddleFromID(PaddleID id) const noexcept
   {
-    switch(id)
-    {
-      case 1:
-        return std::get<0>(this->first_paddle_);
-      case 2:
-        return std::get<0>(this->second_paddle_);
-      default:
-        return Paddle();
-    }
+    return std::get<0>(this->paddles_[id - 1]);
   }
   Ball ConcreteServer::getBallFromID(BallID id) const noexcept
   {
