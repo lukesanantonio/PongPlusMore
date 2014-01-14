@@ -38,6 +38,12 @@ namespace pong
              : id(id), pos(pos), width(width), height(height){}
     PaddleID id;
     math::vector<int> pos;
+    /*!
+     * \brief The hoped to be location.
+     *
+     * The physics will simulate the paddle until it gets here.
+     */
+    math::vector<int> next_pos;
     int width, height;
   };
 }
