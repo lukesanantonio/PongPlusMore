@@ -42,6 +42,7 @@ namespace pong
       case SDL_QUIT:
       {
         pong::crash("Exiting...");
+        break;
       }
     }
   }
