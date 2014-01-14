@@ -35,7 +35,7 @@ namespace pong
 
     this->title_.position({center(0, game.width,
                                   this->title_.getSurfaceWidth()),
-                           15});
+                           50});
 
     int width = 750;
     int height = 90;
