@@ -30,20 +30,10 @@ namespace pong
   }
   void LocalServer::setPaddle(PaddleID id, const Paddle& paddle)
   {
-    auto iter = findPaddleByID(this->world_, id);
-    if(iter == this->world_.paddles.end())
-    {
-      throw InvalidPaddleID();
-    }
-    *iter = paddle;
+    findPaddleByID(this->world_, id) = paddle;
   }
   Paddle LocalServer::getPaddle(PaddleID id)
   {
-    auto iter = findPaddleByID(this->world_, id);
-    if(iter == this->world_.paddles.end())
-    {
-      throw InvalidPaddleID();
-    }
-    return *iter;
+    return findPaddleByID(this->world_, id);
   }
 }

@@ -27,6 +27,6 @@ namespace pong
     std::vector<Paddle> paddles;
   };
 
-  decltype(World::paddles)::iterator findPaddleByID(World& world,
-                                                    PaddleID id);
+  const Paddle& findPaddleByID(const World&, PaddleID);
+  Paddle& findPaddleByID(World&, PaddleID);
 }

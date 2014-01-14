@@ -19,12 +19,19 @@
  */
 #include "World.h"
 #include <algorithm>
+#include "exceptions.h"
 namespace pong
 {
-  decltype(World::paddles)::iterator findPaddleByID(World& world,
-                                                    PaddleID id)
+  const Paddle& findPaddleByID(const World& world, PaddleID id)
   {
-    return std::find_if(world.paddles.begin(), world.paddles.end(),
+    auto iter = std::find_if(world.paddles.begin(), world.paddles.end(),
        [&](const Paddle& paddle) {return paddle.id == id;});
+
+    if(iter == world.paddles.end()) throw InvalidPaddleID();
+    return *iter;
+  }
+  Paddle& findPaddleByID(World& world, PaddleID id)
+  {
+    return const_cast<Paddle&>(findPaddleByID(world, id));
   }
 }
