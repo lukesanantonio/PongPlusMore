@@ -17,33 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "LocalServer.h"
-#include "exceptions.h"
 namespace pong
 {
-  PaddleID LocalServer::connect()
-  {
-    // We've done a loop, no more ids.
-    if(++id_counter_ == 0x00) throw NoMoreClientsAvailable();
-    this->world_.paddles.emplace_back(id_counter_);
-    return id_counter_;
-  }
-  void LocalServer::setPaddle(PaddleID id, const Paddle& paddle)
-  {
-    auto iter = findPaddleByID(this->world_, id);
-    if(iter == this->world_.paddles.end())
-    {
-      throw InvalidPaddleID();
-    }
-    *iter = paddle;
-  }
-  Paddle LocalServer::getPaddle(PaddleID id)
-  {
-    auto iter = findPaddleByID(this->world_, id);
-    if(iter == this->world_.paddles.end())
-    {
-      throw InvalidPaddleID();
-    }
-    return *iter;
-  }
+  struct NoMoreClientsAvailable {};
+  struct InvalidPaddleID {};
 }

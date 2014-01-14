@@ -22,9 +22,6 @@
 #include "World.h"
 namespace pong
 {
-  struct NoMoreClientsAvailable {};
-  struct InvalidPaddleID {};
-
   struct LocalServer : public Server
   {
     virtual PaddleID connect() override;
