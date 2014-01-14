@@ -26,6 +26,7 @@ namespace pong
 {
   struct Server
   {
+    virtual ~Server() noexcept = default;
     virtual PaddleID connect() = 0;
   };
 }
