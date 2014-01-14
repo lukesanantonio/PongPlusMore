@@ -29,8 +29,7 @@ namespace pong
     virtual void update() override;
     virtual void render(SDL_Renderer*) const override;
   private:
-    // TODO Fix by making LocalServer::paddles const.
-    mutable LocalServer server_;
+    LocalServer server_;
     PaddleID top_ = 0;
     PaddleID bottom_ = 0;
   };

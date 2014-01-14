@@ -31,6 +31,6 @@ namespace pong
     virtual Paddle& getPaddle(PaddleID) = 0;
     virtual const Paddle& getPaddle(PaddleID) const = 0;
 
-    virtual std::vector<Paddle> paddles() noexcept = 0;
+    virtual std::vector<Paddle> paddles() const noexcept = 0;
   };
 }

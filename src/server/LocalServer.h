@@ -28,7 +28,7 @@ namespace pong
     virtual Paddle& getPaddle(PaddleID) override;
     virtual const Paddle& getPaddle(PaddleID) const override;
 
-    inline virtual std::vector<Paddle> paddles() noexcept override
+    inline virtual std::vector<Paddle> paddles() const noexcept override
     {
       return this->world_.paddles;
     }
