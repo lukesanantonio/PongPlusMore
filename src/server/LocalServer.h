@@ -28,8 +28,8 @@ namespace pong
   struct LocalServer : public Server
   {
     virtual PaddleID connect() override;
-    virtual void setPaddle(PaddleID, const Paddle&);
-    virtual Paddle getPaddle(PaddleID);
+    virtual void setPaddle(PaddleID, const Paddle&) override;
+    virtual Paddle getPaddle(PaddleID) override;
   private:
     World world_;
     PaddleID id_counter_ = 0;
