@@ -43,19 +43,18 @@ to add:
  - Scripting to control arbitrary paddles and a "Level Editor" to go with that!
    - The maps and scripts can be bundled into a package and distributed as a
    gamemode.
-   - Don't know about any particular scripting language... Possibly Javascript,
-   Python, or [any of these][2].
+   - Don't know about any particular scripting language... Most likely Python.
  - Complete Network Transparency. The scripting API will do the best job it can
  in allowing the developer to avoid special cases involved when a player
  abstraction isn't that great...
- - Configurable. It'd be nice if a player could change the resolution of their
- pong game. So why not!
  - Some other stuff that I can't remember at the moment.
- - Awesome Portability and Compatibility
+ - Awesome Portability, Compatibility, and Configurability.
    - I at least want Pong Plus More to run on my Raspberry Pi so I can get it
    on my TV.
    - It would be pretty cool to work with the Wii remote tilt function.
    - Joystick/Controller support is a must.
+   - What the hell, why not have it run in a console, while playing against a
+   friend, I don't discriminate.
 
 
 Building
