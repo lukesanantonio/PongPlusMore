@@ -23,6 +23,7 @@ add_library(ppmclient STATIC render_text.cpp Label.cpp Button.cpp
                              GameStates/MenuGameState.cpp)
 
 target_link_libraries(ppmclient ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
+target_link_libraries(ppmclient ppmserv)
 target_include_directories(ppmclient PUBLIC ${SDL2_INCLUDE_DIRS}
                                             ${FREETYPE_INCLUDE_DIRS}
                                             ${CMAKE_CURRENT_SOURCE_DIR})
