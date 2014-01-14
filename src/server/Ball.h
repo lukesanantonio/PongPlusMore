@@ -27,10 +27,12 @@ namespace pong
   {
     explicit Ball(BallID id = 0,
                   math::vector<int> pos = math::vector<int>(),
+                  math::vector<int> vel = math::vector<int>(),
                   int diameter = 0)
              : id(id), pos(pos), diameter(diameter){}
     BallID id;
     math::vector<int> pos;
+    math::vector<int> vel;
     int diameter;
   };
 }

@@ -26,8 +26,7 @@ namespace pong
                      //TODO Fix this, now!
                      first_paddle_(Paddle(0, {0,0}, 200, 30), 0),
                      second_paddle_(Paddle(0, {0, height - 30}, 200, 30), 0),
-                     ball_(Ball(1, { width / 2, height / 2 }, 20),
-                           {0, 0})
+                     ball_(1, { width / 2, height / 2 }, {0, 0}, 20)
   {}
 
   PaddleID ConcreteServer::makePaddle()
@@ -73,13 +72,7 @@ namespace pong
   }
   std::vector<BallID> ConcreteServer::balls() const noexcept
   {
-    //At least we have move semantics.
-    std::vector<BallID> balls;
-    if(std::get<0>(this->ball_).id != 0)
-    {
-      balls.push_back(std::get<0>(this->ball_).id);
-    }
-    return balls;
+    return {this->ball_.id};
   }
   Paddle ConcreteServer::getPaddleFromID(PaddleID id) const noexcept
   {
@@ -98,7 +91,7 @@ namespace pong
     switch(id)
     {
       case 1:
-        return std::get<0>(this->ball_);
+        return this->ball_;
       default:
         return Ball();
     }
