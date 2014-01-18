@@ -32,6 +32,7 @@ namespace pong
   }
   Paddle& findPaddleByID(World& world, PaddleID id)
   {
-    return const_cast<Paddle&>(findPaddleByID(world, id));
+    return const_cast<Paddle&>(
+                         findPaddleByID(static_cast<const World&>(world), id));
   }
 }
