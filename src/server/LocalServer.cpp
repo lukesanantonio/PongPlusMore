@@ -25,7 +25,9 @@ namespace pong
   {
     // We've done a loop, no more ids.
     if(++id_counter_ == 0x00) throw NoMoreClientsAvailable();
-    this->world_.paddles.emplace_back(id_counter_);
+    // TODO Add support for configurable dimensions of the Paddle.
+    this->world_.paddles.emplace_back(id_counter_,
+                                      math::vector<int>(0, 0), 250, 40);
     return id_counter_;
   }
   Paddle& LocalServer::getPaddle(PaddleID id)
