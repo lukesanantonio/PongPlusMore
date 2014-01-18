@@ -19,6 +19,7 @@
  */
 
 #include <iostream>
+#include "common/Timer.hpp"
 #include "SDL.h"
 #include "common/crash.hpp"
 #include "client/Game.h"
@@ -54,28 +55,34 @@ int main(int argc, char** argv)
                   new pong::MonoTextRenderer("/home/luke/.fonts/Railway.ttf"));
   game.game_state.reset(new pong::MenuGameState(game));
 
+  pong::Timer<> update;
   while(!game.exiting)
   {
-    // Make a link to the game state so it doesn't all of a sudden become a
-    // nullptr.
-    std::shared_ptr<pong::GameState> game_state = game.game_state;
-
-    SDL_Event event;
-    while(SDL_PollEvent(&event))
+    if(update.hasBeen(std::chrono::milliseconds(5)))
     {
-      game_state->handleEvent(event);
+      // Make a link to the game state so it doesn't all of a sudden become a
+      // nullptr.
+      std::shared_ptr<pong::GameState> game_state = game.game_state;
+
+      SDL_Event event;
+      while(SDL_PollEvent(&event))
+      {
+        game_state->handleEvent(event);
+      }
+
+      game_state->update();
+      update.reset();
+
+      // If the game state is different from our cache... Don't render.
+      if(game_state != game.game_state) continue;
+
+      SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xff);
+      SDL_RenderClear(renderer);
+
+      game_state->render(renderer);
+
+      SDL_RenderPresent(renderer);
     }
-    game_state->update();
-
-    // If the game state is different from our cache... Don't render.
-    if(game_state != game.game_state) continue;
-
-    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xff);
-    SDL_RenderClear(renderer);
-
-    game_state->render(renderer);
-
-    SDL_RenderPresent(renderer);
   }
 
   SDL_DestroyRenderer(renderer);
