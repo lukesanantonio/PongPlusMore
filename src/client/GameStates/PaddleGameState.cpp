@@ -49,14 +49,28 @@ namespace pong
 
   void PaddleGameState::update()
   {
+    for(PaddleID id : this->server_.paddles())
+    {
+      Paddle& paddle = this->server_.getPaddle(id);
+      decltype(paddle.pos) pos_diff = {paddle.next_pos.x - paddle.pos.x,
+                                       paddle.next_pos.y - paddle.pos.y};
+      constexpr int diff = 7;
+      pos_diff.x =
+              std::min(diff, std::abs(pos_diff.x)) * (pos_diff.x < 0 ? -1 : 1);
+      pos_diff.y =
+              std::min(diff, std::abs(pos_diff.y)) * (pos_diff.y < 0 ? -1 : 1);
+
+      paddle.pos.x += pos_diff.x;
+      paddle.pos.y += pos_diff.y;
+    }
   }
 
   void PaddleGameState::render(SDL_Renderer* renderer) const
   {
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
-    for(Paddle paddle : this->server_.paddles())
+    for(PaddleID id : this->server_.paddles())
     {
-      pong::render(renderer, paddle);
+      pong::render(renderer, this->server_.getPaddle(id));
     }
   }
 }

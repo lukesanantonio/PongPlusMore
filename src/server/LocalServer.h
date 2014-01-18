@@ -28,9 +28,16 @@ namespace pong
     virtual Paddle& getPaddle(PaddleID) override;
     virtual const Paddle& getPaddle(PaddleID) const override;
 
-    inline virtual std::vector<Paddle> paddles() const noexcept override
+    inline virtual std::vector<PaddleID> paddles() const noexcept override
     {
-      return this->world_.paddles;
+      std::vector<PaddleID> ids;
+      ids.reserve(this->world_.paddles.size());
+
+      for(const Paddle& paddle : this->world_.paddles)
+      {
+        ids.push_back(paddle.id);
+      }
+      return ids;
     }
   private:
     World world_;
