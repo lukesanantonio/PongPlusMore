@@ -106,7 +106,7 @@ The steps should work similar to how it's built on Linux. The hard part is
 getting the dependencies.
 
 ##### Windows
-Pfft. Have fun, man! Hint: It is possible.
+Pfft. Have fun, man! Hint: It is possible; it will always be possible.
 
 Prebuilt Binaries
 -----------------
