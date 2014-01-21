@@ -71,7 +71,7 @@ namespace pong
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
     for(PaddleID id : this->server_.paddles())
     {
-      pong::render(renderer, this->server_.getPaddle(id));
+      pong::render(renderer, this->server_.getPaddle(id).volume);
     }
   }
 }

@@ -24,33 +24,16 @@
  */
 #pragma once
 #include "SDL.h"
-#include "server/Paddle.h"
-#include "server/Ball.h"
+#include "server/Volume.h"
 namespace pong
 {
-  template <typename pos_type,
-            typename int_type>
-  static void render_rect(SDL_Renderer* renderer,
-                          pos_type x, pos_type y,
-                          int_type w, int_type h)
+  void render(SDL_Renderer* renderer, const Volume& volume)
   {
     SDL_Rect rect;
-    // Set the rectangle this way to avoid those damn narrowing conversion
-    // errors.
-    rect.x = x;
-    rect.y = y;
-    rect.w = w;
-    rect.h = h;
+    rect.x = volume.pos.x;
+    rect.y = volume.pos.y;
+    rect.w = volume.width;
+    rect.h = volume.height;
     SDL_RenderFillRect(renderer, &rect);
-  }
-  inline void render(SDL_Renderer* renderer, const Paddle& paddle)
-  {
-    render_rect(renderer, paddle.volume.pos.x, paddle.volume.pos.y,
-                          paddle.volume.width, paddle.volume.height);
-  }
-  inline void render(SDL_Renderer* renderer, const Ball& ball)
-  {
-    render_rect(renderer, ball.pos.x, ball.pos.y,
-                          ball.diameter, ball.diameter);
   }
 }
