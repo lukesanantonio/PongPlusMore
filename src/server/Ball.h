@@ -20,19 +20,47 @@
 #pragma once
 #include <cstdint>
 #include "common/vector.h"
+#include "Volume.h"
 namespace pong
 {
   using BallID = uint8_t;
   struct Ball
   {
+  public:
     explicit Ball(BallID id = 0,
+                  int diameter = 0,
                   math::vector<int> pos = math::vector<int>(),
-                  math::vector<int> vel = math::vector<int>(),
-                  int diameter = 0)
-             : id(id), pos(pos), diameter(diameter){}
-    BallID id;
-    math::vector<int> pos;
-    math::vector<int> vel;
-    int diameter;
+                  math::vector<int> vel = math::vector<int>())
+             : id_(id), pos_(pos), diameter_(diameter){}
+  private:
+    const BallID id_;
+    int diameter_;
+    math::vector<int> pos_;
+    math::vector<int> vel_;
+  public:
+    inline Volume getVolume() const noexcept;
+
+    BallID id() const noexcept { return this->id_; }
+
+    const math::vector<int>& getPosition() const noexcept {return this->pos_;}
+    math::vector<int>& getPosition() noexcept { return this->pos_; }
+
+    const math::vector<int>& getVelocity() const noexcept {return this->vel_;}
+    math::vector<int>& getVelocity() noexcept { return this->vel_; }
+
+    const int& diameter() const noexcept { return this->diameter_; }
+    int& diameter() noexcept { return this->diameter_; }
   };
+
+  inline Volume Ball::getVolume() const noexcept
+  {
+    Volume vol;
+
+    vol.pos.x = this->pos_.x;
+    vol.pos.y = this->pos_.y;
+    vol.width = this->diameter_;
+    vol.height= this->diameter_;
+
+    return vol;
+  }
 }
