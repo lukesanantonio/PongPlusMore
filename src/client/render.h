@@ -45,8 +45,8 @@ namespace pong
   }
   inline void render(SDL_Renderer* renderer, const Paddle& paddle)
   {
-    render_rect(renderer, paddle.pos.x, paddle.pos.y,
-                          paddle.width, paddle.height);
+    render_rect(renderer, paddle.volume.pos.x, paddle.volume.pos.y,
+                          paddle.volume.width, paddle.volume.height);
   }
   inline void render(SDL_Renderer* renderer, const Ball& ball)
   {

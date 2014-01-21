@@ -20,6 +20,7 @@
 #pragma once
 #include <cstdint>
 #include "common/vector.h"
+#include "Volume.h"
 namespace pong
 {
   /*!
@@ -32,18 +33,16 @@ namespace pong
   struct Paddle
   {
     explicit Paddle(PaddleID id = 0,
-                    math::vector<int> pos =math::vector<int>(),
+                    math::vector<int> pos = math::vector<int>(),
                     int width = 0,
-                    int height = 0)
-             : id(id), pos(pos), width(width), height(height){}
+                    int height = 0) : id(id), volume{pos, width, height}{}
     PaddleID id;
-    math::vector<int> pos;
     /*!
      * \brief The hoped to be location.
      *
      * The physics will simulate the paddle until it gets here.
      */
     math::vector<int> next_pos;
-    int width, height;
+    Volume volume;
   };
 }
