@@ -16,18 +16,32 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * \file collision_util.h
- * \brief Collision helper functions.
  */
-#pragma once
-#include <algorithm>
-#include "Volume.h"
-namespace pong
+#include "server/collision_util.h"
+#include "gtest/gtest.h"
+
+TEST(CollisionUtilTest, isIn)
 {
-  inline bool isIn(int left, int right, int check) noexcept
-  {
-    return std::min(left, right) <= check && check <= std::max(left, right);
-  }
-  bool isIntersecting(const Volume& vol1, const Volume& vol2) noexcept;
+  EXPECT_EQ(true, pong::isIn(0, 5, 5));
+  EXPECT_EQ(true, pong::isIn(-7, 16, 6));
+  EXPECT_EQ(true, pong::isIn(-100, 100, -100));
+  EXPECT_EQ(false, pong::isIn(100, 560, 99));
+  EXPECT_EQ(false, pong::isIn(100, 675, 691));
+  EXPECT_EQ(false, pong::isIn(100, 200, -150));
+}
+TEST(CollisionUtilTest, isIntersecting)
+{
+  pong::Volume vol1, vol2;
+  vol1.pos = {500, 510};
+  vol1.width = 61;
+  vol1.height = 55;
+
+  vol2.pos = {560, 564};
+  vol2.width = 50;
+  vol2.height = 50;
+
+  EXPECT_EQ(true, isIntersecting(vol1, vol2));
+
+  vol1.width = 60;
+  EXPECT_EQ(false, isIntersecting(vol1, vol2));
 }

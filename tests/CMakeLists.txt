@@ -18,7 +18,7 @@
 
 # Add the executable which runs every test.
 add_executable(PpM_Tests EXCLUDE_FROM_ALL
-               ConcreteServerTests.cpp ConcreteServerStepUtilTests.cpp
+               CollisionUtilTests.cpp
                VectorTests.cpp
                ${CMAKE_CURRENT_SOURCE_DIR}/../gtest/gtest/gtest_main.cc)
 

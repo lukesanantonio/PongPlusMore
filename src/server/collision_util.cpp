@@ -16,18 +16,29 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * \file collision_util.h
- * \brief Collision helper functions.
  */
-#pragma once
-#include <algorithm>
-#include "Volume.h"
+#include "collision_util.h"
 namespace pong
 {
-  inline bool isIn(int left, int right, int check) noexcept
+  bool isIntersecting(const Volume& vol1, const Volume& vol2) noexcept
   {
-    return std::min(left, right) <= check && check <= std::max(left, right);
+    int vol1_left = vol1.pos.x,
+        vol1_right = vol1.pos.x + vol1.width - 1,
+        vol1_top = vol1.pos.y,
+        vol1_bottom = vol1.pos.y + vol1.height - 1,
+        vol2_left = vol2.pos.x,
+        vol2_right = vol2.pos.x + vol2.width - 1,
+        vol2_top = vol2.pos.y,
+        vol2_bottom = vol2.pos.y + vol2.height - 1;
+
+    if((vol2_left <= vol1_left and vol1_left <= vol2_right) or
+       (vol2_left <= vol1_right and vol1_right <= vol2_right) or
+       (vol1_left <= vol2_left and vol2_right <= vol1_right))
+    {
+      if((vol2_top <= vol1_top and vol1_top <= vol2_bottom) or
+         (vol2_top <= vol1_bottom and vol1_bottom <= vol2_bottom) or
+         (vol1_top <= vol2_top and vol2_bottom <= vol1_bottom)) return true;
+    }
+    return false;
   }
-  bool isIntersecting(const Volume& vol1, const Volume& vol2) noexcept;
 }
