@@ -18,11 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
+#include "common/vector.h"
 namespace pong
 {
   struct Volume
   {
     math::vector<int> pos = {0,0};
     int width = 0, height = 0;
-  }
+  };
 }
