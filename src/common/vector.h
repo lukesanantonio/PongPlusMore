@@ -87,6 +87,14 @@ namespace pong
               static_cast<point_type>(lhs.y + rhs.y)};
     }
 
+    template <typename point_type1, typename point_type2>
+    inline vector<point_type1> operator+= (vector<point_type1>& lhs,
+                                           const vector<point_type2>& rhs)
+    {
+      lhs = lhs + rhs;
+      return lhs;
+    }
+
     template <typename point_type>
     inline vector<point_type> operator-(const vector<point_type>& vec)
     {
