@@ -28,9 +28,14 @@ namespace pong
   {
     virtual ~Server() noexcept = default;
     virtual PaddleID connect() = 0;
+
     virtual Paddle& getPaddle(PaddleID) = 0;
     virtual const Paddle& getPaddle(PaddleID) const = 0;
 
+    virtual Ball& getBall(BallID) = 0;
+    virtual const Ball& getBall(BallID) const = 0;
+
     virtual std::vector<PaddleID> paddles() const noexcept = 0;
+    virtual std::vector<BallID> balls() const noexcept = 0;
   };
 }
