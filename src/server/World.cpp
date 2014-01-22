@@ -25,7 +25,7 @@ namespace pong
   const Paddle& findPaddleByID(const World& world, PaddleID id)
   {
     auto iter = std::find_if(world.paddles.begin(), world.paddles.end(),
-       [&](const Paddle& paddle) {return paddle.id == id;});
+       [&](const Paddle& paddle) {return paddle.id() == id;});
 
     if(iter == world.paddles.end()) throw InvalidPaddleID();
     return *iter;

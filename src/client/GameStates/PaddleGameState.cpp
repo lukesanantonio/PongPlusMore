@@ -35,7 +35,7 @@ namespace pong
       case SDL_MOUSEMOTION:
       {
         if(!this->top_) break;
-        this->server_.getPaddle(this->top_).volume.pos =
+        this->server_.getPaddle(this->top_).getNextPosition() =
                                               {event.motion.x, event.motion.y};
         break;
       }
@@ -52,17 +52,17 @@ namespace pong
     for(PaddleID id : this->server_.paddles())
     {
       Paddle& paddle = this->server_.getPaddle(id);
-      decltype(paddle.volume.pos) pos_diff =
-                                     {paddle.next_pos.x - paddle.volume.pos.x,
-                                      paddle.next_pos.y - paddle.volume.pos.y};
+      math::vector<int>& pos = paddle.getPosition();
+      math::vector<int>& next_pos = paddle.getNextPosition();
+      math::vector<int> pos_diff = {next_pos.x - pos.x, next_pos.y - pos.y};
       constexpr int diff = 7;
       pos_diff.x =
               std::min(diff, std::abs(pos_diff.x)) * (pos_diff.x < 0 ? -1 : 1);
       pos_diff.y =
               std::min(diff, std::abs(pos_diff.y)) * (pos_diff.y < 0 ? -1 : 1);
 
-      paddle.volume.pos.x += pos_diff.x;
-      paddle.volume.pos.y += pos_diff.y;
+      pos.x += pos_diff.x;
+      pos.y += pos_diff.y;
     }
   }
 
@@ -71,7 +71,7 @@ namespace pong
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
     for(PaddleID id : this->server_.paddles())
     {
-      pong::render(renderer, this->server_.getPaddle(id).volume);
+      pong::render(renderer, this->server_.getPaddle(id).getVolume());
     }
   }
 }

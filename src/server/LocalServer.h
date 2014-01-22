@@ -35,7 +35,7 @@ namespace pong
 
       for(const Paddle& paddle : this->world_.paddles)
       {
-        ids.push_back(paddle.id);
+        ids.push_back(paddle.id());
       }
       return ids;
     }
