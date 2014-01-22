@@ -22,6 +22,8 @@
  */
 #pragma once
 #include <algorithm>
+#include <vector>
+#include "common/vector.h"
 #include "Volume.h"
 namespace pong
 {
@@ -30,4 +32,7 @@ namespace pong
     return std::min(left, right) <= check && check <= std::max(left, right);
   }
   bool isIntersecting(const Volume& vol1, const Volume& vol2) noexcept;
+
+  std::vector<math::vector<int> >
+  raytrace(math::vector<double> ray) noexcept;
 }

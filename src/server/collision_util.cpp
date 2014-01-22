@@ -41,4 +41,27 @@ namespace pong
     }
     return false;
   }
+
+  /*!
+   * \brief Returns all discrete positions along a ray.
+   */
+  std::vector<math::vector<int> >
+  raytrace(math::vector<double> ray) noexcept
+  {
+    math::vector<double> direction = math::normalize(ray);
+    double length = math::length(ray);
+
+    std::vector<math::vector<int> > points;
+
+    for(double i = 0.0; i <= length; i += length / std::ceil(length))
+    {
+      math::vector<int> point = direction * i;
+      if(std::find(points.begin(), points.end(), point) == points.end())
+      {
+        points.push_back(std::move(point));
+      }
+    }
+
+    return points;
+  }
 }
