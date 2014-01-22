@@ -27,6 +27,8 @@ namespace pong
   struct Ball
   {
   public:
+    using id_type = BallID;
+
     explicit Ball(BallID id = 0,
                   int diameter = 0,
                   math::vector<int> pos = math::vector<int>(),

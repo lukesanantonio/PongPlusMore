@@ -33,6 +33,8 @@ namespace pong
   struct Paddle
   {
   public:
+    using id_type = PaddleID;
+
     explicit Paddle(PaddleID id = 0,
                     math::vector<int> pos = math::vector<int>(),
                     int width = 0,
