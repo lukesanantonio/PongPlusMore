@@ -39,6 +39,43 @@ namespace pong
                                               {event.motion.x, event.motion.y};
         break;
       }
+      case SDL_KEYDOWN:
+      {
+        switch(event.key.keysym.scancode)
+        {
+          case SDL_SCANCODE_SPACE:
+          {
+            if(this->bottom_) break;
+            bottom_ = this->server_.connect();
+            break;
+          }
+          case SDL_SCANCODE_W:
+          {
+            if(!this->bottom_) break;
+            this->server_.getPaddle(bottom_).getNextPosition().y -= 10;
+            break;
+          }
+          case SDL_SCANCODE_A:
+          {
+            if(!this->bottom_) break;
+            this->server_.getPaddle(bottom_).getNextPosition().x -= 10;
+            break;
+          }
+          case SDL_SCANCODE_S:
+          {
+            if(!this->bottom_) break;
+            this->server_.getPaddle(bottom_).getNextPosition().y += 10;
+            break;
+          }
+          case SDL_SCANCODE_D:
+          {
+            if(!this->bottom_) break;
+            this->server_.getPaddle(bottom_).getNextPosition().x += 10;
+            break;
+          }
+        }
+        break;
+      }
       case SDL_QUIT:
       {
         pong::crash("Exiting...");
