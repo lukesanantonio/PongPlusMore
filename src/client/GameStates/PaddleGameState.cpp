@@ -17,9 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <algorithm>
 #include "PaddleGameState.h"
 #include "render.h"
 #include "common/crash.hpp"
+#include "server/collision_util.h"
 namespace pong
 {
   void PaddleGameState::handleEvent(const SDL_Event& event)
@@ -92,14 +94,34 @@ namespace pong
       math::vector<int>& pos = paddle.getPosition();
       math::vector<int>& next_pos = paddle.getNextPosition();
       math::vector<int> pos_diff = {next_pos.x - pos.x, next_pos.y - pos.y};
-      constexpr int diff = 7;
-      pos_diff.x =
-              std::min(diff, std::abs(pos_diff.x)) * (pos_diff.x < 0 ? -1 : 1);
-      pos_diff.y =
-              std::min(diff, std::abs(pos_diff.y)) * (pos_diff.y < 0 ? -1 : 1);
 
-      pos.x += pos_diff.x;
-      pos.y += pos_diff.y;
+      double new_length = std::min<double>(math::length<double>(pos_diff), 5);
+
+      std::vector<math::vector<int> > points =
+                      raytrace(math::normalize<double>(pos_diff) * new_length);
+
+      std::transform(points.begin(), points.end(), points.begin(),
+                     [&](math::vector<int> point) { return point + pos; });
+
+      for(auto iter = points.begin() + 1; iter != points.end(); ++iter)
+      {
+        bool can_move = true;
+        for(PaddleID other_id : this->server_.paddles())
+        {
+          if(other_id == id) continue;
+          Volume vol = paddle.getVolume();
+          vol.pos = *iter;
+          if(isIntersecting(vol,
+                            this->server_.getPaddle(other_id).getVolume()))
+          {
+            can_move = false;
+          }
+        }
+        if(can_move)
+        {
+          pos = *iter;
+        }
+      }
     }
   }
 
