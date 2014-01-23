@@ -18,8 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
+#include "exceptions.h"
+#include <algorithm>
 namespace pong
 {
-  struct NoMoreClientsAvailable {};
-  struct InvalidID {};
-}
+  template <typename object_type,
+            typename id_type = typename object_type::id_type>
+  const object_type&
+  findObjectByID(const std::vector<object_type>& objs, id_type id)
+  {
+    auto iter = std::find_if(objs.begin(), objs.end(),
+                         [&](const object_type& obj){return obj.id() == id;});
+    if(iter == objs.end())
+    {
+      throw InvalidID();
+    }
+    return (*iter);
+  }
+};

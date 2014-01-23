@@ -19,20 +19,18 @@
  */
 #include "World.h"
 #include <algorithm>
+#include "util.h"
 #include "exceptions.h"
 namespace pong
 {
   const Paddle& findPaddleByID(const World& world, PaddleID id)
   {
-    auto iter = std::find_if(world.paddles.begin(), world.paddles.end(),
-       [&](const Paddle& paddle) {return paddle.id() == id;});
-
-    if(iter == world.paddles.end()) throw InvalidPaddleID();
-    return *iter;
+    return findObjectByID(world.paddles, id);
   }
   Paddle& findPaddleByID(World& world, PaddleID id)
   {
-    return const_cast<Paddle&>(
-                         findPaddleByID(static_cast<const World&>(world), id));
+    // We know we can modify the result. The World is non-const, the vector
+    // is non-const, etc.
+    return const_cast<Paddle&>(findObjectByID(world.paddles, id));
   }
 }
