@@ -37,5 +37,7 @@ namespace pong
 
     virtual std::vector<PaddleID> paddles() const noexcept = 0;
     virtual std::vector<BallID> balls() const noexcept = 0;
+
+    virtual void step() noexcept = 0;
   };
 }

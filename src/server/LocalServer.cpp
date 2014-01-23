@@ -19,6 +19,7 @@
  */
 #include "LocalServer.h"
 #include "exceptions.h"
+#include "collision_util.h"
 namespace pong
 {
   PaddleID LocalServer::connect()
@@ -65,5 +66,49 @@ namespace pong
     std::transform(balls.begin(), balls.end(), ids.begin(),
                    [&](const Ball& ball){ return ball.id(); });
     return ids;
+  }
+
+  void LocalServer::step() noexcept
+  {
+    for(Paddle& paddle : this->world_.paddles)
+    {
+      math::vector<int>& pos = paddle.getPosition();
+      math::vector<int>& next_pos = paddle.getNextPosition();
+      math::vector<int> diff = {next_pos.x - pos.x, next_pos.y - pos.y};
+
+      // We don't want to move to fast.
+      // This method adds that terminal-velocity effect that is kind of
+      // interesting.
+      double new_length = std::min<double>(math::length<double>(diff), 5);
+
+      std::vector<math::vector<int> > points =
+                          raytrace(math::normalize<double>(diff) * new_length);
+      // Add our current position to the points.
+      // That way we can modify pos in place, without losing anything, since
+      // its original location is the first element of the vector anyway.
+      std::transform(points.begin(), points.end(), points.begin(),
+                     [&](const math::vector<int>& point){return point + pos;});
+
+      // The first point is 0,0. TODO add some sort of assertion of that.
+      for(auto iter = points.begin() + 1; iter != points.end(); ++iter)
+      {
+        bool can_move = true;
+        for(PaddleID other_id : this->paddles())
+        {
+          if(other_id == paddle.id()) continue;
+          Volume vol = paddle.getVolume();
+          vol.pos = *iter;
+          if(isIntersecting(vol, this->getPaddle(other_id).getVolume()))
+          {
+            can_move = false;
+            break;
+          }
+        }
+        if(can_move) // Nothing is obstructing us from moving to *iter.
+        {
+          pos = *(iter);
+        }
+      }
+    }
   }
 }

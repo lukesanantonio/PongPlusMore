@@ -90,41 +90,7 @@ namespace pong
 
   void PaddleGameState::update()
   {
-    for(PaddleID id : this->server_.paddles())
-    {
-      Paddle& paddle = this->server_.getPaddle(id);
-      math::vector<int>& pos = paddle.getPosition();
-      math::vector<int>& next_pos = paddle.getNextPosition();
-      math::vector<int> pos_diff = {next_pos.x - pos.x, next_pos.y - pos.y};
-
-      double new_length = std::min<double>(math::length<double>(pos_diff), 5);
-
-      std::vector<math::vector<int> > points =
-                      raytrace(math::normalize<double>(pos_diff) * new_length);
-
-      std::transform(points.begin(), points.end(), points.begin(),
-                     [&](math::vector<int> point) { return point + pos; });
-
-      for(auto iter = points.begin() + 1; iter != points.end(); ++iter)
-      {
-        bool can_move = true;
-        for(PaddleID other_id : this->server_.paddles())
-        {
-          if(other_id == id) continue;
-          Volume vol = paddle.getVolume();
-          vol.pos = *iter;
-          if(isIntersecting(vol,
-                            this->server_.getPaddle(other_id).getVolume()))
-          {
-            can_move = false;
-          }
-        }
-        if(can_move)
-        {
-          pos = *iter;
-        }
-      }
-    }
+    this->server_.step();
   }
 
   void PaddleGameState::render(SDL_Renderer* renderer) const

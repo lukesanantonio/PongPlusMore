@@ -34,6 +34,8 @@ namespace pong
 
     virtual std::vector<PaddleID> paddles() const noexcept override;
     virtual std::vector<BallID> balls() const noexcept override;
+
+    virtual void step() noexcept override;
   private:
     World world_;
     PaddleID id_counter_ = 0;
