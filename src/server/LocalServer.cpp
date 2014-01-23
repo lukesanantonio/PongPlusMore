@@ -98,18 +98,24 @@ namespace pong
       // The first point is 0,0. TODO add some sort of assertion of that.
       for(auto iter = points.begin() + 1; iter != points.end(); ++iter)
       {
+        Volume vol = paddle.getVolume();
+        vol.pos = *iter;
         bool can_move = true;
         for(PaddleID other_id : this->paddles())
         {
           if(other_id == paddle.id()) continue;
-          Volume vol = paddle.getVolume();
-          vol.pos = *iter;
           if(isIntersecting(vol, this->getPaddle(other_id).getVolume()))
           {
             can_move = false;
             break;
           }
         }
+
+        if(isIntersectingWithWall(vol, 1000, 1000))
+        {
+          can_move = false;
+        }
+
         if(can_move) // Nothing is obstructing us from moving to *iter.
         {
           pos = *(iter);
