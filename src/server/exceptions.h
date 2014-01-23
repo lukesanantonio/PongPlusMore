@@ -21,5 +21,6 @@
 namespace pong
 {
   struct NoMoreClientsAvailable {};
+  struct NoMoreBallsAvailable {};
   struct InvalidID {};
 }

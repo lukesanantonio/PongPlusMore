@@ -32,6 +32,9 @@ namespace pong
     virtual Paddle& getPaddle(PaddleID) = 0;
     virtual const Paddle& getPaddle(PaddleID) const = 0;
 
+    virtual void spawnBall(math::vector<int> pos,
+                           math::vector<int> vel) = 0;
+
     virtual Ball& getBall(BallID) = 0;
     virtual const Ball& getBall(BallID) const = 0;
 
