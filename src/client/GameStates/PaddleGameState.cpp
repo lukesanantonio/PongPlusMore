@@ -75,6 +75,8 @@ namespace pong
             this->server_.getPaddle(bottom_).getNextPosition().x += 10;
             break;
           }
+          default:
+            break;
         }
         break;
       }
