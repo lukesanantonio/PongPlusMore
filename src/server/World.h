@@ -20,12 +20,14 @@
 #pragma once
 #include <vector>
 #include "Paddle.h"
+#include "Ball.h"
 #include "util.h"
 namespace pong
 {
   struct World
   {
     std::vector<Paddle> paddles;
+    std::vector<Ball> balls;
   };
 
   inline const Paddle& findPaddleByID(const World& world, PaddleID id)
@@ -37,5 +39,14 @@ namespace pong
     // We know we can modify the result. The World is non-const, the vector
     // is non-const, and the elements are non-const.
     return const_cast<Paddle&>(findObjectByID(world.paddles, id));
+  }
+
+  inline const Ball& findBallByID(const World& world, BallID id)
+  {
+    return findObjectByID(world.balls, id);
+  }
+  inline Ball& findBallByID(World& world, BallID id)
+  {
+    return const_cast<Ball&>(findObjectByID(world.balls, id));
   }
 }
