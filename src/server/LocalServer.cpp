@@ -47,6 +47,16 @@ namespace pong
     return findBallByID(this->world_, id);
   }
 
+  std::vector<PaddleID> LocalServer::paddles() const noexcept
+  {
+    const std::vector<Paddle>& paddles = this->world_.paddles;
+    std::vector<PaddleID> ids(paddles.size());
+
+    std::transform(paddles.begin(), paddles.end(), ids.begin(),
+                   [&](const Paddle& paddle){ return paddle.id(); });
+    return ids;
+  }
+
   std::vector<BallID> LocalServer::balls() const noexcept
   {
     const std::vector<Ball>& balls = this->world_.balls;
