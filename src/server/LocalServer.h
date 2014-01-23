@@ -25,8 +25,12 @@ namespace pong
   struct LocalServer : public Server
   {
     virtual PaddleID connect() override;
+
     virtual Paddle& getPaddle(PaddleID) override;
     virtual const Paddle& getPaddle(PaddleID) const override;
+
+    virtual Ball& getBall(BallID) override;
+    virtual const Ball& getBall(BallID) const override;
 
     inline virtual std::vector<PaddleID> paddles() const noexcept override
     {
@@ -39,6 +43,7 @@ namespace pong
       }
       return ids;
     }
+    virtual std::vector<BallID> balls() const noexcept override;
   private:
     World world_;
     PaddleID id_counter_ = 0;

@@ -38,4 +38,22 @@ namespace pong
   {
     return findPaddleByID(this->world_, id);
   }
+  Ball& LocalServer::getBall(BallID id)
+  {
+    return findBallByID(this->world_, id);
+  }
+  const Ball& LocalServer::getBall(BallID id) const
+  {
+    return findBallByID(this->world_, id);
+  }
+
+  std::vector<BallID> LocalServer::balls() const noexcept
+  {
+    const std::vector<Ball>& balls = this->world_.balls;
+    std::vector<BallID> ids(balls.size());
+
+    std::transform(balls.begin(), balls.end(), ids.begin(),
+                   [&](const Ball& ball){ return ball.id(); });
+    return ids;
+  }
 }
