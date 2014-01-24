@@ -98,9 +98,12 @@ namespace pong
       // The first point is 0,0. TODO add some sort of assertion of that.
       for(auto iter = points.begin() + 1; iter != points.end(); ++iter)
       {
+        // Check to see if we *can* move.
         Volume vol = paddle.getVolume();
         vol.pos = *iter;
         bool can_move = true;
+
+        // Will we intersect with another paddle.
         for(PaddleID other_id : this->paddles())
         {
           if(other_id == paddle.id()) continue;
@@ -111,6 +114,7 @@ namespace pong
           }
         }
 
+        // Will we intersect with the wall.
         if(isIntersectingWithWall(vol, 1000, 1000))
         {
           can_move = false;
