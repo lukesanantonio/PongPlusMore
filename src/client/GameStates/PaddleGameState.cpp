@@ -100,5 +100,9 @@ namespace pong
     {
       pong::render(renderer, this->server_.getPaddle(id).getVolume());
     }
+    for(BallID id : this->server_.balls())
+    {
+      pong::render(renderer, this->server_.getBall(id).getVolume());
+    }
   }
 }
