@@ -20,7 +20,7 @@
 #pragma once
 #include <cstdint>
 #include "common/vector.h"
-#include "Volume.h"
+#include "common/Volume.h"
 namespace pong
 {
   using BallID = uint8_t;

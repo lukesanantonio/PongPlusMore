@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <vector>
 #include "common/vector.h"
-#include "Volume.h"
+#include "common/Volume.h"
 namespace pong
 {
   inline bool isIn(int left, int right, int check) noexcept
