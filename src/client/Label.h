@@ -31,6 +31,10 @@ namespace pong
 {
   /*!
    * \brief Class wrapping renderable text.
+   *
+   * The reason the label is not similar to the Paddle and Ball interface is
+   * because it needs to maintain a cache, should it return a bare reference
+   * to a member, it could be changed at any given time.
    */
   class Label : public Surface_Cache
   {
