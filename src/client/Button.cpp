@@ -38,16 +38,19 @@ namespace pong
   Button::Button(const std::string& text,
                  Volume vol,
                  bool enabled,
-                 FontRenderer* font_renderer) :
-                 label_(text, 24, {0,0}, font_renderer)
+                 FontRenderer* font_renderer,
+                 SDL_Color text_color,
+                 SDL_Color back_color,
+                 SDL_Color disabled_color) :
+                 label_(text, 0, {0,0}, font_renderer)
   {
-    // Set the initial colors of the label.
-    this->label_.text_color({0xff, 0xff, 0xff, 0xff});
-
     // Use the function so that the extra logic is done and so we don't have
     // to repeat it here.
-    this->enabled(enabled);
     this->volume(vol);
+    this->enabled(enabled);
+    this->text_color(text_color);
+    this->background_color(back_color);
+    this->disabled_color(disabled_color);
   }
 
   /*!

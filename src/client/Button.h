@@ -16,8 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/*!
+ *
  * \file Button.h
  * \brief Contains declarations for the Button class.
  */
@@ -32,17 +31,21 @@
 namespace pong
 {
   /*!
-   * \brief Class wrapping clickable button.
+   * \brief Class wrapping a clickable button.
    */
   class Button
   {
   public:
     using signal_t = boost::signals2::signal<void ()>;
+
   public:
     explicit Button(const std::string& text = "",
-                    Volume vol = {{0,0},200,75},
+                    Volume vol = {{0,0},0,0},
                     bool enabled = true,
-                    FontRenderer* font_renderer = nullptr);
+                    FontRenderer* font_renderer = nullptr,
+                    SDL_Color text_color = {0x00, 0x00, 0x00, 0xff},
+                    SDL_Color back_color = {0xff, 0xff, 0xff, 0xff},
+                    SDL_Color disabled_color = {0x77, 0x77, 0x77, 0xff});
 
     ~Button() noexcept = default;
 
@@ -91,13 +94,17 @@ namespace pong
      */
     Volume vol_;
 
+    /*!
+     * \brief The background color of the button when it is enabled.
+     */
     SDL_Color background_color_;
+    /*!
+     * \brief The background color of the button when it is disabled.
+     */
     SDL_Color disabled_color_;
 
     /*!
      * \brief Whether or not the button can be clicked.
-     *
-     * \note Also, the button is rendered grayed out if this is false.
      */
     bool enabled_;
 
@@ -167,7 +174,7 @@ namespace pong
     // is that should the background color of the button change after the
     // property of it being enabled then it will lag behind the *actual* color
     // of the button. This way it is always what it should be. *But* if we do
-    // this every time we render it will muckduck the cache eg the Label would
+    // this every time we render it will muckduck the cache eg the Label will
     // be regenerated every frame.
     if(this->enabled_) this->label_.back_color(col);
   }
