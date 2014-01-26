@@ -24,7 +24,7 @@
  */
 #pragma once
 #include "SDL.h"
-#include "server/Volume.h"
+#include "common/Volume.h"
 namespace pong
 {
   void render(SDL_Renderer* renderer, const Volume& volume)
