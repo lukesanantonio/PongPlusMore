@@ -23,78 +23,30 @@
  */
 #include "Button.h"
 #include "common/center.hpp"
+#include "server/collision_util.h"
 namespace pong
 {
-  /*!
-   * \brief Checks whether the specified point is in the button.
-   */
-  static bool checkClick(Button* button, math::vector<int> point)
-  {
-    //The button can only be clicked if it is enabled.
-    if(button->enabled())
-    {
-      //Cache the parameters...
-      math::vector<int> pos = button->position();
-      int width = button->width();
-      int height = button->height();
-
-      //Check to see if the button occupies the point... Sooo:
-      if(point.x <= pos.x + width  && point.x >= pos.x &&
-         point.y <= pos.y + height && point.y >= pos.y)
-      {
-        return true;
-      }
-    }
-    return false;
-  }
-
   /*!
    * \brief Initializes the button.
    *
    * \param text The text to display centered in the button.
-   * \param pos The position of the top left corner of the button in SDL
-   * window space.
-   * \param width The width of the button.
-   * \param height The height of the button.
+   * \param vol The volume of the button. Position, Width, and Height.
    * \param enabled Whether or not the button should be clickable.
    * \param font_renderer Font Renderer implementation passed directly to
    * the internal label: Button::label_
    */
   Button::Button(const std::string& text,
-                 math::vector<int> pos,
-                 int width,
-                 int height,
+                 Volume vol,
                  bool enabled,
                  FontRenderer* font_renderer) :
                  label_(text, 24, {0,0}, font_renderer),
-                 pos_(pos),
-                 width_(width),
-                 height_(height),
-                 enabled_(enabled)
+                 vol_(vol)
   {
-    //Set the initial colors of the label.
-    SDL_Color black;
-    black.r = 0x00;
-    black.g = 0x00;
-    black.b = 0x00;
-    this->label_.text_color(black);
+    // Set the initial colors of the label.
+    this->label_.text_color({0xff, 0xff, 0xff, 0xff});
 
-    SDL_Color white;
-    if(enabled)
-    {
-      white.r = 0xff;
-      white.g = 0xff;
-      white.b = 0xff;
-    }
-    else
-    {
-      white.r = 0x55;
-      white.g = 0x55;
-      white.b = 0x55;
-    }
-    this->label_.back_color(white);
-
-    this->label_.text_height(this->height_ - 10);
+    // Use the function so that the label's background color is set properly.
+    this->enabled(enabled);
   }
 
   /*!
@@ -108,26 +60,15 @@ namespace pong
   {
     //Calculate bounds.
     SDL_Rect button_rect;
-    button_rect.x = this->pos_.x;
-    button_rect.y = this->pos_.y;
-    button_rect.w = this->width_;
-    button_rect.h = this->height_;
+    button_rect.x = vol_.pos.x;
+    button_rect.y = vol_.pos.y;
+    button_rect.w = vol_.width;
+    button_rect.h = vol_.height;
 
     //Choose button color.
-    SDL_Color color;
-    if(this->enabled_)
-    {
-      color.r = 0xff;
-      color.g = 0xff;
-      color.b = 0xff;
-    }
-    else
-    {
-      color.r = 0x55;
-      color.g = 0x55;
-      color.b = 0x55;
-    }
-    color.a = 0xff;
+    const SDL_Color* color;
+    if(this->enabled_) color = &this->background_color_;
+    else color = &this->disabled_color_;
 
     //Get our previous draw color.
     SDL_Color prev_color;
@@ -142,7 +83,7 @@ namespace pong
       prev_color.a = 0xff;
     }
 
-    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_SetRenderDrawColor(renderer, color->r, color->g, color->b, color->a);
     SDL_RenderFillRect(renderer, &button_rect);
 
     //Return to our old draw color.
@@ -153,13 +94,14 @@ namespace pong
 
     //Find where to render the label!
     math::vector<int> label_pos;
-    label_pos.x = center(this->pos_.x, this->width_,
+    label_pos.x = center(this->vol_.pos.x, this->vol_.width,
                          this->label_.getSurfaceWidth());
-    label_pos.y = center(this->pos_.y, this->height_,
+    label_pos.y = center(this->vol_.pos.y, this->vol_.height,
                          this->label_.getSurfaceHeight());
     this->label_.position(label_pos);
 
-    //Render the label.
+    // Render the label. Its background color should be consistent with the
+    // one we chose earlier because of the enabled function.
     this->label_.render(renderer);
   }
 
@@ -170,7 +112,7 @@ namespace pong
    * \returns The connection returned by boost::signals2::signal::connect().
    * \sa Button::on_click_
    */
-  boost::signals2::connection Button::executeOnClick(
+  boost::signals2::connection Button::onClick(
                        const boost::signals2::signal<void ()>::slot_type& slot)
   {
     return this->on_click_.connect(slot);
@@ -182,7 +124,7 @@ namespace pong
    *
    * If there is indeed a mouse click inside the bounds of the current button,
    * Button::on_click_ is called!
-   * \see Button::executeOnClick
+   * \see Button::onClick
    */
   void Button::handleEvent(const SDL_Event& event)
   {
@@ -194,7 +136,8 @@ namespace pong
         point.x = event.button.x;
         point.y = event.button.y;
 
-        if(checkClick(this, point))
+        if(isIn(vol_.pos.x, vol_.pos.x + vol_.width - 1, point.x) &&
+           isIn(vol_.pos.y, vol_.pos.y + vol_.height - 1, point.y))
         {
           this->on_click_();
         }
@@ -211,19 +154,13 @@ namespace pong
 
     //Make sure to set the background color in the Label so it is consistent
     //with the background of the button.
-    SDL_Color back_color;
     if(this->enabled_)
     {
-      back_color.r = 0xff;
-      back_color.g = 0xff;
-      back_color.b = 0xff;
+      this->label_.back_color(this->background_color_);
     }
     else
     {
-      back_color.r = 0x55;
-      back_color.g = 0x55;
-      back_color.b = 0x55;
+      this->label_.back_color(this->disabled_color_);
     }
-    this->label_.back_color(back_color);
   }
 };

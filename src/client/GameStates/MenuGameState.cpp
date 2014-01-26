@@ -46,20 +46,18 @@ namespace pong
     for(Button* button : {&singleplayer_, &multiplayer_, &options_, &quit_})
     {
 
-      button->position({position_x, starting_y});
-      button->width(width);
-      button->height(height);
+      button->volume({{position_x, starting_y}, width, height});
       button->font_renderer(font_renderer);
       button->enabled(true);
       starting_y += height + 50;
     }
 
-    this->singleplayer_.executeOnClick([&]()
+    this->singleplayer_.onClick([&]()
     {
       game.game_state = std::make_shared<PaddleGameState>();
     });
 
-    this->quit_.executeOnClick([&]()
+    this->quit_.onClick([&]()
     {
       game.exiting = true;
     });

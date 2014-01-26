@@ -28,6 +28,7 @@
 #include "Label.h"
 #include "render_text.h"
 #include "common/vector.h"
+#include "common/Volume.h"
 namespace pong
 {
   /*!
@@ -36,10 +37,10 @@ namespace pong
   class Button
   {
   public:
+    using signal_t = boost::signals2::signal<void ()>;
+  public:
     explicit Button(const std::string& text = "",
-                    math::vector<int> pos = math::vector<int>(),
-                    int width = 0,
-                    int height = 0,
+                    Volume vol = {{0,0},300,100},
                     bool enabled = true,
                     FontRenderer* font_renderer = nullptr);
 
@@ -52,22 +53,24 @@ namespace pong
 
     void render(SDL_Renderer*) const;
 
-    boost::signals2::connection executeOnClick(
-                      const boost::signals2::signal<void ()>::slot_type& slot);
+    boost::signals2::connection onClick(const signal_t::slot_type& slot);
 
     void handleEvent(const SDL_Event&);
 
     inline void text(const std::string& text);
     inline std::string text() const;
 
-    inline void position(const math::vector<int> pos) noexcept;
-    inline math::vector<int> position() const noexcept;
+    inline void volume(const Volume& vol) noexcept;
+    inline Volume volume() const noexcept;
 
-    inline void width(int width) noexcept;
-    inline int width() const noexcept;
+    inline void text_color(SDL_Color col) noexcept;
+    inline SDL_Color text_color() const noexcept;
 
-    inline void height(int height) noexcept;
-    inline int height() const noexcept;
+    inline void background_color(SDL_Color col) noexcept;
+    inline SDL_Color background_color() const noexcept;
+
+    inline void disabled_color(SDL_Color col) noexcept;
+    inline SDL_Color disabled_color() const noexcept;
 
     void enabled(bool enabled) noexcept;
     inline bool enabled() const noexcept;
@@ -84,20 +87,12 @@ namespace pong
     mutable Label label_;
 
     /*!
-     * \brief The position of the top left corner of the button in SDL window
-     * space.
+     * \brief The volume of the Button.
      */
-    math::vector<int> pos_;
+    Volume vol_;
 
-    /*!
-     * \brief The width of the button.
-     */
-    int width_;
-
-    /*!
-     * \brief The height of the button.
-     */
-    int height_;
+    SDL_Color background_color_;
+    SDL_Color disabled_color_;
 
     /*!
      * \brief Whether or not the button can be clicked.
@@ -109,9 +104,9 @@ namespace pong
     /*!
      * \brief This signal is emitted when the button is clicked on.
      *
-     * \sa Button::executeOnClick()
+     * \sa Button::onClick()
      */
-    boost::signals2::signal<void ()> on_click_;
+    signal_t on_click_;
 };
 
   /*!
@@ -132,56 +127,62 @@ namespace pong
   }
 
   /*!
-   * \brief Sets the internal position of the button.
+   * \brief Sets the Volume of the Button.
    */
-  inline void Button::position(const math::vector<int> pos) noexcept
+  inline void Button::volume(const Volume& vol) noexcept
   {
-    this->pos_ = pos;
+    this->vol_ = vol;
   }
-  /*!
-   * \brief Returns the internal position of the button.
-   *
-   * \returns Button::pos_
-   */
-  inline math::vector<int> Button::position() const noexcept
+  inline Volume Button::volume() const noexcept
   {
-    return this->pos_;
+    return this->vol_;
   }
 
   /*!
-   * \brief Sets the width of the button to render.
+   * \brief Sets the text color of the button.
    */
-  inline void Button::width(int width) noexcept
+  inline void Button::text_color(SDL_Color col) noexcept
   {
-    this->width_ = width;
+    this->label_.text_color(col);
   }
   /*!
-   * \brief Returns the width of the button.
-   *
-   * \returns Button::width_
+   * \brief Returns the text color of the button.
    */
-  inline int Button::width() const noexcept
+  inline SDL_Color Button::text_color() const noexcept
   {
-    return this->width_;
+    return this->label_.text_color();
   }
 
   /*!
-   * \brief Sets the height of the button to render.
+   * \brief Sets the background color of the button when enabled.
    */
-  inline void Button::height(int height) noexcept
+  inline void Button::background_color(SDL_Color col) noexcept
   {
-    this->height_ = height;
-    //Set the text height relative to the button height.
-    this->label_.text_height(this->height_ - 10);
+    this->background_color_ = col;
   }
   /*!
-   * \brief Returns the height of the button
-   *
-   * \returns Button::height_
+   * \brief Returns the background color of the button when enabled.
    */
-  inline int Button::height() const noexcept
+  inline SDL_Color Button::background_color() const noexcept
   {
-    return this->height_;
+    return this->background_color_;
+  }
+
+  /*!
+   * \brief Sets the color of the background of the button when it is
+   * disabled.
+   */
+  inline void Button::disabled_color(SDL_Color col) noexcept
+  {
+    this->disabled_color_ = col;
+  }
+  /*!
+   * \brief Returns the color of the background of the button when it is
+   * disabled.
+   */
+  inline SDL_Color Button::disabled_color() const noexcept
+  {
+    return this->disabled_color_;
   }
 
   /*!
