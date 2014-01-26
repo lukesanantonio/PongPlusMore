@@ -40,7 +40,7 @@ namespace pong
     using signal_t = boost::signals2::signal<void ()>;
   public:
     explicit Button(const std::string& text = "",
-                    Volume vol = {{0,0},300,100},
+                    Volume vol = {{0,0},200,75},
                     bool enabled = true,
                     FontRenderer* font_renderer = nullptr);
 
@@ -131,6 +131,9 @@ namespace pong
    */
   inline void Button::volume(const Volume& vol) noexcept
   {
+    // The text height needs to be updated.
+    if(this->vol_.height != vol.height) this->label_.text_height(vol.height);
+
     this->vol_ = vol;
   }
   inline Volume Button::volume() const noexcept
@@ -159,6 +162,14 @@ namespace pong
   inline void Button::background_color(SDL_Color col) noexcept
   {
     this->background_color_ = col;
+    // Does the label need to be updated? Doing this here and in the disabled_
+    // color function basically complements the enabled function. The problem
+    // is that should the background color of the button change after the
+    // property of it being enabled then it will lag behind the *actual* color
+    // of the button. This way it is always what it should be. *But* if we do
+    // this every time we render it will muckduck the cache eg the Label would
+    // be regenerated every frame.
+    if(this->enabled_) this->label_.back_color(col);
   }
   /*!
    * \brief Returns the background color of the button when enabled.
@@ -175,6 +186,8 @@ namespace pong
   inline void Button::disabled_color(SDL_Color col) noexcept
   {
     this->disabled_color_ = col;
+    // Does the label need to be updated?
+    if(!this->enabled_) this->label_.back_color(col);
   }
   /*!
    * \brief Returns the color of the background of the button when it is

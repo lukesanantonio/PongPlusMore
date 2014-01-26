@@ -39,14 +39,15 @@ namespace pong
                  Volume vol,
                  bool enabled,
                  FontRenderer* font_renderer) :
-                 label_(text, 24, {0,0}, font_renderer),
-                 vol_(vol)
+                 label_(text, 24, {0,0}, font_renderer)
   {
     // Set the initial colors of the label.
     this->label_.text_color({0xff, 0xff, 0xff, 0xff});
 
-    // Use the function so that the label's background color is set properly.
+    // Use the function so that the extra logic is done and so we don't have
+    // to repeat it here.
     this->enabled(enabled);
+    this->volume(vol);
   }
 
   /*!
