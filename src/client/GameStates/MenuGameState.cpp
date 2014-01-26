@@ -49,6 +49,8 @@ namespace pong
       button->volume({{position_x, starting_y}, width, height});
       button->font_renderer(font_renderer);
       button->enabled(true);
+      button->background_color({0xff, 0xff, 0xff, 0xff});
+      button->text_color({0x00, 0x00, 0x00, 0xff});
       starting_y += height + 50;
     }
 
