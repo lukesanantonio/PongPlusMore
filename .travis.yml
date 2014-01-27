@@ -1,0 +1,6 @@
+language: cpp
+compiler:
+  - gcc
+  - clang
+before_install: sudo apt-get install cmake libsdl2-dev git libboost-all-dev
+script: cmake . && make
