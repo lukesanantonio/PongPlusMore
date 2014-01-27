@@ -3,6 +3,6 @@ compiler:
   - gcc
   - clang
 before_install:
-  - sudo apt-add-repository ppa:zoogie/sdl2-snapshots
+  - sudo apt-add-repository -y ppa:zoogie/sdl2-snapshots
   - sudo apt-get install cmake libsdl2 git libboost-all-dev
 script: cmake . && make
