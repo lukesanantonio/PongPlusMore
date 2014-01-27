@@ -17,7 +17,7 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-Pong Plus More (PpM)
+'Mo Pong - Pong Plus More (PpM)
 ====================
 
 A pong clone full of surprises written with C++11
