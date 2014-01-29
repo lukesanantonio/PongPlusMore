@@ -20,16 +20,16 @@
 #include "collision_util.h"
 namespace pong
 {
+  #define GENERATE_VOLUME_BOUNDS(vol) \
+    int vol##_left = vol.pos.x, \
+        vol##_right = vol.pos.x + vol.width - 1, \
+        vol##_top = vol.pos.y, \
+        vol##_bottom = vol.pos.y + vol.height - 1
+
   bool isIntersecting(const Volume& vol1, const Volume& vol2) noexcept
   {
-    int vol1_left = vol1.pos.x,
-        vol1_right = vol1.pos.x + vol1.width - 1,
-        vol1_top = vol1.pos.y,
-        vol1_bottom = vol1.pos.y + vol1.height - 1,
-        vol2_left = vol2.pos.x,
-        vol2_right = vol2.pos.x + vol2.width - 1,
-        vol2_top = vol2.pos.y,
-        vol2_bottom = vol2.pos.y + vol2.height - 1;
+    GENERATE_VOLUME_BOUNDS(vol1);
+    GENERATE_VOLUME_BOUNDS(vol2);
 
     if((vol2_left <= vol1_left and vol1_left <= vol2_right) or
        (vol2_left <= vol1_right and vol1_right <= vol2_right) or
