@@ -38,4 +38,7 @@ namespace pong
 
   std::vector<math::vector<int> >
   raytrace(math::vector<double> ray) noexcept;
+
+  auto raytrace(math::vector<double> ray, math::vector<int> start)
+                                                    -> decltype(raytrace(ray));
 }

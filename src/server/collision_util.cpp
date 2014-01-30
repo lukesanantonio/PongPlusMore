@@ -75,4 +75,15 @@ namespace pong
 
     return points;
   }
+
+  auto raytrace(math::vector<double> ray, math::vector<int> start)
+                                                     -> decltype(raytrace(ray))
+  {
+    auto ray_points = raytrace(ray);
+
+    using std::begin; using std::end;
+    std::transform(begin(ray_points), end(ray_points), begin(ray_points),
+                   [&](const math::vector<int>& point){return point + start;});
+    return ray_points;
+  }
 }
