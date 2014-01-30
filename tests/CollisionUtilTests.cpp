@@ -70,3 +70,32 @@ TEST(CollisionUtilTest, raytrace)
   expected = {{0,0}, {1,1}, {2,2}, {3,3}};
   EXPECT_EQ(expected, points);
 }
+TEST(CollisionUtilTest, findClosestSide)
+{
+  using pong::Volume; using pong::VolumeSide; using pong::findClosestSide;
+  Volume vol1, vol2;
+  vol1.pos = {0, 0};
+  vol1.width = 5; vol1.height = 5;
+
+  vol2.pos = {4, 0};
+  vol2.width = 5; vol2.height = 5;
+
+  EXPECT_EQ(VolumeSide::Right, findClosestSide(vol1, vol2));
+
+  vol1.pos = {500, 500};
+  vol1.width = 10; vol1.height = 10;
+
+  vol2.pos = {450, 500};
+  vol2.width = 51; vol2.height = 51;
+
+  EXPECT_EQ(VolumeSide::Left, findClosestSide(vol1, vol2));
+
+  vol2.pos = {500, 450};
+  EXPECT_EQ(VolumeSide::Top, findClosestSide(vol1, vol2));
+
+  vol2.pos = {500, 509};
+  EXPECT_EQ(VolumeSide::Bottom, findClosestSide(vol1, vol2));
+
+  vol1.height = 9;
+  EXPECT_EQ(VolumeSide::None, findClosestSide(vol1, vol2));
+}

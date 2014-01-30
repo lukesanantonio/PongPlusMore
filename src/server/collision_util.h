@@ -22,9 +22,11 @@
  */
 #pragma once
 #include <algorithm>
+#include <unordered_map>
 #include <vector>
 #include "common/vector.h"
 #include "common/Volume.h"
+#include "enum_hash.hpp"
 namespace pong
 {
   inline bool isIn(int left, int right, int check) noexcept
@@ -41,4 +43,18 @@ namespace pong
 
   auto raytrace(math::vector<double> ray, math::vector<int> start)
                                                     -> decltype(raytrace(ray));
+
+  enum class VolumeSide : unsigned int
+  {
+    Top, Bottom, Left, Right, None
+  };
+
+  template <typename key_type, typename value_type>
+  using unordered_map_enumhash = std::unordered_map<key_type, value_type,
+                                                    enum_hash<key_type> >;
+
+  VolumeSide findClosestSide(const Volume& vol1, const Volume& vol2) noexcept;
+
+  unordered_map_enumhash<VolumeSide, int>
+  getVolumePenetration(const Volume& vol1, const Volume& vol2) noexcept;
 }

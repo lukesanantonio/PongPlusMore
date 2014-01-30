@@ -86,4 +86,74 @@ namespace pong
                    [&](const math::vector<int>& point){return point + start;});
     return ray_points;
   }
+
+  /*!
+   * \brief Finds the side of the first volume that is closest to some side of
+   * the second volume.
+   *
+   * \param vol1 This is the volume whose side is returned.
+   * \param vol2 This is the volume which is compared to the other volume.
+   *
+   * \returns The side of vol1 that is closest to vol2.
+   */
+  VolumeSide findClosestSide(const Volume& vol1, const Volume& vol2) noexcept
+  {
+
+    auto bounds = getVolumePenetration(vol1, vol2);
+
+    if(bounds.empty()) return VolumeSide::None;
+
+    using std::begin; using std::end;
+    using pair_type = decltype(bounds)::value_type;
+    auto iter = std::min_element(begin(bounds), end(bounds),
+    [](const pair_type& pair1, const pair_type& pair2)
+    {
+      return pair1.second < pair2.second;
+    });
+
+    // The iterator is not going to be end(bounds) because bounds is non empty.
+    return iter->first;
+  }
+
+  /*!
+   * \brief Returns the distance of each side from vol2 in a map.
+   *
+   * \param vol1 The volume used as a reference
+   * \param vol2 The volume compared against vol1 whose differences are
+   * reported.
+   *
+   * \returns A hash map describing how much each side of vol2 penetrates vol1.
+   * Value integers will be only greater than 0.
+   */
+  unordered_map_enumhash<VolumeSide, int>
+  getVolumePenetration(const Volume& vol1, const Volume& vol2) noexcept
+  {
+    using map_type = unordered_map_enumhash<VolumeSide, int>;
+
+    // If the volumes are not intersecting the results are irrelevant.
+    if(!isIntersecting(vol1, vol2)) return map_type{};
+
+    GENERATE_VOLUME_BOUNDS(vol1);
+    GENERATE_VOLUME_BOUNDS(vol2);
+
+    map_type map;
+
+    using std::max;
+    map.emplace(VolumeSide::Top, max(vol2_bottom - vol1_top, -1));
+    map.emplace(VolumeSide::Bottom, max(vol1_bottom - vol2_top, -1));
+    map.emplace(VolumeSide::Left, max(vol2_right - vol1_left, -1));
+    map.emplace(VolumeSide::Right, max(vol1_right - vol2_left, -1));
+
+
+    // Remove the ones that don't even intersect.
+    using std::begin; using std::end;
+
+    for(auto iter = begin(map); iter != end(map);)
+    {
+      if(iter->second < 0) iter = map.erase(iter);
+      else ++iter;
+    }
+
+    return map;
+  }
 }
