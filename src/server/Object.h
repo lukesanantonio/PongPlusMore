@@ -24,20 +24,19 @@ namespace pong
   using id_type = uint16_t;
   struct Object
   {
-    virtual ~Object() noexcept = 0;
+    virtual ~Object() noexcept {}
 
-    Object(const id_type id, const Volume& vol = Volume{})
+    Object(const id_type id = 0, const Volume& vol = Volume{})
            : id_(id), vol_(vol) {}
 
-    id_type id() const noexcept { return this->id_; }
+    const id_type& id() const noexcept { return this->id_; }
+    id_type& id() noexcept { return this->id_; }
 
     const Volume& getVolume() const noexcept { return this->vol_; }
     Volume& getVolume() noexcept { return this->vol_; }
 
   private:
-    const id_type id_;
+    id_type id_;
     Volume vol_;
   };
-
-  Object::~Object() {}
 }
