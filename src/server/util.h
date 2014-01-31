@@ -23,7 +23,7 @@
 #include "Object.h"
 namespace pong
 {
-  struct NoMoreClientsAvailable {};
+  struct NoMorePaddlesAvailable {};
   struct NoMoreBallsAvailable {};
   struct InvalidID {};
 
