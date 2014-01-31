@@ -38,7 +38,7 @@ namespace pong
      *
      * \returns The id of the created paddle.
      */
-    virtual id_type makePaddle(const Volume& vol);
+    virtual id_type makePaddle(const Volume& vol) = 0;
     /*!
      * \brief Spawns a new ball with a volume and a velocity.
      *
@@ -47,7 +47,7 @@ namespace pong
      *
      * \returns The id of the created ball.
      */
-    virtual id_type makeBall(const Volume& vol, math::vector<int> vel);
+    virtual id_type makeBall(const Volume& vol, math::vector<int> vel) = 0;
 
     virtual Object getObject(id_type) const = 0;
     virtual Paddle getPaddle(id_type) const = 0;
