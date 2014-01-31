@@ -21,8 +21,6 @@
 #include <algorithm>
 namespace pong
 {
-  using id_type = uint16_t;
-
   struct NoMoreClientsAvailable {};
   struct NoMoreBallsAvailable {};
   struct InvalidID {};

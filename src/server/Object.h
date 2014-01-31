@@ -19,9 +19,9 @@
  */
 #pragma once
 #include "common/Volume.h"
-#include "util.h"
 namespace pong
 {
+  using id_type = uint16_t;
   struct Object
   {
     virtual ~Object() noexcept = 0;
