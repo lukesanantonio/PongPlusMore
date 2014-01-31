@@ -21,7 +21,6 @@
 #include <vector>
 #include "Paddle.h"
 #include "Ball.h"
-#include "util.h"
 namespace pong
 {
   struct World
@@ -29,24 +28,4 @@ namespace pong
     std::vector<Paddle> paddles;
     std::vector<Ball> balls;
   };
-
-  inline const Paddle& findPaddleByID(const World& world, PaddleID id)
-  {
-    return findObjectByID(world.paddles, id);
-  }
-  inline Paddle& findPaddleByID(World& world, PaddleID id)
-  {
-    // We know we can modify the result. The World is non-const, the vector
-    // is non-const, and the elements are non-const.
-    return const_cast<Paddle&>(findObjectByID(world.paddles, id));
-  }
-
-  inline const Ball& findBallByID(const World& world, BallID id)
-  {
-    return findObjectByID(world.balls, id);
-  }
-  inline Ball& findBallByID(World& world, BallID id)
-  {
-    return const_cast<Ball&>(findObjectByID(world.balls, id));
-  }
 }
