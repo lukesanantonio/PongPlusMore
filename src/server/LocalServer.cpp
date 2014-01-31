@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "LocalServer.h"
-#include "exceptions.h"
+#include "util.h"
 #include "collision_util.h"
 namespace pong
 {

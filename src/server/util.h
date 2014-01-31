@@ -18,10 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "exceptions.h"
 #include <algorithm>
 namespace pong
 {
+  struct NoMoreClientsAvailable {};
+  struct NoMoreBallsAvailable {};
+  struct InvalidID {};
+
   template <typename object_type,
             typename id_type = typename object_type::id_type>
   const object_type&
