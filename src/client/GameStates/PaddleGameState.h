@@ -30,7 +30,7 @@ namespace pong
     virtual void render(SDL_Renderer*) const override;
   private:
     LocalServer server_;
-    PaddleID top_ = 0;
-    PaddleID bottom_ = 0;
+    id_type top_ = 0;
+    id_type bottom_ = 0;
   };
 }

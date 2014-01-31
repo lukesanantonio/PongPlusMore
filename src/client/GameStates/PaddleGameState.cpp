@@ -31,7 +31,7 @@ namespace pong
       case SDL_MOUSEBUTTONDOWN:
       {
         if(top_) break;
-        top_ = this->server_.connect();
+        top_ = this->server_.makePaddle({{0, 0}, 200, 50});
         break;
       }
       case SDL_MOUSEMOTION:
@@ -48,7 +48,7 @@ namespace pong
           case SDL_SCANCODE_SPACE:
           {
             if(this->bottom_) break;
-            bottom_ = this->server_.connect();
+            bottom_ = this->server_.makePaddle({{0, 0}, 200, 50});
             break;
           }
           case SDL_SCANCODE_W:
@@ -96,11 +96,11 @@ namespace pong
   void PaddleGameState::render(SDL_Renderer* renderer) const
   {
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
-    for(PaddleID id : this->server_.paddles())
+    for(id_type id : this->server_.paddles())
     {
       pong::render(renderer, this->server_.getPaddle(id).getVolume());
     }
-    for(BallID id : this->server_.balls())
+    for(id_type id : this->server_.balls())
     {
       pong::render(renderer, this->server_.getBall(id).getVolume());
     }
