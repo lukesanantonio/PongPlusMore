@@ -88,12 +88,7 @@ namespace pong
       double new_length = std::min<double>(math::length<double>(diff), 5);
 
       std::vector<math::vector<int> > points =
-                          raytrace(math::normalize<double>(diff) * new_length);
-      // Add our current position to the points.
-      // That way we can modify pos in place, without losing anything, since
-      // its original location is the first element of the vector anyway.
-      std::transform(points.begin(), points.end(), points.begin(),
-                     [&](const math::vector<int>& point){return point + pos;});
+                    raytrace(math::normalize<double>(diff) * new_length, pos);
 
       // The first point is 0,0. TODO add some sort of assertion of that.
       for(auto iter = points.begin() + 1; iter != points.end(); ++iter)
