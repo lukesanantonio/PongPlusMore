@@ -36,6 +36,7 @@ namespace pong
 
     std::vector<id_type> paddles() const noexcept override;
     std::vector<id_type> balls() const noexcept override;
+    std::vector<id_type> objects() const noexcept override;
 
     void step() noexcept override;
   private:

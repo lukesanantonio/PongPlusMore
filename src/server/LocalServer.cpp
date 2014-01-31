@@ -124,6 +124,19 @@ namespace pong
 
     return ids;
   }
+  std::vector<id_type> LocalServer::objects() const noexcept
+  {
+    const auto& paddles = this->world_.paddles;
+    const auto& balls = this->world_.balls;
+    std::vector<id_type> ids(paddles.size() + balls.size());
+
+    using std::begin; using std::end;
+    auto new_end = std::transform(begin(paddles), end(paddles), begin(ids),
+                                  id_of);
+    std::transform(begin(balls), end(balls), new_end, id_of);
+
+    return ids;
+  }
 
   void LocalServer::step() noexcept {}
 }

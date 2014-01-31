@@ -58,6 +58,7 @@ namespace pong
 
     virtual std::vector<id_type> paddles() const noexcept = 0;
     virtual std::vector<id_type> balls() const noexcept = 0;
+    virtual std::vector<id_type> objects() const noexcept = 0;
 
     virtual void step() noexcept = 0;
   };
