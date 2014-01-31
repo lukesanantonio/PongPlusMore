@@ -22,35 +22,20 @@
 #include "common/vector.h"
 #include "common/Volume.h"
 #include "util.h"
+#include "Object.h"
 namespace pong
 {
-  struct Ball
+  struct Ball : public Object
   {
   public:
     explicit Ball(id_type id = 0,
                   Volume vol = Volume{},
                   math::vector<int> vel = math::vector<int>())
-             : id_(id), vol_(vol), vel_(vel) {}
+             : Object{id, vol}, vel_(vel) {}
   private:
-    const id_type id_;
-    Volume vol_;
     math::vector<int> vel_;
   public:
-    inline Volume& getVolume() noexcept;
-    inline const Volume& getVolume() const noexcept;
-
     const math::vector<int>& getVelocity() const noexcept {return this->vel_;}
     math::vector<int>& getVelocity() noexcept { return this->vel_; }
-
-    id_type id() const noexcept { return this->id_; }
   };
-
-  inline Volume& Ball::getVolume() noexcept
-  {
-    return this->vol_;
-  }
-  inline const Volume& Ball::getVolume() const noexcept
-  {
-    return this->vol_;
-  }
 }
