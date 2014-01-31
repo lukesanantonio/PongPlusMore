@@ -25,19 +25,4 @@ namespace pong
   struct NoMorePaddlesAvailable {};
   struct NoMoreBallsAvailable {};
   struct InvalidID {};
-
-  template <typename iter_type>
-  auto findObjectByID(iter_type begin, iter_type end, id_type id)
-                                              -> decltype(*begin)
-  {
-    using object_type = decltype(*begin);
-    auto iter = std::find_if(begin, end,
-    [&] (const object_type& obj)
-    {
-      return obj.id() == id;
-    });
-
-    if(iter == end) throw InvalidID{};
-    return (*iter);
-  }
 };
