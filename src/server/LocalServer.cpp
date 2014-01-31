@@ -20,6 +20,7 @@
 #include "LocalServer.h"
 #include "util.h"
 #include "collision_util.h"
+#include <functional>
 namespace pong
 {
   id_type LocalServer::makePaddle(const Volume& vol)
@@ -37,15 +38,92 @@ namespace pong
     return id_counter_;
   }
 
-  Object LocalServer::getObject(id_type) const {}
-  Paddle LocalServer::getPaddle(id_type) const {}
-  Ball LocalServer::getBall(id_type) const {}
+  struct hasID
+  {
+    hasID(id_type id = 0) : id(id) {}
 
-  bool LocalServer::isPaddle(id_type) const {}
-  bool LocalServer::isBall(id_type) const {}
+    bool operator()(const Object& obj) const noexcept
+    {
+      return obj.id() == id;
+    }
 
-  std::vector<id_type> LocalServer::paddles() const noexcept {}
-  std::vector<id_type> LocalServer::balls() const noexcept {}
+    id_type id;
+  };
+
+  static id_type id_of(const Object& obj)
+  {
+    return obj.id();
+  }
+
+  Object LocalServer::getObject(id_type id) const
+  {
+    using std::begin; using std::end;
+
+    const auto& paddles = this->world_.paddles;
+    const auto& balls = this->world_.balls;
+
+    std::vector<Object> objs(paddles.size() + balls.size());
+
+    auto iter_end = std::copy(begin(paddles), end(paddles), begin(objs));
+    std::copy(begin(balls), end(balls), iter_end);
+
+    auto iter = std::find_if(begin(objs), end(objs), hasID(id));
+
+    if(iter == end(objs)) throw InvalidID{};
+    else return *iter;
+  }
+  Paddle LocalServer::getPaddle(id_type id) const
+  {
+    const auto& paddles = this->world_.paddles;
+    using std::begin; using std::end;
+    auto iter = std::find_if(begin(paddles), end(paddles), hasID(id));
+    if(iter == end(paddles)) throw InvalidID{};
+    return *iter;
+  }
+  Ball LocalServer::getBall(id_type id) const
+  {
+    const auto& balls = this->world_.balls;
+    using std::begin; using std::end;
+    auto iter = std::find_if(begin(balls), end(balls), hasID(id));
+    if(iter == end(balls)) throw InvalidID{};
+    return *iter;
+  }
+
+  bool LocalServer::isPaddle(id_type id) const
+  {
+    const auto& paddles = this->world_.paddles;
+    using std::begin; using std::end;
+    return std::find_if(begin(paddles), end(paddles),
+                        hasID(id)) != end(paddles);
+  }
+  bool LocalServer::isBall(id_type id) const
+  {
+    const auto& balls = this->world_.balls;
+    using std::begin; using std::end;
+    return std::find_if(begin(balls), end(balls),
+                        hasID(id)) != end(balls);
+  }
+
+  std::vector<id_type> LocalServer::paddles() const noexcept
+  {
+    const auto& paddles = this->world_.paddles;
+    std::vector<id_type> ids(paddles.size());
+
+    using std::begin; using std::end;
+    std::transform(begin(paddles), end(paddles), begin(ids), id_of);
+
+    return ids;
+  }
+  std::vector<id_type> LocalServer::balls() const noexcept
+  {
+    const auto& balls = this->world_.balls;
+    std::vector<id_type> ids(balls.size());
+
+    using std::begin; using std::end;
+    std::transform(begin(balls), end(balls), begin(ids), id_of);
+
+    return ids;
+  }
 
   void LocalServer::step() noexcept {}
 }
