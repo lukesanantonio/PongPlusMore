@@ -49,7 +49,8 @@ namespace pong
     math::vector<int> next_pos_;
     Volume volume_;
   public:
-    inline Volume getVolume() const noexcept { return this->volume_; }
+    inline const Volume& getVolume() const noexcept { return this->volume_; }
+    inline Volume& getVolume() noexcept { return this->volume_; }
 
     inline PaddleID id() const noexcept { return this->id_; }
 
