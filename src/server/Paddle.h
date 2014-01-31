@@ -21,26 +21,18 @@
 #include <cstdint>
 #include "common/vector.h"
 #include "common/Volume.h"
+#include "util.h"
 namespace pong
 {
-  /*!
-   * \brief Used to identify a paddle to the server.
-   *
-   * \note A PaddleID of zero does not reference any paddle but remains
-   * semantically correct.
-   */
-  using PaddleID = uint8_t;
   struct Paddle
   {
   public:
-    using id_type = PaddleID;
-
-    explicit Paddle(PaddleID id = 0,
+    explicit Paddle(id_type id = 0,
                     math::vector<int> pos = math::vector<int>(),
                     int width = 0,
                     int height = 0) : id_(id), volume_{pos, width, height}{}
   private:
-    const PaddleID id_;
+    const id_type id_;
     /*!
      * \brief The hoped to be location.
      *
@@ -52,7 +44,7 @@ namespace pong
     inline const Volume& getVolume() const noexcept { return this->volume_; }
     inline Volume& getVolume() noexcept { return this->volume_; }
 
-    inline PaddleID id() const noexcept { return this->id_; }
+    inline id_type id() const noexcept { return this->id_; }
 
     inline const math::vector<int>& getPosition() const noexcept
     {

@@ -21,20 +21,18 @@
 #include <cstdint>
 #include "common/vector.h"
 #include "common/Volume.h"
+#include "util.h"
 namespace pong
 {
-  using BallID = uint8_t;
   struct Ball
   {
   public:
-    using id_type = BallID;
-
-    explicit Ball(BallID id = 0,
+    explicit Ball(id_type id = 0,
                   Volume vol = Volume{},
                   math::vector<int> vel = math::vector<int>())
              : id_(id), vol_(vol), vel_(vel) {}
   private:
-    const BallID id_;
+    const id_type id_;
     Volume vol_;
     math::vector<int> vel_;
   public:
@@ -44,7 +42,7 @@ namespace pong
     const math::vector<int>& getVelocity() const noexcept {return this->vel_;}
     math::vector<int>& getVelocity() noexcept { return this->vel_; }
 
-    BallID id() const noexcept { return this->id_; }
+    id_type id() const noexcept { return this->id_; }
   };
 
   inline Volume& Ball::getVolume() noexcept
