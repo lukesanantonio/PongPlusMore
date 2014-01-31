@@ -17,15 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include <algorithm>
-#include <vector>
-#include "Object.h"
+#include "util.h"
 namespace pong
 {
-  struct NoMoreClientsAvailable {};
-  struct NoMoreBallsAvailable {};
-  struct InvalidID {};
-
-  const Object& findObjectByID(const std::vector<Object>& objs, id_type id);
-};
+  const Object& findObjectByID(const std::vector<Object>& objs, id_type id)
+  {
+    auto iter = std::find_if(objs.begin(), objs.end(),
+                         [&](const Object& obj){return obj.id() == id;});
+    if(iter == objs.end())
+    {
+      throw InvalidID();
+    }
+    return (*iter);
+  }
+}
