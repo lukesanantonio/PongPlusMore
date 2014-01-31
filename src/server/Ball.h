@@ -30,39 +30,29 @@ namespace pong
     using id_type = BallID;
 
     explicit Ball(BallID id = 0,
-                  int diameter = 0,
-                  math::vector<int> pos = math::vector<int>(),
+                  Volume vol = Volume{},
                   math::vector<int> vel = math::vector<int>())
-             : id_(id), pos_(pos), diameter_(diameter){}
+             : id_(id), vol_(vol), vel_(vel) {}
   private:
     const BallID id_;
-    int diameter_;
-    math::vector<int> pos_;
+    Volume vol_;
     math::vector<int> vel_;
   public:
-    inline Volume getVolume() const noexcept;
-
-    BallID id() const noexcept { return this->id_; }
-
-    const math::vector<int>& getPosition() const noexcept {return this->pos_;}
-    math::vector<int>& getPosition() noexcept { return this->pos_; }
+    inline Volume& getVolume() noexcept;
+    inline const Volume& getVolume() const noexcept;
 
     const math::vector<int>& getVelocity() const noexcept {return this->vel_;}
     math::vector<int>& getVelocity() noexcept { return this->vel_; }
 
-    const int& diameter() const noexcept { return this->diameter_; }
-    int& diameter() noexcept { return this->diameter_; }
+    BallID id() const noexcept { return this->id_; }
   };
 
-  inline Volume Ball::getVolume() const noexcept
+  inline Volume& Ball::getVolume() noexcept
   {
-    Volume vol;
-
-    vol.pos.x = this->pos_.x;
-    vol.pos.y = this->pos_.y;
-    vol.width = this->diameter_;
-    vol.height= this->diameter_;
-
-    return vol;
+    return this->vol_;
+  }
+  inline const Volume& Ball::getVolume() const noexcept
+  {
+    return this->vol_;
   }
 }
