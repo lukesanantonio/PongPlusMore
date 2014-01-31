@@ -54,25 +54,25 @@ namespace pong
           case SDL_SCANCODE_W:
           {
             if(!this->bottom_) break;
-            this->server_.getPaddle(bottom_).getNextPosition().y -= 10;
+            this->server_.getPaddle(bottom_).getNextPosition().y -= 1;
             break;
           }
           case SDL_SCANCODE_A:
           {
             if(!this->bottom_) break;
-            this->server_.getPaddle(bottom_).getNextPosition().x -= 10;
+            this->server_.getPaddle(bottom_).getNextPosition().x -= 1;
             break;
           }
           case SDL_SCANCODE_S:
           {
             if(!this->bottom_) break;
-            this->server_.getPaddle(bottom_).getNextPosition().y += 10;
+            this->server_.getPaddle(bottom_).getNextPosition().y += 1;
             break;
           }
           case SDL_SCANCODE_D:
           {
             if(!this->bottom_) break;
-            this->server_.getPaddle(bottom_).getNextPosition().x += 10;
+            this->server_.getPaddle(bottom_).getNextPosition().x += 1;
             break;
           }
           default:
