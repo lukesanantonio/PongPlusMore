@@ -22,39 +22,23 @@
 #include "common/vector.h"
 #include "common/Volume.h"
 #include "util.h"
+#include "Object.h"
 namespace pong
 {
-  struct Paddle
+  struct Paddle : public Object
   {
   public:
-    explicit Paddle(id_type id = 0,
-                    math::vector<int> pos = math::vector<int>(),
-                    int width = 0,
-                    int height = 0) : id_(id), volume_{pos, width, height}{}
+    explicit Paddle(id_type id = 0, const Volume& vol = Volume{},
+                    math::vector<int> next_pos = math::vector<int>())
+                    : Object{id, vol}, next_pos_(next_pos){}
   private:
-    const id_type id_;
     /*!
      * \brief The hoped to be location.
      *
      * The physics will simulate the paddle until it gets here.
      */
     math::vector<int> next_pos_;
-    Volume volume_;
   public:
-    inline const Volume& getVolume() const noexcept { return this->volume_; }
-    inline Volume& getVolume() noexcept { return this->volume_; }
-
-    inline id_type id() const noexcept { return this->id_; }
-
-    inline const math::vector<int>& getPosition() const noexcept
-    {
-      return this->volume_.pos;
-    }
-    inline math::vector<int>& getPosition() noexcept
-    {
-      return this->volume_.pos;
-    }
-
     inline const math::vector<int>& getNextPosition() const noexcept
     {
       return this->next_pos_;
@@ -63,12 +47,5 @@ namespace pong
     {
       return this->next_pos_;
     }
-
-    inline int getWidth() const noexcept { return this->volume_.width; }
-    inline int& getWidth() noexcept { return this->volume_.width; }
-
-    inline int getHeight() const noexcept { return this->volume_.height; }
-    inline int& getHeight() noexcept { return this->volume_.height; }
-
   };
 }
