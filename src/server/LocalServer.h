@@ -32,7 +32,7 @@ namespace pong
     virtual Ball& getBall(BallID) override;
     virtual const Ball& getBall(BallID) const override;
 
-    virtual void spawnBall(math::vector<int> pos,
+    virtual void spawnBall(const Volume& vol,
                            math::vector<int> vel) override;
 
     virtual std::vector<PaddleID> paddles() const noexcept override;

@@ -48,10 +48,10 @@ namespace pong
     return findBallByID(this->world_, id);
   }
 
-  void LocalServer::spawnBall(math::vector<int> pos, math::vector<int> vel)
+  void LocalServer::spawnBall(const Volume& vol, math::vector<int> vel)
   {
     if(++this->ball_id_counter_ == 0x00) throw NoMoreBallsAvailable();
-    this->world_.balls.push_back(Ball{ball_id_counter_, 5, pos, vel});
+    this->world_.balls.push_back(Ball{ball_id_counter_, vol, vel});
   }
 
   std::vector<PaddleID> LocalServer::paddles() const noexcept
