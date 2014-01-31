@@ -20,14 +20,4 @@
 #include "util.h"
 namespace pong
 {
-  const Object& findObjectByID(const std::vector<Object>& objs, id_type id)
-  {
-    auto iter = std::find_if(objs.begin(), objs.end(),
-                         [&](const Object& obj){return obj.id() == id;});
-    if(iter == objs.end())
-    {
-      throw InvalidID();
-    }
-    return (*iter);
-  }
 }

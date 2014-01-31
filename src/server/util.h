@@ -19,7 +19,6 @@
  */
 #pragma once
 #include <algorithm>
-#include <vector>
 #include "Object.h"
 namespace pong
 {
@@ -27,5 +26,18 @@ namespace pong
   struct NoMoreBallsAvailable {};
   struct InvalidID {};
 
-  const Object& findObjectByID(const std::vector<Object>& objs, id_type id);
+  template <typename iter_type>
+  auto findObjectByID(iter_type begin, iter_type end, id_type id)
+                                              -> decltype(*begin)
+  {
+    using object_type = decltype(*begin);
+    auto iter = std::find_if(begin, end,
+    [&] (const object_type& obj)
+    {
+      return obj.id() == id;
+    });
+
+    if(iter == end) throw InvalidID{};
+    return (*iter);
+  }
 };
