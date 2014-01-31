@@ -117,7 +117,42 @@ namespace pong
 
         if(can_move) // Nothing is obstructing us from moving to *iter.
         {
-          pos = *(iter);
+          // Handle the move. This is where we move the balls around.
+          math::vector<int> new_diff = *iter - pos;
+          for(BallID id : this->balls())
+          {
+            Ball& ball = this->getBall(id);
+            if(isIntersecting(vol, ball.getVolume()))
+            {
+              // Which side of *the paddle.*
+              VolumeSide side = findClosestSide(vol, ball.getVolume());
+              switch(side)
+              {
+                case VolumeSide::Top:
+                {
+                  ball.getPosition().y = vol.pos.y - ball.diameter();
+                  break;
+                }
+                case VolumeSide::Bottom:
+                {
+                  ball.getPosition().y = vol.pos.y + vol.height;
+                  break;
+                }
+                case VolumeSide::Left:
+                {
+                  ball.getPosition().x = vol.pos.x - ball.diameter();
+                  break;
+                }
+                case VolumeSide::Right:
+                {
+                  ball.getPosition().x = vol.pos.x + vol.width;
+                  break;
+                }
+                default: break;
+              }
+            }
+          }
+          pos = *iter;
         }
       }
     }
