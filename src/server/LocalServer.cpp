@@ -76,85 +76,26 @@ namespace pong
 
   void LocalServer::step() noexcept
   {
-    for(Paddle& paddle : this->world_.paddles)
+    struct ObjectProps
     {
-      math::vector<int>& pos = paddle.getPosition();
-      math::vector<int>& next_pos = paddle.getNextPosition();
-      math::vector<int> diff = {next_pos.x - pos.x, next_pos.y - pos.y};
+      Volume* vol;
+      math::vector<int> next_pos;
+    };
 
-      // We don't want to move to fast.
-      // This method adds that terminal-velocity effect that is kind of
-      // interesting.
-      double new_length = std::min<double>(math::length<double>(diff), 5);
+    std::vector<Paddle>& paddles = this->world_.paddles;
+    std::vector<Ball>& balls = this->world_.balls;
 
-      std::vector<math::vector<int> > points =
-                    raytrace(math::normalize<double>(diff) * new_length, pos);
+    std::vector<ObjectProps> objs(paddles.size() + balls.size());
 
-      // The first point is 0,0. TODO add some sort of assertion of that.
-      for(auto iter = points.begin() + 1; iter != points.end(); ++iter)
-      {
-        // Check to see if we *can* move.
-        Volume vol = paddle.getVolume();
-        vol.pos = *iter;
-        bool can_move = true;
-
-        // Will we intersect with another paddle.
-        for(PaddleID other_id : this->paddles())
-        {
-          if(other_id == paddle.id()) continue;
-          if(isIntersecting(vol, this->getPaddle(other_id).getVolume()))
-          {
-            can_move = false;
-            break;
-          }
-        }
-
-        // Will we intersect with the wall.
-        if(isIntersectingWithWall(vol, 1000, 1000))
-        {
-          can_move = false;
-        }
-
-        if(can_move) // Nothing is obstructing us from moving to *iter.
-        {
-          // Handle the move. This is where we move the balls around.
-          math::vector<int> new_diff = *iter - pos;
-          for(BallID id : this->balls())
-          {
-            Ball& ball = this->getBall(id);
-            if(isIntersecting(vol, ball.getVolume()))
-            {
-              // Which side of *the paddle.*
-              VolumeSide side = findClosestSide(vol, ball.getVolume());
-              switch(side)
-              {
-                case VolumeSide::Top:
-                {
-                  ball.getPosition().y = vol.pos.y - ball.diameter();
-                  break;
-                }
-                case VolumeSide::Bottom:
-                {
-                  ball.getPosition().y = vol.pos.y + vol.height;
-                  break;
-                }
-                case VolumeSide::Left:
-                {
-                  ball.getPosition().x = vol.pos.x - ball.diameter();
-                  break;
-                }
-                case VolumeSide::Right:
-                {
-                  ball.getPosition().x = vol.pos.x + vol.width;
-                  break;
-                }
-                default: break;
-              }
-            }
-          }
-          pos = *iter;
-        }
-      }
-    }
+    std::transform(begin(paddles), end(paddles), begin(objs),
+    [](Paddle& p) -> ObjectProps
+    {
+      return {&p.getVolume(), p.getNextPosition()};
+    });
+    std::transform(begin(balls), begin(balls), begin(objs) + paddles.size(),
+    [](Ball& b) -> ObjectProps
+    {
+      return {&b.getVolume(), b.getVelocity() + b.getVolume().pos};
+    });
   }
 }
