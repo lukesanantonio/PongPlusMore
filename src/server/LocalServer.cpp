@@ -22,80 +22,19 @@
 #include "collision_util.h"
 namespace pong
 {
-  PaddleID LocalServer::connect()
-  {
-    // We've done a loop, no more ids.
-    if(++id_counter_ == 0x00) throw NoMoreClientsAvailable();
-    // TODO Add support for configurable dimensions of the Paddle.
-    this->world_.paddles.emplace_back(id_counter_,
-                                      math::vector<int>(0, 0), 250, 40);
-    return id_counter_;
-  }
-  Paddle& LocalServer::getPaddle(PaddleID id)
-  {
-    return findPaddleByID(this->world_, id);
-  }
-  const Paddle& LocalServer::getPaddle(PaddleID id) const
-  {
-    return findPaddleByID(this->world_, id);
-  }
-  Ball& LocalServer::getBall(BallID id)
-  {
-    return findBallByID(this->world_, id);
-  }
-  const Ball& LocalServer::getBall(BallID id) const
-  {
-    return findBallByID(this->world_, id);
-  }
+  id_type LocalServer::makePaddle(const Volume& vol) {}
+  id_type LocalServer::makeBall(const Volume& vol,
+                                math::vector<int> vel) {}
 
-  void LocalServer::spawnBall(const Volume& vol, math::vector<int> vel)
-  {
-    if(++this->ball_id_counter_ == 0x00) throw NoMoreBallsAvailable();
-    this->world_.balls.push_back(Ball{ball_id_counter_, vol, vel});
-  }
+  Object LocalServer::getObject(id_type) const {}
+  Paddle LocalServer::getPaddle(id_type) const {}
+  Ball LocalServer::getBall(id_type) const {}
 
-  std::vector<PaddleID> LocalServer::paddles() const noexcept
-  {
-    const std::vector<Paddle>& paddles = this->world_.paddles;
-    std::vector<PaddleID> ids(paddles.size());
+  bool LocalServer::isPaddle(id_type) const {}
+  bool LocalServer::isBall(id_type) const {}
 
-    std::transform(paddles.begin(), paddles.end(), ids.begin(),
-                   [&](const Paddle& paddle){ return paddle.id(); });
-    return ids;
-  }
+  std::vector<id_type> LocalServer::paddles() const noexcept {}
+  std::vector<id_type> LocalServer::balls() const noexcept {}
 
-  std::vector<BallID> LocalServer::balls() const noexcept
-  {
-    const std::vector<Ball>& balls = this->world_.balls;
-    std::vector<BallID> ids(balls.size());
-
-    std::transform(balls.begin(), balls.end(), ids.begin(),
-                   [&](const Ball& ball){ return ball.id(); });
-    return ids;
-  }
-
-  void LocalServer::step() noexcept
-  {
-    struct ObjectProps
-    {
-      Volume* vol;
-      math::vector<int> next_pos;
-    };
-
-    std::vector<Paddle>& paddles = this->world_.paddles;
-    std::vector<Ball>& balls = this->world_.balls;
-
-    std::vector<ObjectProps> objs(paddles.size() + balls.size());
-
-    std::transform(begin(paddles), end(paddles), begin(objs),
-    [](Paddle& p) -> ObjectProps
-    {
-      return {&p.getVolume(), p.getNextPosition()};
-    });
-    std::transform(begin(balls), begin(balls), begin(objs) + paddles.size(),
-    [](Ball& b) -> ObjectProps
-    {
-      return {&b.getVolume(), b.getVelocity() + b.getVolume().pos};
-    });
-  }
+  void LocalServer::step() noexcept {}
 }

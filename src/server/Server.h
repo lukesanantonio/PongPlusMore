@@ -20,26 +20,44 @@
 #pragma once
 #include <cstdint>
 #include <vector>
+#include "common/vector.h"
+#include "Object.h"
 #include "Paddle.h"
 #include "Ball.h"
+#include "util.h"
 namespace pong
 {
   struct Server
   {
     virtual ~Server() noexcept = default;
-    virtual PaddleID connect() = 0;
 
-    virtual Paddle& getPaddle(PaddleID) = 0;
-    virtual const Paddle& getPaddle(PaddleID) const = 0;
+    /*!
+     * \brief Spawns a new paddle with a volume.
+     *
+     * \param vol The volume *requested* of the paddle.
+     *
+     * \returns The id of the created paddle.
+     */
+    virtual id_type makePaddle(const Volume& vol);
+    /*!
+     * \brief Spawns a new ball with a volume and a velocity.
+     *
+     * \param vol The volume *requested* of the ball.
+     * \param vel The velocity of the ball.
+     *
+     * \returns The id of the created ball.
+     */
+    virtual id_type makeBall(const Volume& vol, math::vector<int> vel);
 
-    virtual void spawnBall(const Volume& vol,
-                           math::vector<int> vel) = 0;
+    virtual Object getObject(id_type) const = 0;
+    virtual Paddle getPaddle(id_type) const = 0;
+    virtual Ball getBall(id_type) const = 0;
 
-    virtual Ball& getBall(BallID) = 0;
-    virtual const Ball& getBall(BallID) const = 0;
+    virtual bool isPaddle(id_type) const = 0;
+    virtual bool isBall(id_type) const = 0;
 
-    virtual std::vector<PaddleID> paddles() const noexcept = 0;
-    virtual std::vector<BallID> balls() const noexcept = 0;
+    virtual std::vector<id_type> paddles() const noexcept = 0;
+    virtual std::vector<id_type> balls() const noexcept = 0;
 
     virtual void step() noexcept = 0;
   };

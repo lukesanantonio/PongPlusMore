@@ -24,24 +24,22 @@ namespace pong
 {
   struct LocalServer : public Server
   {
-    virtual PaddleID connect() override;
+    id_type makePaddle(const Volume& vol) override;
+    id_type makeBall(const Volume& vol, math::vector<int> vel) override;
 
-    virtual Paddle& getPaddle(PaddleID) override;
-    virtual const Paddle& getPaddle(PaddleID) const override;
+    Object getObject(id_type) const override;
+    Paddle getPaddle(id_type) const override;
+    Ball getBall(id_type) const override;
 
-    virtual Ball& getBall(BallID) override;
-    virtual const Ball& getBall(BallID) const override;
+    bool isPaddle(id_type) const override;
+    bool isBall(id_type) const override;
 
-    virtual void spawnBall(const Volume& vol,
-                           math::vector<int> vel) override;
+    std::vector<id_type> paddles() const noexcept override;
+    std::vector<id_type> balls() const noexcept override;
 
-    virtual std::vector<PaddleID> paddles() const noexcept override;
-    virtual std::vector<BallID> balls() const noexcept override;
-
-    virtual void step() noexcept override;
+    void step() noexcept override;
   private:
     World world_;
-    PaddleID id_counter_ = 0;
-    BallID ball_id_counter_ = 0;
+    id_type id_counter_ = 0;
   };
 }
