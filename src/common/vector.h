@@ -73,7 +73,7 @@ namespace pong
 
     template <typename point_type1, typename point_type2>
     inline bool operator==(const vector<point_type1>& lhs,
-                           const vector<point_type2>& rhs)
+                           const vector<point_type2>& rhs) noexcept
     {
       return (lhs.x == rhs.x) && (lhs.y == rhs.y);
     }
@@ -85,7 +85,7 @@ namespace pong
     }
     template <typename point_type1, typename point_type2>
     inline auto operator+(const vector<point_type1>& lhs,
-                          const vector<point_type2>& rhs)
+                          const vector<point_type2>& rhs) noexcept
                                              -> vector<decltype(lhs.x + rhs.x)>
     {
       using point_type = decltype(lhs.x + rhs.x);
@@ -94,22 +94,23 @@ namespace pong
     }
 
     template <typename point_type1, typename point_type2>
-    inline vector<point_type1> operator+= (vector<point_type1>& lhs,
-                                           const vector<point_type2>& rhs)
+    inline vector<point_type1>
+    operator+= (vector<point_type1>& lhs,
+                const vector<point_type2>& rhs) noexcept
     {
       lhs = lhs + rhs;
       return lhs;
     }
 
     template <typename point_type>
-    inline vector<point_type> operator-(const vector<point_type>& vec)
+    inline vector<point_type> operator-(const vector<point_type>& vec) noexcept
     {
       return {static_cast<point_type>(-vec.x),
               static_cast<point_type>(-vec.y)};
     }
     template <typename point_type1, typename point_type2>
     inline auto operator-(const vector<point_type1>& lhs,
-                          const vector<point_type2>& rhs)
+                          const vector<point_type2>& rhs) noexcept
                                              -> vector<decltype(lhs.x - rhs.x)>
     {
       using point_type = decltype(lhs.x - rhs.x);
@@ -119,22 +120,22 @@ namespace pong
 
     template <typename point_type1, typename point_type2>
     inline decltype(auto) operator-=(vector<point_type1>& lhs,
-                                     const vector<point_type2>& rhs)
+                                     const vector<point_type2>& rhs) noexcept
     {
       return lhs = lhs - rhs;
     }
 
     template <typename point_type>
     inline vector<point_type> operator*(const vector<point_type>& lhs,
-                                        double scalar)
+                                        double scalar) noexcept
     {
       return {static_cast<point_type>(lhs.x * scalar),
               static_cast<point_type>(lhs.y * scalar)};
     }
 
     template <typename point_type>
-    inline vector<point_type> operator*(double scalar,
-                                        const vector<point_type>& rhs)
+    inline vector<point_type>
+    operator*(double scalar, const vector<point_type>& rhs) noexcept
     {
       return rhs * scalar;
     }
@@ -175,12 +176,12 @@ namespace pong
 
     template <typename point_type>
     inline bool operator==(const vector<point_type>& lhs,
-                           const vector<point_type>& rhs)
+                           const vector<point_type>& rhs) noexcept
     {
       return lhs.x == rhs.x && lhs.y == rhs.y;
     }
     template <typename point_type>
-    inline vector<point_type> truncate(const vector<point_type>& vec)
+    inline vector<point_type> truncate(const vector<point_type>& vec) noexcept
     {
       return {std::trunc(vec.x), std::trunc(vec.y)};
     }
