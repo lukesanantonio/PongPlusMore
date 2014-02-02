@@ -16,36 +16,37 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * \file ServerTests.cpp
+ * \brief Tests of various server/ specific stuff, but which doesn't fit in
+ * other test files.
  */
-#pragma once
-#include <algorithm>
-#include "Object.h"
-namespace pong
+
+#include "server/util.h"
+#include "server/World.h"
+#include "gtest/gtest.h"
+
+TEST(ServerTests, findObjectByID)
 {
-  struct NoMorePaddlesAvailable {};
-  struct NoMoreBallsAvailable {};
-  struct InvalidID {};
+  pong::World world;
 
-  /*!
-   * \brief A functor good for std::find and the like. Checks for a specific
-   * id.
-   */
-  struct hasID
-  {
-    hasID(id_type id = 0) : id(id) {}
+  world.paddles.emplace_back(0);
+  world.paddles.emplace_back(2);
+  world.paddles.emplace_back(5);
+  world.paddles.emplace_back(1);
 
-    bool operator()(const Object& obj) const noexcept
-    {
-      return obj.id() == id;
-    }
+  pong::id_type id = 5;
 
-    id_type id;
-  };
+  using std::begin; using std::end;
+  auto iter = pong::findObjectByID(begin(world.paddles),
+                                   end(world.paddles), id);
 
-  template <class InputIterator>
-  inline InputIterator findObjectByID(InputIterator begin, InputIterator end,
-                                      id_type id)
-  {
-    return std::find_if(begin, end, hasID(id));
-  }
-};
+  ASSERT_NE(end(world.paddles), iter);
+  EXPECT_EQ(id, iter->id());
+
+  id = 6;
+
+  iter = pong::findObjectByID(begin(world.paddles),
+                              end(world.paddles), id);
+  EXPECT_EQ(end(world.paddles), iter);
+}

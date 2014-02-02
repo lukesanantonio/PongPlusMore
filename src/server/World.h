@@ -21,6 +21,7 @@
 #include <vector>
 #include "Paddle.h"
 #include "Ball.h"
+#include "util.h"
 namespace pong
 {
   struct World

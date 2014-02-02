@@ -19,7 +19,7 @@
 # Add the executable which runs every test.
 add_executable(PpM_Tests EXCLUDE_FROM_ALL
                CollisionUtilTests.cpp LocalServerTests.cpp
-               VectorTests.cpp
+               VectorTests.cpp ServerTests.cpp
                ${CMAKE_CURRENT_SOURCE_DIR}/../gtest/gtest/gtest_main.cc)
 
 # Make sure it has the entirety of the pong support library.
