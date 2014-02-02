@@ -21,12 +21,47 @@
 #include "common/Volume.h"
 namespace pong
 {
+  enum class PhysicsType
+  {
+    Undefined,
+    Paddle,
+    Ball
+  };
+  struct PaddleOptions
+  {
+    math::vector<int> destination;
+  };
+  struct BallOptions
+  {
+    math::vector<int> velocity;
+  };
+
+  /*!
+   * \brief A variant to encapsulate the differences of a paddle and a ball.
+   *
+   * Kind of works like the SDL_Event structure. This kind of thing is elegant
+   * *enough*.
+   */
+  struct PhysicsOptions
+  {
+    /* implicit */ PhysicsOptions(PhysicsType type = PhysicsType::Undefined)
+                                  : type(type) {}
+
+    PhysicsType type;
+    union
+    {
+      PaddleOptions paddle_options;
+      BallOptions ball_options;
+    };
+  };
+
   using id_type = uint16_t;
   struct Object
   {
     virtual ~Object() noexcept {}
 
-    Object(const id_type id = 0, const Volume& vol = Volume{})
+    Object(const id_type id = 0, const Volume& vol = Volume{},
+           PhysicsOptions type = {})
            : id_(id), vol_(vol) {}
 
     const id_type& id() const noexcept { return this->id_; }
@@ -35,8 +70,15 @@ namespace pong
     const Volume& getVolume() const noexcept { return this->vol_; }
     Volume& getVolume() noexcept { return this->vol_; }
 
+    const PhysicsOptions& getPhysicsOptions() const noexcept
+    { return this->physics_options_; }
+
+    PhysicsOptions& getPhysicsOptions() noexcept
+    { return this->physics_options_; }
+
   private:
     id_type id_;
     Volume vol_;
+    PhysicsOptions physics_options_;
   };
 }
