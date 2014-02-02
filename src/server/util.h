@@ -25,4 +25,20 @@ namespace pong
   struct NoMorePaddlesAvailable {};
   struct NoMoreBallsAvailable {};
   struct InvalidID {};
+
+  /*!
+   * \brief A functor good for std::find and the like. Checks for a specific
+   * id.
+   */
+  struct hasID
+  {
+    hasID(id_type id = 0) : id(id) {}
+
+    bool operator()(const Object& obj) const noexcept
+    {
+      return obj.id() == id;
+    }
+
+    id_type id;
+  };
 };

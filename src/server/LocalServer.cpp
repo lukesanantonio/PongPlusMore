@@ -38,18 +38,6 @@ namespace pong
     return id_counter_;
   }
 
-  struct hasID
-  {
-    hasID(id_type id = 0) : id(id) {}
-
-    bool operator()(const Object& obj) const noexcept
-    {
-      return obj.id() == id;
-    }
-
-    id_type id;
-  };
-
   static id_type id_of(const Object& obj)
   {
     return obj.id();
