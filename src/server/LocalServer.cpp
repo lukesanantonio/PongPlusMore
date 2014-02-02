@@ -20,6 +20,7 @@
 #include "LocalServer.h"
 #include "util.h"
 #include "collision_util.h"
+#include <algorithm>
 #include <functional>
 namespace pong
 {
@@ -119,5 +120,35 @@ namespace pong
     return ids;
   }
 
-  void LocalServer::step() noexcept {}
+  void LocalServer::step() noexcept
+  {
+    struct PhysicsObject
+    {
+      // Including an id means a find operation *every time.* A pointer will
+      // be vastly more efficient.
+      Object* object;
+      math::vector<int> destination;
+      bool getsPriority;
+    };
+
+    using std::begin; using std::end;
+
+    std::vector<PhysicsObject> objs(world_.paddles.size() +
+                                    world_.balls.size());
+
+    // Build our PhysicsObjects from both our Paddles and balls.
+    auto next = std::transform(begin(world_.paddles), end(world_.paddles),
+                               begin(objs),
+    [](Paddle& obj) -> PhysicsObject
+    {
+      return {&obj, math::normalize<long double>(obj.getNextPosition()) * 7,
+              true};
+    });
+
+    std::transform(begin(world_.balls), end(world_.balls), begin(objs),
+    [](Ball& ball) -> PhysicsObject
+    {
+      return {&ball, ball.getVelocity() + ball.getVolume().pos, false};
+    });
+  }
 }
