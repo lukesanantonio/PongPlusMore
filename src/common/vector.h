@@ -78,6 +78,12 @@ namespace pong
       return (lhs.x == rhs.x) && (lhs.y == rhs.y);
     }
     template <typename point_type1, typename point_type2>
+    inline bool operator!=(const vector<point_type1>& lhs,
+                           const vector<point_type2>& rhs) noexcept
+    {
+      return !(lhs == rhs);
+    }
+    template <typename point_type1, typename point_type2>
     inline auto operator+(const vector<point_type1>& lhs,
                           const vector<point_type2>& rhs)
                                              -> vector<decltype(lhs.x + rhs.x)>
@@ -109,6 +115,13 @@ namespace pong
       using point_type = decltype(lhs.x - rhs.x);
       return {static_cast<point_type>(lhs.x - rhs.x),
               static_cast<point_type>(lhs.y - rhs.y)};
+    }
+
+    template <typename point_type1, typename point_type2>
+    inline decltype(auto) operator-=(vector<point_type1>& lhs,
+                                     const vector<point_type2>& rhs)
+    {
+      return lhs = lhs - rhs;
     }
 
     template <typename point_type>
