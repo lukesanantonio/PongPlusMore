@@ -28,14 +28,10 @@ namespace pong
     id_type makeBall(const Volume& vol, math::vector<int> vel) override;
 
     Object getObject(id_type) const override;
-    Paddle getPaddle(id_type) const override;
-    Ball getBall(id_type) const override;
 
     bool isPaddle(id_type) const override;
     bool isBall(id_type) const override;
 
-    std::vector<id_type> paddles() const noexcept override;
-    std::vector<id_type> balls() const noexcept override;
     std::vector<id_type> objects() const noexcept override;
 
     void step() noexcept override;

@@ -37,8 +37,8 @@ namespace pong
       case SDL_MOUSEMOTION:
       {
         if(!this->top_) break;
-        this->server_.getPaddle(this->top_).getNextPosition() =
-                                              {event.motion.x, event.motion.y};
+        //this->server_.getPaddle(this->top_).getNextPosition() =
+        //                                    {event.motion.x, event.motion.y};
         break;
       }
       case SDL_KEYDOWN:
@@ -59,25 +59,25 @@ namespace pong
           case SDL_SCANCODE_W:
           {
             if(!this->bottom_) break;
-            this->server_.getPaddle(bottom_).getNextPosition().y -= 1;
+            //this->server_.getPaddle(bottom_).getNextPosition().y -= 1;
             break;
           }
           case SDL_SCANCODE_A:
           {
             if(!this->bottom_) break;
-            this->server_.getPaddle(bottom_).getNextPosition().x -= 1;
+            //this->server_.getPaddle(bottom_).getNextPosition().x -= 1;
             break;
           }
           case SDL_SCANCODE_S:
           {
             if(!this->bottom_) break;
-            this->server_.getPaddle(bottom_).getNextPosition().y += 1;
+            //this->server_.getPaddle(bottom_).getNextPosition().y += 1;
             break;
           }
           case SDL_SCANCODE_D:
           {
             if(!this->bottom_) break;
-            this->server_.getPaddle(bottom_).getNextPosition().x += 1;
+            //this->server_.getPaddle(bottom_).getNextPosition().x += 1;
             break;
           }
           default:
@@ -101,13 +101,9 @@ namespace pong
   void PaddleGameState::render(SDL_Renderer* renderer) const
   {
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
-    for(id_type id : this->server_.paddles())
+    for(id_type id : this->server_.objects())
     {
-      pong::render(renderer, this->server_.getPaddle(id).getVolume());
+      pong::render(renderer, this->server_.getObject(id).getVolume());
     }
-    for(id_type id : this->server_.balls())
-    {
-      pong::render(renderer, this->server_.getBall(id).getVolume());
-    }
-  }
+}
 }

@@ -22,8 +22,6 @@
 #include <vector>
 #include "common/vector.h"
 #include "Object.h"
-#include "Paddle.h"
-#include "Ball.h"
 #include "util.h"
 namespace pong
 {
@@ -50,14 +48,10 @@ namespace pong
     virtual id_type makeBall(const Volume& vol, math::vector<int> vel) = 0;
 
     virtual Object getObject(id_type) const = 0;
-    virtual Paddle getPaddle(id_type) const = 0;
-    virtual Ball getBall(id_type) const = 0;
 
     virtual bool isPaddle(id_type) const = 0;
     virtual bool isBall(id_type) const = 0;
 
-    virtual std::vector<id_type> paddles() const noexcept = 0;
-    virtual std::vector<id_type> balls() const noexcept = 0;
     virtual std::vector<id_type> objects() const noexcept = 0;
 
     virtual void step() noexcept = 0;

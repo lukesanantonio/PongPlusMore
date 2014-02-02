@@ -19,14 +19,11 @@
  */
 #pragma once
 #include <vector>
-#include "Paddle.h"
-#include "Ball.h"
 #include "util.h"
 namespace pong
 {
   struct World
   {
-    std::vector<Paddle> paddles;
-    std::vector<Ball> balls;
+    std::vector<Object> objs;
   };
 }
