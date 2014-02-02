@@ -83,6 +83,7 @@ namespace pong
     {
       return !(lhs == rhs);
     }
+
     template <typename point_type1, typename point_type2>
     inline auto operator+(const vector<point_type1>& lhs,
                           const vector<point_type2>& rhs) noexcept
@@ -113,6 +114,8 @@ namespace pong
                           const vector<point_type2>& rhs) noexcept
                                              -> vector<decltype(lhs.x - rhs.x)>
     {
+      // lhs.x - rhs.x is *not* the same as lhs.x + -rhs.x if rhs.x is
+      // unsigned for some ridiculous reason.
       using point_type = decltype(lhs.x - rhs.x);
       return {static_cast<point_type>(lhs.x - rhs.x),
               static_cast<point_type>(lhs.y - rhs.y)};
@@ -135,7 +138,8 @@ namespace pong
 
     template <typename point_type>
     inline vector<point_type>
-    operator*(double scalar, const vector<point_type>& rhs) noexcept
+    operator*(double scalar,
+              const vector<point_type>& rhs) noexcept
     {
       return rhs * scalar;
     }
@@ -174,12 +178,6 @@ namespace pong
       return length;
     }
 
-    template <typename point_type>
-    inline bool operator==(const vector<point_type>& lhs,
-                           const vector<point_type>& rhs) noexcept
-    {
-      return lhs.x == rhs.x && lhs.y == rhs.y;
-    }
     template <typename point_type>
     inline vector<point_type> truncate(const vector<point_type>& vec) noexcept
     {
