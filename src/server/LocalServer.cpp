@@ -27,14 +27,14 @@ namespace pong
   id_type LocalServer::makePaddle(const Volume& vol)
   {
     // If ++id_counter_ is 0, then we already used up every id.
-    if(++id_counter_ == 0x00) throw NoMorePaddlesAvailable{};
+    if(++id_counter_ == 0x00) throw OutOfIDs{};
     this->world_.paddles.emplace_back(id_counter_, vol);
     return id_counter_;
   }
   id_type LocalServer::makeBall(const Volume& vol,
                                 math::vector<int> vel)
   {
-    if(++id_counter_ == 0x00) throw NoMoreBallsAvailable{};
+    if(++id_counter_ == 0x00) throw OutOfIDs{};
     this->world_.paddles.emplace_back(id_counter_, vol);
     return id_counter_;
   }
