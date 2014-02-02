@@ -50,7 +50,7 @@ namespace pong
     auto iter_end = std::copy(begin(paddles), end(paddles), begin(objs));
     std::copy(begin(balls), end(balls), iter_end);
 
-    auto iter = std::find_if(begin(objs), end(objs), hasID(id));
+    auto iter = findObjectByID(begin(objs), end(objs), id);
 
     if(iter == end(objs)) throw InvalidID{};
     else return *iter;
@@ -59,7 +59,7 @@ namespace pong
   {
     const auto& paddles = this->world_.paddles;
     using std::begin; using std::end;
-    auto iter = std::find_if(begin(paddles), end(paddles), hasID(id));
+    auto iter = findObjectByID(begin(paddles), end(paddles), id);
     if(iter == end(paddles)) throw InvalidID{};
     return *iter;
   }
@@ -67,7 +67,7 @@ namespace pong
   {
     const auto& balls = this->world_.balls;
     using std::begin; using std::end;
-    auto iter = std::find_if(begin(balls), end(balls), hasID(id));
+    auto iter = findObjectByID(begin(balls), end(balls), id);
     if(iter == end(balls)) throw InvalidID{};
     return *iter;
   }
@@ -76,15 +76,13 @@ namespace pong
   {
     const auto& paddles = this->world_.paddles;
     using std::begin; using std::end;
-    return std::find_if(begin(paddles), end(paddles),
-                        hasID(id)) != end(paddles);
+    return findObjectByID(begin(paddles), end(paddles), id) != end(paddles);
   }
   bool LocalServer::isBall(id_type id) const
   {
     const auto& balls = this->world_.balls;
     using std::begin; using std::end;
-    return std::find_if(begin(balls), end(balls),
-                        hasID(id)) != end(balls);
+    return findObjectByID(begin(balls), end(balls), id) != end(balls);
   }
 
   std::vector<id_type> LocalServer::paddles() const noexcept
