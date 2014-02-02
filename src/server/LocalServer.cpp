@@ -38,11 +38,6 @@ namespace pong
     return id_counter_;
   }
 
-  static id_type id_of(const Object& obj)
-  {
-    return obj.id();
-  }
-
   Object LocalServer::getObject(id_type id) const
   {
     using std::begin; using std::end;

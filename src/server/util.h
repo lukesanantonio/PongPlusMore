@@ -42,6 +42,18 @@ namespace pong
     id_type id;
   };
 
+  /*!
+   * \brief Returns the id of an object.
+   *
+   * The pointer to member function of Object::id isn't sufficient because
+   * that function has two overloads which can't be disambiguated without
+   * fairly verbose syntax (I believe).
+   */
+  inline id_type id_of(const Object& obj)
+  {
+    return obj.id();
+  }
+
   template <class InputIterator>
   inline InputIterator findObjectByID(InputIterator begin, InputIterator end,
                                       id_type id)
