@@ -24,6 +24,9 @@ namespace pong
 {
   struct World
   {
+    // Not efficient, each round of step is going to go std::find through the
+    // vector a lot of times. TODO find a way to make this logarithmic time or
+    // use a hash map, etc.
     std::vector<Object> objs;
   };
 }
