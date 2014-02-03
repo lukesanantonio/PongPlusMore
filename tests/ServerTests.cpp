@@ -30,23 +30,23 @@ TEST(ServerTests, findObjectByID)
 {
   pong::World world;
 
-  world.paddles.emplace_back(0);
-  world.paddles.emplace_back(2);
-  world.paddles.emplace_back(5);
-  world.paddles.emplace_back(1);
+  world.objs.emplace_back(0);
+  world.objs.emplace_back(2);
+  world.objs.emplace_back(5);
+  world.objs.emplace_back(1);
 
   pong::id_type id = 5;
 
   using std::begin; using std::end;
-  auto iter = pong::findObjectByID(begin(world.paddles),
-                                   end(world.paddles), id);
+  auto iter = pong::findObjectByID(begin(world.objs),
+                                   end(world.objs), id);
 
-  ASSERT_NE(end(world.paddles), iter);
+  ASSERT_NE(end(world.objs), iter);
   EXPECT_EQ(id, iter->id());
 
   id = 6;
 
-  iter = pong::findObjectByID(begin(world.paddles),
-                              end(world.paddles), id);
-  EXPECT_EQ(end(world.paddles), iter);
+  iter = pong::findObjectByID(begin(world.objs),
+                              end(world.objs), id);
+  EXPECT_EQ(end(world.objs), iter);
 }
