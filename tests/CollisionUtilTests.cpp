@@ -103,3 +103,16 @@ TEST(CollisionUtilTest, findClosestSide)
   vol1.height = 9;
   EXPECT_EQ(VolumeSide::None, findClosestSide(vol1, vol2));
 }
+TEST(CollisionUtilTest, collidesWith)
+{
+  //TODO Make this test better, it's not very rigorous.
+
+  using pong::collidesWith;
+
+  pong::World world;
+  world.objs.push_back({1, {{500, 500}, 500, 500}});
+
+  EXPECT_EQ(1, collidesWith({2, {{0, 0}, 10, 10}}, {491, 491}, world));
+
+  EXPECT_EQ(0, collidesWith({2, {{490, 490}, 10, 10}}, {-490, -490}, world));
+}

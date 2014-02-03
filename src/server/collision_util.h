@@ -26,6 +26,9 @@
 #include <vector>
 #include "common/vector.h"
 #include "common/Volume.h"
+#include "World.h"
+#include "util.h"
+#include "Object.h"
 #include "enum_hash.hpp"
 namespace pong
 {
@@ -57,4 +60,7 @@ namespace pong
 
   unordered_map_enumhash<VolumeSide, int>
   getVolumePenetration(const Volume& vol1, const Volume& vol2) noexcept;
+
+  id_type collidesWith(const Object& obj, const math::vector<int>& vel,
+                       const World& world) noexcept;
 }
