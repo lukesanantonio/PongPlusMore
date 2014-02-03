@@ -25,6 +25,7 @@
 #include <type_traits>
 #include <cstdint>
 #include <cmath>
+#include <iostream>
 namespace pong
 {
   /*!
@@ -228,6 +229,13 @@ namespace pong
                   vec.y * std::cos(rotation_degrees));
 
       return rot_vec;
+    }
+
+    template <typename point_type>
+    std::ostream& operator<<(std::ostream& out, const vector<point_type>& vec)
+    {
+      out << "{" << vec.x << "," << vec.y << "}";
+      return out;
     }
   }
 }
