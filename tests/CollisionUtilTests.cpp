@@ -69,6 +69,10 @@ TEST(CollisionUtilTest, raytrace)
   points = pong::raytrace(vec);
   expected = {{0,0}, {1,1}, {2,2}, {3,3}};
   EXPECT_EQ(expected, points);
+
+  points = pong::raytrace({500,620});
+  math::vector<int> expected_point = {500,620};
+  EXPECT_EQ(expected_point, points.back());
 }
 TEST(CollisionUtilTest, findClosestSide)
 {

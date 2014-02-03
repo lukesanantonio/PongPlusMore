@@ -60,11 +60,11 @@ namespace pong
   raytrace(math::vector<double> ray) noexcept
   {
     math::vector<double> direction = math::normalize(ray);
-    double length = math::length(ray);
+    auto length = math::length(direction);
 
-    std::vector<math::vector<int> > points;
+    std::vector<math::vector<int> > points{{0, 0}};
 
-    for(double i = 0.0; i <= length; i += length / std::ceil(length))
+    for(double i = 0.0; points.back() != ray; i += length / std::ceil(length))
     {
       math::vector<int> point = direction * i;
       if(std::find(points.begin(), points.end(), point) == points.end())
