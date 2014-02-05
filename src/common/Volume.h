@@ -23,10 +23,11 @@ namespace pong
 {
   struct Volume
   {
-    Volume(math::vector<int> pos = math::vector<int>(),
-           int width = 0, int height = 0)
+    math::vector<double> pos;
+    double width, height;
+
+    Volume(decltype(pos) pos = decltype(pos){},
+           decltype(width) width = 0, decltype(height) height = 0)
            : pos(pos), width(width), height(height) {}
-    math::vector<int> pos;
-    int width, height;
   };
 }
