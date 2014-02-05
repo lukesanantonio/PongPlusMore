@@ -60,12 +60,9 @@ namespace pong
   {
     virtual ~Object() noexcept {}
 
-    Object(const id_type id = 0, const Volume& vol = Volume{},
-           PhysicsOptions type = {})
-           : id_(id), vol_(vol) {}
-
-    const id_type& id() const noexcept { return this->id_; }
-    id_type& id() noexcept { return this->id_; }
+    explicit Object(const Volume& vol = Volume{},
+                    PhysicsOptions opts = {})
+                    : vol_(vol), physics_options_(opts) {}
 
     const Volume& getVolume() const noexcept { return this->vol_; }
     Volume& getVolume() noexcept { return this->vol_; }
@@ -77,7 +74,6 @@ namespace pong
     { return this->physics_options_; }
 
   private:
-    id_type id_;
     Volume vol_;
     PhysicsOptions physics_options_;
   };
