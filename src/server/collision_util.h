@@ -26,25 +26,23 @@
 #include <vector>
 #include "common/vector.h"
 #include "common/Volume.h"
-#include "World.h"
-#include "util.h"
-#include "Object.h"
 #include "enum_hash.hpp"
 namespace pong
 {
-  inline bool isIn(int left, int right, int check) noexcept
+  template <typename P1, typename P2, typename P3>
+  inline bool isIn(P1 left, P2 right, P3 check) noexcept
   {
     return std::min(left, right) <= check && check <= std::max(left, right);
   }
-  bool isIntersecting(const Volume& vol1, const Volume& vol2) noexcept;
 
+  bool isIntersecting(const Volume& v1, const Volume& v2) noexcept;
   bool isIntersectingWithWall(const Volume& vol,
                               int width, int height) noexcept;
 
-  std::vector<math::vector<int> >
-  raytrace(math::vector<double> ray) noexcept;
+  auto raytrace(math::vector<double> ray) noexcept
+                                                 -> std::vector<decltype(ray)>;
 
-  auto raytrace(math::vector<double> ray, math::vector<int> start)
+  auto raytrace(math::vector<double> ray, math::vector<double> start)
                                                     -> decltype(raytrace(ray));
 
   enum class VolumeSide : unsigned int
@@ -56,8 +54,8 @@ namespace pong
   using unordered_map_enumhash = std::unordered_map<key_type, value_type,
                                                     enum_hash<key_type> >;
 
-  VolumeSide findClosestSide(const Volume& vol1, const Volume& vol2) noexcept;
+  VolumeSide findClosestSide(const Volume& v1, const Volume& v2) noexcept;
 
-  unordered_map_enumhash<VolumeSide, int>
-  getVolumePenetration(const Volume& vol1, const Volume& vol2) noexcept;
+  unordered_map_enumhash<VolumeSide, double>
+  getVolumePenetration(const Volume& v1, const Volume& v2) noexcept;
 }

@@ -26,18 +26,18 @@ namespace pong
         vol##_top = vol.pos.y, \
         vol##_bottom = vol.pos.y + vol.height - 1
 
-  bool isIntersecting(const Volume& vol1, const Volume& vol2) noexcept
+  bool isIntersecting(const Volume& v1, const Volume& v2) noexcept
   {
-    GENERATE_VOLUME_BOUNDS(vol1);
-    GENERATE_VOLUME_BOUNDS(vol2);
+    GENERATE_VOLUME_BOUNDS(v1);
+    GENERATE_VOLUME_BOUNDS(v2);
 
-    if((vol2_left <= vol1_left and vol1_left <= vol2_right) or
-       (vol2_left <= vol1_right and vol1_right <= vol2_right) or
-       (vol1_left <= vol2_left and vol2_right <= vol1_right))
+    if((v2_left <= v1_left and v1_left <= v2_right) or
+       (v2_left <= v1_right and v1_right <= v2_right) or
+       (v1_left <= v2_left and v2_right <= v1_right))
     {
-      if((vol2_top <= vol1_top and vol1_top <= vol2_bottom) or
-         (vol2_top <= vol1_bottom and vol1_bottom <= vol2_bottom) or
-         (vol1_top <= vol2_top and vol2_bottom <= vol1_bottom)) return true;
+      if((v2_top <= v1_top and v1_top <= v2_bottom) or
+         (v2_top <= v1_bottom and v1_bottom <= v2_bottom) or
+         (v1_top <= v2_top and v2_bottom <= v1_bottom)) return true;
     }
     return false;
   }
@@ -56,17 +56,17 @@ namespace pong
   /*!
    * \brief Returns all discrete positions along a ray.
    */
-  std::vector<math::vector<int> >
-  raytrace(math::vector<double> ray) noexcept
+  auto raytrace(math::vector<double> ray) noexcept
+                                                  -> std::vector<decltype(ray)>
   {
     math::vector<double> direction = math::normalize(ray);
     auto length = math::length(direction);
 
-    std::vector<math::vector<int> > points{{0, 0}};
+    std::vector<math::vector<double> > points{{0.0, 0.0}};
 
-    for(double i = 0.0; points.back() != ray; i += length / std::ceil(length))
+    for(double i = 0.0; i <= length; i += length / std::ceil(length))
     {
-      math::vector<int> point = direction * i;
+      math::vector<double> point = direction * i;
       if(std::find(points.begin(), points.end(), point) == points.end())
       {
         points.push_back(std::move(point));
@@ -76,14 +76,14 @@ namespace pong
     return points;
   }
 
-  auto raytrace(math::vector<double> ray, math::vector<int> start)
+  auto raytrace(math::vector<double> ray, math::vector<double> start)
                                                      -> decltype(raytrace(ray))
   {
     auto ray_points = raytrace(ray);
 
     using std::begin; using std::end;
     std::transform(begin(ray_points), end(ray_points), begin(ray_points),
-                   [&](const math::vector<int>& point){return point + start;});
+                [&](const math::vector<double>& point){return point + start;});
     return ray_points;
   }
 
@@ -91,15 +91,15 @@ namespace pong
    * \brief Finds the side of the first volume that is closest to some side of
    * the second volume.
    *
-   * \param vol1 This is the volume whose side is returned.
-   * \param vol2 This is the volume which is compared to the other volume.
+   * \param v1 This is the volume whose side is returned.
+   * \param v2 This is the volume which is compared to the other volume.
    *
-   * \returns The side of vol1 that is closest to vol2.
+   * \returns The side of v1 that is closest to v2.
    */
-  VolumeSide findClosestSide(const Volume& vol1, const Volume& vol2) noexcept
+  VolumeSide findClosestSide(const Volume& v1, const Volume& v2) noexcept
   {
 
-    auto bounds = getVolumePenetration(vol1, vol2);
+    auto bounds = getVolumePenetration(v1, v2);
 
     if(bounds.empty()) return VolumeSide::None;
 
@@ -116,33 +116,33 @@ namespace pong
   }
 
   /*!
-   * \brief Returns the distance of each side from vol2 in a map.
+   * \brief Returns the distance of each side from v2 in a map.
    *
-   * \param vol1 The volume used as a reference
-   * \param vol2 The volume compared against vol1 whose differences are
+   * \param v1 The volume used as a reference
+   * \param v2 The volume compared against v1 whose differences are
    * reported.
    *
-   * \returns A hash map describing how much each side of vol2 penetrates vol1.
+   * \returns A hash map describing how much each side of v2 penetrates v1.
    * Value integers will be only greater than 0.
    */
-  unordered_map_enumhash<VolumeSide, int>
-  getVolumePenetration(const Volume& vol1, const Volume& vol2) noexcept
+  unordered_map_enumhash<VolumeSide, double>
+  getVolumePenetration(const Volume& v1, const Volume& v2) noexcept
   {
-    using map_type = unordered_map_enumhash<VolumeSide, int>;
+    using map_type = unordered_map_enumhash<VolumeSide, double>;
 
     // If the volumes are not intersecting the results are irrelevant.
-    if(!isIntersecting(vol1, vol2)) return map_type{};
+    if(!isIntersecting(v1, v2)) return map_type{};
 
-    GENERATE_VOLUME_BOUNDS(vol1);
-    GENERATE_VOLUME_BOUNDS(vol2);
+    GENERATE_VOLUME_BOUNDS(v1);
+    GENERATE_VOLUME_BOUNDS(v2);
 
     map_type map;
 
     using std::max;
-    map.emplace(VolumeSide::Top, max(vol2_bottom - vol1_top, -1));
-    map.emplace(VolumeSide::Bottom, max(vol1_bottom - vol2_top, -1));
-    map.emplace(VolumeSide::Left, max(vol2_right - vol1_left, -1));
-    map.emplace(VolumeSide::Right, max(vol1_right - vol2_left, -1));
+    map.emplace(VolumeSide::Top, max(v2_bottom - v1_top, -1));
+    map.emplace(VolumeSide::Bottom, max(v1_bottom - v2_top, -1));
+    map.emplace(VolumeSide::Left, max(v2_right - v1_left, -1));
+    map.emplace(VolumeSide::Right, max(v1_right - v2_left, -1));
 
 
     // Remove the ones that don't even intersect.
