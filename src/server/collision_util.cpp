@@ -156,36 +156,4 @@ namespace pong
 
     return map;
   }
-
-  /*!
-   * \brief Returns the id of the first object collided with going a certain
-   * velocity.
-   *
-   * \returns The id of the object that is encountered first while raytracing
-   * obj going at a velocity of vel considering objs in world.
-   */
-  id_type collidesWith(const Object& obj, const math::vector<int>& vel,
-                       const World& world) noexcept
-  {
-    // Get a path from the volume to volume + vel.
-    auto path = raytrace(vel, obj.getVolume().pos);
-
-    // Go through each location checking collision each way.
-    for(math::vector<int> loc : path)
-    {
-      Volume new_vol = obj.getVolume();
-      new_vol.pos = loc;
-
-      for(const Object& other_obj : world.objs)
-      {
-        if(other_obj.id() == obj.id()) break;
-
-        if(isIntersecting(new_vol, other_obj.getVolume()))
-        {
-          return other_obj.id();
-        }
-      }
-    }
-    return 0;
-  }
 }
