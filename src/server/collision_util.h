@@ -27,6 +27,7 @@
 #include "common/vector.h"
 #include "common/Volume.h"
 #include "enum_hash.hpp"
+#include "ObjectManager.h"
 namespace pong
 {
   template <typename P1, typename P2, typename P3>
@@ -56,4 +57,7 @@ namespace pong
 
   unordered_map_enumhash<VolumeSide, double>
   getVolumePenetration(const Volume& v1, const Volume& v2) noexcept;
+
+  std::vector<id_type>
+  findIntersectingObjects(id_type id, const ObjectManager& objs) noexcept;
 }

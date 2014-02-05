@@ -145,4 +145,25 @@ namespace pong
 
     return map;
   }
+
+  std::vector<id_type>
+  findIntersectingObjects(id_type id, const ObjectManager& objs) noexcept
+  {
+    std::vector<id_type> ids;
+
+    const Object& obj = objs.findObject(id);
+
+    for(const auto& pair : objs)
+    {
+      // If the our object is the same as this one collision detection is moot.
+      if(std::get<0>(pair) == id) continue;
+
+      if(isIntersecting(std::get<1>(pair).getVolume(), obj.getVolume()))
+      {
+        ids.push_back(std::get<0>(pair));
+      }
+    }
+
+    return ids;
+  }
 }
