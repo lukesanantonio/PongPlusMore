@@ -41,8 +41,8 @@ namespace pong
     inline id_type makeBall(Volume vol) noexcept;
     inline id_type insertObject(Volume vol, PhysicsOptions opt) noexcept;
 
-    inline const Object& object(id_type) const;
-    inline Object& object(id_type);
+    inline const Object& findObject(id_type) const;
+    inline Object& findObject(id_type);
 
     inline iterator erase(const_iterator pos);
     inline iterator erase(const_iterator first, const_iterator last);
@@ -155,7 +155,7 @@ namespace pong
    * \brief Returns a const reference to the object with the passed in id.
    * \throws std::out_of_range if the id doesn't correlate with any Object.
    */
-  const Object& ObjectManager::object(id_type id) const
+  const Object& ObjectManager::findObject(id_type id) const
   {
     return objs_.at(id);
   }
@@ -163,7 +163,7 @@ namespace pong
    * \brief Returns a non const reference to the object with the passed in id.
    * \throws std::out_of_range if the id doesn't correlate with any Object.
    */
-  Object& ObjectManager::object(id_type id)
+  Object& ObjectManager::findObject(id_type id)
   {
     return objs_.at(id);
   }

@@ -23,7 +23,7 @@ namespace pong
   void LocalServer::setDestination(id_type id, math::vector<double> dest)
   {
     // Might throw an exception, fine let it throw!
-    PhysicsOptions& physobj = this->objs_.object(id).getPhysicsOptions();
+    PhysicsOptions& physobj = this->objs_.findObject(id).getPhysicsOptions();
     if(physobj.type != PhysicsType::Paddle)
     {
       physobj.type = PhysicsType::Paddle;
@@ -33,7 +33,7 @@ namespace pong
   }
   void LocalServer::setVelocity(id_type id, math::vector<double> vel)
   {
-    PhysicsOptions& physopt = this->objs_.object(id).getPhysicsOptions();
+    PhysicsOptions& physopt = this->objs_.findObject(id).getPhysicsOptions();
     if(physopt.type != PhysicsType::Ball)
     {
       physopt.type = PhysicsType::Ball;
@@ -44,7 +44,7 @@ namespace pong
 
   Object LocalServer::getObject(id_type id) const
   {
-    return this->objs_.object(id);
+    return this->objs_.findObject(id);
   }
   std::vector<id_type> LocalServer::objects() const noexcept
   {
