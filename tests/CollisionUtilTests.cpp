@@ -48,10 +48,10 @@ TEST(CollisionUtilTest, isIntersecting)
 TEST(CollisionUtilTest, raytrace)
 {
   namespace math = pong::math;
-  math::vector<int> vec(3, 0);
+  math::vector<double> vec(3, 0);
 
-  std::vector<math::vector<int> > points = pong::raytrace(vec);
-  std::vector<math::vector<int> > expected = {{0,0}, {1,0}, {2,0}, {3,0}};
+  std::vector<math::vector<double> > points = pong::raytrace(vec);
+  std::vector<math::vector<double> > expected = {{0,0}, {1,0}, {2,0}, {3,0}};
   EXPECT_EQ(expected, points);
 
   vec = {3, 3};
@@ -60,7 +60,7 @@ TEST(CollisionUtilTest, raytrace)
   EXPECT_EQ(expected, points);
 
   points = pong::raytrace({500,620});
-  math::vector<int> expected_point = {500,620};
+  math::vector<double> expected_point = {500,620};
   EXPECT_EQ(expected_point, points.back());
 }
 TEST(CollisionUtilTest, findClosestSide)
