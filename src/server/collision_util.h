@@ -36,8 +36,6 @@ namespace pong
   }
 
   bool isIntersecting(const Volume& v1, const Volume& v2) noexcept;
-  bool isIntersectingWithWall(const Volume& vol,
-                              int width, int height) noexcept;
 
   auto raytrace(math::vector<double> ray) noexcept
                                                  -> std::vector<decltype(ray)>;

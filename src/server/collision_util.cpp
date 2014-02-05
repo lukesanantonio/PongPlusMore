@@ -42,17 +42,6 @@ namespace pong
     return false;
   }
 
-  bool isIntersectingWithWall(const Volume& vol,
-                              int width, int height) noexcept
-  {
-    if(vol.pos.x < 0 || vol.pos.y < 0) return true;
-
-    if(vol.pos.x + vol.width - 1 > width - 1 ||
-       vol.pos.y + vol.height - 1 > height - 1) return true;
-
-    return false;
-  }
-
   /*!
    * \brief Returns all discrete positions along a ray.
    */

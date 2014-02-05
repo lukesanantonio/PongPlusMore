@@ -45,17 +45,6 @@ TEST(CollisionUtilTest, isIntersecting)
   vol1.width = 60;
   EXPECT_EQ(false, isIntersecting(vol1, vol2));
 }
-TEST(CollisionUtilTest, isIntersectingWithWall)
-{
-  pong::Volume vol;
-  vol.pos = {200, 200};
-  vol.width = 300;
-  vol.height = 300;
-  EXPECT_EQ(false, isIntersectingWithWall(vol, 500, 500));
-
-  ++vol.pos.x;
-  EXPECT_EQ(true, isIntersectingWithWall(vol, 500, 500));
-}
 TEST(CollisionUtilTest, raytrace)
 {
   namespace math = pong::math;
