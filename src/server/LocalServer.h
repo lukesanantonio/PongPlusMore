@@ -19,24 +19,19 @@
  */
 #pragma once
 #include "Server.h"
-#include "World.h"
+#include "ObjectManager.h"
 namespace pong
 {
   struct LocalServer : public Server
   {
-    id_type makePaddle(const Volume& vol) override;
-    id_type makeBall(const Volume& vol, math::vector<int> vel) override;
+    void setDestination(id_type, math::vector<double>) override;
+    void setVelocity(id_type, math::vector<double>) override;
 
     Object getObject(id_type) const override;
-
-    bool isPaddle(id_type) const override;
-    bool isBall(id_type) const override;
-
     std::vector<id_type> objects() const noexcept override;
 
     void step() noexcept override;
   private:
-    World world_;
-    id_type id_counter_ = 0;
+    ObjectManager objs_;
   };
 }

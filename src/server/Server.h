@@ -20,9 +20,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
-#include "common/vector.h"
 #include "Object.h"
-#include "util.h"
 namespace pong
 {
   struct Server
@@ -30,28 +28,30 @@ namespace pong
     virtual ~Server() noexcept = default;
 
     /*!
-     * \brief Spawns a new paddle with a volume.
+     * \brief Sets the destination of the object making it a paddle if it isn't
+     * already.
      *
-     * \param vol The volume *requested* of the paddle.
-     *
-     * \returns The id of the created paddle.
+     * \throws std::out_of_range if an object with that id doesn't exist.
      */
-    virtual id_type makePaddle(const Volume& vol) = 0;
+    virtual void setDestination(id_type id, math::vector<double> dest);
     /*!
-     * \brief Spawns a new ball with a volume and a velocity.
+     * \brief Sets the velocity of the object making it a ball if it isn't
+     * already.
      *
-     * \param vol The volume *requested* of the ball.
-     * \param vel The velocity of the ball.
-     *
-     * \returns The id of the created ball.
+     * \throw std::out_of_range if an object with that id doesn't exist.
      */
-    virtual id_type makeBall(const Volume& vol, math::vector<int> vel) = 0;
+    virtual void setVelocity(id_type id, math::vector<double> vel);
 
-    virtual Object getObject(id_type) const = 0;
+    /*!
+     * \brief Finds some object by id, returning a copy of it.
+     *
+     * \throws std::out_of_range if an object with that id doesn't exist.
+     */
+    virtual Object getObject(id_type id) const = 0;
 
-    virtual bool isPaddle(id_type) const = 0;
-    virtual bool isBall(id_type) const = 0;
-
+    /*!
+     * \brief Returns the id of every object in the world currently.
+     */
     virtual std::vector<id_type> objects() const noexcept = 0;
 
     virtual void step() noexcept = 0;

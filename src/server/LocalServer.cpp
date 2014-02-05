@@ -18,68 +18,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "LocalServer.h"
-#include "util.h"
-#include "collision_util.h"
-#include <algorithm>
-#include <functional>
 namespace pong
 {
-  id_type LocalServer::makePaddle(const Volume& vol)
+  void LocalServer::setDestination(id_type id, math::vector<double> dest)
   {
-    // If ++id_counter_ is 0, then we already used up every id.
-    if(++id_counter_ == 0x00) throw OutOfIDs{};
-    this->world_.objs.emplace_back(id_counter_, vol, PhysicsType::Paddle);
-    return id_counter_;
+    // Might throw an exception, fine let it throw!
+    PhysicsOptions& physobj = this->objs_.object(id).getPhysicsOptions();
+    if(physobj.type != PhysicsType::Paddle)
+    {
+      physobj.type = PhysicsType::Paddle;
+      physobj.paddle_options = PaddleOptions{};
+    }
+    physobj.paddle_options.destination = dest;
   }
-  id_type LocalServer::makeBall(const Volume& vol,
-                                math::vector<int> vel)
+  void LocalServer::setVelocity(id_type id, math::vector<double> vel)
   {
-    if(++id_counter_ == 0x00) throw OutOfIDs{};
-    this->world_.objs.emplace_back(id_counter_, vol, PhysicsType::Ball);
-    return id_counter_;
+    PhysicsOptions& physopt = this->objs_.object(id).getPhysicsOptions();
+    if(physopt.type != PhysicsType::Ball)
+    {
+      physopt.type = PhysicsType::Ball;
+      physopt.ball_options = BallOptions{};
+    }
+    physopt.ball_options.velocity = vel;
   }
 
   Object LocalServer::getObject(id_type id) const
   {
-    using std::begin; using std::end;
-
-    auto iter = findObjectByID(begin(world_.objs), end(world_.objs), id);
-
-    if(iter == end(world_.objs)) throw InvalidID{};
-    else return *iter;
+    return this->objs_.object(id);
   }
-
-  bool LocalServer::isPaddle(id_type id) const
-  {
-    try
-    {
-      return
-      this->getObject(id).getPhysicsOptions().type == PhysicsType::Paddle;
-    }
-    catch(...)
-    {
-      return false;
-    }
-  }
-  bool LocalServer::isBall(id_type id) const
-  {
-    try
-    {
-      return
-      this->getObject(id).getPhysicsOptions().type == PhysicsType::Ball;
-    }
-    catch(...)
-    {
-      return false;
-    }
-  }
-
   std::vector<id_type> LocalServer::objects() const noexcept
   {
-    std::vector<id_type> ids(world_.objs.size());
+    std::vector<id_type> ids;
 
     using std::begin; using std::end;
-    std::transform(begin(world_.objs), end(world_.objs), begin(ids), id_of);
+    std::transform(begin(this->objs_), end(this->objs_), begin(ids),
+    [](const auto& pair) -> id_type
+    {
+      return pair.first;
+    });
 
     return ids;
   }
