@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "LocalServer.h"
+#include "collision_util.h"
 namespace pong
 {
   void LocalServer::setDestination(id_type id, math::vector<double> dest)
@@ -62,5 +63,34 @@ namespace pong
 
   void LocalServer::step() noexcept
   {
+    using std::begin;
+    for(std::pair<const id_type, Object>& obj_pair : this->objs_)
+    {
+      id_type id = std::get<0>(obj_pair);
+      Object& obj = std::get<1>(obj_pair);
+      Object orig_obj = obj;
+
+      if(obj.getPhysicsOptions().type == PhysicsType::Paddle)
+      {
+        math::vector<double> dest =
+                            obj.getPhysicsOptions().paddle_options.destination;
+        obj.getVolume().pos += math::normalize(dest);
+        // TODO this way of calling the function is awkward, use a volume
+        // and possibly an id *to ignore*. That seems kind of awkward as well.
+        if(findIntersectingObjects(id, objs_).empty()) continue;
+
+        obj = orig_obj; continue;
+      }
+      if(obj.getPhysicsOptions().type == PhysicsType::Ball)
+      {
+        math::vector<double> vel =
+                                 obj.getPhysicsOptions().ball_options.velocity;
+
+        obj.getVolume().pos += math::normalize(vel);
+        if(findIntersectingObjects(id, objs_).empty()) continue;
+
+        obj = orig_obj; continue;
+      }
+    }
   }
 }
