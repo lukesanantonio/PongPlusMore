@@ -24,6 +24,9 @@ namespace pong
 {
   struct LocalServer : public Server
   {
+    LocalServer() noexcept = default;
+    ~LocalServer() noexcept = default;
+
     void setDestination(id_type, math::vector<double>) override;
     void setVelocity(id_type, math::vector<double>) override;
 
