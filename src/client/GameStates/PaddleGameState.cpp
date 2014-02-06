@@ -31,14 +31,14 @@ namespace pong
       case SDL_MOUSEBUTTONDOWN:
       {
         if(top_) break;
-        top_ = this->server_.makePaddle({{0, 0}, 200, 50});
+        top_ = this->server_.createPaddle({{0, 0}, 200, 50});
         break;
       }
       case SDL_MOUSEMOTION:
       {
         if(!this->top_) break;
-        //this->server_.getPaddle(this->top_).getNextPosition() =
-        //                                    {event.motion.x, event.motion.y};
+        this->server_.setDestination(this->top_,
+                         math::vector<double>(event.motion.x, event.motion.y));
         break;
       }
       case SDL_KEYDOWN:
@@ -47,13 +47,13 @@ namespace pong
         {
           case SDL_SCANCODE_SPACE:
           {
-            this->server_.makeBall({{500,500}, 25, 25}, {0,0});
+            //this->server_.makeBall({{500,500}, 25, 25}, {0,0});
             break;
           }
           case SDL_SCANCODE_Q:
           {
             if(this->bottom_) break;
-            bottom_ = this->server_.makePaddle({{0, 0}, 200, 50});
+            //bottom_ = this->server_.makePaddle({{0, 0}, 200, 50});
             break;
           }
           case SDL_SCANCODE_W:

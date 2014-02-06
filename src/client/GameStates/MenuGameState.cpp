@@ -45,8 +45,8 @@ namespace pong
 
     for(Button* button : {&singleplayer_, &multiplayer_, &options_, &quit_})
     {
-
-      button->volume({{position_x, starting_y}, width, height});
+      button->volume({math::vector<double>(position_x, starting_y),
+                     static_cast<double>(width), static_cast<double>(height)});
       button->font_renderer(font_renderer);
       button->enabled(true);
       button->background_color({0xff, 0xff, 0xff, 0xff});
