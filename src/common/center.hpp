@@ -41,9 +41,9 @@ namespace pong
    * \code begin + (length / 2) - (object_length / 2) \endcode
    * This is what is returned.
    */
-  template<typename IntType>
-  inline constexpr IntType
-  center(IntType begin, IntType length, IntType object_length)
+  template<typename P1, typename P2, typename P3>
+  inline constexpr decltype(auto)
+  center(P1 begin, P2 length, P3 object_length)
   {
     return begin + (length / 2) - (object_length / 2);
   }
