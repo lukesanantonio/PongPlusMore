@@ -56,6 +56,7 @@ namespace pong
     inline const_iterator end() const { return objs_.end(); }
     inline const_iterator cend() const { return objs_.cend(); }
 
+    inline size_type size() const { return objs_.size(); }
   private:
     map_type objs_;
     id_type id_counter_ = 0;
