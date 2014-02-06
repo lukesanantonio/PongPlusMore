@@ -48,7 +48,7 @@ namespace pong
   }
   std::vector<id_type> LocalServer::objects() const noexcept
   {
-    std::vector<id_type> ids;
+    std::vector<id_type> ids(this->objs_.size());
 
     using std::begin; using std::end;
     std::transform(begin(this->objs_), end(this->objs_), begin(ids),
