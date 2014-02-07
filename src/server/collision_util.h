@@ -31,7 +31,7 @@
 namespace pong
 {
   template <typename P1, typename P2, typename P3>
-  inline bool isIn(P1 left, P2 right, P3 check) noexcept
+  constexpr inline bool isIn(P1 left, P2 right, P3 check) noexcept
   {
     return std::min(left, right) <= check && check <= std::max(left, right);
   }
