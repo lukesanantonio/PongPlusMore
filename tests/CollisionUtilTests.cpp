@@ -92,3 +92,41 @@ TEST(CollisionUtilTest, findClosestSide)
   vol1.height = 9;
   EXPECT_EQ(VolumeSide::None, findClosestSide(vol1, vol2));
 }
+TEST(CollisionUtilTest, isInsideVolume)
+{
+  using pong::Volume; using pong::isInsideVolume;
+  Volume bounds = {{0, 0}, 1000, 1000};
+  Volume check = {{0, 0}, 1000, 1000};
+
+  EXPECT_TRUE(isInsideVolume(bounds, check));
+
+  check.pos = {500, 500};
+  check.width = 500; check.height = 500;
+  EXPECT_TRUE(isInsideVolume(bounds, check));
+
+  check.pos = {-1, 0};
+  EXPECT_FALSE(isInsideVolume(bounds, check));
+}
+TEST(CollisionUtilTest, closestSideFromInside)
+{
+  using pong::Volume; using pong::closestSideFromInside;
+  using pong::VolumeSide;
+
+  Volume bounds = {{0, 0}, 1000, 1000};
+  Volume check = {{0, 500}, 20, 20};
+
+  EXPECT_EQ(VolumeSide::Left, closestSideFromInside(bounds, check));
+
+  //                                .- Next best choice.
+  //##################################  .- Intersects, so the side isn't used.
+  //#                        ###############
+  //#                        #       #     #
+  //#                        ###############
+  //#                                #
+  //##################################
+
+  check.pos = {750, 200};
+  check.width = 500;
+  check.height = 20;
+  EXPECT_EQ(VolumeSide::Top, closestSideFromInside(bounds, check));
+}

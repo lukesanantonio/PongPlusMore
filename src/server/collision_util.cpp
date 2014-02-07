@@ -166,4 +166,53 @@ namespace pong
 
     return ids;
   }
+
+  /*!
+   * \brief Returns whether obj is inside box. Inclusive.
+   */
+  bool isInsideVolume(const Volume& box, const Volume& obj) noexcept
+  {
+    GENERATE_VOLUME_BOUNDS(box);
+    GENERATE_VOLUME_BOUNDS(obj);
+
+    if(isIn(box_left, box_right, obj_left) &&
+       isIn(box_left, box_right, obj_right) &&
+       isIn(box_top, box_bottom, obj_top) &&
+       isIn(box_top, box_bottom, obj_bottom))
+    {
+      return true;
+    }
+    return false;
+  }
+  VolumeSide closestSideFromInside(const Volume& box,
+                                   const Volume& obj) noexcept
+  {
+    unordered_map_enumhash<VolumeSide, int> map;
+
+    GENERATE_VOLUME_BOUNDS(box);
+    GENERATE_VOLUME_BOUNDS(obj);
+
+    map.emplace(VolumeSide::Top, obj_top - box_top);
+    map.emplace(VolumeSide::Bottom, box_bottom - obj_bottom);
+    map.emplace(VolumeSide::Left, obj_left - box_left);
+    map.emplace(VolumeSide::Right, box_right - obj_right);
+
+    using std::begin; using std::end;
+
+    // Remove the bad ones.
+    for(auto iter = begin(map); iter != end(map);)
+    {
+      if(std::get<1>(*iter) < 0) iter = map.erase(iter);
+      ++iter;
+    }
+
+    // Find the good one.
+    auto it = std::min_element(begin(map), end(map),
+    [](const auto& p1, const auto& p2)
+    {
+      return std::get<1>(p1) < std::get<1>(p2);
+    });
+
+    return it == end(map) ? VolumeSide::None : std::get<0>(*it);
+  }
 }

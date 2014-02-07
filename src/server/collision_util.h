@@ -60,4 +60,8 @@ namespace pong
 
   std::vector<id_type>
   findIntersectingObjects(id_type id, const ObjectManager& objs) noexcept;
+
+  bool isInsideVolume(const Volume& box, const Volume& obj) noexcept;
+  VolumeSide closestSideFromInside(const Volume& box,
+                                   const Volume& obj) noexcept;
 }
