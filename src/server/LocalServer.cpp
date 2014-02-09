@@ -63,6 +63,10 @@ namespace pong
 
   void LocalServer::step() noexcept
   {
+
+    // Make these configurable.
+    Volume bounds = {{0, 0}, 1000, 1000};
+
     using std::begin;
     for(std::pair<const id_type, Object>& obj_pair : this->objs_)
     {
@@ -72,14 +76,18 @@ namespace pong
 
       if(obj.getPhysicsOptions().type == PhysicsType::Paddle)
       {
-        math::vector<double> dest =
-                            obj.getPhysicsOptions().paddle_options.destination;
-        obj.getVolume().pos += math::normalize(dest);
+        math::vector<double> diff =
+                           obj.getPhysicsOptions().paddle_options.destination -
+                           obj.getVolume().pos;
+        obj.getVolume().pos += math::normalize(diff) *
+                            std::min<double>(1, math::length(diff));
         // TODO this way of calling the function is awkward, use a volume
         // and possibly an id *to ignore*. That seems kind of awkward as well.
-        if(findIntersectingObjects(id, objs_).empty()) continue;
+        if(!findIntersectingObjects(id, objs_).empty())
+          obj = orig_obj;
 
-        obj = orig_obj; continue;
+        if(!isInsideVolume(bounds, obj.getVolume()))
+          obj = orig_obj;
       }
       if(obj.getPhysicsOptions().type == PhysicsType::Ball)
       {
