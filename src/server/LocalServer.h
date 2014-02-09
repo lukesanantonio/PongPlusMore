@@ -28,6 +28,7 @@ namespace pong
     ~LocalServer() noexcept = default;
 
     inline id_type createPaddle(const Volume& v) noexcept;
+    inline id_type createBall(const Volume& v) noexcept;
 
     void setDestination(id_type, math::vector<double>) override;
     void setVelocity(id_type, math::vector<double>) override;
@@ -43,5 +44,9 @@ namespace pong
   inline id_type LocalServer::createPaddle(const Volume& v) noexcept
   {
     return this->objs_.makePaddle(v);
+  }
+  inline id_type LocalServer::createBall(const Volume& v) noexcept
+  {
+    return this->objs_.makeBall(v);
   }
 }
