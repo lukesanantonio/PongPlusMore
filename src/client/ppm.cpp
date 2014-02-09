@@ -56,22 +56,36 @@ int main(int argc, char** argv)
   game.game_state.reset(new pong::MenuGameState(game));
 
   pong::Timer<> update;
+  int excess = 0;
   while(!game.exiting)
   {
-    if(update.hasBeen(std::chrono::milliseconds(5)))
+    // Make a link to the game state so it doesn't all of a sudden become a
+    // nullptr.
+    std::shared_ptr<pong::GameState> game_state = game.game_state;
+
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
     {
-      // Make a link to the game state so it doesn't all of a sudden become a
-      // nullptr.
-      std::shared_ptr<pong::GameState> game_state = game.game_state;
+      game_state->handleEvent(event);
+    }
 
-      SDL_Event event;
-      while(SDL_PollEvent(&event))
-      {
-        game_state->handleEvent(event);
-      }
+    int micro = update.hasBeen<std::chrono::microseconds>().count();
+    int dt = micro / 1000;
+    excess += micro - dt * 1000;
+    int sims = dt + excess / 1000;
+    excess -= excess / 1000 * 1000;
 
-      game_state->update();
+    // We use dt here, because otherwise we might render faster than we want
+    // to. We aren't trying to render faster we are just trying to make sure
+    // our simulation is catching up adequately.
+    if(dt >= 4)
+    {
       update.reset();
+
+      for(int i = 0; i < sims; i++)
+      {
+        game_state->update();
+      }
 
       // If the game state is different from our cache... Don't render.
       if(game_state != game.game_state) continue;
