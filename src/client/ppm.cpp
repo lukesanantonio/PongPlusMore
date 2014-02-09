@@ -94,7 +94,6 @@ int main(int argc, char** argv)
       SDL_RenderClear(renderer);
 
       game_state->render(renderer);
-
       SDL_RenderPresent(renderer);
     }
   }
