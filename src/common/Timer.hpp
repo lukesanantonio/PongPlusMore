@@ -28,6 +28,9 @@ namespace pong
     template <class DurationType>
     bool hasBeen(DurationType duration) const;
 
+    template <class DurationType>
+    DurationType hasBeen() const;
+
     void reset();
   private:
     std::chrono::time_point<ClockType> time_before_ = ClockType::now();
@@ -37,8 +40,17 @@ namespace pong
   template <class DurationType>
   bool Timer<ClockType>::hasBeen(DurationType duration) const
   {
-    return ClockType::now() - this->time_before_ >= duration ? true : false;
+    return ClockType::now() - this->time_before_ >= duration;
   }
+
+  template <class ClockType>
+  template <class DurationType>
+  DurationType Timer<ClockType>::hasBeen() const
+  {
+    using std::chrono::duration_cast;
+    return duration_cast<DurationType>(ClockType::now() - this->time_before_);
+  }
+
   template <class ClockType>
   void Timer<ClockType>::reset()
   {
