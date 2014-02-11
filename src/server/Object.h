@@ -29,11 +29,11 @@ namespace pong
   };
   struct PaddleOptions
   {
-    math::vector<int> destination;
+    math::vector<double> destination;
   };
   struct BallOptions
   {
-    math::vector<int> velocity;
+    math::vector<double> velocity;
   };
 
   /*!
