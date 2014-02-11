@@ -67,6 +67,8 @@ namespace pong
     // Make these configurable.
     Volume bounds = {{0, 0}, 1000, 1000};
 
+    std::vector<id_type> to_delete;
+
     using std::begin;
     for(std::pair<const id_type, Object>& obj_pair : this->objs_)
     {
@@ -95,10 +97,23 @@ namespace pong
                                  obj.getPhysicsOptions().ball_options.velocity;
 
         obj.getVolume().pos += math::normalize(vel);
+
+        if(!isIntersecting(bounds, obj.getVolume()))
+        {
+          to_delete.push_back(id);
+        }
+
         if(findIntersectingObjects(id, objs_).empty()) continue;
 
         obj = orig_obj; continue;
       }
     }
+
+    using std::end;
+    std::for_each(begin(to_delete), end(to_delete),
+    [this](id_type id)
+    {
+      this->objs_.erase(id);
+    });
   }
 }
