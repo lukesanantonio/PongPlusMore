@@ -211,6 +211,12 @@ namespace pong
       return value;
     }
 
+    template <typename P1>
+    constexpr decltype(auto) to_radians(P1 degrees) noexcept
+    {
+      return degrees * M_PI / 180.0;
+    }
+
     /*!
      * \brief Rotates the vector passed in then returns the result.
      *
