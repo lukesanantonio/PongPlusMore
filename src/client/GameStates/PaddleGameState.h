@@ -32,5 +32,6 @@ namespace pong
     LocalServer server_;
     id_type top_ = 0;
     id_type bottom_ = 0;
+    id_type ball_ = 0;
   };
 }

@@ -47,7 +47,8 @@ namespace pong
         {
           case SDL_SCANCODE_SPACE:
           {
-            //this->server_.makeBall({{500,500}, 25, 25}, {0,0});
+            this->ball_ = this->server_.createBall({{500,500}, 25, 25});
+            this->server_.setVelocity(this->ball_, {0,-1});
             break;
           }
           case SDL_SCANCODE_Q:
