@@ -215,4 +215,34 @@ namespace pong
 
     return it == end(map) ? VolumeSide::None : std::get<0>(*it);
   }
+
+  void snapVolumeToVolume(Volume& to_move, VolumeSide side,
+                          const Volume& v) noexcept
+  {
+    switch(side)
+    {
+      case VolumeSide::Top:
+      {
+        to_move.pos.y = v.pos.y - to_move.height;
+        break;
+      }
+      case VolumeSide::Bottom:
+      {
+        to_move.pos.y = v.pos.y + v.height;
+        break;
+      }
+      case VolumeSide::Left:
+      {
+        to_move.pos.x = v.pos.x - to_move.width;
+        break;
+      }
+      case VolumeSide::Right:
+      {
+        to_move.pos.x = v.pos.x + v.width;
+        break;
+      }
+      default:
+        break;
+    }
+  }
 }

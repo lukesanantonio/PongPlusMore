@@ -64,4 +64,6 @@ namespace pong
   bool isInsideVolume(const Volume& box, const Volume& obj) noexcept;
   VolumeSide closestSideFromInside(const Volume& box,
                                    const Volume& obj) noexcept;
+
+  void snapVolumeToVolume(Volume&, VolumeSide, const Volume&) noexcept;
 }

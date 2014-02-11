@@ -130,3 +130,26 @@ TEST(CollisionUtilTest, closestSideFromInside)
   check.height = 20;
   EXPECT_EQ(VolumeSide::Top, closestSideFromInside(bounds, check));
 }
+TEST(CollisionUtilTest, snapVolumeToVolume)
+{
+  using pong::Volume; using pong::snapVolumeToVolume; using pong::VolumeSide;
+
+  Volume v{{0, 0}, 5, 5};
+  Volume anchor{{500, 500}, 50, 50};
+
+  snapVolumeToVolume(v, VolumeSide::Top, anchor);
+  Volume expected{{0, 495}, 5, 5};
+  EXPECT_EQ(expected, v);
+
+  snapVolumeToVolume(v, VolumeSide::Bottom, anchor);
+  expected.pos.y = 550;
+  EXPECT_EQ(expected, v);
+
+  snapVolumeToVolume(v, VolumeSide::Left, anchor);
+  expected.pos.x = 495;
+  EXPECT_EQ(expected, v);
+
+  snapVolumeToVolume(v, VolumeSide::Right, anchor);
+  expected.pos.x = 550;
+  EXPECT_EQ(expected, v);
+}
