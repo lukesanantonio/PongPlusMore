@@ -81,4 +81,13 @@ namespace pong
 
   Json::Value dumpJSON(const PhysicsOptions&) noexcept;
   Json::Value dumpJSON(const Object&) noexcept;
+
+  inline bool isPaddle(const Object& obj) noexcept
+  {
+    return obj.getPhysicsOptions().type == PhysicsType::Paddle;
+  }
+  inline bool isBall(const Object& obj) noexcept
+  {
+    return obj.getPhysicsOptions().type == PhysicsType::Ball;
+  }
 }
