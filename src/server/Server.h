@@ -20,6 +20,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
+#include <json/json.h>
 #include "Object.h"
 namespace pong
 {
@@ -57,4 +58,6 @@ namespace pong
 
     virtual void step() noexcept = 0;
   };
+
+  Json::Value dumpJSON(Server& serv);
 }

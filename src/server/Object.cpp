@@ -17,24 +17,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include "common/vector.h"
-#include <json/json.h>
+#include "Object.h"
 namespace pong
 {
-  struct Volume
+  Json::Value dumpJSON(const PhysicsOptions& phys) noexcept
   {
-    math::vector<double> pos;
-    double width, height;
+    Json::Value root(Json::objectValue);
 
-    Volume(decltype(pos) pos = decltype(pos){},
-           decltype(width) width = 0, decltype(height) height = 0)
-           : pos(pos), width(width), height(height) {}
-  };
+    if(phys.type == PhysicsType::Paddle)
+    {
+      root["Destination"] = dumpJSON(phys.paddle_options.destination);
+    }
+    if(phys.type == PhysicsType::Ball)
+    {
+      root["Velocity"] = dumpJSON(phys.ball_options.velocity);
+    }
 
-  inline bool operator==(const Volume& v1, const Volume& v2) noexcept
-  {
-    return v1.pos == v2.pos && v1.width == v2.width && v1.height == v2.height;
+    return root;
   }
-  Json::Value dumpJSON(const Volume&) noexcept;
+  Json::Value dumpJSON(const Object& obj) noexcept
+  {
+    Json::Value root(Json::objectValue);
+    Json::Value vol = dumpJSON(obj.getVolume());
+    Json::Value phys = dumpJSON(obj.getPhysicsOptions());
+
+    root["Volume"] = vol;
+    root["PhysicsOptions"] = phys;
+
+    return root;
+  }
 }

@@ -26,6 +26,7 @@
 #include <cstdint>
 #include <cmath>
 #include <iostream>
+#include <json/json.h>
 namespace pong
 {
   /*!
@@ -242,6 +243,17 @@ namespace pong
     {
       out << "{" << vec.x << "," << vec.y << "}";
       return out;
+    }
+
+    template <typename point_type>
+    Json::Value dumpJSON(const vector<point_type>& v) noexcept
+    {
+      Json::Value root(Json::objectValue);
+
+      root["x"] = v.x;
+      root["y"] = v.y;
+
+      return root;
     }
   }
 }

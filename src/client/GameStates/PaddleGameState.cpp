@@ -22,6 +22,7 @@
 #include "render.h"
 #include "common/crash.hpp"
 #include "server/collision_util.h"
+#include <json/json.h>
 namespace pong
 {
   void PaddleGameState::handleEvent(const SDL_Event& event)
@@ -79,6 +80,12 @@ namespace pong
           {
             if(!this->bottom_) break;
             //this->server_.getPaddle(bottom_).getNextPosition().x += 1;
+            break;
+          }
+          case SDL_SCANCODE_TAB:
+          {
+            Json::StyledStreamWriter("  ").write(std::cout,
+                                                dumpJSON(this->server_));
             break;
           }
           default:

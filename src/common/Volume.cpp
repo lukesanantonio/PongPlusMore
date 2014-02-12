@@ -17,24 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include "common/vector.h"
-#include <json/json.h>
+#include "Volume.h"
 namespace pong
 {
-  struct Volume
+  Json::Value dumpJSON(const Volume& v) noexcept
   {
-    math::vector<double> pos;
-    double width, height;
+    Json::Value root(Json::objectValue);
+    Json::Value pos = dumpJSON(v.pos);
 
-    Volume(decltype(pos) pos = decltype(pos){},
-           decltype(width) width = 0, decltype(height) height = 0)
-           : pos(pos), width(width), height(height) {}
-  };
+    root["Position"] = pos;
+    root["Width"] = v.width;
+    root["Height"] = v.height;
 
-  inline bool operator==(const Volume& v1, const Volume& v2) noexcept
-  {
-    return v1.pos == v2.pos && v1.width == v2.width && v1.height == v2.height;
+    return root;
   }
-  Json::Value dumpJSON(const Volume&) noexcept;
 }

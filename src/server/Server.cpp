@@ -16,25 +16,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * \file Server.cpp
+ * \brief Impl. of server-related functions.
  */
-#pragma once
-#include "common/vector.h"
-#include <json/json.h>
+#include "Server.h"
 namespace pong
 {
-  struct Volume
+  Json::Value dumpJSON(Server& s)
   {
-    math::vector<double> pos;
-    double width, height;
+    Json::Value root(Json::arrayValue);
 
-    Volume(decltype(pos) pos = decltype(pos){},
-           decltype(width) width = 0, decltype(height) height = 0)
-           : pos(pos), width(width), height(height) {}
-  };
+    for(id_type id : s.objects())
+    {
+      // Add that object to our array.
+      Json::Value obj = dumpJSON(s.getObject(id));
+      obj["id"] = id;
+      root.append(obj);
+    }
 
-  inline bool operator==(const Volume& v1, const Volume& v2) noexcept
-  {
-    return v1.pos == v2.pos && v1.width == v2.width && v1.height == v2.height;
+    return root;
   }
-  Json::Value dumpJSON(const Volume&) noexcept;
 }
