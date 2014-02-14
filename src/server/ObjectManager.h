@@ -20,6 +20,7 @@
 #pragma once
 #include <unordered_map>
 #include <queue>
+#include <json/json.h>
 #include "Object.h"
 
 namespace pong
@@ -67,6 +68,8 @@ namespace pong
 
     inline id_type getNextID() noexcept;
   };
+
+  Json::Value dumpJSON(const ObjectManager& objs) noexcept;
 
   /*!
    * \brief Returns some valid which can be used on a new Object.
