@@ -21,7 +21,7 @@
 #include "Server.h"
 namespace pong
 {
-  ObjectManager::ObjectManager(Server& s) noexcept
+  ObjectManager::ObjectManager(const Server& s) noexcept
   {
     if(s.objects().empty()) return;
     for(id_type id : s.objects())

@@ -39,7 +39,7 @@ namespace pong
     using id_type = pong::id_type;
 
     ObjectManager() noexcept {}
-    ObjectManager(Server& s) noexcept;
+    ObjectManager(const Server& s) noexcept;
 
     inline id_type makePaddle(Volume vol) noexcept;
     inline id_type makeBall(Volume vol) noexcept;
