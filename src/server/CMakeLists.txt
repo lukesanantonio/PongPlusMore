@@ -16,5 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_library(ppmserv collision_util.cpp LocalServer.cpp Object.cpp Server.cpp)
+add_library(ppmserv collision_util.cpp LocalServer.cpp Object.cpp Server.cpp
+                    ObjectManager.cpp)
 target_link_libraries(ppmserv jsoncpp ppmcommon)

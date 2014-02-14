@@ -24,6 +24,8 @@
 
 namespace pong
 {
+  struct Server;
+
   using id_type = uint16_t;
   using map_type = std::unordered_map<id_type, Object>;
   struct ObjectManager
@@ -36,6 +38,7 @@ namespace pong
     using id_type = pong::id_type;
 
     ObjectManager() noexcept {}
+    ObjectManager(Server& s) noexcept;
 
     inline id_type makePaddle(Volume vol) noexcept;
     inline id_type makeBall(Volume vol) noexcept;
