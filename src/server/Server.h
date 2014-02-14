@@ -22,6 +22,7 @@
 #include <vector>
 #include <json/json.h>
 #include "Object.h"
+#include "ObjectManager.h"
 namespace pong
 {
   struct Server
@@ -59,5 +60,8 @@ namespace pong
     virtual void step() noexcept = 0;
   };
 
-  Json::Value dumpJSON(Server& serv);
+  inline Json::Value dumpJSON(const Server& s) noexcept
+  {
+    return dumpJSON(ObjectManager(s));
+  }
 }
