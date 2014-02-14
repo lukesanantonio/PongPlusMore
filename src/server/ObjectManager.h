@@ -174,4 +174,19 @@ namespace pong
   {
     return objs_.at(id);
   }
+
+  /*!
+   * \brief Returns whether or not the id is of an object that is a paddle.
+   */
+  inline bool isPaddle(const ObjectManager& objs, id_type id)
+  {
+    return isPaddle(objs.findObject(id));
+  }
+  /*!
+   * \brief Returns whether or not the id is of an object that is a ball.
+   */
+  inline bool isBall(const ObjectManager& objs, id_type id)
+  {
+    return isBall(objs.findObject(id));
+  }
 }
