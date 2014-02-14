@@ -59,8 +59,6 @@ namespace pong
   using id_type = uint16_t;
   struct Object
   {
-    virtual ~Object() noexcept {}
-
     explicit Object(const Volume& vol = Volume{},
                     PhysicsOptions opts = {})
                     : vol_(vol), physics_options_(opts) {}
