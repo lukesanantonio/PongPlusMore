@@ -20,32 +20,43 @@
 #include "server/collision_util.h"
 #include "gtest/gtest.h"
 
-TEST(CollisionUtilTest, isIn)
+TEST(CollisionUtilTests, isIn)
 {
-  EXPECT_EQ(true, pong::isIn(0, 5, 5));
-  EXPECT_EQ(true, pong::isIn(-7, 16, 6));
-  EXPECT_EQ(true, pong::isIn(-100, 100, -100));
-  EXPECT_EQ(false, pong::isIn(100, 560, 99));
-  EXPECT_EQ(false, pong::isIn(100, 675, 691));
-  EXPECT_EQ(false, pong::isIn(100, 200, -150));
+  using pong::isIn;
+
+  // Test inclusiveness.
+  EXPECT_TRUE(isIn(0, 5, 5));
+  // Test negative integer support.
+  EXPECT_TRUE(isIn(-7, 16, 6));
+  EXPECT_TRUE(isIn(-100, 100, -100));
+  // Test the falsehood of numbers outside the range.
+  EXPECT_FALSE(isIn(100, 560, 99));
+  EXPECT_FALSE(isIn(100, 675, 691));
+  EXPECT_FALSE(isIn(100, 200, -150));
+
+  // Do the same, but with doubles.
+  EXPECT_TRUE(isIn(5.5, 6.5, 6.4));
+  EXPECT_TRUE(isIn(-5.5, 6.5, -5.5));
+  EXPECT_TRUE(isIn(-10.064, -5.064, -10.064));
+  EXPECT_TRUE(isIn(-10.064, -5.064, -10.001));
 }
-TEST(CollisionUtilTest, isIntersecting)
+TEST(CollisionUtilTests, isIntersecting)
 {
-  pong::Volume vol1, vol2;
-  vol1.pos = {500, 510};
-  vol1.width = 61;
-  vol1.height = 55;
+  pong::Volume v1, v2;
+  v1.pos = {500, 510};
+  v1.width = 61;
+  v1.height = 55;
 
-  vol2.pos = {560, 564};
-  vol2.width = 50;
-  vol2.height = 50;
+  v2.pos = {560, 564};
+  v2.width = 50;
+  v2.height = 50;
 
-  EXPECT_EQ(true, isIntersecting(vol1, vol2));
+  EXPECT_TRUE(isIntersecting(v1, v2));
 
-  vol1.width = 60;
-  EXPECT_EQ(false, isIntersecting(vol1, vol2));
+  v1.width = 60;
+  EXPECT_FALSE(isIntersecting(v1, v2));
 }
-TEST(CollisionUtilTest, findClosestSide)
+TEST(CollisionUtilTests, findClosestSide)
 {
   using pong::Volume; using pong::VolumeSide; using pong::findClosestSide;
   Volume vol1, vol2;
@@ -74,7 +85,7 @@ TEST(CollisionUtilTest, findClosestSide)
   vol1.height = 9;
   EXPECT_EQ(VolumeSide::None, findClosestSide(vol1, vol2));
 }
-TEST(CollisionUtilTest, isInsideVolume)
+TEST(CollisionUtilTests, isInsideVolume)
 {
   using pong::Volume; using pong::isInsideVolume;
   Volume bounds = {{0, 0}, 1000, 1000};
@@ -89,7 +100,7 @@ TEST(CollisionUtilTest, isInsideVolume)
   check.pos = {-1, 0};
   EXPECT_FALSE(isInsideVolume(bounds, check));
 }
-TEST(CollisionUtilTest, closestSideFromInside)
+TEST(CollisionUtilTests, closestSideFromInside)
 {
   using pong::Volume; using pong::closestSideFromInside;
   using pong::VolumeSide;
@@ -112,7 +123,7 @@ TEST(CollisionUtilTest, closestSideFromInside)
   check.height = 20;
   EXPECT_EQ(VolumeSide::Top, closestSideFromInside(bounds, check));
 }
-TEST(CollisionUtilTest, snapVolumeToVolume)
+TEST(CollisionUtilTests, snapVolumeToVolume)
 {
   using pong::Volume; using pong::snapVolumeToVolume; using pong::VolumeSide;
 

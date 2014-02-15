@@ -30,6 +30,16 @@
 #include "ObjectManager.h"
 namespace pong
 {
+  /*!
+   * \brief Returns whether or not check is inside a range inclusive.
+   *
+   * \param left One end of the range.
+   * \param right Another end of the range.
+   * \param check Number to check.
+   *
+   * \returns True if check is between left..right or right..left
+   * inclusive.
+   */
   template <typename P1, typename P2, typename P3>
   constexpr inline bool isIn(P1 left, P2 right, P3 check) noexcept
   {
@@ -43,14 +53,7 @@ namespace pong
     Top, Bottom, Left, Right, None
   };
 
-  template <typename key_type, typename value_type>
-  using unordered_map_enumhash = std::unordered_map<key_type, value_type,
-                                                    enum_hash<key_type> >;
-
   VolumeSide findClosestSide(const Volume& v1, const Volume& v2) noexcept;
-
-  unordered_map_enumhash<VolumeSide, double>
-  getVolumePenetration(const Volume& v1, const Volume& v2) noexcept;
 
   std::vector<id_type>
   findIntersectingObjects(id_type id, const ObjectManager& objs) noexcept;
