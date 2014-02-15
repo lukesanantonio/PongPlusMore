@@ -62,7 +62,7 @@ namespace pong
           {
             if(!this->bottom_) break;
             auto pos = this->server_.getObject(bottom_).getVolume().pos;
-            pos.y -= 1;
+            pos.y -= 35;
             this->server_.setDestination(bottom_, pos);
             break;
           }
@@ -70,7 +70,7 @@ namespace pong
           {
             if(!this->bottom_) break;
             auto pos = this->server_.getObject(bottom_).getVolume().pos;
-            pos.x -= 1;
+            pos.x -= 35;
             this->server_.setDestination(bottom_, pos);
             break;
           }
@@ -78,7 +78,7 @@ namespace pong
           {
             if(!this->bottom_) break;
             auto pos = this->server_.getObject(bottom_).getVolume().pos;
-            pos.y += 1;
+            pos.y += 35;
             this->server_.setDestination(bottom_, pos);
             break;
           }
@@ -86,7 +86,7 @@ namespace pong
           {
             if(!this->bottom_) break;
             auto pos = this->server_.getObject(bottom_).getVolume().pos;
-            pos.x += 1;
+            pos.x += 35;
             this->server_.setDestination(bottom_, pos);
             break;
           }
