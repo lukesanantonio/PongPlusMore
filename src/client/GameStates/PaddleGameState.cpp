@@ -93,7 +93,7 @@ namespace pong
           case SDL_SCANCODE_TAB:
           {
             Json::StyledStreamWriter("  ").write(std::cout,
-                                                dumpJSON(this->server_));
+                                                 dumpJSON(this->server_));
             break;
           }
           default:
