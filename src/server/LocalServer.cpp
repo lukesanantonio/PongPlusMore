@@ -74,31 +74,12 @@ namespace pong
     return !(iter == end(intersecting));
   }
 
-  void stepObject(id_type id, ObjectManager& obj_manager) noexcept
+  void moveObject(id_type id, ObjectManager& obj_manager) noexcept;
+
+  bool moveObject(id_type id, ObjectManager& obj_manager,
+                  math::vector<double> diff) noexcept
   {
     Object& obj = obj_manager.findObject(id);
-
-    // Our change in position this iteration.
-    math::vector<double> diff;
-
-    // If we have a paddle on our hands.
-    // TODO: Put this code in a function, it will help scripting custom object
-    // types also.
-    if(isPaddle(obj))
-    {
-      //                   .- Delta position
-      math::vector<double> dp_temp =
-                           obj.getPhysicsOptions().paddle_options.destination -
-                           obj.getVolume().pos;
-
-      // Move one or less units towards our destination. Easy.
-      diff = math::normalize(dp_temp) * std::min(math::length(dp_temp), 1.0);
-    }
-    else if(isBall(obj))
-    {
-      // Easy.
-      diff = obj.getPhysicsOptions().ball_options.velocity;
-    }
 
     // Keep the original.
     Object original = obj;
@@ -164,7 +145,7 @@ namespace pong
 
         // But wait, obj hasn't actually been moved at this point.
         // Just step it in the *right* direction now.
-        stepObject(id, obj_manager);
+        moveObject(id, obj_manager);
       }
       else
       {
@@ -172,12 +153,41 @@ namespace pong
         // TODO: Scripting.
       }
     }
+    return true;
+  }
+  void moveObject(id_type id, ObjectManager& obj_manager) noexcept
+  {
+    Object& obj = obj_manager.findObject(id);
+
+    // Our change in position this iteration.
+    math::vector<double> diff;
+
+    // If we have a paddle on our hands.
+    // TODO: Put this code in a function, it will help scripting custom object
+    // types also.
+    if(isPaddle(obj))
+    {
+      //                   .- Delta position
+      math::vector<double> dp_temp =
+                           obj.getPhysicsOptions().paddle_options.destination -
+                           obj.getVolume().pos;
+
+      // Move one or less units towards our destination. Easy.
+      diff = math::normalize(dp_temp) * std::min(math::length(dp_temp), 1.0);
+    }
+    else if(isBall(obj))
+    {
+      // Easy.
+      diff = obj.getPhysicsOptions().ball_options.velocity;
+    }
+
+    moveObject(id, obj_manager, diff);
   }
   void LocalServer::step() noexcept
   {
     for(std::pair<const id_type, Object>& obj_pair : this->objs_)
     {
-      stepObject(std::get<0>(obj_pair), this->objs_);
+      moveObject(std::get<0>(obj_pair), this->objs_);
     }
   }
 }
