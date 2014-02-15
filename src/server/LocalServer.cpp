@@ -61,6 +61,19 @@ namespace pong
     return ids;
   }
 
+  bool isIntersectingWithPaddle(id_type id, ObjectManager& obj_manager)
+  {
+    auto intersecting = findIntersectingObjects(id, obj_manager);
+    using std::begin; using std::end;
+
+    auto iter = std::find_if(begin(intersecting), end(intersecting),
+    [&](id_type id) { return isPaddle(obj_manager, id); });
+
+    // Damn double negatives.
+    // True if found. False if *not* found.
+    return !(iter == end(intersecting));
+  }
+
   void stepObject(id_type id, ObjectManager& obj_manager) noexcept
   {
     Object& obj = obj_manager.findObject(id);
