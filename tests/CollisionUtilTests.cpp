@@ -45,24 +45,6 @@ TEST(CollisionUtilTest, isIntersecting)
   vol1.width = 60;
   EXPECT_EQ(false, isIntersecting(vol1, vol2));
 }
-TEST(CollisionUtilTest, raytrace)
-{
-  namespace math = pong::math;
-  math::vector<double> vec(3, 0);
-
-  std::vector<math::vector<double> > points = pong::raytrace(vec);
-  std::vector<math::vector<double> > expected = {{0,0}, {1,0}, {2,0}, {3,0}};
-  EXPECT_EQ(expected, points);
-
-  vec = {3, 3};
-  points = pong::raytrace(vec);
-  expected = {{0,0}, {1,1}, {2,2}, {3,3}};
-  EXPECT_EQ(expected, points);
-
-  points = pong::raytrace({500,620});
-  math::vector<double> expected_point = {500,620};
-  EXPECT_EQ(expected_point, points.back());
-}
 TEST(CollisionUtilTest, findClosestSide)
 {
   using pong::Volume; using pong::VolumeSide; using pong::findClosestSide;

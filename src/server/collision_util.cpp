@@ -43,40 +43,6 @@ namespace pong
   }
 
   /*!
-   * \brief Returns all discrete positions along a ray.
-   */
-  auto raytrace(math::vector<double> ray) noexcept
-                                                  -> std::vector<decltype(ray)>
-  {
-    math::vector<double> direction = math::normalize(ray);
-    auto length = math::length(direction);
-
-    std::vector<math::vector<double> > points{{0.0, 0.0}};
-
-    for(double i = 0.0; i <= length; i += length / std::ceil(length))
-    {
-      math::vector<double> point = direction * i;
-      if(std::find(points.begin(), points.end(), point) == points.end())
-      {
-        points.push_back(std::move(point));
-      }
-    }
-
-    return points;
-  }
-
-  auto raytrace(math::vector<double> ray, math::vector<double> start)
-                                                     -> decltype(raytrace(ray))
-  {
-    auto ray_points = raytrace(ray);
-
-    using std::begin; using std::end;
-    std::transform(begin(ray_points), end(ray_points), begin(ray_points),
-                [&](const math::vector<double>& point){return point + start;});
-    return ray_points;
-  }
-
-  /*!
    * \brief Finds the side of the first volume that is closest to some side of
    * the second volume.
    *

@@ -38,12 +38,6 @@ namespace pong
 
   bool isIntersecting(const Volume& v1, const Volume& v2) noexcept;
 
-  auto raytrace(math::vector<double> ray) noexcept
-                                                 -> std::vector<decltype(ray)>;
-
-  auto raytrace(math::vector<double> ray, math::vector<double> start)
-                                                    -> decltype(raytrace(ray));
-
   enum class VolumeSide : unsigned int
   {
     Top, Bottom, Left, Right, None
