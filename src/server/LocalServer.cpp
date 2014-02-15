@@ -61,59 +61,110 @@ namespace pong
     return ids;
   }
 
-  void LocalServer::step() noexcept
+  void stepObject(id_type id, ObjectManager& obj_manager) noexcept
   {
+    Object& obj = obj_manager.findObject(id);
+    PhysicsOptions& phys = obj.getPhysicsOptions();
 
-    // Make these configurable.
-    Volume bounds = {{0, 0}, 1000, 1000};
+    // Our change in position this iteration.
+    math::vector<double> diff;
 
-    std::vector<id_type> to_delete;
-
-    using std::begin;
-    for(std::pair<const id_type, Object>& obj_pair : this->objs_)
+    // If we have a paddle on our hands.
+    // TODO: Put this code in a function, it will help scripting custom object
+    // types also.
+    if(phys.type == PhysicsType::Paddle)
     {
-      id_type id = std::get<0>(obj_pair);
-      Object& obj = std::get<1>(obj_pair);
-      Object orig_obj = obj;
+      //                   .- Delta position
+      math::vector<double> dp_temp = phys.paddle_options.destination -
+                                     obj.getVolume().pos;
 
-      if(obj.getPhysicsOptions().type == PhysicsType::Paddle)
-      {
-        math::vector<double> diff =
-                           obj.getPhysicsOptions().paddle_options.destination -
-                           obj.getVolume().pos;
-        obj.getVolume().pos += math::normalize(diff) *
-                            std::min<double>(1, math::length(diff));
-        // TODO this way of calling the function is awkward, use a volume
-        // and possibly an id *to ignore*. That seems kind of awkward as well.
-        if(!findIntersectingObjects(id, objs_).empty())
-          obj = orig_obj;
-
-        if(!isInsideVolume(bounds, obj.getVolume()))
-          obj = orig_obj;
-      }
-      if(obj.getPhysicsOptions().type == PhysicsType::Ball)
-      {
-        math::vector<double> vel =
-                                 obj.getPhysicsOptions().ball_options.velocity;
-
-        obj.getVolume().pos += math::normalize(vel);
-
-        if(!isIntersecting(bounds, obj.getVolume()))
-        {
-          to_delete.push_back(id);
-        }
-
-        if(findIntersectingObjects(id, objs_).empty()) continue;
-
-        obj = orig_obj; continue;
-      }
+      // Move one or less unit towards our destination. Easy.
+      diff = math::normalize(dp_temp) * std::min(math::length(dp_temp), 1.0);
+    }
+    else if(phys.type == PhysicsType::Ball)
+    {
+      // Easy.
+      diff = phys.ball_options.velocity;
     }
 
-    using std::end;
-    std::for_each(begin(to_delete), end(to_delete),
-    [this](id_type id)
+    // Keep the original.
+    Object original = obj;
+
+    // Move our object
+    obj.getVolume().pos += diff;
+
+    // Check collision.
+    auto intersecting = findIntersectingObjects(id, obj_manager);
+
+    using std::begin; using std::end;
+    // Move the paddles to the front.
+    std::partition(begin(intersecting), end(intersecting),
+     std::bind(static_cast<bool (*)(const ObjectManager&, id_type)>(&isPaddle),
+               std::ref(obj_manager), std::placeholders::_1));
+
+    for(id_type other_id : intersecting)
     {
-      this->objs_.erase(id);
-    });
+      Object& other_obj = obj_manager.findObject(other_id);
+
+      if(isPaddle(obj) && isPaddle(other_obj))
+      {
+        // The other object was here first as a paddle. So we shouldn't be
+        // here.
+        obj = original;
+        break;
+      }
+      else if((isPaddle(obj) && isBall(other_obj)) ||
+              (isBall(obj) && isPaddle(other_obj)))
+      {
+        // Paddle-Ball collision, this is where it gets interesting.
+        Object& paddle = isPaddle(obj) ? obj : other_obj;
+        Object& ball   = isBall(obj)   ? obj : other_obj;
+
+        VolumeSide s = findClosestSide(paddle.getVolume(), ball.getVolume());
+        switch(s)
+        {
+          case VolumeSide::Left:
+          case VolumeSide::Right:
+          {
+            ball.getPhysicsOptions().ball_options.velocity.x *= -1;
+            break;
+          }
+          case VolumeSide::Top:
+          case VolumeSide::Bottom:
+          {
+            ball.getPhysicsOptions().ball_options.velocity.y *= -1;
+            break;
+          }
+          default: break;
+        }
+
+        snapVolumeToVolume(ball.getVolume(), s, paddle.getVolume());
+      }
+      else if(isBall(obj) && isBall(other_obj))
+      {
+        // Switch velocities.
+        obj = original;
+
+        using std::swap;
+        swap(phys.ball_options.velocity,
+             other_obj.getPhysicsOptions().ball_options.velocity);
+
+        // But wait, obj hasn't actually been moved at this point.
+        // Just step it in the *right* direction now.
+        stepObject(id, obj_manager);
+      }
+      else
+      {
+        // WTF?
+        // TODO: Scripting.
+      }
+    }
+  }
+  void LocalServer::step() noexcept
+  {
+    for(std::pair<const id_type, Object>& obj_pair : this->objs_)
+    {
+      stepObject(std::get<0>(obj_pair), this->objs_);
+    }
   }
 }
