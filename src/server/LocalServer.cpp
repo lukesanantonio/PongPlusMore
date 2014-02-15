@@ -64,7 +64,6 @@ namespace pong
   void stepObject(id_type id, ObjectManager& obj_manager) noexcept
   {
     Object& obj = obj_manager.findObject(id);
-    PhysicsOptions& phys = obj.getPhysicsOptions();
 
     // Our change in position this iteration.
     math::vector<double> diff;
@@ -72,19 +71,20 @@ namespace pong
     // If we have a paddle on our hands.
     // TODO: Put this code in a function, it will help scripting custom object
     // types also.
-    if(phys.type == PhysicsType::Paddle)
+    if(isPaddle(obj))
     {
       //                   .- Delta position
-      math::vector<double> dp_temp = phys.paddle_options.destination -
-                                     obj.getVolume().pos;
+      math::vector<double> dp_temp =
+                           obj.getPhysicsOptions().paddle_options.destination -
+                           obj.getVolume().pos;
 
       // Move one or less unit towards our destination. Easy.
       diff = math::normalize(dp_temp) * std::min(math::length(dp_temp), 1.0);
     }
-    else if(phys.type == PhysicsType::Ball)
+    else if(isBall(obj))
     {
       // Easy.
-      diff = phys.ball_options.velocity;
+      diff = obj.getPhysicsOptions().ball_options.velocity;
     }
 
     // Keep the original.
@@ -146,7 +146,7 @@ namespace pong
         obj = original;
 
         using std::swap;
-        swap(phys.ball_options.velocity,
+        swap(obj.getPhysicsOptions().ball_options.velocity,
              other_obj.getPhysicsOptions().ball_options.velocity);
 
         // But wait, obj hasn't actually been moved at this point.
