@@ -105,7 +105,38 @@ namespace pong
         // The other object was here first as a paddle. So we shouldn't be
         // here.
         obj = original;
-        break;
+
+        // But! Can we use either component?
+        math::vector<double> only_x = diff;
+        only_x.y = 0;
+        math::vector<double> only_y = diff;
+        only_y.x = 0;
+
+        // This method, of checking whether there is a paddle on the next
+        // iteration is very rigid. It doesn't really work well for custom
+        // object types that may have custom rules of collision. However,
+        // it should work as a hack as an alternative to blatent recursion
+        // which is causing segmentation faults.
+
+        obj.getVolume().pos += only_x;
+        if(!isIntersectingWithPaddle(id, obj_manager))
+        {
+          // That's it we have a good location for the paddle.
+          // Now actually move it. We know we won't recurse infinitely
+          // we know there won't be a paddle collision to ruin our fun.
+          obj = original;
+          return moveObject(id, obj_manager, only_x);
+        }
+
+        obj = original;
+        obj.getVolume().pos += only_y;
+        if(!isIntersectingWithPaddle(id, obj_manager))
+        {
+          obj = original;
+          return moveObject(id, obj_manager, only_y);
+        }
+
+        return false;
       }
       else if((isPaddle(obj) && isBall(other_obj)) ||
               (isBall(obj) && isPaddle(other_obj)))
