@@ -55,31 +55,39 @@ namespace pong
           case SDL_SCANCODE_Q:
           {
             if(this->bottom_) break;
-            //bottom_ = this->server_.makePaddle({{0, 0}, 200, 50});
+            bottom_ = this->server_.createPaddle({{0, 0}, 200, 50});
             break;
           }
           case SDL_SCANCODE_W:
           {
             if(!this->bottom_) break;
-            //this->server_.getPaddle(bottom_).getNextPosition().y -= 1;
+            auto pos = this->server_.getObject(bottom_).getVolume().pos;
+            pos.y -= 1;
+            this->server_.setDestination(bottom_, pos);
             break;
           }
           case SDL_SCANCODE_A:
           {
             if(!this->bottom_) break;
-            //this->server_.getPaddle(bottom_).getNextPosition().x -= 1;
+            auto pos = this->server_.getObject(bottom_).getVolume().pos;
+            pos.x -= 1;
+            this->server_.setDestination(bottom_, pos);
             break;
           }
           case SDL_SCANCODE_S:
           {
             if(!this->bottom_) break;
-            //this->server_.getPaddle(bottom_).getNextPosition().y += 1;
+            auto pos = this->server_.getObject(bottom_).getVolume().pos;
+            pos.y += 1;
+            this->server_.setDestination(bottom_, pos);
             break;
           }
           case SDL_SCANCODE_D:
           {
             if(!this->bottom_) break;
-            //this->server_.getPaddle(bottom_).getNextPosition().x += 1;
+            auto pos = this->server_.getObject(bottom_).getVolume().pos;
+            pos.x += 1;
+            this->server_.setDestination(bottom_, pos);
             break;
           }
           case SDL_SCANCODE_TAB:
