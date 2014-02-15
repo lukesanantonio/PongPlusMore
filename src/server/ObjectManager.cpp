@@ -19,6 +19,7 @@
  */
 #include "ObjectManager.h"
 #include "Server.h"
+#include "collision_util.h"
 namespace pong
 {
   ObjectManager::ObjectManager(const Server& s) noexcept
@@ -57,7 +58,16 @@ namespace pong
 
     for(const auto& pair : objs)
     {
-      ar.append(dumpJSON(std::get<1>(pair)));
+      Json::Value object = dumpJSON(std::get<1>(pair));
+
+      Json::Value collisions(Json::arrayValue);
+      for(id_type id : findIntersectingObjects(std::get<0>(pair), objs))
+      {
+        collisions.append(id);
+      }
+      object["collisions"] = collisions;
+
+      ar.append(object);
     }
 
     return ar;
