@@ -40,6 +40,7 @@ TEST(CollisionUtilTests, isIn)
   EXPECT_TRUE(isIn(-10.064, -5.064, -10.064));
   EXPECT_TRUE(isIn(-10.064, -5.064, -10.001));
 }
+// TODO Test volume collision with floating point values!
 TEST(CollisionUtilTests, isIntersecting)
 {
   pong::Volume v1, v2;
