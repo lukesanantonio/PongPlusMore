@@ -280,6 +280,24 @@ namespace pong
   }
   void LocalServer::step() noexcept
   {
+    std::vector<id_type> to_delete;
+    Volume bounds{{0,0}, 1000, 1000};
+    for(std::pair<const id_type, Object>& obj_pair : this->objs_)
+    {
+      if(!isIntersecting(std::get<1>(obj_pair).getVolume(), bounds))
+      {
+        to_delete.push_back(std::get<0>(obj_pair));
+      }
+    }
+
+    using fun_type =
+          ObjectManager::size_type (ObjectManager::*)(ObjectManager::key_type);
+    fun_type fun= &ObjectManager::erase;
+
+    using std::begin; using std::end;
+    std::for_each(begin(to_delete), end(to_delete),
+                  std::bind(fun, std::ref(this->objs_),
+                            std::placeholders::_1));
     for(std::pair<const id_type, Object>& obj_pair : this->objs_)
     {
       moveObject(std::get<0>(obj_pair), this->objs_);
