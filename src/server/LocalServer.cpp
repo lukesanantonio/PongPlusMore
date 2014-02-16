@@ -75,7 +75,7 @@ namespace pong
   }
 
   void moveObject(id_type id, ObjectManager& obj_manager) noexcept;
-
+#if 0
   bool moveObject(id_type id, ObjectManager& obj_manager,
                   math::vector<double> diff) noexcept
   {
@@ -186,6 +186,70 @@ namespace pong
     }
     return true;
   }
+#endif
+
+  bool moveObject(id_type id, ObjectManager& obj_manager,
+                  math::vector<double> diff, bool slave=false) noexcept
+  {
+    Object& obj = obj_manager.findObject(id);
+
+    Object original = obj;
+    obj.getVolume().pos += diff;
+
+    auto intersecting = findIntersectingObjects(id, obj_manager);
+
+    using std::begin; using std::end;
+    std::partition(begin(intersecting), end(intersecting),
+     std::bind(static_cast<bool (*)(const ObjectManager&, id_type)>(&isPaddle),
+               std::ref(obj_manager), std::placeholders::_1));
+
+    for(id_type other_id : intersecting)
+    {
+      Object& other_obj = obj_manager.findObject(other_id);
+      if(isPaddle(obj) && isPaddle(other_obj))
+      {
+        // It is unacceptable for a paddle to collide with a paddle.
+        // If this is what we were asked, the answer is no.
+        if(slave)
+        {
+          // Don't change any state!
+          obj = original;
+          return false;
+        }
+
+        obj = original;
+
+        // We *cannot* move to diff.
+        // But! Can we use either component to maneuver around this obstacle?
+        math::vector<double> only_x = diff;
+        only_x.y = 0;
+        math::vector<double> only_y = diff;
+        only_y.x = 0;
+
+        // Two calls are required so that infinite recursion doesn't occur.
+        if(moveObject(id, obj_manager, only_x, true))
+        {
+          // Well, we can move using the x component
+          // However that means different collisions need to be dealt with.
+          moveObject(id, obj_manager, only_x, false);
+          return true;
+        }
+        if(moveObject(id, obj_manager, only_y, true))
+        {
+          moveObject(id, obj_manager, only_y, false);
+          return true;
+        }
+
+        // Well, there is a paddle still there even after trying both comps.
+        return false;
+      }
+    }
+
+    // Assume no collisions. That's a success.
+    if(slave) obj = original;
+    return true;
+  }
+
   void moveObject(id_type id, ObjectManager& obj_manager) noexcept
   {
     Object& obj = obj_manager.findObject(id);
