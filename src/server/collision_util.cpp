@@ -262,4 +262,21 @@ namespace pong
         break;
     }
   }
+
+  /*!
+   * \brief Returns the required difference needed to snap to a side of v.
+   *
+   * \param to_move Assumed this is the volume that needs to be moved.
+   * \param side The side that to_move needs to snap to.
+   * \param v The reference. A side of this object is the destination.
+   *
+   * \returns A diff from where to_move is and where it needs to be.
+   */
+  math::vector<double> snapDiff(const Volume& to_move, VolumeSide side,
+                                const Volume& v) noexcept
+  {
+    Volume to_move_copy = to_move;
+    snapVolumeToVolume(to_move_copy, side, v);
+    return to_move_copy.pos - to_move.pos;
+  }
 }

@@ -63,4 +63,6 @@ namespace pong
                                    const Volume& obj) noexcept;
 
   void snapVolumeToVolume(Volume&, VolumeSide, const Volume&) noexcept;
+  math::vector<double> snapDiff(const Volume&, VolumeSide,
+                                const Volume&) noexcept;
 }

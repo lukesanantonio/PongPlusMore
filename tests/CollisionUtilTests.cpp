@@ -147,3 +147,17 @@ TEST(CollisionUtilTests, snapVolumeToVolume)
   expected.pos.x = 550;
   EXPECT_EQ(expected, v);
 }
+TEST(CollisionUtilTests, snapDiff)
+{
+  using pong::Volume; using pong::VolumeSide; using pong::snapDiff;
+  namespace math = pong::math;
+
+  Volume v{{0.463, 0.25}, 2, 53};
+  Volume anchor{{500, 500}, 50, 50};
+
+  math::vector<double> result = snapDiff(v, VolumeSide::Top, anchor);
+  math::vector<double> expected = {.463, 447};
+  EXPECT_EQ(expected, result + v.pos);
+
+  // TODO add more tests.
+}
