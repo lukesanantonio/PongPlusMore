@@ -24,10 +24,10 @@ namespace pong
    * \brief A macro for generating local variables of Volume bounds.
    */
   #define GENERATE_VOLUME_BOUNDS(vol) \
-    int vol##_left = vol.pos.x, \
-        vol##_right = vol.pos.x + vol.width - 1, \
-        vol##_top = vol.pos.y, \
-        vol##_bottom = vol.pos.y + vol.height - 1
+    double vol##_left = vol.pos.x, \
+           vol##_right = vol.pos.x + vol.width - 1, \
+           vol##_top = vol.pos.y, \
+           vol##_bottom = vol.pos.y + vol.height - 1
 
   /*!
    * \brief Returns the boolean state of intersection between two volumes.
@@ -87,10 +87,10 @@ namespace pong
 
     // Find the actual penetration.
     using std::max;
-    map.emplace(VolumeSide::Top, max(v2_bottom - v1_top, -1));
-    map.emplace(VolumeSide::Bottom, max(v1_bottom - v2_top, -1));
-    map.emplace(VolumeSide::Left, max(v2_right - v1_left, -1));
-    map.emplace(VolumeSide::Right, max(v1_right - v2_left, -1));
+    map.emplace(VolumeSide::Top, max(v2_bottom - v1_top, -1.0));
+    map.emplace(VolumeSide::Bottom, max(v1_bottom - v2_top, -1.0));
+    map.emplace(VolumeSide::Left, max(v2_right - v1_left, -1.0));
+    map.emplace(VolumeSide::Right, max(v1_right - v2_left, -1.0));
 
 
     // Remove the ones that don't even intersect.
