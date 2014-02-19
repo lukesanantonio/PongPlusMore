@@ -106,7 +106,15 @@ The steps should work similar to how it's built on Linux. The hard part is
 getting the dependencies.
 
 ##### Windows
-Pfft. Have fun, man! Hint: It is possible; it will always be possible.
+Pfft. Have fun man!
+
+No, that's not it. When the game is actually worth downloading I'll have a
+prebuilt binary uploaded. The only reason it can't be built in Visual Studio
+is because of the compiler and its lack of support for C++11/14. Soon enough
+I will try to minimize the C++14 usage like <pre>decltype(auto)</pre> which is
+just me being lazy.
+
+It might be possible to use MinGW since they have g++ 4.8.1 ported.
 
 Prebuilt Binaries
 -----------------
