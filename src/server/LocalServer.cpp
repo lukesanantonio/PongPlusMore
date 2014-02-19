@@ -84,16 +84,17 @@ namespace pong
       Object other_original = other_obj;
       if(isPaddle(obj) && isPaddle(other_obj))
       {
+        obj = original;
+
         // It is unacceptable for a paddle to collide with a paddle.
         // If this is what we were asked, the answer is no.
         if(slave)
         {
           // Don't change any state!
-          obj = original;
           return false;
         }
 
-        obj = original;
+        // if !slave:
 
         // We *cannot* move to diff.
         // But! Can we use either component to maneuver around this obstacle?
