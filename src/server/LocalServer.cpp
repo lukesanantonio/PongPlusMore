@@ -81,6 +81,7 @@ namespace pong
     for(id_type other_id : intersecting)
     {
       Object& other_obj = obj_manager.findObject(other_id);
+      Object other_original = other_obj;
       if(isPaddle(obj) && isPaddle(other_obj))
       {
         // It is unacceptable for a paddle to collide with a paddle.
