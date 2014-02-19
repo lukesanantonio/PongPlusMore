@@ -125,6 +125,141 @@ namespace pong
         // Well, there is a paddle still there even after trying both comps.
         return false;
       }
+      if((isPaddle(obj) && isBall(other_obj)) ||
+         (isBall(obj) && isPaddle(other_obj)))
+      {
+        bool this_object_is_paddle = isPaddle(obj);
+
+        // If we were only asked if we could move here and we are just a ball.
+        // well sorry, we can't. Restore than return false.
+        if(slave && !this_object_is_paddle)
+        {
+          // The user wanted to move a ball.
+          // Into a paddle?
+          // Hell no.
+
+          // the ball
+          obj = original;
+          return false;
+        }
+
+        Object& paddle = isPaddle(obj) ? obj : other_obj;
+        Object& ball   = isBall(obj)   ? obj : other_obj;
+
+        id_type paddle_id = isPaddle(obj) ? id : other_id;
+        id_type ball_id = isBall(obj) ? id : other_id;
+
+        // Handle this collision no matter what.
+        VolumeSide s = findClosestSide(paddle.getVolume(), ball.getVolume());
+        math::vector<double>& ball_velocity =
+                                ball.getPhysicsOptions().ball_options.velocity;
+        using std::abs;
+        switch(s)
+        {
+          case VolumeSide::Right:
+          {
+            ball_velocity.x = abs(ball_velocity.x);
+            break;
+          }
+          case VolumeSide::Left:
+          {
+            ball_velocity.x = -abs(ball_velocity.x);
+            break;
+          }
+          case VolumeSide::Top:
+          {
+            ball_velocity.y = -abs(ball_velocity.y);
+            break;
+          }
+          case VolumeSide::Bottom:
+          {
+            ball_velocity.y = abs(ball_velocity.y);
+            break;
+          }
+          default: break;
+        }
+
+        if(!this_object_is_paddle)
+        {
+          // Restore volume.
+          ball.getVolume().pos = original.getVolume().pos;
+          // Bad move.
+          return false;
+        }
+
+        // Well, we only have the option to move the ball, when the paddle
+        // collided with the ball. If the ball was moving along minding its
+        // own business and hit a paddle, bouncing off is enough.
+        // Only move if paddle.
+        if(this_object_is_paddle)
+        {
+          // So a paddle moved where a ball was. We react (change velocity)
+          // then move the ball out of the way.
+          math::vector<double> ball_diff = snapDiff(ball.getVolume(),
+                                                    s, paddle.getVolume());
+          // Can we move the ball?
+          if(moveObject(ball_id, obj_manager, ball_diff, true))
+          {
+            // Nice. Move it. This is where the recursive ball-to-ball
+            // collision handling happens.
+            moveObject(ball_id, obj_manager, ball_diff, false);
+          }
+          else
+          {
+            // If the ball can't move for some reason. Well that means the
+            // paddle can't me moved either. Abort collisions.
+            obj = original;
+            return false;
+          }
+        }
+      }
+      if(isBall(obj) && isBall(other_obj))
+      {
+        // We most likely can move.
+        // Make sure we can move the other ball out of the way.
+        VolumeSide s = findClosestSide(obj.getVolume(),
+                                       other_obj.getVolume());
+        math::vector<double> ball_diff = snapDiff(other_obj.getVolume(), s,
+                                                  obj.getVolume());
+
+        if(slave)
+        {
+          // If we are asked, well it all matters if we can move the ball
+          // ahead of us.
+          // However if it isn't false, some other collision could be false
+          // so we can't commit to saying we *can* by returning true.
+          if(!moveObject(other_id, obj_manager, ball_diff, true))
+          {
+            // Aw well, restore.
+            // TODO I really need to figure out a better way to restore the
+            // object.
+            obj = original;
+            return false;
+          }
+          continue;
+        }
+
+        // If we ain't slaven' we can swap velocities and in other words
+        // modify the object.
+        using std::swap;
+        swap(obj.getPhysicsOptions().ball_options.velocity,
+             other_obj.getPhysicsOptions().ball_options.velocity);
+        // The velocities swapped will be restored anyway if there's a problem
+        // so we good.
+
+        if(moveObject(other_id, obj_manager, ball_diff, true))
+        {
+          moveObject(other_id, obj_manager, ball_diff, false);
+        }
+        else
+        {
+          // Oh god, well we need to go back because we obviously can't
+          // stay here.
+          obj = original;
+          other_obj = other_original;
+          return false;
+        }
+      }
     }
 
     // Assume no collisions. That's a success.
