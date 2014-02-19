@@ -153,6 +153,7 @@ namespace pong
         VolumeSide s = findClosestSide(paddle.getVolume(), ball.getVolume());
         math::vector<double>& ball_velocity =
                                 ball.getPhysicsOptions().ball_options.velocity;
+
         using std::abs;
         switch(s)
         {
@@ -262,6 +263,63 @@ namespace pong
       }
     }
 
+    // But wait, wall?
+    Volume bounds{{0,0}, 1000, 1000};
+
+    if(!isInsideVolume(bounds, obj.getVolume()))
+    {
+      // We simply cannot move there.
+      if(isPaddle(obj))
+      {
+        obj = original;
+        return false;
+      }
+
+      // if isBall(obj):
+
+      // We are probably intersecting a wall. But which one?
+      VolumeSide s = closestSideFromInside(bounds, obj.getVolume());
+
+      // This is absolutely copied from line 157.
+      // That's horrible
+      math::vector<double>& ball_velocity =
+                                 obj.getPhysicsOptions().ball_options.velocity;
+
+      switch(s)
+      {
+        case VolumeSide::Right:
+        {
+          ball_velocity.x = -std::abs(ball_velocity.x);
+          break;
+        }
+        case VolumeSide::Left:
+        {
+          ball_velocity.x = std::abs(ball_velocity.x);
+          break;
+        }
+        case VolumeSide::Top:
+        {
+          ball_velocity.y = std::abs(ball_velocity.y);
+          break;
+        }
+        case VolumeSide::Bottom:
+        {
+          ball_velocity.y = -std::abs(ball_velocity.y);
+          break;
+        }
+        default: break;
+      }
+
+      // Now go back to where we were.
+      obj.getVolume().pos = original.getVolume().pos;
+
+      // Yes this is a valid move, but it won't actually end up moving the
+      // ball, if we are in slave mode, return false so that things don't
+      // think other things can be moved into a wall. But if we are actually
+      // moving then it doesn't matter.
+      return false;
+    }
+
     // Assume no collisions. That's a success.
     if(slave) obj = original;
     return true;
@@ -298,24 +356,6 @@ namespace pong
   }
   void LocalServer::step() noexcept
   {
-    std::vector<id_type> to_delete;
-    Volume bounds{{0,0}, 1000, 1000};
-    for(std::pair<const id_type, Object>& obj_pair : this->objs_)
-    {
-      if(!isIntersecting(std::get<1>(obj_pair).getVolume(), bounds))
-      {
-        to_delete.push_back(std::get<0>(obj_pair));
-      }
-    }
-
-    using fun_type =
-          ObjectManager::size_type (ObjectManager::*)(ObjectManager::key_type);
-    fun_type fun= &ObjectManager::erase;
-
-    using std::begin; using std::end;
-    std::for_each(begin(to_delete), end(to_delete),
-                  std::bind(fun, std::ref(this->objs_),
-                            std::placeholders::_1));
     for(std::pair<const id_type, Object>& obj_pair : this->objs_)
     {
       moveObject(std::get<0>(obj_pair), this->objs_);
