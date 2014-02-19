@@ -63,12 +63,16 @@ namespace pong
 
   void moveObject(id_type id, ObjectManager& obj_manager) noexcept;
 
+  /*!
+   * \param slave Implies no change in the provided object is wanted/needed.
+   */
   bool moveObject(id_type id, ObjectManager& obj_manager,
                   math::vector<double> diff, bool slave=false) noexcept
   {
     Object& obj = obj_manager.findObject(id);
 
     Object original = obj;
+
     obj.getVolume().pos += diff;
 
     auto intersecting = findIntersectingObjects(id, obj_manager);
