@@ -61,7 +61,8 @@ namespace pong
     return ids;
   }
 
-  void moveObject(id_type id, ObjectManager& obj_manager) noexcept;
+  bool moveObject(id_type id, ObjectManager& obj_manager,
+                  bool slave) noexcept;
 
   /*!
    * \param slave Implies no change in the provided object is wanted/needed.
@@ -131,7 +132,8 @@ namespace pong
     return true;
   }
 
-  void moveObject(id_type id, ObjectManager& obj_manager) noexcept
+  bool moveObject(id_type id, ObjectManager& obj_manager,
+                  bool slave = false) noexcept
   {
     Object& obj = obj_manager.findObject(id);
 
@@ -157,7 +159,7 @@ namespace pong
       diff = obj.getPhysicsOptions().ball_options.velocity;
     }
 
-    moveObject(id, obj_manager, diff);
+    return moveObject(id, obj_manager, diff, slave);
   }
   void LocalServer::step() noexcept
   {
