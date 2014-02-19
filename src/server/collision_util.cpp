@@ -209,7 +209,7 @@ namespace pong
     for(auto iter = begin(map); iter != end(map);)
     {
       if(std::get<1>(*iter) < 0) iter = map.erase(iter);
-      ++iter;
+      if(iter != end(map)) ++iter;
     }
 
     // Find the good one.
