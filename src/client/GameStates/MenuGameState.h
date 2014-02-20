@@ -22,6 +22,7 @@
 #include "Label.h"
 #include "Button.h"
 #include "Game.h"
+#include "AnimationBase.h"
 
 namespace pong
 {
