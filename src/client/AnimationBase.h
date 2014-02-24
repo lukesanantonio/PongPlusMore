@@ -55,7 +55,7 @@ namespace pong
     /*!
      * \brief Make animation go. Specifically accounts for 1 ms of animation.
      */
-    virtual void step() const noexcept = 0;
+    virtual void step() noexcept = 0;
 
     /*!
      * \brief Returns all objects that are part of the animation.
