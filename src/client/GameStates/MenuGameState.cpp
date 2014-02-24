@@ -24,12 +24,58 @@
 
 namespace pong
 {
+  MoPongAnimation::MoPongAnimation(Game& game) noexcept
+                                   : font_(*game.font_renderer.get()),
+                                     mo_("'Mo", 40, {}, &font_),
+                                     pong_("Pong", 40, {}, &font_)
+  {
+    math::vector<int> left, right;
+
+    left.x = 0 - this->mo_.getSurfaceWidth();
+    right.x = game.width;
+
+    left.y = game.height - 40;
+    right.y = game.height - 40;
+
+    this->mo_.position(left);
+    this->pong_.position(right);
+  }
+
+  void MoPongAnimation::step() noexcept
+  {
+    if(!on_)
+    {
+      on_ = !on_;
+      return;
+    }
+
+    if(moving_pong_)
+    {
+      auto new_pos = this->pong_.position();
+      --new_pos.x;
+      this->pong_.position(new_pos);
+    }
+  }
+  std::vector<std::unique_ptr<RenderableObject> >
+  MoPongAnimation::objects() const noexcept
+  {
+    std::vector<std::unique_ptr<RenderableObject> > objs;
+
+    using renderable_object_type = RenderableObjectTemplate<Label>;
+
+    using std::make_unique;
+    objs.push_back(std::make_unique<renderable_object_type>(this->mo_));
+    objs.push_back(std::make_unique<renderable_object_type>(this->pong_));
+
+    return objs;
+  }
   MenuGameState::MenuGameState(Game& game)
                              : title_("Pong Plus More", 120, {0,0}),
                                singleplayer_("Singleplayer"),
                                multiplayer_("Multiplayer"),
                                options_("Options"),
-                               quit_("Quit")
+                               quit_("Quit"),
+                               anim_(game)
   {
     FontRenderer* font_renderer = &(*game.font_renderer);
     this->title_.font_renderer(font_renderer);
@@ -75,6 +121,7 @@ namespace pong
 
   void MenuGameState::update()
   {
+    this->anim_.step();
   }
 
   void MenuGameState::render(SDL_Renderer* renderer) const
@@ -84,5 +131,12 @@ namespace pong
     this->multiplayer_.render(renderer);
     this->options_.render(renderer);
     this->quit_.render(renderer);
+
+    for(auto&& ptr : this->anim_.objects())
+    {
+      // TODO: Better interface, ideally a dedicated render function which
+      // wraps exactly this.
+      ptr->render(renderer);
+    }
   }
 }

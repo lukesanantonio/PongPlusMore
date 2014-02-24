@@ -26,6 +26,25 @@
 
 namespace pong
 {
+  // TODO: This is kind of rigid. Find a nice, json way to do this later.
+  struct MoPongAnimation : public AnimationBase
+  {
+    MoPongAnimation(Game& game) noexcept;
+
+    void step() noexcept override;
+
+    std::vector<std::unique_ptr<RenderableObject> >
+    objects() const noexcept override;
+  private:
+    FontRenderer& font_;
+
+    Label mo_;
+    Label pong_;
+
+    bool moving_pong_ = true;
+    bool on_ = true;
+  };
+
   struct MenuGameState : public GameState
   {
     MenuGameState(Game& game);
@@ -35,5 +54,7 @@ namespace pong
   private:
     Label title_;
     Button singleplayer_, multiplayer_, options_, quit_;
+
+    MoPongAnimation anim_;
   };
 }
