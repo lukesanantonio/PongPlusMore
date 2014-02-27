@@ -138,8 +138,8 @@ namespace pong
    */
   inline void Button::volume(const Volume& vol) noexcept
   {
-    // The text height needs to be updated.
-    if(this->vol_.height != vol.height) this->label_.text_height(vol.height);
+    // The text height may need to be updated.
+    this->label_.text_height(vol.height);
 
     this->vol_ = vol;
   }
