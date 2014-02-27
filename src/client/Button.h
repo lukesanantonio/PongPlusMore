@@ -75,7 +75,7 @@ namespace pong
     inline void disabled_color(SDL_Color col) noexcept;
     inline SDL_Color disabled_color() const noexcept;
 
-    void enabled(bool enabled) noexcept;
+    inline void enabled(bool enabled) noexcept;
     inline bool enabled() const noexcept;
 
     inline void font_renderer(FontRenderer* font_renderer) noexcept;
@@ -169,14 +169,6 @@ namespace pong
   inline void Button::background_color(SDL_Color col) noexcept
   {
     this->background_color_ = col;
-    // Does the label need to be updated? Doing this here and in the disabled_
-    // color function basically complements the enabled function. The problem
-    // is that should the background color of the button change after the
-    // property of it being enabled then it will lag behind the *actual* color
-    // of the button. This way it is always what it should be. *But* if we do
-    // this every time we render it will muckduck the cache eg the Label will
-    // be regenerated every frame.
-    if(this->enabled_) this->label_.back_color(col);
   }
   /*!
    * \brief Returns the background color of the button when enabled.
@@ -193,8 +185,6 @@ namespace pong
   inline void Button::disabled_color(SDL_Color col) noexcept
   {
     this->disabled_color_ = col;
-    // Does the label need to be updated?
-    if(!this->enabled_) this->label_.back_color(col);
   }
   /*!
    * \brief Returns the color of the background of the button when it is
@@ -203,6 +193,14 @@ namespace pong
   inline SDL_Color Button::disabled_color() const noexcept
   {
     return this->disabled_color_;
+  }
+
+  /*!
+   * \brief Sets whether the button can be clicked.
+   */
+  inline void Button::enabled(bool enabled) noexcept
+  {
+    this->enabled_ = enabled;
   }
 
   /*!

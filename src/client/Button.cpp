@@ -62,19 +62,19 @@ namespace pong
    */
   void Button::render(SDL_Renderer* renderer) const
   {
-    //Calculate bounds.
-    SDL_Rect button_rect;
-    button_rect.x = vol_.pos.x;
-    button_rect.y = vol_.pos.y;
-    button_rect.w = vol_.width;
-    button_rect.h = vol_.height;
-
-    //Choose button color.
+    // Choose button (and label back) color.
     const SDL_Color* color;
-    if(this->enabled_) color = &this->background_color_;
+    if(this->enabled_ && !this->on_click_.empty())
+    {
+      color = &this->background_color_;
+    }
     else color = &this->disabled_color_;
 
-    //Get our previous draw color.
+    // Set the label, this won't regenerate the label unless of course
+    // it has a different back color, which is obviously necessary.
+    this->label_.back_color(*color);
+
+    // Get our previous draw color, and "push" it, sort of speak.
     SDL_Color prev_color;
     if(SDL_GetRenderDrawColor(renderer, &prev_color.r,
                                         &prev_color.g,
@@ -87,16 +87,23 @@ namespace pong
       prev_color.a = 0xff;
     }
 
+    // Calculate bounds.
+    SDL_Rect button_rect;
+    button_rect.x = vol_.pos.x;
+    button_rect.y = vol_.pos.y;
+    button_rect.w = vol_.width;
+    button_rect.h = vol_.height;
+
     SDL_SetRenderDrawColor(renderer, color->r, color->g, color->b, color->a);
     SDL_RenderFillRect(renderer, &button_rect);
 
-    //Return to our old draw color.
+    // Return to our old draw color, or "pop."
     SDL_SetRenderDrawColor(renderer, prev_color.r,
                                      prev_color.g,
                                      prev_color.b,
                                      prev_color.a);
 
-    //Find where to render the label!
+    // Find out where to render the label!
     math::vector<int> label_pos;
     label_pos.x = center(this->vol_.pos.x, this->vol_.width,
                          this->label_.getSurfaceWidth());
@@ -104,8 +111,6 @@ namespace pong
                          this->label_.getSurfaceHeight());
     this->label_.position(label_pos);
 
-    // Render the label. Its background color should be consistent with the
-    // one we chose earlier because of the enabled function.
     this->label_.render(renderer);
   }
 
@@ -149,22 +154,4 @@ namespace pong
     }
   }
 
-  /*!
-   * \brief Sets whether the button can be clicked.
-   */
-  void Button::enabled(bool enabled) noexcept
-  {
-    this->enabled_ = enabled;
-
-    //Make sure to set the background color in the Label so it is consistent
-    //with the background of the button.
-    if(this->enabled_)
-    {
-      this->label_.back_color(this->background_color_);
-    }
-    else
-    {
-      this->label_.back_color(this->disabled_color_);
-    }
-  }
 };
