@@ -137,8 +137,6 @@ namespace pong
    */
   Label& Label::operator=(Label&& label) noexcept
   {
-    Surface_Cache::operator=(std::move(label));
-
     this->text(std::move(label.text_));
     this->text_height(label.text_height_);
 
@@ -146,6 +144,8 @@ namespace pong
 
     this->text_color(label.text_color_);
     this->back_color(label.back_color_);
+
+    Surface_Cache::operator=(std::move(label));
 
     return *this;
   }
