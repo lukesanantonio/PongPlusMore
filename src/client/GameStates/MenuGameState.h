@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "GameState.h"
-#include "Label.h"
-#include "Button.h"
-#include "Game.h"
-#include "AnimationBase.h"
+#include "../GameState.h"
+#include "../Label.h"
+#include "../Button.h"
+#include "../Game.h"
+#include "../AnimationBase.h"
 
 namespace pong
 {

@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "GameState.h"
+#include "../GameState.h"
 #include "server/LocalServer.h"
 namespace pong
 {

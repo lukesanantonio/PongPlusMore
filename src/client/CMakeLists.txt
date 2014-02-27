@@ -26,8 +26,7 @@ add_library(ppmclient STATIC render_text.cpp Label.cpp Button.cpp
 target_link_libraries(ppmclient ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
 target_link_libraries(ppmclient ppmserv)
 target_include_directories(ppmclient PUBLIC ${SDL2_INCLUDE_DIRS}
-                                            ${FREETYPE_INCLUDE_DIRS}
-                                            ${CMAKE_CURRENT_SOURCE_DIR})
+                                            ${FREETYPE_INCLUDE_DIRS})
 
 add_executable(ppm ppm.cpp)
 target_link_libraries(ppm ppmclient)
