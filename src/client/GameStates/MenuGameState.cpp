@@ -54,6 +54,9 @@ namespace pong
       auto new_pos = this->pong_.position();
       --new_pos.x;
       this->pong_.position(new_pos);
+
+      // TODO: destroy the paddle when it gets to far to avoid it getting out
+      // of hand.
     }
   }
   std::vector<std::unique_ptr<RenderableObject> >
