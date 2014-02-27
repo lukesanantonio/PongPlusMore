@@ -27,6 +27,7 @@
 #include "sdl_cache.hpp"
 #include "common/vector.h"
 #include "render_text.h"
+#include "util.hpp"
 namespace pong
 {
   /*!
@@ -155,10 +156,12 @@ namespace pong
   /*!
    * \brief Sets the text of the label.
    *
-   * \post Invalidates the surface.
+   * \post Invalidates the cache if the passed in text is different from the
+   * one already stored.
    */
   inline void Label::text(const std::string& text) noexcept
   {
+    if(this->text_ == text) return;
     this->text_ = text;
     this->invalidateCache();
   }
@@ -175,10 +178,12 @@ namespace pong
   /*!
    * \brief Sets the text height of the label.
    *
-   * \post Invalidates the surface.
+   * \post Invalidates the cache if the passed in text height is different
+   * from the one already stored.
    */
   inline void Label::text_height(int text_height) noexcept
   {
+    if(this->text_height_ == text_height) return;
     this->text_height_ = text_height;
     this->invalidateCache();
   }
@@ -214,10 +219,12 @@ namespace pong
   /*!
    * \brief Sets the color of the text.
    *
-   * \post Invalidates the cache.
+   * \post Invalidates the cache if the passed in text color is different
+   * from the one already stored.
    */
   inline void Label::text_color(SDL_Color text_color) noexcept
   {
+    if(this->text_color_ == text_color) return;
     this->text_color_ = text_color;
     this->invalidateCache();
   }
@@ -234,10 +241,12 @@ namespace pong
   /*!
    * \brief Sets the color of the background of the image blitted.
    *
-   * \post Invalidates the surface.
+   * \post Invalidates the cache if the passed in back color is different
+   * from the one already stored.
    */
   inline void Label::back_color(SDL_Color back_color) noexcept
   {
+    if(this->back_color_ == back_color) return;
     this->back_color_ = back_color;
     this->invalidateCache();
   }
@@ -254,10 +263,12 @@ namespace pong
   /*!
    * \brief Sets the font renderer implementation to use.
    *
-   * \post Invalidates the cache.
+   * \post Invalidates the cache if the passed in font renderer is different
+   * from the one already stored.
    */
   inline void Label::font_renderer(FontRenderer* font_renderer) noexcept
   {
+    if(this->font_renderer_ == font_renderer) return;
     this->font_renderer_ = font_renderer;
     this->invalidateCache();
   }
