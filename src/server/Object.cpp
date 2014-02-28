@@ -27,6 +27,7 @@ namespace pong
     if(phys.type == PhysicsType::Paddle)
     {
       root["Destination"] = dumpJSON(phys.paddle_options.destination);
+      root["Max Velocity"] = phys.paddle_options.max_velocity;
     }
     if(phys.type == PhysicsType::Ball)
     {
