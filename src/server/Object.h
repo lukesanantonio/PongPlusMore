@@ -46,7 +46,23 @@ namespace pong
   struct PhysicsOptions
   {
     /* implicit */ PhysicsOptions(PhysicsType type = PhysicsType::Undefined)
-                                  : type(type) {}
+                                  : type(type)
+    {
+      switch(type)
+      {
+        case PhysicsType::Paddle:
+        {
+          this->paddle_options = PaddleOptions();
+          break;
+        }
+        case PhysicsType::Ball:
+        {
+          this->ball_options = BallOptions();
+          break;
+        }
+        default: break;
+      }
+    }
 
     PhysicsType type;
     union
