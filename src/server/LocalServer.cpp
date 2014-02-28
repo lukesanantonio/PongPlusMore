@@ -344,7 +344,9 @@ namespace pong
                            obj.getVolume().pos;
 
       // Move one or less units towards our destination. Easy.
-      diff = math::normalize(dp_temp) * std::min(math::length(dp_temp), 1.0);
+      diff = math::normalize(dp_temp) *
+             std::min(math::length(dp_temp),
+                      obj.getPhysicsOptions().paddle_options.max_velocity);
     }
     else if(isBall(obj))
     {
