@@ -93,17 +93,19 @@ namespace pong
       button->volume({math::vector<double>(position_x, starting_y),
                      static_cast<double>(width), static_cast<double>(height)});
       button->font_renderer(font_renderer);
-      button->enabled(true);
+      button->enabled(false);
       button->background_color({0xff, 0xff, 0xff, 0xff});
       button->text_color({0x00, 0x00, 0x00, 0xff});
       starting_y += height + 50;
     }
 
+    this->singleplayer_.enabled(true);
     this->singleplayer_.onClick([&]()
     {
       game.game_state = std::make_shared<PaddleGameState>();
     });
 
+    this->quit_.enabled(true);
     this->quit_.onClick([&]()
     {
       game.exiting = true;
