@@ -36,13 +36,12 @@ namespace pong
     std::vector<std::unique_ptr<RenderableObject> >
     objects() const noexcept override;
   private:
-    FontRenderer& font_;
+    Game& game_;
 
-    Label mo_;
     Label pong_;
 
-    bool moving_pong_ = true;
     bool on_ = true;
+    bool step_now_ = true;
   };
 
   struct MenuGameState : public GameState

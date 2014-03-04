@@ -25,40 +25,37 @@
 namespace pong
 {
   MoPongAnimation::MoPongAnimation(Game& game) noexcept
-                                   : font_(*game.font_renderer.get()),
-                                     mo_("'Mo", 40, {}, &font_),
-                                     pong_("Pong", 40, {}, &font_)
+                                   : game_(game),
+                                     pong_("Pong", 40, {})
   {
-    math::vector<int> left, right;
+    this->pong_.font_renderer(game_.font_renderer.get());
 
-    left.x = 0 - this->mo_.getSurfaceWidth();
-    right.x = game.width;
-
-    left.y = game.height - 40;
-    right.y = game.height - 40;
-
-    this->mo_.position(left);
-    this->pong_.position(right);
+    math::vector<int> pos;
+    pos.x = 0 - this->pong_.getSurfaceWidth();
+    pos.y = game.height - this->pong_.getSurfaceHeight();
+    this->pong_.position(pos);
   }
 
   void MoPongAnimation::step() noexcept
   {
-    if(!on_)
-    {
-      on_ = !on_;
-      return;
-    }
+    if(!on_) return;
 
-    if(moving_pong_)
+    if(step_now_)
     {
       auto new_pos = this->pong_.position();
+      if(new_pos.x >= game_.width)
+      {
+        on_ = false;
+        return;
+      }
+
       --new_pos.x;
       this->pong_.position(new_pos);
-
-      // TODO: destroy the paddle when it gets to far to avoid it getting out
-      // of hand.
     }
+
+    step_now_ = !step_now_;
   }
+
   std::vector<std::unique_ptr<RenderableObject> >
   MoPongAnimation::objects() const noexcept
   {
@@ -67,7 +64,6 @@ namespace pong
     using renderable_object_type = RenderableObjectTemplate<Label>;
 
     using std::make_unique;
-    objs.push_back(std::make_unique<renderable_object_type>(this->mo_));
     objs.push_back(std::make_unique<renderable_object_type>(this->pong_));
 
     return objs;
