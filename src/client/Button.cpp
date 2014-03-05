@@ -137,6 +137,7 @@ namespace pong
    */
   void Button::handleEvent(const SDL_Event& event)
   {
+    if(!this->enabled_) return;
     if(event.type == SDL_MOUSEBUTTONUP)
     {
       if(event.button.button == SDL_BUTTON_LEFT)
