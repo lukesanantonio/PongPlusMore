@@ -64,7 +64,7 @@ Roadmap
 ##### Alpha v0.1 "Pong for the masses."
 This will be the first alpha, including a Single player game mode with an AI.
 
-*Expected Release*: March 4th, 2014.
+*Expected Release*: March 9th, 2014.
 
 ##### Alpha v0.2 "The Plugin Update."
 This update will bring a plugin system similar to that of the new fangled
