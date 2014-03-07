@@ -60,13 +60,6 @@ namespace pong
     {
       Json::Value object = dumpJSON(std::get<1>(pair));
 
-      Json::Value collisions(Json::arrayValue);
-      for(id_type id : findIntersectingObjects(std::get<0>(pair), objs))
-      {
-        collisions.append(id);
-      }
-      object["collisions"] = collisions;
-
       ar.append(object);
     }
 

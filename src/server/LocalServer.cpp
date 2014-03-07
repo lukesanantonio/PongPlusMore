@@ -61,6 +61,7 @@ namespace pong
     return ids;
   }
 
+#if 0
   bool moveObject(id_type id, ObjectManager& obj_manager,
                   bool slave) noexcept;
 
@@ -356,11 +357,14 @@ namespace pong
 
     return moveObject(id, obj_manager, diff, slave);
   }
+#endif
   void LocalServer::step() noexcept
   {
+#if 0
     for(std::pair<const id_type, Object>& obj_pair : this->objs_)
     {
       moveObject(std::get<0>(obj_pair), this->objs_);
     }
+#endif
   }
 }
