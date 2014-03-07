@@ -24,23 +24,29 @@ namespace pong
   void LocalServer::setDestination(id_type id, math::vector<double> dest)
   {
     // Might throw an exception, fine let it throw!
-    PhysicsOptions& physobj = this->objs_.findObject(id).getPhysicsOptions();
+    Object obj = this->objs_.findObject(id);
+    PhysicsOptions& physobj = obj.getPhysicsOptions();
     if(physobj.type != PhysicsType::Paddle)
     {
       physobj.type = PhysicsType::Paddle;
       physobj.paddle_options = PaddleOptions{};
     }
     physobj.paddle_options.destination = dest;
+
+    this->objs_.setObject(id, obj);
   }
   void LocalServer::setVelocity(id_type id, math::vector<double> vel)
   {
-    PhysicsOptions& physopt = this->objs_.findObject(id).getPhysicsOptions();
+    Object obj = this->objs_.findObject(id);
+    PhysicsOptions& physopt = obj.getPhysicsOptions();
     if(physopt.type != PhysicsType::Ball)
     {
       physopt.type = PhysicsType::Ball;
       physopt.ball_options = BallOptions{};
     }
     physopt.ball_options.velocity = vel;
+
+    this->objs_.setObject(id, obj);
   }
 
   Object LocalServer::getObject(id_type id) const
