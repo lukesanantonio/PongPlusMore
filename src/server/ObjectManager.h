@@ -61,6 +61,8 @@ namespace pong
     inline const_iterator cend() const { return objs_.cend(); }
 
     inline size_type size() const { return objs_.size(); }
+
+    inline std::vector<id_type> ids() const noexcept;
   private:
     map_type objs_;
     id_type id_counter_ = 0;
@@ -169,6 +171,18 @@ namespace pong
   void ObjectManager::setObject(id_type id, const Object& obj)
   {
     this->objs_.at(id) = obj;
+  }
+
+  inline std::vector<id_type> ObjectManager::ids() const noexcept
+  {
+    std::vector<id_type> ids;
+
+    for(auto&& pair : *this)
+    {
+      ids.push_back(std::get<0>(pair));
+    }
+
+    return ids;
   }
 
   /*!
