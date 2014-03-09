@@ -25,6 +25,23 @@
 #include "common/crash.hpp"
 namespace pong
 {
+  Surface_Cache::gen_func_type cache_gen(Label& l)
+  {
+    return [&l](Surface_Cache::ptr_type ptr)
+    {
+      // If we have surface already, there is no reason to change it.
+      // This does create the off-chance that we are returning a bad and out
+      // of date label, but such a thing will only occur if the Label isn't
+      // invalidating it correctly.
+      if(ptr) return ptr;
+      return Surface_Cache::ptr_type(l.font_renderer()->render_text(
+                                                              l.text(),
+                                                              l.text_height(),
+                                                              l.text_color(),
+                                                              l.back_color()));
+    };
+  }
+
   /*!
    * \brief Initializes a label with everything necessary to start rendering.
    *
@@ -46,7 +63,8 @@ namespace pong
                text_(text),
                text_height_(text_height),
                pos_(pos),
-               font_renderer_(font_renderer)
+               font_renderer_(font_renderer),
+               cache_(cache_gen(*this))
   {
     //Set defaults.
     //Text color default: white
@@ -85,7 +103,8 @@ namespace pong
                pos_(pos),
                text_color_(text_color),
                back_color_(back_color),
-               font_renderer_(font_renderer){}
+               font_renderer_(font_renderer),
+               cache_(cache_gen(*this)) {}
 
   /*!
    * \brief Copy constructor.
@@ -93,24 +112,26 @@ namespace pong
    * Does not copy the cache.
    */
   Label::Label(const Label& label) noexcept :
-               Surface_Cache(),
                text_(label.text_),
                text_height_(label.text_height_),
                pos_(label.pos_),
                text_color_(label.text_color_),
-               back_color_(label.back_color_){}
+               back_color_(label.back_color_),
+               font_renderer_(label.font_renderer_),
+               cache_(label.cache_){}
   /*!
    * \brief Move constructor.
    *
    * Moves the cache from the object passed in, notably.
    */
   Label::Label(Label&& label) noexcept :
-               Surface_Cache(std::move(label)),
                text_(std::move(label.text_)),
                text_height_(label.text_height_),
                pos_(label.pos_),
                text_color_(label.text_color_),
-               back_color_(label.back_color_){}
+               back_color_(label.back_color_),
+               font_renderer_(label.font_renderer_),
+               cache_(std::move(label.cache_)) {}
 
   /*!
    * \brief Copy assignment operator.
@@ -145,7 +166,7 @@ namespace pong
     this->text_color(label.text_color_);
     this->back_color(label.back_color_);
 
-    Surface_Cache::operator=(std::move(label));
+    this->cache_ = std::move(label.cache_);
 
     return *this;
   }
@@ -155,7 +176,10 @@ namespace pong
    */
   void Label::render(SDL_Renderer* renderer) const
   {
-    SDL_Texture* texture=SDL_CreateTextureFromSurface(renderer, this->cache());
+    if(!renderer) return;
+
+    SDL_Texture* texture =
+                  SDL_CreateTextureFromSurface(renderer, this->cache_.cache());
     if(!texture) crash("Failed to create texture from Label surface!");
 
     SDL_Rect dest;
@@ -173,20 +197,6 @@ namespace pong
     dest.y = this->pos_.y;
     dest.w = this->getSurfaceWidth();
     dest.h = this->getSurfaceHeight();
-    SDL_BlitSurface(this->cache(), NULL, surface, &dest);
+    SDL_BlitSurface(this->cache_.cache(), NULL, surface, &dest);
   }
-
-  Label::ptr_type Label::generateCache_private() const
-  {
-    if(!this->font_renderer_)
-      crash("Label: \"" + this->text_ + "\""
-            " doesn't have a FontRenderer implementation!");
-
-
-    //render the text with the specified colors.
-    return this->font_renderer_->render_text(this->text_,
-                                             this->text_height_,
-                                             this->text_color_,
-                                             this->back_color_);
-  }
-};
+}

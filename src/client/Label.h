@@ -37,7 +37,7 @@ namespace pong
    * because it needs to maintain a cache, should it return a bare reference
    * to a member, it could be changed at any given time.
    */
-  class Label : public Surface_Cache
+  class Label
   {
   public:
     explicit Label(const std::string& text = "",
@@ -64,7 +64,7 @@ namespace pong
     Label& operator=(Label&&) noexcept;
 
     void render(SDL_Renderer* renderer) const;
-    void render(SDL_Surface* surface) const;
+    void render(SDL_Surface* s) const;
 
     inline int getSurfaceWidth() const;
     inline int getSurfaceHeight() const;
@@ -121,15 +121,15 @@ namespace pong
     /*!
      * \brief The fontrenderer implementation...
      */
-    FontRenderer* font_renderer_ = nullptr;
+    FontRenderer* font_renderer_;
 
-    virtual ptr_type generateCache_private() const override;
+    mutable Surface_Cache cache_;
   };
 
   /*!
    * \brief Returns the width of the cached text surface.
    *
-   * \returns Label::cache()->w
+   * \returns cache_.cache()->w
    *
    * \post Generates the cache if necessary.
    * \warning This function requires a valid FontRenderer, otherwise it
@@ -137,12 +137,12 @@ namespace pong
    */
   inline int Label::getSurfaceWidth() const
   {
-    return this->cache()->w;
+    return this->cache_.cache()->w;
   }
   /*!
    * \brief Returns the height of the cached text surface.
    *
-   * \returns Label::cache()->h
+   * \returns cache_.cache()->h
    *
    * \post Generates the cache if necessary.
    * \warning This function requires a valid FontRenderer, otherwise it
@@ -150,7 +150,7 @@ namespace pong
    */
   inline int Label::getSurfaceHeight() const
   {
-    return this->cache()->h;
+    return this->cache_.cache()->h;
   }
 
   /*!
@@ -163,7 +163,7 @@ namespace pong
   {
     if(this->text_ == text) return;
     this->text_ = text;
-    this->invalidateCache();
+    this->cache_.invalidate();
   }
   /*!
    * \brief Gets the text of the label.
@@ -185,7 +185,7 @@ namespace pong
   {
     if(this->text_height_ == text_height) return;
     this->text_height_ = text_height;
-    this->invalidateCache();
+    this->cache_.invalidate();
   }
   /*!
    * \brief Returns the text height of the label.
@@ -226,7 +226,7 @@ namespace pong
   {
     if(this->text_color_ == text_color) return;
     this->text_color_ = text_color;
-    this->invalidateCache();
+    this->cache_.invalidate();
   }
   /*!
    * \brief Returns the color of the text.
@@ -248,7 +248,7 @@ namespace pong
   {
     if(this->back_color_ == back_color) return;
     this->back_color_ = back_color;
-    this->invalidateCache();
+    this->cache_.invalidate();
   }
   /*!
    * \brief Returns the color of the background of the image blitted.
@@ -270,7 +270,7 @@ namespace pong
   {
     if(this->font_renderer_ == font_renderer) return;
     this->font_renderer_ = font_renderer;
-    this->invalidateCache();
+    this->cache_.invalidate();
   }
   /*!
    * \brief Returns the font renderer.
@@ -279,4 +279,4 @@ namespace pong
   {
     return this->font_renderer_;
   }
-};
+}
