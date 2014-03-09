@@ -58,8 +58,8 @@ namespace pong
     Cache(Cache&&) noexcept;
     Cache& operator=(Cache&&) noexcept;
 
-    Cache(const Cache&) noexcept = delete;
-    Cache& operator=(const Cache&) noexcept = delete;
+    Cache(const Cache&) noexcept;
+    Cache& operator=(const Cache&) noexcept;
 
     inline const T* ccache() const noexcept;
     inline T* cache();
@@ -98,6 +98,23 @@ namespace pong
   {
     this->cache_ = std::move(c.cache_);
     this->gen_func_ = std::move(c.gen_func_);
+
+    return *this;
+  }
+
+  /*!
+   * \brief Copies the generation function only.
+   */
+  template <typename T, class D>
+  Cache<T, D>::Cache(const Cache& c) noexcept : gen_func_(c.gen_func_) {}
+
+  /*!
+   * \brief Copies the generation function only.
+   */
+  template <typename T, class D>
+  auto Cache<T, D>::operator=(const Cache& c) noexcept -> Cache&
+  {
+    this->gen_func_ = c.gen_func_;
 
     return *this;
   }
