@@ -67,17 +67,17 @@ namespace pong
     Cache_Impl& operator=(const Cache_Impl&) noexcept;
 
     inline const T* ccache() const noexcept;
-    inline T* cache();
+    inline T* cache() const;
 
     template <std::size_t N> inline auto get_dependency() const noexcept ->
-                      typename std::tuple_element<N, depends_tuple_type>::type;
+               typename std::tuple_element<N, depends_tuple_type>::type const&;
 
     template <std::size_t N> inline void
     set_dependency(typename
               std::tuple_element<N, depends_tuple_type>::type const&) noexcept;
 
-    inline bool generate();
-    inline void invalidate() noexcept;
+    inline bool generate() const;
+    inline void invalidate() const noexcept;
 
     inline gen_func_type gen_func() const noexcept;
     inline void gen_func(gen_func_type f) noexcept;
@@ -86,7 +86,7 @@ namespace pong
     /*!
      * \brief Smart pointer managing the cache.
      */
-    ptr_type cache_ = nullptr;
+    mutable ptr_type cache_ = nullptr;
 
     /*!
      * \brief Function used to generate the cache.
@@ -96,9 +96,10 @@ namespace pong
     /*!
      * \brief Tuple of dependencies.
      *
-     * This tuple is later expanded into arguments to the gen func.
+     * This tuple is later expanded into arguments to the gen func. It can
+     * only be modified by the gen function.
      */
-    depends_tuple_type deps_;
+    mutable depends_tuple_type deps_;
   };
 
   template <typename T, class... Depends>
