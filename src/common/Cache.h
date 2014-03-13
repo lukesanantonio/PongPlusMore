@@ -40,7 +40,7 @@ namespace pong
     /*!
      * \brief Generation function type.
      */
-    using gen_func_type = std::function<ptr_type (ptr_type&&, Depends&...)>;
+    using gen_func_type = std::function<ptr_type (ptr_type, Depends&...)>;
 
     /*!
      * \brief Dependencies tuple type.
