@@ -45,7 +45,7 @@ struct constant_cache_val
   }
 };
 
-class CacheTest : public ::testing::Test
+class SimpleCacheTest : public ::testing::Test
 {
 protected:
   Cache<int> cache;
@@ -66,7 +66,7 @@ protected:
   }
 };
 
-TEST_F(CacheTest, Invalidate)
+TEST_F(SimpleCacheTest, Invalidate)
 {
   // We haven't run that lambda have we, yet?
   EXPECT_EQ(0, generates);
@@ -81,14 +81,14 @@ TEST_F(CacheTest, Invalidate)
   // We should have generated that string twice now.
   EXPECT_EQ(2, generates);
 }
-TEST_F(CacheTest, Generate)
+TEST_F(SimpleCacheTest, Generate)
 {
   cache.generate();
   cache.generate();
   cache.generate();
   EXPECT_EQ(3, generates);
 }
-TEST_F(CacheTest, Cache)
+TEST_F(SimpleCacheTest, Cache)
 {
   cache.invalidate();
 
@@ -114,10 +114,16 @@ TEST_F(CacheTest, Cache)
   EXPECT_EQ(1, generates);
 
 }
-TEST(CacheTestsOther, DependenciesAreSet)
-{
-  Cache<int, int> cache;
 
+class CacheWithDependencyTest : public ::testing::Test
+{
+protected:
+  Cache<int, int> cache;
+  using ptr_type = decltype(cache)::ptr_type;
+};
+
+TEST_F(CacheWithDependencyTest, DependenciesAreSet)
+{
   // Set the int dependency.
   int dependency_expected = 5;
   cache.set_dependency<0>(dependency_expected);
@@ -135,4 +141,30 @@ TEST(CacheTestsOther, DependenciesAreSet)
 
   // The cache value should be equal to the int dependency.
   EXPECT_EQ(dependency_expected, *cache.cache());
+}
+TEST_F(CacheWithDependencyTest, DependenciesTransfer)
+{
+  // Set a dependency.
+  int dependency_expected = 5;
+  cache.set_dependency<0>(dependency_expected);
+
+  // Passthrough gen func.
+  cache.gen_func(
+  [](ptr_type p, int x)
+  {
+    p.reset(new int(x));
+    return p;
+  });
+
+  // Copy.
+  decltype(cache) other(cache);
+
+  // The dependency should have been copied.
+  EXPECT_EQ(dependency_expected, *other.cache());
+
+  // Now move.
+  decltype(cache) moved(cache);
+
+  // The dependency should have been moved.
+  EXPECT_EQ(dependency_expected, *moved.cache());
 }

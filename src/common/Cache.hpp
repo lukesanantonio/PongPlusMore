@@ -33,7 +33,8 @@ namespace pong
   template <typename T, class D, class... Depends>
   Cache_Impl<T, D, Depends...>::Cache_Impl(Cache_Impl&& c) noexcept
                                            : cache_(std::move(c.cache_)),
-                                            gen_func_(std::move(c.gen_func_)){}
+                                             gen_func_(std::move(c.gen_func_)),
+                                             deps_(std::move(c.deps_)){}
 
   /*!
    * \brief Move assignment operator, moves the cache!
@@ -45,6 +46,8 @@ namespace pong
     this->cache_ = std::move(c.cache_);
     this->gen_func_ = std::move(c.gen_func_);
 
+    this->deps_ = std::move(c.deps_);
+
     return *this;
   }
 
@@ -53,7 +56,8 @@ namespace pong
    */
   template <typename T, class D, class... Depends>
   Cache_Impl<T, D, Depends...>::Cache_Impl(const Cache_Impl& c) noexcept
-                                           : gen_func_(c.gen_func_) {}
+                                           : gen_func_(c.gen_func_),
+                                             deps_(c.deps_){}
 
   /*!
    * \brief Copies the generation function only.
@@ -63,6 +67,7 @@ namespace pong
                                                                  -> Cache_Impl&
   {
     this->gen_func_ = c.gen_func_;
+    this->deps_ = c.deps_;
 
     return *this;
   }
