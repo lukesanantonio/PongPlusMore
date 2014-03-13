@@ -168,3 +168,26 @@ TEST_F(CacheWithDependencyTest, DependenciesTransfer)
   // The dependency should have been moved.
   EXPECT_EQ(dependency_expected, *moved.cache());
 }
+TEST_F(CacheWithDependencyTest, SetDependencyUsesEquality)
+{
+  int generates = 0;
+  cache.gen_func(
+  [&](ptr_type p, int x)
+  {
+    ++generates;
+    p.reset(new int(x));
+    return p;
+  });
+
+  EXPECT_EQ(0, generates);
+
+  int dep_val = 1;
+  cache.set_dependency<0>(dep_val);
+
+  cache.generate();
+  EXPECT_EQ(1, generates);
+
+  cache.set_dependency<0>(dep_val);
+  cache.cache();
+  EXPECT_EQ(1, generates);
+}
