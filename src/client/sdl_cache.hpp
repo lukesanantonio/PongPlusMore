@@ -22,7 +22,7 @@
  * \brief File containing Cache template instantiations for SDL.
  */
 #pragma once
-#include "common/Cache.hpp"
+#include "common/Cache.h"
 #include "SDL.h"
 namespace pong
 {
@@ -37,7 +37,7 @@ namespace pong
       SDL_FreeSurface(surface);
     }
   };
-  using Surface_Cache = Cache<SDL_Surface, SurfaceDeleter>;
+  using Surface_Cache = Cache_With_Deleter<SDL_Surface, SurfaceDeleter>;
 
   /*!
    * \brief A simple deleter which frees `SDL_Texture`s - for use with smart
@@ -50,5 +50,6 @@ namespace pong
       SDL_DestroyTexture(texture);
     }
   };
-  using Texture_Cache = Cache<SDL_Texture, TextureDeleter>;
+  using Texture_Cache = Cache_With_Deleter<SDL_Texture, TextureDeleter,
+                                           Surface_Cache>;
 }
