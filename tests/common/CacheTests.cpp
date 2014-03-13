@@ -191,3 +191,20 @@ TEST_F(CacheWithDependencyTest, SetDependencyUsesEquality)
   cache.cache();
   EXPECT_EQ(1, generates);
 }
+
+// This test makes sure that the dependencies can be changed within the
+// generation function.
+TEST_F(CacheWithDependencyTest, DependencyArgumentsChangePersists)
+{
+  int expected = 1;
+
+  cache.gen_func(
+  [=](ptr_type p, int& x)
+  {
+    x = expected;
+    return p;
+  });
+  cache.generate();
+
+  EXPECT_EQ(expected, cache.get_dependency<0>());
+}
