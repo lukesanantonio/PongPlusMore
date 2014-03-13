@@ -133,10 +133,10 @@ TEST_F(CacheWithDependencyTest, DependenciesAreSet)
 
   // Now check whether it's passed to the gen func correctly.
   cache.gen_func(
-  [](Cache<int, int>::ptr_type ptr, int x)
+  [](ptr_type p, int x)
   {
-    ptr.reset(new int(x));
-    return std::move(ptr);
+    p.reset(new int(x));
+    return p;
   });
 
   // The cache value should be equal to the int dependency.
