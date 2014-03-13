@@ -51,5 +51,5 @@ namespace pong
     }
   };
   using Texture_Cache = Cache_With_Deleter<SDL_Texture, TextureDeleter,
-                                           Surface_Cache>;
+                                           Surface_Cache, SDL_Renderer*>;
 }
