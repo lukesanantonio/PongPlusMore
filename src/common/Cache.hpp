@@ -92,7 +92,7 @@ namespace pong
    * still is a nullptr after the generation than that is what is returned.
    */
   template <typename T, class D, class... Depends>
-  inline T* Cache_Impl<T, D, Depends...>::cache() const
+  inline T* Cache_Impl<T, D, Depends...>::cache()
   {
     if(!this->cache_) this->generate();
     return this->cache_.get();
@@ -108,7 +108,7 @@ namespace pong
   template <typename T, class D, class... Depends>
   template <std::size_t N>
   inline auto Cache_Impl<T, D, Depends...>::get_dependency() const noexcept ->
-                typename std::tuple_element<N, depends_tuple_type>::type const&
+                       typename std::tuple_element<N, depends_tuple_type>::type
   {
     return std::get<N>(this->deps_);
   }
@@ -152,15 +152,12 @@ namespace pong
   /*!
    * \brief Generates the cache possibly factoring in its previous value.
    *
-   * Dependencies are passed to the gen func as non const references, meaning
-   * the function can change them and have these changes persist.
-   *
    * \returns The nullptrness of the cache after the generation.
    *
    * \note This function will always (re)generate the cache.
    */
   template <typename T, class D, class... Depends>
-  inline bool Cache_Impl<T, D, Depends...>::generate() const
+  inline auto Cache_Impl<T, D, Depends...>::generate() -> bool
   {
     this->cache_ = call<0, gen_func_type>(this->gen_func_, this->deps_,
                                           std::move(this->cache_));
@@ -173,7 +170,7 @@ namespace pong
    * This means it will have to be completely regenerated at some later time.
    */
   template <typename T, class D, class... Depends>
-  inline void Cache_Impl<T, D, Depends...>::invalidate() const noexcept
+  inline auto Cache_Impl<T, D, Depends...>::invalidate() noexcept -> void
   {
     this->cache_.reset(nullptr);
   }
