@@ -70,7 +70,7 @@ namespace pong
     inline T* cache();
 
     template <std::size_t N> inline auto get_dependency() const noexcept ->
-                      typename std::tuple_element<N, depends_tuple_type>::type;
+               typename std::tuple_element<N, depends_tuple_type>::type const&;
 
     template <std::size_t N> inline void
     set_dependency(typename

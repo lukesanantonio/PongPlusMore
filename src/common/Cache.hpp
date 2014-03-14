@@ -108,7 +108,7 @@ namespace pong
   template <typename T, class D, class... Depends>
   template <std::size_t N>
   inline auto Cache_Impl<T, D, Depends...>::get_dependency() const noexcept ->
-                       typename std::tuple_element<N, depends_tuple_type>::type
+                typename std::tuple_element<N, depends_tuple_type>::type const&
   {
     return std::get<N>(this->deps_);
   }
