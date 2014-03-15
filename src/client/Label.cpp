@@ -25,21 +25,27 @@
 #include "common/crash.hpp"
 namespace pong
 {
-  Surface_Cache::gen_func_type cache_gen(Label& l)
+  Texture_Cache make_label_cache(Label& l)
   {
-    return [&l](Surface_Cache::ptr_type ptr)
+    Texture_Cache c;
+    c.gen_func([](Texture_Cache::ptr_type p,
+                  Surface_Cache& s, SDL_Renderer*& r)
     {
-      // If we have surface already, there is no reason to change it.
-      // This does create the off-chance that we are returning a bad and out
-      // of date label, but such a thing will only occur if the Label isn't
-      // invalidating it correctly.
-      if(ptr) return ptr;
-      return Surface_Cache::ptr_type(l.font_renderer()->render_text(
-                                                              l.text(),
-                                                              l.text_height(),
-                                                              l.text_color(),
-                                                              l.back_color()));
-    };
+      if(p) return p;
+      p.reset(SDL_CreateTextureFromSurface(r, s.cache()));
+      return p;
+    });
+
+    c.grab_dependency<0>().gen_func(
+    [&l](Surface_Cache::ptr_type p)
+    {
+      if(p) return p;
+      p = std::move(l.font_renderer()->render_text(l.text(), l.text_height(),
+                                                   l.text_color(),
+                                                   l.back_color()));
+      return p;
+    });
+    return c;
   }
 
   /*!
@@ -64,7 +70,7 @@ namespace pong
                text_height_(text_height),
                pos_(pos),
                font_renderer_(font_renderer),
-               cache_(cache_gen(*this))
+               cache_(make_label_cache(*this))
   {
     //Set defaults.
     //Text color default: white
@@ -104,7 +110,7 @@ namespace pong
                text_color_(text_color),
                back_color_(back_color),
                font_renderer_(font_renderer),
-               cache_(cache_gen(*this)) {}
+               cache_(make_label_cache(*this)) {}
 
   /*!
    * \brief Copy constructor.
@@ -148,6 +154,8 @@ namespace pong
     this->text_color(label.text_color_);
     this->back_color(label.back_color_);
 
+    this->cache_ = label.cache_;
+
     return *this;
   }
 
@@ -178,17 +186,14 @@ namespace pong
   {
     if(!renderer) return;
 
-    SDL_Texture* texture =
-                  SDL_CreateTextureFromSurface(renderer, this->cache_.cache());
-    if(!texture) crash("Failed to create texture from Label surface!");
+    this->cache_.set_dependency<1>(renderer);
 
     SDL_Rect dest;
     dest.x = this->pos_.x;
     dest.y = this->pos_.y;
     dest.w = this->getSurfaceWidth();
     dest.h = this->getSurfaceHeight();
-    SDL_RenderCopy(renderer, texture, NULL, &dest);
-    SDL_DestroyTexture(texture);
+    SDL_RenderCopy(renderer, this->cache_.cache(), NULL, &dest);
   }
   void Label::render(SDL_Surface* surface) const
   {
@@ -197,6 +202,7 @@ namespace pong
     dest.y = this->pos_.y;
     dest.w = this->getSurfaceWidth();
     dest.h = this->getSurfaceHeight();
-    SDL_BlitSurface(this->cache_.cache(), NULL, surface, &dest);
+    SDL_BlitSurface(this->cache_.grab_dependency<0>().cache(),
+                    NULL, surface, &dest);
   }
 }

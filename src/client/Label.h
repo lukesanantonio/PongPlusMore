@@ -123,7 +123,7 @@ namespace pong
      */
     FontRenderer* font_renderer_;
 
-    mutable Surface_Cache cache_;
+    mutable Texture_Cache cache_;
   };
 
   /*!
@@ -137,7 +137,7 @@ namespace pong
    */
   inline int Label::getSurfaceWidth() const
   {
-    return this->cache_.cache()->w;
+    return this->cache_.grab_dependency<0>().cache()->w;
   }
   /*!
    * \brief Returns the height of the cached text surface.
@@ -150,7 +150,7 @@ namespace pong
    */
   inline int Label::getSurfaceHeight() const
   {
-    return this->cache_.cache()->h;
+    return this->cache_.grab_dependency<0>().cache()->h;
   }
 
   /*!
@@ -163,6 +163,7 @@ namespace pong
   {
     if(this->text_ == text) return;
     this->text_ = text;
+    this->cache_.grab_dependency<0>().invalidate();
     this->cache_.invalidate();
   }
   /*!
@@ -185,6 +186,7 @@ namespace pong
   {
     if(this->text_height_ == text_height) return;
     this->text_height_ = text_height;
+    this->cache_.grab_dependency<0>().invalidate();
     this->cache_.invalidate();
   }
   /*!
@@ -226,6 +228,7 @@ namespace pong
   {
     if(this->text_color_ == text_color) return;
     this->text_color_ = text_color;
+    this->cache_.grab_dependency<0>().invalidate();
     this->cache_.invalidate();
   }
   /*!
@@ -248,6 +251,7 @@ namespace pong
   {
     if(this->back_color_ == back_color) return;
     this->back_color_ = back_color;
+    this->cache_.grab_dependency<0>().invalidate();
     this->cache_.invalidate();
   }
   /*!
@@ -270,6 +274,7 @@ namespace pong
   {
     if(this->font_renderer_ == font_renderer) return;
     this->font_renderer_ = font_renderer;
+    this->cache_.grab_dependency<0>().invalidate();
     this->cache_.invalidate();
   }
   /*!
