@@ -72,6 +72,9 @@ namespace pong
     template <std::size_t N> inline auto get_dependency() const noexcept ->
                typename std::tuple_element<N, depends_tuple_type>::type const&;
 
+    template <std::size_t N> inline auto grab_dependency() noexcept ->
+               typename std::tuple_element<N, depends_tuple_type>::type&;
+
     template <std::size_t N> inline void
     set_dependency(typename
               std::tuple_element<N, depends_tuple_type>::type const&) noexcept;

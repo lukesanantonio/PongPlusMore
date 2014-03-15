@@ -113,6 +113,25 @@ namespace pong
     return std::get<N>(this->deps_);
   }
 
+  /*!
+   * \brief Returns a non-const reference of a dependency.
+   *
+   * This function is great for calling a single method on some dependency
+   * where you otherwise would need to do a call to get_dependency, then
+   * set_dependency. It's also good where a copy won't cut it, for instance
+   * when dealing with a cache dependency.
+   *
+   * \warning Storing the reference and using it later can cause the cache to
+   * become out of date without warning. It's best used with discretion.
+   */
+  template <typename T, class D, class... Depends>
+  template <std::size_t N> inline auto
+  Cache_Impl<T, D, Depends...>::grab_dependency() noexcept ->
+                      typename std::tuple_element<N, depends_tuple_type>::type&
+  {
+    return std::get<N>(this->deps_);
+  }
+
   template <typename T>
   inline bool maybe_equality(
            const T& t1,
