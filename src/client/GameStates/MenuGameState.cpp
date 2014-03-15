@@ -31,7 +31,7 @@ namespace pong
     this->pong_.font_renderer(game_.font_renderer.get());
 
     math::vector<int> pos;
-    pos.x = 0 - this->pong_.getSurfaceWidth();
+    pos.x = game.width;
     pos.y = game.height - this->pong_.getSurfaceHeight();
     this->pong_.position(pos);
   }
@@ -43,7 +43,7 @@ namespace pong
     if(step_now_)
     {
       auto new_pos = this->pong_.position();
-      if(new_pos.x >= game_.width)
+      if(new_pos.x <= 0 - pong_.getSurfaceWidth())
       {
         on_ = false;
         return;
