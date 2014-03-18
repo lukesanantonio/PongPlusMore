@@ -44,6 +44,7 @@ namespace pong
     inline id_type makePaddle(Volume vol) noexcept;
     inline id_type makeBall(Volume vol) noexcept;
     inline id_type insertObject(Volume vol, PhysicsOptions opt) noexcept;
+    inline id_type insert(const Object& obj) noexcept;
 
     inline const Object& findObject(id_type) const;
     inline void setObject(id_type, const Object&);
@@ -135,6 +136,14 @@ namespace pong
     if(!id) return 0;
 
     this->objs_.emplace(id, Object{vol, opt});
+    return id;
+  }
+  inline id_type ObjectManager::insert(const Object& obj) noexcept
+  {
+    id_type id = getNextID();
+    if(!id) return 0;
+
+    this->objs_.emplace(id, obj);
     return id;
   }
 
