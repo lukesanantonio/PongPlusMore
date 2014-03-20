@@ -31,6 +31,15 @@
 namespace pong
 {
   /*!
+   * \brief A macro for generating local variables of Volume bounds.
+   */
+  #define GENERATE_VOLUME_BOUNDS(vol) \
+    double vol##_left = vol.pos.x, \
+           vol##_right = vol.pos.x + vol.width - 1, \
+           vol##_top = vol.pos.y, \
+           vol##_bottom = vol.pos.y + vol.height - 1
+
+  /*!
    * \brief Returns whether or not check is inside a range inclusive.
    *
    * \param left One end of the range.

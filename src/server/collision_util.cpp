@@ -21,15 +21,6 @@
 namespace pong
 {
   /*!
-   * \brief A macro for generating local variables of Volume bounds.
-   */
-  #define GENERATE_VOLUME_BOUNDS(vol) \
-    double vol##_left = vol.pos.x, \
-           vol##_right = vol.pos.x + vol.width - 1, \
-           vol##_top = vol.pos.y, \
-           vol##_bottom = vol.pos.y + vol.height - 1
-
-  /*!
    * \brief Returns the boolean state of intersection between two volumes.
    *
    * \param v1 A volume.
