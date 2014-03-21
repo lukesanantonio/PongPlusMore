@@ -239,4 +239,40 @@ namespace pong
     snapVolumeToVolume(to_move_copy, side, v);
     return to_move_copy.pos - to_move.pos;
   }
+
+  // Array indice reference:
+  //  _______
+  // |   |   |
+  // | 0 | 1 |
+  // |___|___|
+  // |   |   |
+  // | 2 | 3 |
+  // |___|___|
+  std::array<Volume, 4> find_volume_quads(const Volume& vol) noexcept
+  {
+    std::array<Volume, 4> a;
+
+    GENERATE_VOLUME_BOUNDS(vol);
+
+    math::vector<double> mid = {vol.pos.x + vol.width / 2,
+                                vol.pos.y + vol.height / 2};
+
+    a[0] = Volume(vol.pos,
+                  vol.width / 2,
+                  vol.height / 2);
+
+    a[1] = Volume({mid.x, vol.pos.y},
+                  vol.pos.x + vol.width - mid.x,
+                  vol.height / 2);
+
+    a[2] = Volume({vol.pos.x, mid.y},
+                  vol.width / 2,
+                  vol.pos.y + vol.height - mid.y);
+
+    a[3] = Volume(mid,
+                  vol.pos.x + vol.width - mid.x,
+                  vol.pos.y + vol.height - mid.y);
+
+    return a;
+  }
 }

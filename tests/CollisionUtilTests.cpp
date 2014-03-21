@@ -161,3 +161,24 @@ TEST(CollisionUtilTests, snapDiff)
 
   // TODO add more tests.
 }
+TEST(CollisionUtilTests, find_volume_quads)
+{
+  using pong::Volume; using pong::find_volume_quads;
+
+  Volume v{{0, 0}, 1000, 1000};
+
+  auto a = find_volume_quads(v);
+  Volume expected;
+
+  expected = {{0, 0}, 500, 500};
+  EXPECT_EQ(expected, a[0]);
+
+  expected = {{500, 0}, 500, 500};
+  EXPECT_EQ(expected, a[1]);
+
+  expected = {{0, 500}, 500, 500};
+  EXPECT_EQ(expected, a[2]);
+
+  expected = {{500, 500}, 500, 500};
+  EXPECT_EQ(expected, a[3]);
+}

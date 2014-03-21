@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <vector>
+#include <array>
 #include "common/vector.h"
 #include "common/Volume.h"
 #include "enum_hash.hpp"
@@ -71,4 +72,6 @@ namespace pong
   void snapVolumeToVolume(Volume&, VolumeSide, const Volume&) noexcept;
   math::vector<double> snapDiff(const Volume&, VolumeSide,
                                 const Volume&) noexcept;
+
+  std::array<Volume, 4> find_volume_quads(const Volume& vol) noexcept;
 }
