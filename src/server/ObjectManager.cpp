@@ -41,14 +41,14 @@ namespace pong
     {
       return p1.first < p2.first;
     }));
-    this->id_counter_ = max_id;
+    this->id_counter_.count = max_id;
 
     for(id_type i = 1; i <= max_id; ++i)
     {
       // If this particular id is *not* found: It means we can use it.
       if(this->objs_.find(i) == end(this->objs_))
       {
-        this->removed_id_queue_.push(i);
+        this->id_counter_.removed_id_queue.push(i);
       }
     }
   }

@@ -17,28 +17,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "server/ObjectManager.h"
+#include "common/IDManager.hpp"
 #include "gtest/gtest.h"
 
-TEST(ObjectManagerTest, ObjectInsertionWorks)
+TEST(IDManagerTests, UsesAllAvailableIDs)
 {
-  using pong::ObjectManager;
-  ObjectManager objs;
+  using pong::IDManager;
 
-  static_assert(std::is_unsigned<ObjectManager::id_type>::value,
-                "ID type unsigned, overflow undefined...");
+  using id_type = int16_t;
 
-  for(ObjectManager::id_type id = 0; ++id != 0;)
+  IDManager<id_type> counter;
+
+  for(id_type id = 0; ++id != 0;)
   {
     // We need to exhaust all the ids available.
-    objs.makePaddle({{0,0}, 100, 100});
+    counter.get();
   }
 
-  // We should have absolutely no ids left.
-  EXPECT_EQ(0, objs.makeBall({{5,5}, 100, 100}));
+  // We should have no ids left.
+  EXPECT_EQ(0, counter.get());
 
-  // Now give ourselves room.
-  objs.erase(objs.begin()->first);
+  // Make room.
+  counter.remove(1);
 
-  EXPECT_NE(0, objs.makeBall({{5,5}, 100, 200}));
+  // We should have at least room for one more.
+  EXPECT_NE(0, counter.get());
 }

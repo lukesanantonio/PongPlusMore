@@ -21,6 +21,7 @@
 #include <unordered_map>
 #include <queue>
 #include <json/json.h>
+#include "common/IDManager.hpp"
 #include "Object.h"
 
 namespace pong
@@ -66,38 +67,10 @@ namespace pong
     inline std::vector<id_type> ids() const noexcept;
   private:
     map_type objs_;
-    id_type id_counter_ = 0;
-    std::queue<id_type> removed_id_queue_;
-
-    inline id_type getNextID() noexcept;
+    IDManager<id_type> id_counter_;
   };
 
   Json::Value dumpJSON(const ObjectManager& objs) noexcept;
-
-  /*!
-   * \brief Returns some valid which can be used on a new Object.
-   *
-   * \returns 0 if there are no ids available.
-   */
-  id_type ObjectManager::getNextID() noexcept
-  {
-    if(!removed_id_queue_.empty())
-    {
-      id_type id = 0;
-      id = removed_id_queue_.front();
-      removed_id_queue_.pop();
-      return id;
-    }
-
-    if(++id_counter_ == 0)
-    {
-      // If we subtract one from it, this will continue forever.
-      --id_counter_;
-      return 0;
-    }
-
-    return id_counter_;
-  }
 
   /*!
    * \brief Adds a new Object to the pool with 'Paddle' rules. \sa PhysicsType
@@ -107,7 +80,7 @@ namespace pong
    */
   id_type ObjectManager::makePaddle(Volume vol) noexcept
   {
-    id_type id = getNextID();
+    id_type id = this->id_counter_.get();
     if(!id) return 0;
 
     this->objs_.emplace(id, Object{vol, PhysicsType::Paddle});
@@ -122,7 +95,7 @@ namespace pong
    */
   id_type ObjectManager::makeBall(Volume vol) noexcept
   {
-    id_type id = getNextID();
+    id_type id = this->id_counter_.get();
     if(!id) return 0;
 
     this->objs_.emplace(id, Object{vol, PhysicsType::Ball});
@@ -132,7 +105,7 @@ namespace pong
   inline id_type ObjectManager::insertObject(Volume vol,
                                              PhysicsOptions opt) noexcept
   {
-    id_type id = getNextID();
+    id_type id = this->id_counter_.get();
     if(!id) return 0;
 
     this->objs_.emplace(id, Object{vol, opt});
@@ -140,7 +113,7 @@ namespace pong
   }
   inline id_type ObjectManager::insert(const Object& obj) noexcept
   {
-    id_type id = getNextID();
+    id_type id = this->id_counter_.get();
     if(!id) return 0;
 
     this->objs_.emplace(id, obj);
@@ -150,21 +123,21 @@ namespace pong
   inline auto ObjectManager::erase(const_iterator pos) -> iterator
   {
     using std::end;
-    if(pos != end(this->objs_)) this->removed_id_queue_.push(pos->first);
+    if(pos != end(this->objs_)) this->id_counter_.remove(pos->first);
     return this->objs_.erase(pos);
   }
   inline auto ObjectManager::erase(const_iterator first,
                                    const_iterator last) -> iterator
   {
     const_iterator orig_first = first;
-    for(; first != last; ++first) this->removed_id_queue_.push(first->first);
+    for(; first != last; ++first) this->id_counter_.remove(first->first);
     return this->objs_.erase(orig_first, last);
   }
   inline auto ObjectManager::erase(key_type id) -> size_type
   {
     using std::end;
     if(this->objs_.find(id) != end(this->objs_))
-      this->removed_id_queue_.push(id);
+      this->id_counter_.remove(id);
 
     return this->objs_.erase(id);
   }
