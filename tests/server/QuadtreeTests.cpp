@@ -75,3 +75,19 @@ TEST(NodeTests, NodeIteratorIsEqualToNodePointer)
   EXPECT_EQ(expected, root.begin());
   EXPECT_EQ(next, ++root.begin());
 }
+TEST(NodeTests, NodeIteratorPastTheEndWorks)
+{
+  // According to the standard container.back() should be the same as
+  // { iterator tmp = a.end(); --tmp; return *tmp; }
+  // Although the Node class doesn't have a back function its still good
+  // to follow that you-can-deincrement-the-past-the-end iterator practice.
+  struct none {};
+  using node_type = pong::Node<none>;
+  node_type r;
+
+  r.push_child()->push_child();
+  node_type* expected = r.push_child();
+
+  auto iter = r.end(); --iter;
+  EXPECT_EQ(expected, iter);
+}

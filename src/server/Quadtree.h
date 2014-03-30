@@ -36,6 +36,8 @@ namespace pong
     {
       explicit Iterator(Node* r = nullptr) noexcept
                         : root_(r), current_(find_first_child(r)){}
+      Iterator(Node* r, Node* current) noexcept
+               : root_(r), current_(current) {}
 
       Iterator& operator++() noexcept;
       Iterator operator++(int) noexcept;
@@ -94,7 +96,7 @@ namespace pong
     inline void prev_sibling(Node* n) noexcept { this->prev_sibling_ = n; }
 
     inline Iterator begin() noexcept { return Iterator(this); }
-    inline Iterator end() noexcept { return Iterator(); }
+    inline Iterator end() noexcept { return Iterator(this, nullptr); }
   private:
     std::unique_ptr<T, Deleter> data_;
     std::vector<std::unique_ptr<Node> > children_;
@@ -169,7 +171,11 @@ namespace pong
   template <typename T, class Deleter> typename Node<T, Deleter>::Iterator&
   Node<T, Deleter>::Iterator::operator++() noexcept
   {
-    if(!this->current_) return *this;
+    if(!this->current_)
+    {
+      this->current_ = find_first_child(this->root_);
+      return *this;
+    }
     if(this->current_->next_sibling_)
     {
       this->current_ = find_first_child(this->current_->next_sibling_);
@@ -204,7 +210,11 @@ namespace pong
   typename Node<T, Deleter>::Iterator&
   Node<T, Deleter>::Iterator::operator--() noexcept
   {
-    if(!this->current_) return *this;
+    if(!this->current_)
+    {
+      this->current_ = find_last_child(this->root_);
+      return *this;
+    }
     if(this->current_->prev_sibling_)
     {
       this->current_ = find_last_child(this->current_->prev_sibling_);
