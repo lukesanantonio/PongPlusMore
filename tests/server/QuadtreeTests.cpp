@@ -41,3 +41,25 @@ TEST(NodeTests, FindLastChildWorks)
 
   EXPECT_EQ(last_child, pong::find_last_child(&root));
 }
+TEST(NodeTests, NodeIteratorWorks)
+{
+  struct none {};
+  using node_type = pong::Node<none>;
+  node_type root;
+
+  std::vector<node_type*> expected_path;
+
+  node_type* first_child = root.push_child();
+  expected_path.push_back(first_child->push_child());
+  expected_path.push_back(first_child->push_child());
+  expected_path.push_back(root.push_child());
+
+  std::vector<node_type*> actual_path;
+
+  for(node_type& n : root)
+  {
+    actual_path.push_back(&n);
+  }
+
+  EXPECT_EQ(expected_path, actual_path);
+}

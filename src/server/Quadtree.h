@@ -88,6 +88,9 @@ namespace pong
 
     inline Node* prev_sibling() const noexcept { return this->prev_sibling_; }
     inline void prev_sibling(Node* n) noexcept { this->prev_sibling_ = n; }
+
+    inline Iterator begin() noexcept { return Iterator(this); }
+    inline Iterator end() noexcept { return Iterator(); }
   private:
     std::unique_ptr<T, Deleter> data_;
     std::vector<std::unique_ptr<Node> > children_;
