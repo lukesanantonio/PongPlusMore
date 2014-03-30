@@ -34,10 +34,12 @@ namespace pong
      */
     struct Iterator
     {
+      // TODO: Add actual iterator type aliases.
+
       explicit Iterator(Node* r = nullptr) noexcept
-                        : root_(r), current_(find_first_child(r)){}
-      Iterator(Node* r, Node* current) noexcept
-               : root_(r), current_(current) {}
+                        : root_(r), current_(find_first_child(r)) {}
+      explicit Iterator(Node* r, Node* current) noexcept
+                        : root_(r), current_(current) {}
 
       Iterator& operator++() noexcept;
       Iterator operator++(int) noexcept;
