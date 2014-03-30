@@ -34,8 +34,8 @@ namespace pong
      */
     struct Iterator
     {
-      Iterator() {}
-      Iterator(Node* r) : root_(r), current_(find_first_child(r)){}
+      explicit Iterator(Node* r = nullptr)
+                        : root_(r), current_(find_first_child(r)){}
 
       Iterator& operator++();
       Iterator operator++(int);
