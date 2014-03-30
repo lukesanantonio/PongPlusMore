@@ -53,11 +53,13 @@ namespace pong
     };
 
   private:
-    Node(Node* parent, Node* next_sibling, Node* prev_sibling,
-         std::unique_ptr<T, Deleter> data =
+    explicit Node(Node* parent,
+             Node* next_sibling = nullptr,
+             Node* prev_sibling = nullptr,
+             std::unique_ptr<T, Deleter> data =
                                         std::unique_ptr<T, Deleter>()) noexcept
-         : data_(std::move(data)), children_(), parent_(parent),
-           next_sibling_(next_sibling), prev_sibling_(prev_sibling) {}
+             : data_(std::move(data)), children_(), parent_(parent),
+               next_sibling_(next_sibling), prev_sibling_(prev_sibling) {}
 
   public:
     explicit Node(std::unique_ptr<T, Deleter> data =
