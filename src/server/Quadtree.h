@@ -70,7 +70,7 @@ namespace pong
     { return this->data_; }
 
     Node* push_child() noexcept;
-    Node* push_child(std::unique_ptr<T, Deleter>&& t) noexcept;
+    Node* push_child(std::unique_ptr<T, Deleter> data) noexcept;
 
     inline std::vector<Node*> children() noexcept
     {
@@ -128,16 +128,21 @@ namespace pong
   template <typename T, class Deleter>
   Node<T, Deleter>* Node<T, Deleter>::push_child() noexcept
   {
-    // Can't use std::make_unique because of private constructor.
-    this->children_.push_back(std::unique_ptr<Node>(new Node(this, nullptr,
-                                                             nullptr)));
-    return this->children_.back().get();
+    return this->push_child(nullptr);
   }
   template <typename T, class Deleter> Node<T, Deleter>*
-  Node<T, Deleter>::push_child(std::unique_ptr<T, Deleter>&& t) noexcept
+  Node<T, Deleter>::push_child(std::unique_ptr<T, Deleter> data) noexcept
   {
-    this->children_.push_back(std::unique_ptr<Node>(new Node(this, nullptr,
-                                                             nullptr, t)));
+    Node* prev_sibling =
+             !this->children_.empty() ? this->children_.back().get() : nullptr;
+
+    this->children_.push_back(std::unique_ptr<Node>(
+                      new Node(this, nullptr, prev_sibling, std::move(data))));
+
+    if(prev_sibling)
+    {
+      prev_sibling->next_sibling(this->children_.back().get());
+    }
     return this->children_.back().get();
   }
 
