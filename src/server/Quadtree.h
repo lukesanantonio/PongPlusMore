@@ -149,6 +149,7 @@ namespace pong
   template <typename T, class Deleter>
   typename Node<T, Deleter>::Iterator& Node<T, Deleter>::Iterator::operator++()
   {
+    if(!this->current_) return *this;
     if(this->current_->next_sibling_)
     {
       this->current_ = find_first_child(this->current_->next_sibling_);
@@ -160,6 +161,12 @@ namespace pong
       while(!this->current_->next_sibling_)
       {
         this->current_ = this->current_->parent_;
+        if(!this->current_ || this->current_ == this->root_)
+        {
+          // We have gone up too far.
+          this->current_ = nullptr;
+          return *this;
+        }
       }
       // When its found, start at the beginning of that next sibling.
       this->current_ = find_first_child(this->current_->next_sibling_);
@@ -176,6 +183,7 @@ namespace pong
   template <typename T, class Deleter>
   typename Node<T, Deleter>::Iterator& Node<T, Deleter>::Iterator::operator--()
   {
+    if(!this->current_) return *this;
     if(this->current_->prev_sibling_)
     {
       this->current_ = find_first_child(this->current_->prev_sibling_);
@@ -186,6 +194,12 @@ namespace pong
       while(!this->current_->prev_sibling_)
       {
         this->current_ = this->current_->parent_;
+        if(!this->current_ || this->current_ == this->root_)
+        {
+          // We have gone up too far.
+          this->current_ = nullptr;
+          return *this;
+        }
       }
       this->current_ = find_last_child(this->current_->prev_sibling_);
       return *this;
