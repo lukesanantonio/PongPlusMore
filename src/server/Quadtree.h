@@ -98,7 +98,6 @@ namespace pong
     Node* parent_;
     Node* next_sibling_;
     Node* prev_sibling_;
-
   };
 
   template <typename T, class Deleter>
