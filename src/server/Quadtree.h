@@ -99,27 +99,29 @@ namespace pong
   };
 
   template <typename T, class Deleter>
-  Node<T, Deleter>* find_first_child(Node<T, Deleter>& n)
+  Node<T, Deleter>* find_first_child(Node<T, Deleter>* n)
   {
-    if(n.children().empty())
+    if(!n) return nullptr;
+    if(n->children().empty())
     {
-      return &n;
+      return n;
     }
     else
     {
-      return find_first_child(*n.children().front());
+      return find_first_child(n->children().front());
     }
   }
   template <typename T, class Deleter>
-  Node<T, Deleter>* find_last_child(Node<T, Deleter>& n)
+  Node<T, Deleter>* find_last_child(Node<T, Deleter>* n)
   {
-    if(n.children().empty())
+    if(!n) return nullptr;
+    if(n->children().empty())
     {
-      return &n;
+      return n;
     }
     else
     {
-      return find_last_child(*n.children().back());
+      return find_last_child(n->children().back());
     }
   }
 

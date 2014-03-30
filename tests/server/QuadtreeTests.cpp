@@ -29,7 +29,7 @@ TEST(NodeTests, FindFirstChildWorks)
   root.push_child();
   root.push_child()->push_child()->push_child();
 
-  EXPECT_EQ(first_child, pong::find_first_child(root));
+  EXPECT_EQ(first_child, pong::find_first_child(&root));
 }
 TEST(NodeTests, FindLastChildWorks)
 {
@@ -39,5 +39,5 @@ TEST(NodeTests, FindLastChildWorks)
   root.push_child();
   decltype(root)* last_child = root.push_child()->push_child()->push_child();
 
-  EXPECT_EQ(last_child, pong::find_last_child(root));
+  EXPECT_EQ(last_child, pong::find_last_child(&root));
 }
