@@ -207,7 +207,7 @@ namespace pong
     if(!this->current_) return *this;
     if(this->current_->prev_sibling_)
     {
-      this->current_ = find_first_child(this->current_->prev_sibling_);
+      this->current_ = find_last_child(this->current_->prev_sibling_);
       return *this;
     }
     else
