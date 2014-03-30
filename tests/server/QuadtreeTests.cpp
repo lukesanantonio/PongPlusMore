@@ -63,3 +63,15 @@ TEST(NodeTests, NodeIteratorWorks)
 
   EXPECT_EQ(expected_path, actual_path);
 }
+TEST(NodeTests, NodeIteratorIsEqualToNodePointer)
+{
+  struct none {};
+  using node_type = pong::Node<none>;
+  node_type root;
+
+  node_type* expected = root.push_child();
+  node_type* next = root.push_child();
+
+  EXPECT_EQ(expected, root.begin());
+  EXPECT_EQ(next, ++root.begin());
+}

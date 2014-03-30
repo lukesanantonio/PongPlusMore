@@ -46,7 +46,9 @@ namespace pong
       Node* operator->() noexcept;
 
       inline bool operator==(const Iterator&) const noexcept;
+      inline bool operator==(const Node*) const noexcept;
       inline bool operator!=(const Iterator&) const noexcept;
+      inline bool operator!=(const Node*) const noexcept;
     private:
       Node* root_;
       Node* current_;
@@ -101,6 +103,20 @@ namespace pong
     Node* next_sibling_;
     Node* prev_sibling_;
   };
+
+  template <typename T, class Deleter> inline bool
+  operator==(const Node<T, Deleter>* a,
+             const typename Node<T, Deleter>::Iterator& i) noexcept
+  {
+    return i == a;
+  }
+
+  template <typename T, class Deleter> inline bool
+  operator!=(const Node<T, Deleter>* a,
+             const typename Node<T, Deleter>::Iterator& i) noexcept
+  {
+    return i != a;
+  }
 
   template <typename T, class Deleter>
   Node<T, Deleter>* find_first_child(Node<T, Deleter>* n) noexcept
@@ -236,9 +252,19 @@ namespace pong
     return this->current_ == i.current_;
   }
   template <typename T, class Deleter> inline bool
+  Node<T, Deleter>::Iterator::operator==(const Node* p) const noexcept
+  {
+    return this->current_ == p;
+  }
+  template <typename T, class Deleter> inline bool
   Node<T, Deleter>::Iterator::operator!=
                                        (const Node::Iterator& i) const noexcept
   {
     return !(*this == i);
+  }
+  template <typename T, class Deleter> inline bool
+  Node<T, Deleter>::Iterator::operator!=(const Node* p) const noexcept
+  {
+    return !(*this == p);
   }
 }
