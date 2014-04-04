@@ -17,5 +17,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 add_library(ppmserv collision_util.cpp LocalServer.cpp Object.cpp
-                    ObjectManager.cpp)
+                    ObjectManager.cpp Quadtree.cpp)
 target_link_libraries(ppmserv jsoncpp ppmcommon)
