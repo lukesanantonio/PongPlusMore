@@ -18,22 +18,54 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
+#include <type_traits>
 #include <functional>
 #include <vector>
 namespace pong
 {
-  template <typename Dest, typename Source,
-            typename F = std::function<Dest (Source&)> >
-  std::vector<Dest> vector_cast(std::vector<Source>& v,
-                                F f = [](auto& e) { return e; })
+  namespace detail
   {
-    std::vector<Dest> d;
-
-    for(Source& e : v)
+    template <bool is_const, typename Dest, typename Source,
+              typename F>
+    std::vector<Dest> vector_cast(std::conditional_t<is_const,
+                                                   const std::vector<Source>&,
+                                                   std::vector<Source>&> v,
+                                  F f)
     {
-      d.push_back(f(e));
-    }
+      std::vector<Dest> d;
 
-    return d;
+      using Source_Reference =
+                          std::conditional_t<is_const, const Source&, Source&>;
+
+      for(Source_Reference s : v)
+      {
+        d.push_back(f(s));
+      }
+
+      return d;
+    }
+  }
+
+  template <typename Dest, typename Source, typename F>
+  std::vector<Dest> vector_cast(const std::vector<Source>& v, F f)
+  {
+    return detail::vector_cast<true, Dest, Source>(v, f);
+  }
+  template <typename Dest, typename Source>
+  std::vector<Dest> vector_cast(const std::vector<Source>& v)
+  {
+    return detail::vector_cast<true, Dest, Source>(v,
+    [](const auto& c) { return c; });
+  }
+  template <typename Dest, typename Source, typename F>
+  std::vector<Dest> vector_cast(std::vector<Source>& v, F f)
+  {
+    return detail::vector_cast<false, Dest, Source>(v, f);
+  }
+  template <typename Dest, typename Source>
+  std::vector<Dest> vector_cast(std::vector<Source>& v)
+  {
+    return detail::vector_cast<false, Dest, Source>(v,
+    [](auto& c) { return c; });
   }
 }
