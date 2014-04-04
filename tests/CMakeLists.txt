@@ -23,7 +23,7 @@ add_executable(PpM_Tests EXCLUDE_FROM_ALL
                common/IDManagerTests.cpp
                common/CacheTests.cpp
                common/UtilTests.cpp
-               server/QuadtreeTests.cpp
+               server/Node_Tests.cpp
                ${CMAKE_CURRENT_SOURCE_DIR}/../gtest/gtest/gtest_main.cc)
 
 # Make sure it has the entirety of the pong support library.

@@ -19,9 +19,9 @@
  */
 #include <gtest/gtest.h>
 #include "common/Volume.h"
-#include "server/Quadtree.h"
+#include "server/Node.hpp"
 
-TEST(NodeTests, FindFirstChildWorks)
+TEST(Node_Tests, FindFirstChildWorks)
 {
   pong::Node<int> root;
 
@@ -31,7 +31,7 @@ TEST(NodeTests, FindFirstChildWorks)
 
   EXPECT_EQ(first_child, pong::find_first_child(&root));
 }
-TEST(NodeTests, FindLastChildWorks)
+TEST(Node_Tests, FindLastChildWorks)
 {
   pong::Node<std::vector<int> > root;
 
@@ -41,7 +41,7 @@ TEST(NodeTests, FindLastChildWorks)
 
   EXPECT_EQ(last_child, pong::find_last_child(&root));
 }
-TEST(NodeTests, NodeIteratorWorks)
+TEST(Node_Tests, NodeIteratorWorks)
 {
   struct none {};
   using node_type = pong::Node<none>;
@@ -63,7 +63,7 @@ TEST(NodeTests, NodeIteratorWorks)
 
   EXPECT_EQ(expected_path, actual_path);
 }
-TEST(NodeTests, NodeIteratorIsEqualToNodePointer)
+TEST(Node_Tests, NodeIteratorIsEqualToNodePointer)
 {
   struct none {};
   using node_type = pong::Node<none>;
@@ -75,7 +75,7 @@ TEST(NodeTests, NodeIteratorIsEqualToNodePointer)
   EXPECT_EQ(expected, root.begin());
   EXPECT_EQ(next, ++root.begin());
 }
-TEST(NodeTests, NodeIteratorPastTheEndWorks)
+TEST(Node_Tests, NodeIteratorPastTheEndWorks)
 {
   // According to the standard container.back() should be the same as
   // { iterator tmp = a.end(); --tmp; return *tmp; }
@@ -88,6 +88,29 @@ TEST(NodeTests, NodeIteratorPastTheEndWorks)
   r.push_child()->push_child();
   node_type* expected = r.push_child();
 
-  auto iter = r.end(); --iter;
+  auto iter = r.cend(); --iter;
   EXPECT_EQ(expected, iter);
+}
+TEST(Node_Tests, ChildRemovalWorks)
+{
+  struct none {};
+  using node_type = pong::Node<none>;
+  node_type r;
+
+  node_type* c1 = r.push_child();
+  node_type* c2 = r.push_child();
+
+  std::vector<node_type*> expected_path;
+  expected_path.push_back(c2->push_child());
+  expected_path.push_back(c2->push_child());
+
+  EXPECT_FALSE(r.remove_child(nullptr));
+  EXPECT_TRUE(r.remove_child(c1));
+
+  std::vector<node_type*> actual_path;
+  for(node_type& n : r)
+  {
+    actual_path.push_back(&n);
+  }
+  EXPECT_EQ(expected_path, actual_path);
 }
