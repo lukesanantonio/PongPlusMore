@@ -20,6 +20,33 @@
 #include <gtest/gtest.h>
 #include "server/Quadtree.h"
 
+TEST(Quadtree_Tests, ErasingWorks)
+{
+  using pong::Quadtree;
+  Quadtree q({{0, 0}, 1000, 1000}, 1);
+
+  using pong::ObjectManager;
+  const ObjectManager& objs = q.obj_manager();
+
+  using pong::Volume;
+  q.makePaddle(Volume{});
+  q.makePaddle(Volume{});
+  q.makePaddle(Volume{});
+  q.makeBall(Volume{});
+  q.makeBall(Volume{});
+
+  EXPECT_EQ(5, objs.size());
+  q.erase(objs.begin());
+  EXPECT_EQ(4, objs.size());
+
+  auto erase_end = objs.begin();
+  std::advance(erase_end, 2);
+  q.erase(objs.begin(), erase_end);
+  EXPECT_EQ(2, objs.size());
+
+  q.erase(objs.begin()->first);
+  EXPECT_EQ(1, objs.size());
+}
 TEST(Quadtree_Tests, ObjectMaxWorks)
 {
   using pong::Quadtree;

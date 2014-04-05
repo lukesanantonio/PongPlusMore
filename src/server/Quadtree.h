@@ -57,7 +57,10 @@ namespace pong
     inline id_type insertObject(Volume vol, PhysicsOptions opt) noexcept
     { return insert(Object{vol, opt}); }
 
-    void erase(id_type id);
+    ObjectManager::iterator erase(ObjectManager::const_iterator pos);
+    ObjectManager::iterator erase(ObjectManager::const_iterator pos,
+                                  ObjectManager::const_iterator last);
+    ObjectManager::size_type erase(id_type id);
 
     inline const node_type* root() const noexcept
     { return &this->root_; }

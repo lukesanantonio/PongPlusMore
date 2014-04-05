@@ -166,11 +166,34 @@ namespace pong
 
     return id;
   }
-  void Quadtree::erase(id_type id)
+  ObjectManager::iterator Quadtree::erase(ObjectManager::const_iterator pos)
   {
+    // Remove the object from the tree.
+    remove(this->root_, pos->first);
+
     // Remove the object from the object manager.
-    this->objs_.erase(id);
+    auto ret_iter = this->objs_.erase(pos);
+    return ret_iter;
+  }
+  ObjectManager::iterator Quadtree::erase(ObjectManager::const_iterator pos,
+                                          ObjectManager::const_iterator last)
+  {
+    // Remove the objects from the tree.
+    std::for_each(pos, last,
+    [&](const auto& pair)
+    {
+      remove(this->root_, pair.first);
+    });
+
+    // Remove the objects from the object manager.
+    return this->objs_.erase(pos, last);
+  }
+  ObjectManager::size_type Quadtree::erase(id_type id)
+  {
     // Remove the object from the tree.
     remove(this->root_, id);
+
+    // Remove the object from the object manager.
+    return this->objs_.erase(id);
   }
 }
