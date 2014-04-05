@@ -41,6 +41,8 @@ namespace pong
   };
   struct Quadtree
   {
+    using node_type = Node<Node_Content>;
+
     Quadtree(const Volume& v, int max_objs = 5)
              : root_(std::make_unique<Node_Content>(&objs_, max_objs, v)) {}
 
@@ -57,7 +59,7 @@ namespace pong
 
     void erase(id_type id);
 
-    inline const Node<Node_Content>* root() const noexcept
+    inline const node_type* root() const noexcept
     { return &this->root_; }
     inline const ObjectManager& obj_manager() const noexcept
     { return this->objs_; }
@@ -66,7 +68,7 @@ namespace pong
     bool remove_from_tree(id_type id);
 
     ObjectManager objs_;
-    Node<Node_Content> root_;
+    node_type root_;
   };
 
 }
