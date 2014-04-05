@@ -22,7 +22,7 @@
 #include <numeric>
 namespace pong
 {
-  bool insert(Node<Node_Content>& root, id_type id)
+  bool insert(Node<Node_Content>& root, id_type id) noexcept
   {
     // Logic error!
     if(!root.get_data()) return false;
@@ -151,12 +151,13 @@ namespace pong
 
   // Member implementations.
 
-  id_type Quadtree::insertObject(const Object& obj)
+  id_type Quadtree::insert(const Object& obj) noexcept
   {
     // Add to the object manager.
     id_type id = this->objs_.insert(obj);
     if(!id) return 0;
 
+    using pong::insert;
     if(!insert(this->root_, id))
     {
       this->objs_.erase(id);

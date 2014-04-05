@@ -25,8 +25,8 @@ TEST(Quadtree_Tests, ObjectMaxWorks)
   pong::Quadtree q({{0, 0}, 1000, 1000}, 1);
 
   using pong::Object; using pong::PhysicsType; using pong::id_type;
-  id_type good = q.insertObject(Object{{{5, 5}, 20, 20}, PhysicsType::Paddle});
-  id_type id = q.insertObject(Object{{{750, 750}, 20, 20}, PhysicsType::Ball});
+  id_type good = q.insertObject({{5, 5}, 20, 20}, PhysicsType::Paddle);
+  id_type id = q.insertObject({{750, 750}, 20, 20}, PhysicsType::Ball);
 
   // We should have a root with four children.
   //          .- TODO:Make a type alias in Quadtree.

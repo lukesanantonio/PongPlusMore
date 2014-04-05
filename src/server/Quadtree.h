@@ -44,13 +44,23 @@ namespace pong
     Quadtree(const Volume& v, int max_objs = 5)
              : root_(std::make_unique<Node_Content>(&objs_, max_objs, v)) {}
 
-    id_type insertObject(const Object& obj);
+    id_type insert(const Object& obj) noexcept;
+
+    inline id_type makePaddle(Volume vol) noexcept
+    { return insert(Object{vol, PhysicsType::Paddle}); }
+
+    inline id_type makeBall(Volume vol) noexcept
+    { return insert(Object{vol, PhysicsType::Ball}); }
+
+    inline id_type insertObject(Volume vol, PhysicsOptions opt) noexcept
+    { return insert(Object{vol, opt}); }
+
     void erase(id_type id);
 
     inline const Node<Node_Content>* root() const noexcept
     { return &this->root_; }
     inline const ObjectManager& obj_manager() const noexcept
-    { return &this->objs_; }
+    { return this->objs_; }
   private:
     bool insert_to_tree(id_type id);
     bool remove_from_tree(id_type id);
