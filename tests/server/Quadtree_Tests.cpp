@@ -29,9 +29,7 @@ TEST(Quadtree_Tests, ObjectMaxWorks)
   id_type id = q.insertObject({{750, 750}, 20, 20}, PhysicsType::Ball);
 
   // We should have a root with four children.
-  //          .- TODO:Make a type alias in Quadtree.
-  using pong::Node; using pong::Node_Content;
-  const Node<Node_Content>* root = q.root();
+  const pong::Quadtree::node_type* root = q.root();
   EXPECT_EQ(4, root->children().size());
 
   // Erase an element. :/
