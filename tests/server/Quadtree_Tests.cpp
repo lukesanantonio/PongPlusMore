@@ -22,14 +22,15 @@
 
 TEST(Quadtree_Tests, ObjectMaxWorks)
 {
-  pong::Quadtree q({{0, 0}, 1000, 1000}, 1);
+  using pong::Quadtree;
+  Quadtree q({{0, 0}, 1000, 1000}, 1);
 
   using pong::Object; using pong::PhysicsType; using pong::id_type;
   id_type good = q.insertObject({{5, 5}, 20, 20}, PhysicsType::Paddle);
   id_type id = q.insertObject({{750, 750}, 20, 20}, PhysicsType::Ball);
 
   // We should have a root with four children.
-  const pong::Quadtree::node_type* root = q.root();
+  const Quadtree::node_type* root = q.root();
   EXPECT_EQ(4, root->children().size());
 
   // Erase an element. :/
