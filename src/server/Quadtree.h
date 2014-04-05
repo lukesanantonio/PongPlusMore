@@ -63,10 +63,8 @@ namespace pong
     { return &this->root_; }
     inline const ObjectManager& obj_manager() const noexcept
     { return this->objs_; }
-  private:
-    bool insert_to_tree(id_type id);
-    bool remove_from_tree(id_type id);
 
+  private:
     ObjectManager objs_;
     node_type root_;
   };
