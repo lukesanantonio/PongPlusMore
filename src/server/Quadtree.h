@@ -49,6 +49,8 @@ namespace pong
 
     inline const Node<Node_Content>* root() const noexcept
     { return &this->root_; }
+    inline const ObjectManager& obj_manager() const noexcept
+    { return &this->objs_; }
   private:
     bool insert_to_tree(id_type id);
     bool remove_from_tree(id_type id);
