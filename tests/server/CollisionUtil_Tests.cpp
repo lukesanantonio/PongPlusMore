@@ -20,7 +20,7 @@
 #include "server/collision_util.h"
 #include "gtest/gtest.h"
 
-TEST(CollisionUtilTests, isIn)
+TEST(CollisionUtil_Tests, isIn)
 {
   using pong::isIn;
 
@@ -41,7 +41,7 @@ TEST(CollisionUtilTests, isIn)
   EXPECT_TRUE(isIn(-10.064, -5.064, -10.001));
 }
 // TODO Test volume collision with floating point values!
-TEST(CollisionUtilTests, isIntersecting)
+TEST(CollisionUtil_Tests, isIntersecting)
 {
   pong::Volume v1, v2;
   v1.pos = {500, 510};
@@ -57,7 +57,7 @@ TEST(CollisionUtilTests, isIntersecting)
   v1.width = 60;
   EXPECT_FALSE(isIntersecting(v1, v2));
 }
-TEST(CollisionUtilTests, findClosestSide)
+TEST(CollisionUtil_Tests, findClosestSide)
 {
   using pong::Volume; using pong::VolumeSide; using pong::findClosestSide;
   Volume vol1, vol2;
@@ -86,7 +86,7 @@ TEST(CollisionUtilTests, findClosestSide)
   vol1.height = 9;
   EXPECT_EQ(VolumeSide::None, findClosestSide(vol1, vol2));
 }
-TEST(CollisionUtilTests, isInsideVolume)
+TEST(CollisionUtil_Tests, isInsideVolume)
 {
   using pong::Volume; using pong::isInsideVolume;
   Volume bounds = {{0, 0}, 1000, 1000};
@@ -101,7 +101,7 @@ TEST(CollisionUtilTests, isInsideVolume)
   check.pos = {-1, 0};
   EXPECT_FALSE(isInsideVolume(bounds, check));
 }
-TEST(CollisionUtilTests, closestSideFromInside)
+TEST(CollisionUtil_Tests, closestSideFromInside)
 {
   using pong::Volume; using pong::closestSideFromInside;
   using pong::VolumeSide;
@@ -124,7 +124,7 @@ TEST(CollisionUtilTests, closestSideFromInside)
   check.height = 20;
   EXPECT_EQ(VolumeSide::Top, closestSideFromInside(bounds, check));
 }
-TEST(CollisionUtilTests, snapVolumeToVolume)
+TEST(CollisionUtil_Tests, snapVolumeToVolume)
 {
   using pong::Volume; using pong::snapVolumeToVolume; using pong::VolumeSide;
 
@@ -147,7 +147,7 @@ TEST(CollisionUtilTests, snapVolumeToVolume)
   expected.pos.x = 550;
   EXPECT_EQ(expected, v);
 }
-TEST(CollisionUtilTests, snapDiff)
+TEST(CollisionUtil_Tests, snapDiff)
 {
   using pong::Volume; using pong::VolumeSide; using pong::snapDiff;
   namespace math = pong::math;
@@ -161,7 +161,7 @@ TEST(CollisionUtilTests, snapDiff)
 
   // TODO add more tests.
 }
-TEST(CollisionUtilTests, find_volume_quads)
+TEST(CollisionUtil_Tests, find_volume_quads)
 {
   using pong::Volume; using pong::find_volume_quads;
 

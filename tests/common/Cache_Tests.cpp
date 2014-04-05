@@ -45,7 +45,7 @@ struct constant_cache_val
   }
 };
 
-class SimpleCacheTest : public ::testing::Test
+class SimpleCache_Tests : public ::testing::Test
 {
 protected:
   Cache<int> cache;
@@ -66,7 +66,7 @@ protected:
   }
 };
 
-TEST_F(SimpleCacheTest, Invalidate)
+TEST_F(SimpleCache_Tests, Invalidate)
 {
   // We haven't run that lambda have we, yet?
   EXPECT_EQ(0, generates);
@@ -81,14 +81,14 @@ TEST_F(SimpleCacheTest, Invalidate)
   // We should have generated that string twice now.
   EXPECT_EQ(2, generates);
 }
-TEST_F(SimpleCacheTest, Generate)
+TEST_F(SimpleCache_Tests, Generate)
 {
   cache.generate();
   cache.generate();
   cache.generate();
   EXPECT_EQ(3, generates);
 }
-TEST_F(SimpleCacheTest, Cache)
+TEST_F(SimpleCache_Tests, Cache)
 {
   cache.invalidate();
 
@@ -115,14 +115,14 @@ TEST_F(SimpleCacheTest, Cache)
 
 }
 
-class CacheWithDependencyTest : public ::testing::Test
+class CacheWithDependency_Tests : public ::testing::Test
 {
 protected:
   Cache<int, int> cache;
   using ptr_type = decltype(cache)::ptr_type;
 };
 
-TEST_F(CacheWithDependencyTest, DependenciesAreSet)
+TEST_F(CacheWithDependency_Tests, DependenciesAreSet)
 {
   // Set the int dependency.
   int dependency_expected = 5;
@@ -142,7 +142,7 @@ TEST_F(CacheWithDependencyTest, DependenciesAreSet)
   // The cache value should be equal to the int dependency.
   EXPECT_EQ(dependency_expected, *cache.cache());
 }
-TEST_F(CacheWithDependencyTest, DependenciesTransfer)
+TEST_F(CacheWithDependency_Tests, DependenciesTransfer)
 {
   // Set a dependency.
   int dependency_expected = 5;
@@ -168,7 +168,7 @@ TEST_F(CacheWithDependencyTest, DependenciesTransfer)
   // The dependency should have been moved.
   EXPECT_EQ(dependency_expected, *moved.cache());
 }
-TEST_F(CacheWithDependencyTest, SetDependencyUsesEquality)
+TEST_F(CacheWithDependency_Tests, SetDependencyUsesEquality)
 {
   int generates = 0;
   cache.gen_func(
@@ -194,7 +194,7 @@ TEST_F(CacheWithDependencyTest, SetDependencyUsesEquality)
 
 // This test makes sure that the dependencies can be changed within the
 // generation function.
-TEST_F(CacheWithDependencyTest, DependencyArgumentsChangePersists)
+TEST_F(CacheWithDependency_Tests, DependencyArgumentsChangePersists)
 {
   int expected = 1;
 

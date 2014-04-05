@@ -20,7 +20,7 @@
 #include "gtest/gtest.h"
 #include "common/util.h"
 
-TEST(UtilTests, VectorCast)
+TEST(Util_Tests, VectorCast)
 {
   std::vector<float> floats = { 5.135, 6.123, 7.23 };
 

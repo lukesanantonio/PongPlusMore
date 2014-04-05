@@ -17,26 +17,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "common/vector.h"
+#include "common/IDManager.hpp"
 #include "gtest/gtest.h"
-#include <cstdint>
 
-TEST(VectorTest, Equality)
+TEST(IDManager_Tests, UsesAllAvailableIDs)
 {
-  using pong::math::vector;
+  using pong::IDManager;
 
-  vector<uint16_t> vecui(5, 5);
-  EXPECT_EQ(vecui, vecui);
+  using id_type = int16_t;
 
-  vector<double> vecd(5.5, 5.5);
-  EXPECT_EQ(vecd, vecd);
-}
-TEST(VectorTest, Rotation)
-{
-  namespace pm = pong::math;
+  IDManager<id_type> counter;
 
-  auto calc = pm::rotate(pm::vector<int16_t>(1,0), 3.14159);
-  pm::vector<int16_t> expected(-1, 0);
+  for(id_type id = 0; ++id != 0;)
+  {
+    // We need to exhaust all the ids available.
+    counter.get();
+  }
 
-  EXPECT_EQ(expected, calc);
+  // We should have no ids left.
+  EXPECT_EQ(0, counter.get());
+
+  // Make room.
+  counter.remove(1);
+
+  // We should have at least room for one more.
+  EXPECT_NE(0, counter.get());
 }
