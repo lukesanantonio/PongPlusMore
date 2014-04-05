@@ -26,8 +26,8 @@ TEST(Quadtree_Tests, ObjectMaxWorks)
   Quadtree q({{0, 0}, 1000, 1000}, 1);
 
   using pong::Object; using pong::PhysicsType; using pong::id_type;
-  id_type good = q.insertObject({{5, 5}, 20, 20}, PhysicsType::Paddle);
-  id_type id = q.insertObject({{750, 750}, 20, 20}, PhysicsType::Ball);
+  id_type good = q.makePaddle({{5, 5}, 20, 20});
+  id_type id = q.makeBall({{750, 750}, 20, 20});
 
   // We should have a root with four children.
   const Quadtree::node_type* root = q.root();
