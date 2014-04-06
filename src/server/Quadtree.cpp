@@ -70,11 +70,10 @@ namespace pong
         //std::for_each(root.children().begin(), root.children().end(),
 
         auto children = root.children();
-        std::for_each(children.begin(), children.end(),
-        [&](Node<Node_Content>* n)
+        for(Node<Node_Content>* n : children)
         {
           has_been_added = insert(*n, id) || has_been_added;
-        });
+        };
         return has_been_added;
       }
     }
