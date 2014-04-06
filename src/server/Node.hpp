@@ -95,6 +95,11 @@ namespace pong
     inline Node_Iterator<false, T, Deleter> end() noexcept
     { return Node_Iterator<false, T, Deleter>(this, nullptr); }
 
+    inline Node_Iterator<true, T, Deleter> begin() const noexcept
+    { return this->cbegin(); }
+    inline Node_Iterator<true, T, Deleter> end() const noexcept
+    { return this->cend(); }
+
     inline Node_Iterator<true, T, Deleter> cbegin() const noexcept
     { return Node_Iterator<true, T, Deleter>(this); }
     inline Node_Iterator<true, T, Deleter> cend() const noexcept
