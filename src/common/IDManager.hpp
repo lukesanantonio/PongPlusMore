@@ -26,7 +26,7 @@ namespace pong
   {
     using queue_type = std::queue<id_type>;
 
-    id_type count;
+    id_type count = 0;
     queue_type removed_id_queue;
 
     inline id_type get() noexcept;
