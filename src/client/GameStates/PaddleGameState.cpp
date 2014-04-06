@@ -114,6 +114,36 @@ namespace pong
     this->server_.step();
   }
 
+  void render_box(SDL_Renderer* renderer, const Volume& v)
+  {
+    constexpr int num_points = 5;
+    SDL_Point points[num_points];
+
+    auto from_point = [](math::vector<double> pos)
+    {
+      return SDL_Point{static_cast<int>(pos.x),
+                       static_cast<int>(pos.y)};
+    };
+
+    auto pos = v.pos;
+
+    points[0] = from_point(pos);
+
+    pos.y = v.pos.y + v.height - 1;
+    points[1] = from_point(pos);
+
+    pos.x = v.pos.x + v.width - 1;
+    points[2] = from_point(pos);
+
+    pos.y = v.pos.y;
+    points[3] = from_point(pos);
+
+    pos = v.pos;
+    points[4] = from_point(pos);
+
+    SDL_RenderDrawLines(renderer, points, num_points);
+  }
+
   void PaddleGameState::render(SDL_Renderer* renderer) const
   {
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
@@ -121,5 +151,16 @@ namespace pong
     {
       pong::render(renderer, this->server_.getObject(id).getVolume());
     }
-}
+
+    std::vector<Volume> vols_to_render;
+
+    for(const Quadtree::node_type& n : *this->server_.quadtree().root())
+    {
+      vols_to_render.push_back(n.get_data()->v);
+    }
+    for(const Volume& v : vols_to_render)
+    {
+      render_box(renderer, v);
+    }
+  }
 }
