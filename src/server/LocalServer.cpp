@@ -24,7 +24,7 @@ namespace pong
   void LocalServer::setDestination(id_type id, math::vector<double> dest)
   {
     // Might throw an exception, fine let it throw!
-    Object obj = this->objs_.findObject(id);
+    Object obj = this->quadtree_.findObject(id);
     PhysicsOptions& physobj = obj.getPhysicsOptions();
     if(physobj.type != PhysicsType::Paddle)
     {
@@ -33,11 +33,11 @@ namespace pong
     }
     physobj.paddle_options.destination = dest;
 
-    this->objs_.setObject(id, obj);
+    this->quadtree_.setObject(id, obj);
   }
   void LocalServer::setVelocity(id_type id, math::vector<double> vel)
   {
-    Object obj = this->objs_.findObject(id);
+    Object obj = this->quadtree_.findObject(id);
     PhysicsOptions& physopt = obj.getPhysicsOptions();
     if(physopt.type != PhysicsType::Ball)
     {
@@ -46,28 +46,42 @@ namespace pong
     }
     physopt.ball_options.velocity = vel;
 
-    this->objs_.setObject(id, obj);
+    this->quadtree_.setObject(id, obj);
   }
 
   Object LocalServer::getObject(id_type id) const
   {
-    return this->objs_.findObject(id);
+    return this->quadtree_.findObject(id);
   }
   std::vector<id_type> LocalServer::objects() const noexcept
   {
-    std::vector<id_type> ids(this->objs_.size());
-
-    using std::begin; using std::end;
-    std::transform(begin(this->objs_), end(this->objs_), begin(ids),
-    [](const auto& pair) -> id_type
-    {
-      return pair.first;
-    });
-
-    return ids;
+    return this->quadtree_.obj_manager().ids();
   }
 
   void LocalServer::step() noexcept
   {
+    for(id_type id : this->quadtree_.obj_manager().ids())
+    {
+      // For every object that needs to move.
+      Object obj = this->quadtree_.findObject(id);
+
+      switch(obj.getPhysicsOptions().type)
+      {
+        case PhysicsType::Paddle:
+        {
+          obj.getVolume().pos =
+                           obj.getPhysicsOptions().paddle_options.destination;
+          break;
+        }
+        case PhysicsType::Ball:
+        {
+          obj.getVolume().pos += obj.getPhysicsOptions().ball_options.velocity;
+          break;
+        }
+        default: break;
+      };
+
+      this->quadtree_.setObject(id, obj);
+    }
   }
 }

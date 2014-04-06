@@ -102,7 +102,10 @@ namespace pong
     this->singleplayer_.enabled(true);
     this->singleplayer_.onClick([&]()
     {
-      game.game_state = std::make_shared<PaddleGameState>();
+      game.game_state =
+          std::make_shared<PaddleGameState>(Volume{{},
+                                            static_cast<double>(game.width),
+                                            static_cast<double>(game.height)});
     });
 
     this->quit_.enabled(true);

@@ -19,12 +19,12 @@
  */
 #pragma once
 #include "Server.h"
-#include "ObjectManager.h"
+#include "Quadtree.h"
 namespace pong
 {
   struct LocalServer : public Server
   {
-    LocalServer() noexcept = default;
+    LocalServer(Volume v) noexcept : quadtree_(v, 3) {}
     ~LocalServer() noexcept = default;
 
     inline id_type createPaddle(const Volume& v) noexcept;
@@ -36,17 +36,19 @@ namespace pong
     Object getObject(id_type) const override;
     std::vector<id_type> objects() const noexcept override;
 
+    const Quadtree& quadtree() const noexcept { return this->quadtree_; }
+
     void step() noexcept override;
   private:
-    ObjectManager objs_;
+    Quadtree quadtree_;
   };
 
   inline id_type LocalServer::createPaddle(const Volume& v) noexcept
   {
-    return this->objs_.makePaddle(v);
+    return this->quadtree_.makePaddle(v);
   }
   inline id_type LocalServer::createBall(const Volume& v) noexcept
   {
-    return this->objs_.makeBall(v);
+    return this->quadtree_.makeBall(v);
   }
 }
