@@ -29,11 +29,11 @@ TEST(Quadtree_Tests, ErasingWorks)
   const ObjectManager& objs = q.obj_manager();
 
   using pong::Volume;
-  q.makePaddle(Volume{});
-  q.makePaddle(Volume{});
-  q.makePaddle(Volume{});
-  q.makeBall(Volume{});
-  q.makeBall(Volume{});
+  q.makeBall(Volume{{0,0}, 1, 1});
+  q.makeBall(Volume{{10,10}, 1, 1});
+  q.makeBall(Volume{{20,20}, 1, 1});
+  q.makeBall(Volume{{30,30}, 1, 1});
+  q.makeBall(Volume{{40,40}, 1, 1});
 
   EXPECT_EQ(5, objs.size());
   q.erase(objs.begin());

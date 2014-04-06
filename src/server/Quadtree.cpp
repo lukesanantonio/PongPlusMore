@@ -55,6 +55,10 @@ namespace pong
                                                          quads[2]));
           root.push_child(std::make_unique<Node_Content>(objs, max_objs,
                                                          quads[3]));
+
+          std::vector<id_type> ids = root.get_data()->ids;
+          root.get_data()->ids.clear();
+          for(id_type id : ids) { insert(root, id); }
         }
       }
       // Parent
