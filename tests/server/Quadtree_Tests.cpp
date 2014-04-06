@@ -69,3 +69,34 @@ TEST(Quadtree_Tests, ObjectMaxWorks)
   // the zero indice, *should* work.
   EXPECT_EQ(good, root->get_data()->ids[0]);
 }
+TEST(Quadtree_Tests, SetObjectWorks)
+{
+  using pong::Quadtree;
+  Quadtree q({{0, 0}, 1000, 1000}, 1);
+
+  // Insert some ball somewhere.
+  q.makeBall({{50,50}, 50, 50});
+
+  // Insert a ball somewhere.
+  using pong::id_type;
+  id_type ball = q.makeBall({{750,750}, 50, 50});
+
+  // Move that ball somewhere relevant. A place that will cause some
+  // side-effect.
+  using pong::Object; using pong::Volume; using pong::PhysicsType;
+  q.setObject(ball, Object{{{450,450}, 20, 20}, PhysicsType::Ball});
+
+  // We should have a split.
+  ASSERT_EQ(4, q.root()->children().size());
+
+  const Quadtree::node_type* top_left_node = q.root()->children()[0];
+  // But also another split
+  EXPECT_EQ(4, top_left_node->children().size());
+
+  // We should also find the `ball` object in the first child's root.
+  const std::vector<id_type>& ids =
+                                 top_left_node->children()[3]->get_data()->ids;
+
+  using std::begin; using std::end;
+  EXPECT_NE(end(ids), std::find(begin(ids), end(ids), ball));
+}

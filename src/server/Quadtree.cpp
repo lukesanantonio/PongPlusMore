@@ -199,4 +199,23 @@ namespace pong
     // Remove the object from the object manager.
     return this->objs_.erase(id);
   }
+
+  const Object& Quadtree::findObject(id_type id) const
+  {
+    // TODO: could this be more efficient searching for the id taking into
+    // account its volume?
+    return this->objs_.findObject(id);
+  }
+  void Quadtree::setObject(id_type id, const Object& obj)
+  {
+    // Don't remove it from the object manager, just the quadtree.
+    remove(this->root_, id);
+
+    // Now change it in the object manager.
+    this->objs_.setObject(id, obj);
+
+    // Now add it back to our quadtree.
+    using pong::insert;
+    insert(this->root_, id);
+  }
 }

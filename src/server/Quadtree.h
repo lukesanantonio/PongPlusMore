@@ -46,6 +46,9 @@ namespace pong
     Quadtree(const Volume& v, int max_objs = 5)
              : root_(std::make_unique<Node_Content>(&objs_, max_objs, v)) {}
 
+    const Object& findObject(id_type) const;
+    void setObject(id_type, const Object&);
+
     id_type insert(const Object& obj) noexcept;
 
     inline id_type makePaddle(Volume vol) noexcept
