@@ -46,6 +46,11 @@ namespace pong
       {
         switch(event.key.keysym.scancode)
         {
+          case SDL_SCANCODE_E:
+          {
+            this->render_quadtree_ = !this->render_quadtree_;
+            break;
+          }
           case SDL_SCANCODE_SPACE:
           {
             this->ball_ = this->server_.createBall({{500,500}, 25, 25});
@@ -152,15 +157,18 @@ namespace pong
       pong::render(renderer, this->server_.getObject(id).getVolume());
     }
 
-    std::vector<Volume> vols_to_render;
+    if(this->render_quadtree_)
+    {
+      std::vector<Volume> vols_to_render;
 
-    for(const Quadtree::node_type& n : *this->server_.quadtree().root())
-    {
-      vols_to_render.push_back(n.get_data()->v);
-    }
-    for(const Volume& v : vols_to_render)
-    {
-      render_box(renderer, v);
+      for(const Quadtree::node_type& n : *this->server_.quadtree().root())
+      {
+        vols_to_render.push_back(n.get_data()->v);
+      }
+      for(const Volume& v : vols_to_render)
+      {
+        render_box(renderer, v);
+      }
     }
   }
 }

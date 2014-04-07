@@ -34,5 +34,6 @@ namespace pong
     id_type top_ = 0;
     id_type bottom_ = 0;
     id_type ball_ = 0;
+    bool render_quadtree_ = false;
   };
 }
