@@ -31,54 +31,45 @@ namespace pong
   template <bool is_const, typename NodeT, typename NodeDeleter>
   struct Node_Iterator
   {
-    using difference_type = std::size_t;
+    using iterator_category = std::bidirectional_iterator_tag;
     using value_type = Node<NodeT, NodeDeleter>;
-    using pointer_type = typename std::conditional<is_const,
-                                         const value_type*, value_type*>::type;
-    using reference_type = typename std::conditional<is_const,
-                                         const value_type&, value_type&>::type;
-    using category_type = std::bidirectional_iterator_tag;
+    using difference_type = std::size_t;
+    using pointer = std::conditional_t<is_const,
+                                       const value_type*, value_type*>;
+    using reference = std::conditional_t<is_const,
+                                         const value_type&, value_type&>;
 
-    explicit Node_Iterator(pointer_type r = nullptr) noexcept
+    explicit Node_Iterator(pointer r = nullptr) noexcept
                       : root_(r), current_(find_first_child(r)) {}
-    explicit Node_Iterator(pointer_type r, pointer_type current) noexcept
+
+    explicit Node_Iterator(pointer r, pointer current) noexcept
                       : root_(r), current_(current) {}
+
+    template <bool param_const>
+    Node_Iterator(
+               const Node_Iterator<param_const, NodeT, NodeDeleter>&) noexcept;
 
     Node_Iterator& operator++() noexcept;
     Node_Iterator operator++(int) noexcept;
     Node_Iterator& operator--() noexcept;
     Node_Iterator operator--(int) noexcept;
 
-    reference_type operator*() noexcept;
-    pointer_type operator->() noexcept;
-
-    inline bool operator==(const Node_Iterator&) const noexcept;
-    inline bool
-    operator==(const pointer_type) const noexcept;
-    inline bool operator!=(const Node_Iterator&) const noexcept;
-    inline bool
-    operator!=(const pointer_type) const noexcept;
+    reference operator*() const noexcept;
+    pointer operator->() const noexcept;
   private:
-    pointer_type root_;
-    pointer_type current_;
+    pointer root_;
+    pointer current_;
   };
 
+  /*!
+   * This function will only not go from const to nonconst but it will work
+   * the other way.
+   */
   template <bool is_const, typename NT, class ND>
-  inline bool operator==(const typename Node_Iterator<is_const, NT, ND>::pointer_type a,
-                         const Node_Iterator<is_const, NT, ND>& i) noexcept
-  {
-    // Just change the order of the arguments.
-    return i.operator==(a);
-  }
-
-  template <bool is_const, typename NT, class ND>
-  inline bool operator!=(const typename Node_Iterator<is_const, NT, ND>::pointer_type a,
-                         const Node_Iterator<is_const, NT, ND>& i) noexcept
-  {
-    // Just change the order of the arguments.
-    return i != a;
-  }
-
+  template <bool param_const>
+  Node_Iterator<is_const, NT, ND>::Node_Iterator(
+                          const Node_Iterator<param_const, NT, ND>& n) noexcept
+                          : root_(n.root_), current_(n.current_) {}
 
   template <bool is_const, typename NT, class ND>
   Node_Iterator<is_const, NT, ND>&
@@ -159,39 +150,27 @@ namespace pong
     return t;
   }
 
-  template <bool is_const, typename NT, class ND>
-  auto Node_Iterator<is_const, NT, ND>::operator*() noexcept -> reference_type
+  template <bool is_const, typename NT, class ND> auto
+  Node_Iterator<is_const, NT, ND>::operator*() const noexcept -> reference
   {
     return *this->current_;
   }
-  template <bool is_const, typename NT, class ND>
-  auto Node_Iterator<is_const, NT, ND>::operator->() noexcept -> pointer_type
+  template <bool is_const, typename NT, class ND> auto
+  Node_Iterator<is_const, NT, ND>::operator->() const noexcept -> pointer
   {
     return this->current_;
   }
 
-  template <bool is_const, typename NT, class ND>
-  bool Node_Iterator<is_const, NT, ND>::operator==
-                      (const Node_Iterator<is_const, NT, ND>& i) const noexcept
+  template <bool is_const1, bool is_const2, typename NT, class ND>
+  bool operator==(const Node_Iterator<is_const1, NT, ND>& i1,
+                  const Node_Iterator<is_const2, NT, ND>& i2) noexcept
   {
-    return this->current_ == i.current_;
+    return &(*i1) == &(*i2);
   }
-  template <bool is_const, typename NT, class ND>
-  bool Node_Iterator<is_const, NT, ND>::operator==
-                                          (const pointer_type p) const noexcept
+  template <bool is_const1, bool is_const2, typename NT, class ND>
+  bool operator!=(const Node_Iterator<is_const1, NT, ND>& i1,
+                  const Node_Iterator<is_const2, NT, ND>& i2) noexcept
   {
-    return this->current_ == p;
-  }
-  template <bool is_const, typename NT, class ND>
-  bool Node_Iterator<is_const, NT, ND>::operator!=
-                      (const Node_Iterator<is_const, NT, ND>& i) const noexcept
-  {
-    return !(*this == i);
-  }
-  template <bool is_const, typename NT, class ND>
-  bool Node_Iterator<is_const, NT, ND>::operator!=
-                                          (const pointer_type p) const noexcept
-  {
-    return !(*this == p);
+    return !(i1 == i2);
   }
 }

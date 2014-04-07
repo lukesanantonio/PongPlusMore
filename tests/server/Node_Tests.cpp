@@ -54,14 +54,26 @@ TEST(Node_Tests, NodeIteratorWorks)
   expected_path.push_back(first_child->push_child());
   expected_path.push_back(root.push_child());
 
+  // Test mutable iterator.
   std::vector<node_type*> actual_path;
-
-  for(node_type& n : root)
+  for(auto iter = root.begin(); iter != root.end(); ++iter)
   {
-    actual_path.push_back(&n);
+    actual_path.push_back(&(*iter));
   }
-
   EXPECT_EQ(expected_path, actual_path);
+
+  // Test immutable iterator.
+  std::vector<const node_type*> actual_path_const;
+  for(auto iter = root.cbegin(); iter != root.cend(); ++iter)
+  {
+    actual_path_const.push_back(&(*iter));
+  }
+  using pong::vector_cast;
+  EXPECT_EQ(vector_cast<const node_type*>(expected_path), actual_path_const);
+
+  // Test conversion from mutable iterator to immutable iterator.
+  // This is more of a compile test than a runtime test.
+  EXPECT_EQ(root.cbegin(), root.begin());
 }
 TEST(Node_Tests, NodeIteratorIsEqualToNodePointer)
 {
@@ -72,8 +84,8 @@ TEST(Node_Tests, NodeIteratorIsEqualToNodePointer)
   node_type* expected = root.push_child();
   node_type* next = root.push_child();
 
-  EXPECT_EQ(expected, root.begin());
-  EXPECT_EQ(next, ++root.begin());
+  EXPECT_EQ(expected, &(*root.begin()));
+  EXPECT_EQ(next, &(*++root.begin()));
 }
 TEST(Node_Tests, NodeIteratorPastTheEndWorks)
 {
@@ -89,7 +101,7 @@ TEST(Node_Tests, NodeIteratorPastTheEndWorks)
   node_type* expected = r.push_child();
 
   auto iter = r.cend(); --iter;
-  EXPECT_EQ(expected, iter);
+  EXPECT_EQ(expected, &(*iter));
 }
 TEST(Node_Tests, ChildRemovalWorks)
 {
