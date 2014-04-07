@@ -36,7 +36,8 @@ namespace pong
       if(root.children().empty())
       {
         // We have room?!
-        if(root.get_data()->ids.size() + 1 <= max_objs)
+        if(root.get_data()->ids.size() + 1 <= max_objs ||
+           root.get_data()->current_level + 1 > root.get_data()->max_level)
         {
           root.get_data()->ids.push_back(id);
           return true;
@@ -47,14 +48,26 @@ namespace pong
           auto quads = find_volume_quads(root.get_data()->v);
           auto& objs = root.get_data()->objs;
 
-          root.push_child(std::make_unique<Node_Content>(objs, max_objs,
-                                                         quads[0]));
-          root.push_child(std::make_unique<Node_Content>(objs, max_objs,
-                                                         quads[1]));
-          root.push_child(std::make_unique<Node_Content>(objs, max_objs,
-                                                         quads[2]));
-          root.push_child(std::make_unique<Node_Content>(objs, max_objs,
-                                                         quads[3]));
+          root.push_child(std::make_unique<Node_Content>(
+                                            objs, max_objs,
+                                            root.get_data()->current_level + 1,
+                                            root.get_data()->max_level,
+                                            quads[0]));
+          root.push_child(std::make_unique<Node_Content>(
+                                            objs, max_objs,
+                                            root.get_data()->current_level + 1,
+                                            root.get_data()->max_level,
+                                            quads[1]));
+          root.push_child(std::make_unique<Node_Content>(
+                                            objs, max_objs,
+                                            root.get_data()->current_level + 1,
+                                            root.get_data()->max_level,
+                                            quads[2]));
+          root.push_child(std::make_unique<Node_Content>(
+                                            objs, max_objs,
+                                            root.get_data()->current_level + 1,
+                                            root.get_data()->max_level,
+                                            quads[3]));
 
           std::vector<id_type> ids = root.get_data()->ids;
           root.get_data()->ids.clear();

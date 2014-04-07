@@ -31,12 +31,17 @@ namespace pong
   {
     Node_Content(ObjectManager* const objs,
                  int max_objs,
+                 int level,
+                 int max_level,
                  const Volume& v = Volume(),
                  const std::vector<id_type>& ids = std::vector<id_type>())
-                 : objs(objs), max_objs(max_objs), v(v), ids(ids) {}
+                 : objs(objs), max_objs(max_objs), max_level(max_level),
+                   current_level(level), v(v), ids(ids) {}
     ObjectManager *const objs;
     Volume v;
     int max_objs;
+    int current_level;
+    int max_level;
     std::vector<id_type> ids;
   };
   struct Quadtree
@@ -44,7 +49,8 @@ namespace pong
     using node_type = Node<Node_Content>;
 
     Quadtree(const Volume& v, int max_objs = 5)
-             : root_(std::make_unique<Node_Content>(&objs_, max_objs, v)) {}
+             : root_(std::make_unique<Node_Content>(&objs_, max_objs,
+                                                    1, 4,  v)) {}
 
     const Object& findObject(id_type) const;
     void setObject(id_type, const Object&);
