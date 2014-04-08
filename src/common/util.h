@@ -68,4 +68,14 @@ namespace pong
     return detail::vector_cast<false, Dest, Source>(v,
     [](auto& c) { return c; });
   }
+
+  /*!
+   * \brief Converts a vector of some smart pointer to a vector of just those
+   * pointers.
+   */
+  template <typename Dest, class SP>
+  std::vector<Dest> get_data_vector(const std::vector<SP>& v) noexcept
+  {
+    return vector_cast<Dest>(v, [](const SP& p) { return p.get(); });
+  }
 }

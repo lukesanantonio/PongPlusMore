@@ -36,3 +36,25 @@ TEST(Util_Tests, VectorCast)
   std::vector<std::string> expected_strings{ "5", "6", "7" };
   EXPECT_EQ(expected_strings, strings);
 }
+TEST(Util_Tests, GetDataVector)
+{
+  using pong::get_data_vector;
+
+  std::vector<std::unique_ptr<int> > ints;
+  for(int i = 0; i < 10; ++i)
+  {
+    ints.push_back(std::make_unique<int>(i));
+  }
+
+  std::vector<int*> result = get_data_vector<int*>(ints);
+  std::vector<const int*> const_result = get_data_vector<const int*>(ints);
+
+  auto compare = [](const std::unique_ptr<int>& p, const int* pi)
+  { return p.get() == pi; };
+
+  using std::begin;
+  EXPECT_TRUE(std::equal(begin(ints), end(ints),
+                         begin(result), compare));
+  EXPECT_TRUE(std::equal(begin(ints), end(ints),
+                         begin(const_result), compare));
+}
