@@ -47,23 +47,23 @@ namespace pong
   }
 
   template <typename Dest, typename Source, typename F>
-  std::vector<Dest> vector_cast(const std::vector<Source>& v, F f)
+  inline std::vector<Dest> vector_cast(const std::vector<Source>& v, F f)
   {
     return detail::vector_cast<true, Dest, Source>(v, f);
   }
   template <typename Dest, typename Source>
-  std::vector<Dest> vector_cast(const std::vector<Source>& v)
+  inline std::vector<Dest> vector_cast(const std::vector<Source>& v)
   {
     return detail::vector_cast<true, Dest, Source>(v,
     [](const auto& c) { return c; });
   }
   template <typename Dest, typename Source, typename F>
-  std::vector<Dest> vector_cast(std::vector<Source>& v, F f)
+  inline std::vector<Dest> vector_cast(std::vector<Source>& v, F f)
   {
     return detail::vector_cast<false, Dest, Source>(v, f);
   }
   template <typename Dest, typename Source>
-  std::vector<Dest> vector_cast(std::vector<Source>& v)
+  inline std::vector<Dest> vector_cast(std::vector<Source>& v)
   {
     return detail::vector_cast<false, Dest, Source>(v,
     [](auto& c) { return c; });
