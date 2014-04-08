@@ -21,6 +21,7 @@
 #include <vector>
 #include "common/util.h"
 #include "Node_Iterator.hpp"
+#include "common/Cache.h"
 #pragma once
 namespace pong
 {
@@ -35,7 +36,21 @@ namespace pong
              std::unique_ptr<T, Deleter> data =
                                         std::unique_ptr<T, Deleter>()) noexcept
              : data_(std::move(data)), children_(), parent_(parent),
-               next_sibling_(next_sibling), prev_sibling_(prev_sibling) {}
+               next_sibling_(next_sibling), prev_sibling_(prev_sibling)
+    {
+      this->children_cache_.gen_func(
+      [&](const auto& p)
+      {
+        return std::make_unique<std::vector<Node*> >
+                                     (get_data_vector<Node*>(this->children_));
+      });
+      this->const_children_cache_.gen_func(
+      [&](const auto& p)
+      {
+        return std::make_unique<std::vector<const Node*> >
+                               (get_data_vector<const Node*>(this->children_));
+      });
+    }
 
   public:
     explicit Node(std::unique_ptr<T, Deleter> data =
@@ -50,17 +65,13 @@ namespace pong
     Node* push_child() noexcept;
     Node* push_child(std::unique_ptr<T, Deleter> data) noexcept;
 
-    inline std::vector<Node*> children() noexcept
+    inline const std::vector<Node*>& children() noexcept
     {
-      return vector_cast<Node*>(this->children_,
-      //[] (auto& e) { return e.get(); });
-      std::bind(std::mem_fn(&std::unique_ptr<Node>::get),
-                std::placeholders::_1));
+      return *this->children_cache_.cache();
     }
-    inline std::vector<const Node*> children() const noexcept
+    inline const std::vector<const Node*>& children() const noexcept
     {
-      return vector_cast<const Node*>(this->children_,
-      [] (const auto& e) -> const Node* { return e.get(); });
+      return *this->const_children_cache_.cache();
     }
 
     inline bool remove_child(Node* n) noexcept
@@ -78,6 +89,10 @@ namespace pong
       }
 
       this->children_.erase(iter);
+      // This is bad, we have to invalidate each cache we have when they just
+      // use the same thing.
+      this->children_cache_.invalidate();
+      this->const_children_cache_.invalidate();
       return true;
     }
 
@@ -107,6 +122,9 @@ namespace pong
   private:
     std::unique_ptr<T, Deleter> data_;
     std::vector<std::unique_ptr<Node> > children_;
+
+    mutable Cache<std::vector<Node*> > children_cache_;
+    mutable Cache<std::vector<const Node*> > const_children_cache_;
 
     Node* parent_;
     Node* next_sibling_;
@@ -171,6 +189,11 @@ namespace pong
     {
       prev_sibling->next_sibling(this->children_.back().get());
     }
+
+    // This is bad, we have to invalidate each cache we have when they just
+    // use the same thing.
+    this->children_cache_.invalidate();
+    this->const_children_cache_.invalidate();
     return this->children_.back().get();
   }
 }
