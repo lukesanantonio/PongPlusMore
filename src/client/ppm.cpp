@@ -56,7 +56,9 @@ int main(int argc, char** argv)
   game.game_state.reset(new pong::MenuGameState(game));
 
   pong::Timer<> update;
+  pong::Timer<> fps;
   int excess = 0;
+  int frames = 0;
   while(!game.exiting)
   {
     // Make a link to the game state so it doesn't all of a sudden become a
@@ -80,6 +82,7 @@ int main(int argc, char** argv)
     // our simulation is catching up adequately.
     if(dt >= 4)
     {
+      ++frames;
       update.reset();
 
       for(int i = 0; i < sims; i++)
@@ -95,6 +98,12 @@ int main(int argc, char** argv)
 
       game_state->render(renderer);
       SDL_RenderPresent(renderer);
+    }
+    if(fps.hasBeen(std::chrono::seconds(1)))
+    {
+      std::cout << "fps: " << frames << std::endl;
+      frames = 0;
+      fps.reset();
     }
   }
 
