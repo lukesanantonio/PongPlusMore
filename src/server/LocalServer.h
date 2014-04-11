@@ -24,7 +24,7 @@ namespace pong
 {
   struct LocalServer : public Server
   {
-    LocalServer(Volume v) noexcept : quadtree_(v, 3) {}
+    LocalServer(Volume v) noexcept : quadtree_(v, 3, 5) {}
     ~LocalServer() noexcept = default;
 
     inline id_type createPaddle(const Volume& v) noexcept;
