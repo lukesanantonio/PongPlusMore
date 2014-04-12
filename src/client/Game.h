@@ -26,6 +26,9 @@ namespace pong
 {
   struct Game
   {
+    Game() = default;
+    Game(const Game&) = delete;
+
     std::unique_ptr<FontRenderer> font_renderer;
     int width, height;
     std::shared_ptr<GameState> game_state;
