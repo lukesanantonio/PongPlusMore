@@ -60,15 +60,13 @@ namespace pong
             int x, y;
             SDL_GetMouseState(&x, &y);
 
-            // See a generator and set up a distribution.
-            std::minstd_rand prng(x ^ y);
-            std::uniform_int_distribution<> dist(0, 360);
+            math::vector<double> click(x, y);
 
-            // Rotate the velocity by a certain amount.
-            math::vector<double> vel = {0, -.25};
-            vel = rotate(vel, math::to_radians(dist(prng)));
+            math::vector<double> vel =
+                                     click - math::vector<double>{500.0,500.0};
+            vel = math::normalize(vel) * .25;
 
-            this->server_.setVelocity(this->ball_,vel);
+            this->server_.setVelocity(this->ball_, vel);
             break;
           }
           case SDL_SCANCODE_Q:
