@@ -144,14 +144,15 @@ namespace pong
       // We, the root, can become a leaf again!
       auto& ids = root.get_data()->ids;
 
+      // For every leaf child in root.
       for(auto& child : root)
       {
         // Go through the ids of every child.
         auto& child_ids = child.get_data()->ids;
-        for(auto iter = begin(child_ids); iter != end(child_ids); ++iter)
+        for(id_type id : child_ids)
         {
           // Add them to our big list of ids.
-          ids.push_back(*iter);
+          ids.push_back(id);
         }
       }
 
