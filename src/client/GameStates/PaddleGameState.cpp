@@ -23,7 +23,7 @@
 #include "../render.h"
 #include "common/crash.hpp"
 #include "server/collision_util.h"
-#include <json/json.h>
+#include "common/serialize.h"
 namespace pong
 {
   void PaddleGameState::handleEvent(const SDL_Event& event)

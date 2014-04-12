@@ -20,7 +20,6 @@
 #pragma once
 #include <unordered_map>
 #include <queue>
-#include <json/json.h>
 #include "common/IDManager.hpp"
 #include "Object.h"
 
@@ -69,8 +68,6 @@ namespace pong
     map_type objs_;
     IDManager<id_type> id_counter_;
   };
-
-  Json::Value dumpJSON(const ObjectManager& objs) noexcept;
 
   /*!
    * \brief Adds a new Object to the pool with 'Paddle' rules. \sa PhysicsType

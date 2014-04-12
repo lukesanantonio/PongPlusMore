@@ -16,10 +16,30 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * \file serialize.hpp
+ * \brief All the functions relating to serialization of objects to JSON.
  */
-#include "Object.h"
+#include "serialize.h"
+#include "Volume.h"
+#include "server/Object.h"
+#include "server/ObjectManager.h"
+#include "server/Server.h"
+#include <boost/lexical_cast.hpp>
 namespace pong
 {
+  Json::Value dumpJSON(const Volume& v) noexcept
+  {
+    Json::Value root(Json::objectValue);
+    Json::Value pos = dumpJSON(v.pos);
+
+    root["Position"] = pos;
+    root["Width"] = v.width;
+    root["Height"] = v.height;
+
+    return root;
+  }
+
   Json::Value dumpJSON(const PhysicsOptions& phys) noexcept
   {
     Json::Value root(Json::objectValue);
@@ -46,5 +66,35 @@ namespace pong
     root["PhysicsOptions"] = phys;
 
     return root;
+  }
+
+  Json::Value dumpJSON(const ObjectManager& objs) noexcept
+  {
+    Json::Value ar(Json::arrayValue);
+
+    for(const auto& pair : objs)
+    {
+      Json::Value object = dumpJSON(std::get<1>(pair));
+      object["Id"] = std::get<0>(pair);
+
+      ar.append(object);
+    }
+
+    return ar;
+  }
+  Json::Value dumpJSON(const Node_Content& q) noexcept
+  {
+    Json::Value v(Json::objectValue);
+
+    v["ObjectManager"] = boost::lexical_cast<std::string>(q.objs);
+    v["Volume"] = dumpJSON(q.v);
+    v["Max Objects"] = q.max_objs;
+    v["Max Depth"] = q.max_level;
+    v["Current Depth"] = q.current_level;
+
+    using std::begin; using std::end;
+    v["Ids"] = dumpJSON(begin(q.ids), end(q.ids));
+
+    return v;
   }
 }

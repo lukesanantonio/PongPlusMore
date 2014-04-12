@@ -19,7 +19,6 @@
  */
 #pragma once
 #include "common/Volume.h"
-#include <json/json.h>
 namespace pong
 {
   enum class PhysicsType
@@ -93,9 +92,6 @@ namespace pong
     Volume vol_;
     PhysicsOptions physics_options_;
   };
-
-  Json::Value dumpJSON(const PhysicsOptions&) noexcept;
-  Json::Value dumpJSON(const Object&) noexcept;
 
   inline bool isPaddle(const Object& obj) noexcept
   {

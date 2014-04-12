@@ -19,7 +19,6 @@
  */
 #pragma once
 #include "common/vector.h"
-#include <json/json.h>
 namespace pong
 {
   struct Volume
@@ -36,5 +35,4 @@ namespace pong
   {
     return v1.pos == v2.pos && v1.width == v2.width && v1.height == v2.height;
   }
-  Json::Value dumpJSON(const Volume&) noexcept;
 }

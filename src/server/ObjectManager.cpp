@@ -52,17 +52,4 @@ namespace pong
       }
     }
   }
-  Json::Value dumpJSON(const ObjectManager& objs) noexcept
-  {
-    Json::Value ar(Json::arrayValue);
-
-    for(const auto& pair : objs)
-    {
-      Json::Value object = dumpJSON(std::get<1>(pair));
-
-      ar.append(object);
-    }
-
-    return ar;
-  }
 }

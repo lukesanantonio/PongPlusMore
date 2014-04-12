@@ -20,7 +20,6 @@
 #pragma once
 #include <cstdint>
 #include <vector>
-#include <json/json.h>
 #include "Object.h"
 #include "ObjectManager.h"
 namespace pong
@@ -59,9 +58,4 @@ namespace pong
 
     virtual void step() noexcept = 0;
   };
-
-  inline Json::Value dumpJSON(const Server& s) noexcept
-  {
-    return dumpJSON(ObjectManager(s));
-  }
 }
