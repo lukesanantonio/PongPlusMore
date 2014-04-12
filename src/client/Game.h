@@ -22,6 +22,7 @@
 #include <memory>
 #include "render_text.h"
 #include "GameState.h"
+#include <json/json.h>
 namespace pong
 {
   struct Game
@@ -33,5 +34,7 @@ namespace pong
     int width, height;
     std::shared_ptr<GameState> game_state;
     bool exiting = false;
+
+    Json::Value replay;
   };
 }

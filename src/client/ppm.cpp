@@ -19,6 +19,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include "common/Timer.hpp"
 #include "SDL.h"
 #include "common/crash.hpp"
@@ -28,6 +29,20 @@
 int main(int argc, char** argv)
 {
   using pong::crash;
+  pong::Game game;
+
+  if(argc > 1)
+  {
+    std::ifstream file(argv[1]);
+    if(!file.good())
+    {
+      crash("Replay file invalid!");
+    }
+
+    // Read the Json structure.
+    Json::Reader r(Json::Features::strictMode());
+    r.parse(file, game.replay, false);
+  }
   if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
   {
     crash("Failed to initialize SDL2.");
@@ -48,7 +63,6 @@ int main(int argc, char** argv)
     crash("Failed to create an SDL_Renderer*!");
   }
 
-  pong::Game game;
   game.width = 1000;
   game.height = 1000;
   game.font_renderer.reset(
