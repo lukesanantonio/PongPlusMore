@@ -222,6 +222,14 @@ namespace pong
   }
   void Quadtree::setObject(id_type id, const Object& obj)
   {
+    // Is it out of the quadtree? Can we just ignore it.
+    if(!isIntersecting(this->findObject(id).getVolume(),
+                       this->root_.get_data()->v))
+    {
+      //Don't bother doing anything with it.
+      return;
+    }
+
     // Don't remove it from the object manager, just the quadtree.
     remove(this->root_, id);
 
