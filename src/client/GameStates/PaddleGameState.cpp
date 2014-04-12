@@ -19,6 +19,7 @@
  */
 #include <algorithm>
 #include <random>
+#include <fstream>
 #include "PaddleGameState.h"
 #include "../render.h"
 #include "common/crash.hpp"
@@ -109,8 +110,17 @@ namespace pong
           }
           case SDL_SCANCODE_TAB:
           {
-            Json::StyledStreamWriter("  ").write(std::cout,
-                                                 dumpJSON(this->server_));
+            // Print out the Object Manager.
+            std::fstream obj_file("objectmanager.out",
+                                  std::fstream::out | std::fstream::trunc);
+            Json::StyledStreamWriter("  ").write(obj_file,
+                                           dumpJSON(this->server_));
+
+            // Print out the Quadtree.
+            std::fstream qt_file("quadtree.out",
+                                 std::fstream::out | std::fstream::trunc);
+            Json::StyledStreamWriter("  ").write(qt_file,
+                                           dumpJSON(this->server_.quadtree()));
             break;
           }
           default:
