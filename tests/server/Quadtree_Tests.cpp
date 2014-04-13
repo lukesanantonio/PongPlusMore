@@ -100,3 +100,26 @@ TEST(Quadtree_Tests, SetObjectWorks)
   using std::begin; using std::end;
   EXPECT_NE(end(ids), std::find(begin(ids), end(ids), ball));
 }
+TEST(Quadtree_Tests, FindContainingNodeWorks)
+{
+  using pong::Quadtree;
+  Quadtree q({{0, 0}, 1000, 1000}, 1);
+
+  // In between children 0 and 1.
+  using pong::id_type;
+  q.makeBall({{950, 950}, 50, 50});
+  id_type id = q.makeBall({{475, 0}, 50, 50});
+  ASSERT_TRUE(id);
+
+  std::vector<const Quadtree::node_type*> expected{q.root()->children()[0],
+                                                   q.root()->children()[1]};
+
+  const auto& nodes =
+              find_containing_nodes(const_cast<Quadtree::node_type*>(q.root()),
+                                    id);
+
+  using std::begin; using std::end;
+  std::vector<const Quadtree::node_type*> actual(begin(nodes), end(nodes));
+
+  EXPECT_EQ(expected, actual);
+}

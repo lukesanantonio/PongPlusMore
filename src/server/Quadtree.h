@@ -25,6 +25,7 @@
 #include "common/util.h"
 #include "ObjectManager.h"
 #include "Node.hpp"
+#include "collision_util.h"
 namespace pong
 {
   struct Node_Content
@@ -81,4 +82,30 @@ namespace pong
     node_type root_;
   };
 
+  template <typename NT, class ND>
+  std::vector<Node<NT, ND>*> find_containing_nodes(Node<NT, ND>* root,
+                                                   id_type id) noexcept
+  {
+
+    if(!root) return {nullptr};
+    if(!root->get_data()) return {nullptr};
+
+    const Object& obj = root->get_data()->objs->findObject(id);
+
+    // If the root is a leaf, we have already checked our collision with it.
+    if(root->children().empty()) return {root};
+
+    std::vector<Node<NT, ND>*> nodes;
+    for(auto& child : root->children())
+    {
+      if(isIntersecting(child->get_data()->v, obj.getVolume()))
+      {
+        auto new_nodes = find_containing_nodes(child, id);
+        using std::begin; using std::end;
+        nodes.insert(end(nodes), begin(new_nodes), end(new_nodes));
+      }
+    }
+
+    return nodes;
+  }
 }
