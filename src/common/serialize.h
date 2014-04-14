@@ -120,4 +120,5 @@ namespace pong
     return dumpJSON(*q.root());
   }
 
+  Volume getVolume(const Json::Value& v) noexcept;
 }
