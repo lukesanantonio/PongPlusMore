@@ -117,19 +117,13 @@ namespace pong
       return true;
     }
 
-    // else Parent:
-
-    // Remove the id.
+    // Remove the id from every child.
+    bool has_been_removed = false;
+    for(auto& child : root.children())
     {
-      bool has_been_removed = false;
-      for(auto& child : root.children())
-      {
-        has_been_removed = remove(*child, id) || has_been_removed;
-      }
-      if(!has_been_removed) return false;
+      has_been_removed = remove(*child, id) || has_been_removed;
     }
-
-    // We removed *something*.
+    if(!has_been_removed) return false;
 
     // Important: Use all the Leaf nodes children of the root. Not necessarily
     // the direct children.
