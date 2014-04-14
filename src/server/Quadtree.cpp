@@ -19,6 +19,7 @@
  */
 #include "Quadtree.h"
 #include "collision_util.h"
+#include "common/crash.hpp"
 #include <numeric>
 namespace pong
 {
@@ -150,12 +151,14 @@ namespace pong
         }
       }
 
+      bool remove_child_works = false;
       // Now remove all children.
       for(auto& child : root)
       {
         // We are too far in now. If this fails we can't go back right now.
-        root.remove_child(&child);
+        remove_child_works = root.remove_child(&child) || remove_child_works;
       }
+      if(!remove_child_works) crash("Failed to remove child in Quadtree!");
     }
     return true;
   }
