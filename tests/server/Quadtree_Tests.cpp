@@ -115,11 +115,10 @@ TEST(Quadtree_Tests, FindContainingNodeWorks)
                                                    q.root()->children()[1]};
 
   const auto& nodes =
+                                 // TODO .- Make the const cast unnecessarily.
               find_containing_nodes(const_cast<Quadtree::node_type*>(q.root()),
                                     id);
 
-  using std::begin; using std::end;
-  std::vector<const Quadtree::node_type*> actual(begin(nodes), end(nodes));
-
-  EXPECT_EQ(expected, actual);
+  using pong::vector_cast;
+  EXPECT_EQ(expected, vector_cast<const Quadtree::node_type*>(nodes));
 }

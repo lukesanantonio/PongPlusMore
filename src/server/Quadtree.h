@@ -92,20 +92,22 @@ namespace pong
 
     const Object& obj = root->get_data()->objs->findObject(id);
 
-    // If the root is a leaf, we have already checked our collision with it.
-    if(root->children().empty()) return {root};
-
-    std::vector<Node<NT, ND>*> nodes;
-    for(auto& child : root->children())
+    if(isIntersecting(root->get_data()->v, obj.getVolume()))
     {
-      if(isIntersecting(child->get_data()->v, obj.getVolume()))
+      // If leaf:
+      if(root->children().empty()) return {root};
+
+      // If parent:
+      std::vector<Node<NT, ND>*> nodes;
+      for(auto& child : root->children())
       {
         auto new_nodes = find_containing_nodes(child, id);
         using std::begin; using std::end;
         nodes.insert(end(nodes), begin(new_nodes), end(new_nodes));
       }
+      return nodes;
     }
 
-    return nodes;
+    return {};
   }
 }
