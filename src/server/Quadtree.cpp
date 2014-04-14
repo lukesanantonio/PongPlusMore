@@ -25,6 +25,8 @@ namespace pong
 {
   bool insert(Node<Node_Content>& root, id_type id) noexcept
   {
+    using std::begin; using std::end;
+
     // Logic error!
     if(!root.get_data()) return false;
 
@@ -40,6 +42,12 @@ namespace pong
         if(root.get_data()->ids.size() + 1 <= max_objs ||
            root.get_data()->current_level + 1 > root.get_data()->max_level)
         {
+          if(std::find(begin(root.get_data()->ids),
+                       end(root.get_data()->ids), id)
+                                                  != end(root.get_data()->ids))
+          {
+            return false;
+          }
           root.get_data()->ids.push_back(id);
           return true;
         }
