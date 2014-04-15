@@ -91,13 +91,7 @@ namespace pong
    */
   id_type ObjectManager::makePaddle(Volume vol) noexcept
   {
-    id_type id = this->id_counter_.get();
-    if(!id) return 0;
-
-    this->objs_.emplace(id, Object{vol, PhysicsType::Paddle});
-    // TODO make all these functions just call ObjectManager::insert.
-    this->ids_cache_.invalidate();
-    return id;
+    return this->insert(Object{vol, PhysicsType::Paddle});
   }
 
   /*!
@@ -108,23 +102,13 @@ namespace pong
    */
   id_type ObjectManager::makeBall(Volume vol) noexcept
   {
-    id_type id = this->id_counter_.get();
-    if(!id) return 0;
-
-    this->objs_.emplace(id, Object{vol, PhysicsType::Ball});
-    this->ids_cache_.invalidate();
-    return id;
+    return this->insert(Object{vol, PhysicsType::Ball});
   }
 
   inline id_type ObjectManager::insertObject(Volume vol,
                                              PhysicsOptions opt) noexcept
   {
-    id_type id = this->id_counter_.get();
-    if(!id) return 0;
-
-    this->objs_.emplace(id, Object{vol, opt});
-    this->ids_cache_.invalidate();
-    return id;
+    return this->insert(Object{vol, opt});
   }
   inline id_type ObjectManager::insert(const Object& obj) noexcept
   {
