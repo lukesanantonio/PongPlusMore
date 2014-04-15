@@ -22,6 +22,7 @@
 #include <queue>
 #include "common/IDManager.hpp"
 #include "Object.h"
+#include "common/Cache.h"
 
 namespace pong
 {
@@ -38,7 +39,18 @@ namespace pong
     using size_type = map_type::size_type;
     using id_type = pong::id_type;
 
-    ObjectManager() noexcept {}
+    inline ObjectManager() noexcept
+    {
+      this->ids_cache_.gen_func([this](auto ptr)
+      {
+        auto ids = std::make_unique<std::vector<id_type> >();
+        for(auto&& pair : *this)
+        {
+          ids->push_back(std::get<0>(pair));
+        }
+        return ids;
+      });
+    }
     ObjectManager(const Server& s) noexcept;
 
     inline id_type makePaddle(Volume vol) noexcept;
@@ -67,6 +79,8 @@ namespace pong
   private:
     map_type objs_;
     IDManager<id_type> id_counter_;
+
+    mutable Cache<std::vector<id_type> > ids_cache_;
   };
 
   /*!
@@ -81,6 +95,8 @@ namespace pong
     if(!id) return 0;
 
     this->objs_.emplace(id, Object{vol, PhysicsType::Paddle});
+    // TODO make all these functions just call ObjectManager::insert.
+    this->ids_cache_.invalidate();
     return id;
   }
 
@@ -96,6 +112,7 @@ namespace pong
     if(!id) return 0;
 
     this->objs_.emplace(id, Object{vol, PhysicsType::Ball});
+    this->ids_cache_.invalidate();
     return id;
   }
 
@@ -106,6 +123,7 @@ namespace pong
     if(!id) return 0;
 
     this->objs_.emplace(id, Object{vol, opt});
+    this->ids_cache_.invalidate();
     return id;
   }
   inline id_type ObjectManager::insert(const Object& obj) noexcept
@@ -114,6 +132,7 @@ namespace pong
     if(!id) return 0;
 
     this->objs_.emplace(id, obj);
+    this->ids_cache_.invalidate();
     return id;
   }
 
@@ -121,6 +140,7 @@ namespace pong
   {
     using std::end;
     if(pos != end(this->objs_)) this->id_counter_.remove(pos->first);
+    this->ids_cache_.invalidate();
     return this->objs_.erase(pos);
   }
   inline auto ObjectManager::erase(const_iterator first,
@@ -128,6 +148,7 @@ namespace pong
   {
     const_iterator orig_first = first;
     for(; first != last; ++first) this->id_counter_.remove(first->first);
+    this->ids_cache_.invalidate();
     return this->objs_.erase(orig_first, last);
   }
   inline auto ObjectManager::erase(key_type id) -> size_type
@@ -136,6 +157,7 @@ namespace pong
     if(this->objs_.find(id) != end(this->objs_))
       this->id_counter_.remove(id);
 
+    this->ids_cache_.invalidate();
     return this->objs_.erase(id);
   }
 
@@ -154,14 +176,7 @@ namespace pong
 
   inline std::vector<id_type> ObjectManager::ids() const noexcept
   {
-    std::vector<id_type> ids;
-
-    for(auto&& pair : *this)
-    {
-      ids.push_back(std::get<0>(pair));
-    }
-
-    return ids;
+    return *this->ids_cache_.cache();
   }
 
   /*!
