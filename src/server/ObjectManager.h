@@ -124,6 +124,7 @@ namespace pong
   {
     using std::end;
     if(pos != end(this->objs_)) this->id_counter_.remove(pos->first);
+
     this->ids_cache_.invalidate();
     return this->objs_.erase(pos);
   }
@@ -132,6 +133,7 @@ namespace pong
   {
     const_iterator orig_first = first;
     for(; first != last; ++first) this->id_counter_.remove(first->first);
+
     this->ids_cache_.invalidate();
     return this->objs_.erase(orig_first, last);
   }
