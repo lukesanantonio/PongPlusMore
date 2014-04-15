@@ -57,6 +57,8 @@ namespace pong
           {
             this->ball_ = this->server_.createBall({{500,500}, 25, 25});
 
+            if(!this->ball_) break;
+
             // Get our mouse state.
             int x, y;
             SDL_GetMouseState(&x, &y);

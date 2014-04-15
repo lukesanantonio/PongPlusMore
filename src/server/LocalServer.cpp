@@ -58,6 +58,35 @@ namespace pong
     return this->quadtree_.obj_manager().ids();
   }
 
+  /*!
+   * \brief Inserts an object into the Quadtree.
+   *
+   * \note If the object will intersect with any other object the new one *is
+   * not* inserted.
+   */
+  id_type LocalServer::insertObject(const Volume& v,
+                                    const PhysicsOptions& opt) noexcept
+  {
+    id_type id = this->quadtree_.insertObject(v, opt);
+    if(!id) return 0;
+    auto containing_nodes = find_containing_nodes(this->quadtree_.root(), id);
+    for(const Quadtree::node_type* n : containing_nodes)
+    {
+      for(id_type col_id : n->get_data()->ids)
+      {
+        if(col_id == id) continue;
+        Volume col_v = n->get_data()->objs->findObject(col_id).getVolume();
+
+        if(isIntersecting(v, col_v))
+        {
+          this->quadtree_.erase(id);
+          return 0;
+        }
+      }
+    }
+    return id;
+  }
+
   void LocalServer::step() noexcept
   {
     for(id_type id : this->quadtree_.obj_manager().ids())

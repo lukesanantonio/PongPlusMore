@@ -27,6 +27,8 @@ namespace pong
     LocalServer(Volume v) noexcept : quadtree_(v, 3, 5) {}
     ~LocalServer() noexcept = default;
 
+    id_type insertObject(const Volume& v, const PhysicsOptions& opt) noexcept;
+
     inline id_type createPaddle(const Volume& v) noexcept;
     inline id_type createBall(const Volume& v) noexcept;
 
@@ -45,10 +47,10 @@ namespace pong
 
   inline id_type LocalServer::createPaddle(const Volume& v) noexcept
   {
-    return this->quadtree_.makePaddle(v);
+    return this->insertObject(v, PhysicsType::Paddle);
   }
   inline id_type LocalServer::createBall(const Volume& v) noexcept
   {
-    return this->quadtree_.makeBall(v);
+    return this->insertObject(v, PhysicsType::Ball);
   }
 }
