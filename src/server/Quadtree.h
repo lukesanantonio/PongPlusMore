@@ -90,14 +90,12 @@ namespace pong
     template <bool is_const, typename NT, class ND>
     std::vector<node_helper_t<is_const, NT, ND>* >
     find_containing_nodes(node_helper_t<is_const, NT, ND>* root,
-                          id_type id) noexcept
+                          const Volume& v) noexcept
     {
       if(!root) return {nullptr};
       if(!root->get_data()) return {nullptr};
 
-      const Object& obj = root->get_data()->objs->findObject(id);
-
-      if(isIntersecting(root->get_data()->v, obj.getVolume()))
+      if(isIntersecting(root->get_data()->v, v))
       {
         // If leaf:
         if(root->children().empty()) return {root};
@@ -106,7 +104,7 @@ namespace pong
         std::vector<node_helper_t<is_const, NT, ND>* > nodes;
         for(auto& child : root->children())
         {
-          auto new_nodes = find_containing_nodes<is_const, NT, ND>(child, id);
+          auto new_nodes = find_containing_nodes<is_const, NT, ND>(child, v);
           using std::begin; using std::end;
           nodes.insert(end(nodes), begin(new_nodes), end(new_nodes));
         }
@@ -119,16 +117,16 @@ namespace pong
 
   template <typename NT, class ND>
   inline std::vector<Node<NT, ND>*>
-  find_containing_nodes(Node<NT, ND>* root, id_type id) noexcept
+  find_containing_nodes(Node<NT, ND>* root, const Volume& v) noexcept
   {
-    return detail::find_containing_nodes<false, NT, ND>(root, id);
+    return detail::find_containing_nodes<false, NT, ND>(root, v);
   }
 
   template <typename NT, class ND>
   inline std::vector<const Node<NT, ND>*>
-  find_containing_nodes(const Node<NT, ND>* root, id_type id) noexcept
+  find_containing_nodes(const Node<NT, ND>* root, const Volume& v) noexcept
   {
-    return detail::find_containing_nodes<true, NT, ND>(root, id);
+    return detail::find_containing_nodes<true, NT, ND>(root, v);
   }
 
 }

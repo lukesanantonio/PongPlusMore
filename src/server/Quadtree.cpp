@@ -254,7 +254,9 @@ namespace pong
   }
   void Quadtree::setObject(id_type id, const Object& obj)
   {
-    auto containing_nodes = find_containing_nodes(&this->root_, id);
+    auto containing_nodes =
+                       find_containing_nodes(&this->root_,
+                                             this->findObject(id).getVolume());
 
     bool did_remove = false;
     for(node_type* n : containing_nodes)

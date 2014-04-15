@@ -108,13 +108,15 @@ TEST(Quadtree_Tests, FindContainingNodeWorks)
   // In between children 0 and 1.
   using pong::id_type;
   q.makeBall({{950, 950}, 50, 50});
-  id_type id = q.makeBall({{475, 0}, 50, 50});
+
+  pong::Volume ball_v = {{475, 0}, 50, 50};
+  id_type id = q.makeBall(ball_v);
   ASSERT_TRUE(id);
 
   std::vector<const Quadtree::node_type*> expected{q.root()->children()[0],
                                                    q.root()->children()[1]};
 
-  const auto& nodes = find_containing_nodes(q.root(), id);
+  const auto& nodes = find_containing_nodes(q.root(), ball_v);
 
   EXPECT_EQ(expected, nodes);
 }

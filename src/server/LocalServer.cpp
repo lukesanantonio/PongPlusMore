@@ -67,9 +67,11 @@ namespace pong
   id_type LocalServer::insertObject(const Volume& v,
                                     const PhysicsOptions& opt) noexcept
   {
+    // Do this first so that if it fails we can avoid this *relatively*
+    // hefty calculation.
     id_type id = this->quadtree_.insertObject(v, opt);
-    if(!id) return 0;
-    auto containing_nodes = find_containing_nodes(this->quadtree_.root(), id);
+    if(!id) return id;
+    auto containing_nodes = find_containing_nodes(this->quadtree_.root(), v);
     for(const Quadtree::node_type* n : containing_nodes)
     {
       for(id_type col_id : n->get_data()->ids)
