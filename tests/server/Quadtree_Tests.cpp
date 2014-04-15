@@ -91,7 +91,7 @@ TEST(Quadtree_Tests, SetObjectWorks)
 
   const Quadtree::node_type* top_left_node = q.root()->children()[0];
   // But also another split
-  EXPECT_EQ(4, top_left_node->children().size());
+  ASSERT_EQ(4, top_left_node->children().size());
 
   // We should also find the `ball` object in the first child's root.
   const std::vector<id_type>& ids =
