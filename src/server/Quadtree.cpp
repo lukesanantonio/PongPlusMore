@@ -30,6 +30,8 @@ namespace pong
     // Logic error!
     if(!root.get_data()) return false;
 
+    // Don't do a thing if we aren't even intersecting with the node we need
+    // to insert to.
     if(isIntersecting(root.get_data()->v,
                       root.get_data()->objs->findObject(id).getVolume()))
     {
@@ -38,58 +40,20 @@ namespace pong
       // Leaf
       if(root.children().empty())
       {
-        // We have room?!
-        if(root.get_data()->ids.size() + 1 <= max_objs ||
-           root.get_data()->current_level + 1 > root.get_data()->max_level)
-        {
-          if(std::find(begin(root.get_data()->ids),
-                       end(root.get_data()->ids), id)
+        // Don't double add.
+        if(std::find(begin(root.get_data()->ids),
+                     end(root.get_data()->ids), id)
                                                   != end(root.get_data()->ids))
-          {
-            return false;
-          }
-          root.get_data()->ids.push_back(id);
-          return true;
-        }
-        else
         {
-          // Split, let the next if handle it.
-          auto quads = find_volume_quads(root.get_data()->v);
-          auto& objs = root.get_data()->objs;
-
-          root.push_child(std::make_unique<Node_Content>(
-                                            objs, max_objs,
-                                            root.get_data()->current_level + 1,
-                                            root.get_data()->max_level,
-                                            quads[0]));
-          root.push_child(std::make_unique<Node_Content>(
-                                            objs, max_objs,
-                                            root.get_data()->current_level + 1,
-                                            root.get_data()->max_level,
-                                            quads[1]));
-          root.push_child(std::make_unique<Node_Content>(
-                                            objs, max_objs,
-                                            root.get_data()->current_level + 1,
-                                            root.get_data()->max_level,
-                                            quads[2]));
-          root.push_child(std::make_unique<Node_Content>(
-                                            objs, max_objs,
-                                            root.get_data()->current_level + 1,
-                                            root.get_data()->max_level,
-                                            quads[3]));
-
-          std::vector<id_type> ids = root.get_data()->ids;
-          root.get_data()->ids.clear();
-          for(id_type id : ids) { insert(root, id); }
+          return false;
         }
+        root.get_data()->ids.push_back(id);
+        return true;
       }
       // Parent
-      if(!root.children().empty())
+      else
       {
         bool has_been_added = false;
-        //                      .- This fails because of different locations
-        //                         of the points.
-        //std::for_each(root.children().begin(), root.children().end(),
 
         auto children = root.children();
         for(Node<Node_Content>* n : children)
@@ -123,52 +87,110 @@ namespace pong
       }
 
       root.get_data()->ids.erase(iter);
-      return true;
     }
 
-    // Remove the id from every child.
-    bool has_been_removed = false;
-    for(auto& child : root.children())
+    // Parent
+    else
     {
-      has_been_removed = remove(*child, id) || has_been_removed;
-    }
-    if(!has_been_removed) return false;
-
-    // Important: Use all the Leaf nodes children of the root. Not necessarily
-    // the direct children.
-    int total_children = std::accumulate(begin(root), end(root), 0,
-    [](int i, Node<Node_Content>& n)
-    {
-      return i + n.get_data()->ids.size();
-    });
-
-    if(total_children <= root.get_data()->max_objs)
-    {
-      // We, the root, can become a leaf again!
-      auto& ids = root.get_data()->ids;
-
-      // For every leaf child in root.
-      for(auto& child : root)
+      // Remove the id from every child.
+      bool has_been_removed = false;
+      for(auto& child : root.children())
       {
-        // Go through the ids of every child.
-        auto& child_ids = child.get_data()->ids;
-        for(id_type id : child_ids)
-        {
-          // Add them to our big list of ids.
-          ids.push_back(id);
-        }
+        has_been_removed = remove(*child, id) || has_been_removed;
       }
-
-      bool remove_child_works = false;
-      // Now remove all children.
-      for(auto& child : root)
-      {
-        // We are too far in now. If this fails we can't go back right now.
-        remove_child_works = root.remove_child(&child) || remove_child_works;
-      }
-      if(!remove_child_works) crash("Failed to remove child in Quadtree!");
+      if(!has_been_removed) return false;
     }
+
     return true;
+  }
+
+  void recalculate_quads(Node<Node_Content>& root) noexcept
+  {
+    auto total_children = [&]()
+    {
+      // Important: Use all the Leaf nodes children of the root. Not
+      // necessarily the direct children.
+      return std::accumulate(begin(root), end(root), 0,
+      [](int i, Node<Node_Content>& n)
+      {
+        return i + n.get_data()->ids.size();
+      });
+    };
+
+    // If we are a leaf; we may need to split.
+    if(root.children().empty())
+    {
+      if(root.get_data()->ids.size() > root.get_data()->max_objs &&
+         root.get_data()->current_level+1 <= root.get_data()->max_level)
+      {
+        // Time to split :/
+        auto quads = find_volume_quads(root.get_data()->v);
+        auto& objs = root.get_data()->objs;
+
+        int& max_objs = root.get_data()->max_objs;
+        root.push_child(std::make_unique<Node_Content>(
+                                          objs, max_objs,
+                                          root.get_data()->current_level + 1,
+                                          root.get_data()->max_level,
+                                          quads[0]));
+        root.push_child(std::make_unique<Node_Content>(
+                                          objs, max_objs,
+                                          root.get_data()->current_level + 1,
+                                          root.get_data()->max_level,
+                                          quads[1]));
+        root.push_child(std::make_unique<Node_Content>(
+                                          objs, max_objs,
+                                          root.get_data()->current_level + 1,
+                                          root.get_data()->max_level,
+                                          quads[2]));
+        root.push_child(std::make_unique<Node_Content>(
+                                          objs, max_objs,
+                                          root.get_data()->current_level + 1,
+                                          root.get_data()->max_level,
+                                          quads[3]));
+
+        std::vector<id_type> ids = root.get_data()->ids;
+        root.get_data()->ids.clear();
+        for(id_type id : ids) { insert(root, id); }
+        recalculate_quads(root);
+      }
+    }
+
+    // If we are a parent; we may need to condense or something like that.
+    if(!root.children().empty())
+    {
+      for(auto& child : root.children())
+      {
+        recalculate_quads(*child);
+      }
+
+      if(total_children() <= root.get_data()->max_objs)
+      {
+        // We, the root, can become a leaf again!
+        auto& ids = root.get_data()->ids;
+
+        // For every leaf child in root.
+        for(auto& child : root)
+        {
+          // Go through the ids of every child.
+          auto& child_ids = child.get_data()->ids;
+          for(id_type id : child_ids)
+          {
+            // Add them to our big list of ids.
+            ids.push_back(id);
+          }
+        }
+
+        bool remove_child_works = false;
+        // Now remove all children.
+        for(auto& child : root)
+        {
+          // We are too far in now. If this fails we can't go back right now.
+          remove_child_works = root.remove_child(&child) || remove_child_works;
+        }
+        if(!remove_child_works) crash("Failed to remove child in Quadtree!");
+      }
+    }
   }
 
   // Member implementations.
@@ -185,6 +207,7 @@ namespace pong
       this->objs_.erase(id);
       return 0;
     }
+    recalculate_quads(this->root_);
 
     return id;
   }
@@ -192,6 +215,7 @@ namespace pong
   {
     // Remove the object from the tree.
     remove(this->root_, pos->first);
+    recalculate_quads(this->root_);
 
     // Remove the object from the object manager.
     auto ret_iter = this->objs_.erase(pos);
@@ -207,6 +231,8 @@ namespace pong
       remove(this->root_, pair.first);
     });
 
+    recalculate_quads(this->root_);
+
     // Remove the objects from the object manager.
     return this->objs_.erase(pos, last);
   }
@@ -214,6 +240,7 @@ namespace pong
   {
     // Remove the object from the tree.
     remove(this->root_, id);
+    recalculate_quads(this->root_);
 
     // Remove the object from the object manager.
     return this->objs_.erase(id);
@@ -227,22 +254,27 @@ namespace pong
   }
   void Quadtree::setObject(id_type id, const Object& obj)
   {
-    // Is it out of the quadtree? Can we just ignore it.
-    if(!isIntersecting(this->findObject(id).getVolume(),
-                       this->root_.get_data()->v))
+    auto containing_nodes = find_containing_nodes(&this->root_, id);
+
+    bool did_remove = false;
+    for(node_type* n : containing_nodes)
     {
-      //Don't bother doing anything with it.
-      return;
+      if(!isIntersecting(obj.getVolume(), n->get_data()->v))
+      {
+        // The object has moved *out* of this particular node.
+        using pong::remove;
+        did_remove = remove(*n, id) || did_remove;
+      }
+      // We were previously and are still intersecting node n.
     }
 
-    // Don't remove it from the object manager, just the quadtree.
-    remove(this->root_, id);
-
-    // Now change it in the object manager.
     this->objs_.setObject(id, obj);
 
-    // Now add it back to our quadtree.
     using pong::insert;
-    insert(this->root_, id);
+    if(did_remove)
+    {
+      insert(this->root_, id);
+      recalculate_quads(this->root_);
+    }
   }
 }
