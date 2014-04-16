@@ -161,6 +161,24 @@ TEST(CollisionUtil_Tests, snapDiff)
 
   // TODO add more tests.
 }
+TEST(CollisionUtil_Tests, snapToVolumeInsideDiff)
+{
+  using pong::Volume; using pong::VolumeSide;
+  using pong::snapToVolumeInsideDiff;
+
+  Volume v{{0, 0}, 1000, 1000};
+  Volume obj{{0,0}, 50, 50};
+
+  pong::math::vector<double> expected = {0,0};
+
+  EXPECT_EQ(expected, snapToVolumeInsideDiff(obj, VolumeSide::Top, v));
+  EXPECT_EQ(expected, snapToVolumeInsideDiff(obj, VolumeSide::Left, v));
+
+  expected = {950, 0};
+  EXPECT_EQ(expected, snapToVolumeInsideDiff(obj, VolumeSide::Right, v));
+  expected = {0, 950};
+  EXPECT_EQ(expected, snapToVolumeInsideDiff(obj, VolumeSide::Bottom, v));
+}
 TEST(CollisionUtil_Tests, find_volume_quads)
 {
   using pong::Volume; using pong::find_volume_quads;

@@ -240,6 +240,51 @@ namespace pong
     return to_move_copy.pos - to_move.pos;
   }
 
+  /*!
+   * \brief Returns the required distance to snap a volume to the side of
+   * another from the inside of that volume.
+   *
+   * \param to_move Assumed this is the volume that needs to be moved.
+   * \param side The side that to_move needs to snap to.
+   * \param v The reference. A side of this object is the destination.
+   *
+   * It ends up being that to_move's side is the same side as the parameter.
+   */
+  math::vector<double> snapToVolumeInsideDiff(const Volume& to_move,
+                                              VolumeSide side,
+                                              const Volume& v) noexcept
+  {
+    math::vector<double> pos{to_move.pos};
+
+    GENERATE_VOLUME_BOUNDS(v);
+
+    switch(side)
+    {
+      case VolumeSide::Top:
+      {
+        pos.y = v_top;
+        break;
+      }
+      case VolumeSide::Bottom:
+      {
+        pos.y = v_bottom - to_move.height + 1;
+        break;
+      }
+      case VolumeSide::Left:
+      {
+        pos.x = v_left;
+        break;
+      }
+      case VolumeSide::Right:
+      {
+        pos.x = v_right - to_move.width + 1;
+        break;
+      }
+      default: break;
+    }
+    return pos - to_move.pos;
+  }
+
   // Array indice reference:
   //  _______
   // |   |   |

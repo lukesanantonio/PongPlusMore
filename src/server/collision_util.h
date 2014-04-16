@@ -73,5 +73,9 @@ namespace pong
   math::vector<double> snapDiff(const Volume&, VolumeSide,
                                 const Volume&) noexcept;
 
+  math::vector<double> snapToVolumeInsideDiff(const Volume& to_move,
+                                              VolumeSide side,
+                                              const Volume& v) noexcept;
+
   std::array<Volume, 4> find_volume_quads(const Volume& vol) noexcept;
 }
