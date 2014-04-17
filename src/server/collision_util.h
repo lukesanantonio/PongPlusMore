@@ -66,8 +66,7 @@ namespace pong
   VolumeSide findClosestSide(const Volume& v1, const Volume& v2) noexcept;
 
   bool isInsideVolume(const Volume& box, const Volume& obj) noexcept;
-  VolumeSide closestSideFromInside(const Volume& box,
-                                   const Volume& obj) noexcept;
+  VolumeSide mostProtrudingSide(const Volume& box, const Volume& obj) noexcept;
 
   void snapVolumeToVolume(Volume&, VolumeSide, const Volume&) noexcept;
   math::vector<double> snapDiff(const Volume&, VolumeSide,

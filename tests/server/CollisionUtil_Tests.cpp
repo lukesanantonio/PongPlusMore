@@ -101,18 +101,17 @@ TEST(CollisionUtil_Tests, isInsideVolume)
   check.pos = {-1, 0};
   EXPECT_FALSE(isInsideVolume(bounds, check));
 }
-TEST(CollisionUtil_Tests, closestSideFromInside)
+TEST(CollisionUtil_Tests, mostProtrudingSide)
 {
-  using pong::Volume; using pong::closestSideFromInside;
+  using pong::Volume; using pong::mostProtrudingSide;
   using pong::VolumeSide;
 
   Volume bounds = {{0, 0}, 1000, 1000};
   Volume check = {{0, 500}, 20, 20};
 
-  EXPECT_EQ(VolumeSide::Left, closestSideFromInside(bounds, check));
+  EXPECT_EQ(VolumeSide::None, mostProtrudingSide(bounds, check));
 
-  //                                .- Next best choice.
-  //##################################  .- Intersects, so the side isn't used.
+  //##################################     .- Only side that intersects.
   //#                        ###############
   //#                        #       #     #
   //#                        ###############
@@ -122,7 +121,7 @@ TEST(CollisionUtil_Tests, closestSideFromInside)
   check.pos = {750, 200};
   check.width = 500;
   check.height = 20;
-  EXPECT_EQ(VolumeSide::Top, closestSideFromInside(bounds, check));
+  EXPECT_EQ(VolumeSide::Right, mostProtrudingSide(bounds, check));
 }
 TEST(CollisionUtil_Tests, snapVolumeToVolume)
 {

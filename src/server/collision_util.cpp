@@ -150,10 +150,9 @@ namespace pong
     return false;
   }
 
-  VolumeSide closestSideFromInside(const Volume& box,
-                                   const Volume& obj) noexcept
+  VolumeSide mostProtrudingSide(const Volume& box, const Volume& obj) noexcept
   {
-    unordered_map_enumhash<VolumeSide, int> map;
+    unordered_map_enumhash<VolumeSide, double> map;
 
     GENERATE_VOLUME_BOUNDS(box);
     GENERATE_VOLUME_BOUNDS(obj);
@@ -168,18 +167,22 @@ namespace pong
     // Remove the bad ones.
     for(auto iter = begin(map); iter != end(map);)
     {
-      if(std::get<1>(*iter) < 0) iter = map.erase(iter);
-      if(iter != end(map)) ++iter;
+      double var = iter->second;
+      if(var >= 0)
+      {
+        iter = map.erase(iter);
+      }
+      else ++iter;
     }
 
     // Find the good one.
-    auto it = std::min_element(begin(map), end(map),
+    auto it = std::max_element(begin(map), end(map),
     [](const auto& p1, const auto& p2)
     {
       return std::get<1>(p1) < std::get<1>(p2);
     });
 
-    return it == end(map) ? VolumeSide::None : std::get<0>(*it);
+    return it == end(map) || map.empty() ? VolumeSide::None : std::get<0>(*it);
   }
 
   /*!
