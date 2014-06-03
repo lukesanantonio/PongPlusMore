@@ -89,6 +89,100 @@ namespace pong
     return id;
   }
 
+  struct ModifiedObjectReference
+  {
+    Object obj;
+    id_type id;
+  };
+
+  /*!
+   * \brief Finds the force upon object obj in its current position.
+   *
+   * TODO The use of a ModifiedObjectReference is mostly an implementation
+   * detail, figure out a good interface to represent what we want to
+   * represent.
+   */
+  math::vector<double> find_force(const ModifiedObjectReference& obj,
+                                  Quadtree&,
+                                  double game_width,
+                                  double game_height) noexcept
+  {
+    // TODO implement paddle forces, somehow?
+    if(obj.obj.getPhysicsOptions().type != PhysicsType::Ball) return {};
+
+    math::vector<double> force;
+    Volume bounds = {{0,0}, game_width, game_height};
+    VolumeSide side = mostProtrudingSide(bounds, obj.obj.getVolume());
+    if(side != VolumeSide::None)
+    {
+      switch(side)
+      {
+        case VolumeSide::Top:
+        {
+          force.y = -obj.obj.getPhysicsOptions().ball_options.velocity.y * 2;
+          break;
+        }
+        case VolumeSide::Bottom:
+        {
+          force.y = -obj.obj.getPhysicsOptions().ball_options.velocity.y * 2;
+          break;
+        }
+        case VolumeSide::Left:
+        {
+          force.x = -obj.obj.getPhysicsOptions().ball_options.velocity.x * 2;
+          break;
+        }
+        case VolumeSide::Right:
+        {
+          force.x = -obj.obj.getPhysicsOptions().ball_options.velocity.x * 2;
+          break;
+        }
+      }
+    }
+    return force;
+  }
+
+  void raytrace_ball(id_type ball, Quadtree& q) noexcept
+  {
+    if(!isBall(q.obj_manager(), ball))
+    {
+      return;
+    }
+
+    Object ball_obj = q.findObject(ball);
+    math::vector<double> starting_position = ball_obj.getVolume().pos;
+    math::vector<double> velocity =
+                            ball_obj.getPhysicsOptions().ball_options.velocity;
+    math::vector<double> end_position = starting_position + velocity;
+
+    // Divide by the smallest amount that will give us less-than-.25 chunks.
+    const int chunks = std::ceil(math::length(velocity) / .25);
+    const double magnitude_per_chunk = math::length(velocity) / chunks;
+
+    for(int chunk = 0; chunk < chunks; ++chunk)
+    {
+      // Calculate the new location.
+      // The magnitude of the change is always magnitude_per_step unless that
+      // distance would move the ball past its allowed distance to travel.
+
+      ball_obj.getVolume().pos += magnitude_per_chunk
+                                  * math::normalize(velocity);
+
+      math::vector<double> force = find_force({ball_obj, ball}, q, 1000, 1000);
+
+      if(force.x == 0.0 && force.y == 0.0) continue;
+
+      ball_obj.getPhysicsOptions().ball_options.velocity += force;
+      velocity =
+            math::normalize(ball_obj.getPhysicsOptions().ball_options.velocity)
+            * (math::length(velocity) - (chunks * magnitude_per_chunk));
+      starting_position = ball_obj.getVolume().pos;
+      end_position = ball_obj.getVolume().pos + velocity;
+    }
+
+    q.setObject(ball, ball_obj);
+  }
+
   void LocalServer::step() noexcept
   {
     for(id_type id : this->quadtree_.obj_manager().ids())
@@ -102,17 +196,16 @@ namespace pong
         {
           obj.getVolume().pos =
                            obj.getPhysicsOptions().paddle_options.destination;
+          this->quadtree_.setObject(id, obj);
           break;
         }
         case PhysicsType::Ball:
         {
-          obj.getVolume().pos += obj.getPhysicsOptions().ball_options.velocity;
+          raytrace_ball(id, this->quadtree_);
           break;
         }
         default: break;
       };
-
-      this->quadtree_.setObject(id, obj);
     }
   }
 }
