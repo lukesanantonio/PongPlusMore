@@ -33,7 +33,7 @@ namespace pong
     // Don't do a thing if we aren't even intersecting with the node we need
     // to insert to.
     if(isIntersecting(root.get_data()->v,
-                      root.get_data()->objs->findObject(id).getVolume()))
+                      root.get_data()->objs->findObject(id).volume))
     {
       auto& max_objs = root.get_data()->max_objs;
 
@@ -256,12 +256,12 @@ namespace pong
   {
     auto containing_nodes =
                        find_containing_nodes(&this->root_,
-                                             this->findObject(id).getVolume());
+                                             this->findObject(id).volume);
 
     bool did_remove = false;
     for(node_type* n : containing_nodes)
     {
-      if(!isIntersecting(obj.getVolume(), n->get_data()->v))
+      if(!isIntersecting(obj.volume, n->get_data()->v))
       {
         // The object has moved *out* of this particular node.
         using pong::remove;

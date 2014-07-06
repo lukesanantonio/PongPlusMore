@@ -77,28 +77,18 @@ namespace pong
   {
     explicit Object(const Volume& vol = Volume{},
                     PhysicsOptions opts = {})
-                    : vol_(vol), physics_options_(opts) {}
+                    : volume(vol), physics_options(opts) {}
 
-    const Volume& getVolume() const noexcept { return this->vol_; }
-    Volume& getVolume() noexcept { return this->vol_; }
-
-    const PhysicsOptions& getPhysicsOptions() const noexcept
-    { return this->physics_options_; }
-
-    PhysicsOptions& getPhysicsOptions() noexcept
-    { return this->physics_options_; }
-
-  private:
-    Volume vol_;
-    PhysicsOptions physics_options_;
+    Volume volume;
+    PhysicsOptions physics_options;
   };
 
   inline bool isPaddle(const Object& obj) noexcept
   {
-    return obj.getPhysicsOptions().type == PhysicsType::Paddle;
+    return obj.physics_options.type == PhysicsType::Paddle;
   }
   inline bool isBall(const Object& obj) noexcept
   {
-    return obj.getPhysicsOptions().type == PhysicsType::Ball;
+    return obj.physics_options.type == PhysicsType::Ball;
   }
 }

@@ -81,7 +81,7 @@ namespace pong
           case SDL_SCANCODE_W:
           {
             if(!this->bottom_) break;
-            auto pos = this->server_.getObject(bottom_).getVolume().pos;
+            auto pos = this->server_.getObject(bottom_).volume.pos;
             pos.y -= 35;
             this->server_.setDestination(bottom_, pos);
             break;
@@ -89,7 +89,7 @@ namespace pong
           case SDL_SCANCODE_A:
           {
             if(!this->bottom_) break;
-            auto pos = this->server_.getObject(bottom_).getVolume().pos;
+            auto pos = this->server_.getObject(bottom_).volume.pos;
             pos.x -= 35;
             this->server_.setDestination(bottom_, pos);
             break;
@@ -97,7 +97,7 @@ namespace pong
           case SDL_SCANCODE_S:
           {
             if(!this->bottom_) break;
-            auto pos = this->server_.getObject(bottom_).getVolume().pos;
+            auto pos = this->server_.getObject(bottom_).volume.pos;
             pos.y += 35;
             this->server_.setDestination(bottom_, pos);
             break;
@@ -105,7 +105,7 @@ namespace pong
           case SDL_SCANCODE_D:
           {
             if(!this->bottom_) break;
-            auto pos = this->server_.getObject(bottom_).getVolume().pos;
+            auto pos = this->server_.getObject(bottom_).volume.pos;
             pos.x += 35;
             this->server_.setDestination(bottom_, pos);
             break;
@@ -178,7 +178,7 @@ namespace pong
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
     for(id_type id : this->server_.objects())
     {
-      pong::render(renderer, this->server_.getObject(id).getVolume());
+      pong::render(renderer, this->server_.getObject(id).volume);
     }
 
     if(this->render_quadtree_)

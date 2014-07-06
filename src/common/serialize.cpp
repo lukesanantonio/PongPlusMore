@@ -59,8 +59,8 @@ namespace pong
   Json::Value dumpJSON(const Object& obj) noexcept
   {
     Json::Value root(Json::objectValue);
-    Json::Value vol = dumpJSON(obj.getVolume());
-    Json::Value phys = dumpJSON(obj.getPhysicsOptions());
+    Json::Value vol = dumpJSON(obj.volume);
+    Json::Value phys = dumpJSON(obj.physics_options);
 
     root["Volume"] = vol;
     root["PhysicsOptions"] = phys;

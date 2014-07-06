@@ -25,7 +25,7 @@ namespace pong
   {
     // Might throw an exception, fine let it throw!
     Object obj = this->quadtree_.findObject(id);
-    PhysicsOptions& physobj = obj.getPhysicsOptions();
+    PhysicsOptions& physobj = obj.physics_options;
     if(physobj.type != PhysicsType::Paddle)
     {
       physobj.type = PhysicsType::Paddle;
@@ -38,7 +38,7 @@ namespace pong
   void LocalServer::setVelocity(id_type id, math::vector<double> vel)
   {
     Object obj = this->quadtree_.findObject(id);
-    PhysicsOptions& physopt = obj.getPhysicsOptions();
+    PhysicsOptions& physopt = obj.physics_options;
     if(physopt.type != PhysicsType::Ball)
     {
       physopt.type = PhysicsType::Ball;
@@ -77,7 +77,7 @@ namespace pong
       for(id_type col_id : n->get_data()->ids)
       {
         if(col_id == id) continue;
-        Volume col_v = n->get_data()->objs->findObject(col_id).getVolume();
+        Volume col_v = n->get_data()->objs->findObject(col_id).volume;
 
         if(isIntersecting(v, col_v))
         {
@@ -108,33 +108,33 @@ namespace pong
                                   double game_height) noexcept
   {
     // TODO implement paddle forces, somehow?
-    if(obj.obj.getPhysicsOptions().type != PhysicsType::Ball) return {};
+    if(obj.obj.physics_options.type != PhysicsType::Ball) return {};
 
     math::vector<double> force;
     Volume bounds = {{0,0}, game_width, game_height};
-    VolumeSide side = mostProtrudingSide(bounds, obj.obj.getVolume());
+    VolumeSide side = mostProtrudingSide(bounds, obj.obj.volume);
     if(side != VolumeSide::None)
     {
       switch(side)
       {
         case VolumeSide::Top:
         {
-          force.y = -obj.obj.getPhysicsOptions().ball_options.velocity.y * 2;
+          force.y = -obj.obj.physics_options.ball_options.velocity.y * 2;
           break;
         }
         case VolumeSide::Bottom:
         {
-          force.y = -obj.obj.getPhysicsOptions().ball_options.velocity.y * 2;
+          force.y = -obj.obj.physics_options.ball_options.velocity.y * 2;
           break;
         }
         case VolumeSide::Left:
         {
-          force.x = -obj.obj.getPhysicsOptions().ball_options.velocity.x * 2;
+          force.x = -obj.obj.physics_options.ball_options.velocity.x * 2;
           break;
         }
         case VolumeSide::Right:
         {
-          force.x = -obj.obj.getPhysicsOptions().ball_options.velocity.x * 2;
+          force.x = -obj.obj.physics_options.ball_options.velocity.x * 2;
           break;
         }
       }
@@ -150,9 +150,9 @@ namespace pong
     }
 
     Object ball_obj = q.findObject(ball);
-    math::vector<double> starting_position = ball_obj.getVolume().pos;
+    math::vector<double> starting_position = ball_obj.volume.pos;
     math::vector<double> velocity =
-                            ball_obj.getPhysicsOptions().ball_options.velocity;
+                            ball_obj.physics_options.ball_options.velocity;
     math::vector<double> end_position = starting_position + velocity;
 
     // Divide by the smallest amount that will give us less-than-.25 chunks.
@@ -165,19 +165,18 @@ namespace pong
       // The magnitude of the change is always magnitude_per_step unless that
       // distance would move the ball past its allowed distance to travel.
 
-      ball_obj.getVolume().pos += magnitude_per_chunk
-                                  * math::normalize(velocity);
+      ball_obj.volume.pos += magnitude_per_chunk * math::normalize(velocity);
 
       math::vector<double> force = find_force({ball_obj, ball}, q, 1000, 1000);
 
       if(force.x == 0.0 && force.y == 0.0) continue;
 
-      ball_obj.getPhysicsOptions().ball_options.velocity += force;
+      ball_obj.physics_options.ball_options.velocity += force;
       velocity =
-            math::normalize(ball_obj.getPhysicsOptions().ball_options.velocity)
+            math::normalize(ball_obj.physics_options.ball_options.velocity)
             * (math::length(velocity) - (chunks * magnitude_per_chunk));
-      starting_position = ball_obj.getVolume().pos;
-      end_position = ball_obj.getVolume().pos + velocity;
+      starting_position = ball_obj.volume.pos;
+      end_position = ball_obj.volume.pos + velocity;
     }
 
     q.setObject(ball, ball_obj);
@@ -190,12 +189,11 @@ namespace pong
       // For every object that needs to move.
       Object obj = this->quadtree_.findObject(id);
 
-      switch(obj.getPhysicsOptions().type)
+      switch(obj.physics_options.type)
       {
         case PhysicsType::Paddle:
         {
-          obj.getVolume().pos =
-                           obj.getPhysicsOptions().paddle_options.destination;
+          obj.volume.pos = obj.physics_options.paddle_options.destination;
           this->quadtree_.setObject(id, obj);
           break;
         }
