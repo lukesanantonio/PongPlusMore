@@ -35,7 +35,7 @@ namespace pong
   struct BallOptions
   {
     math::vector<double> velocity;
-    math::vector<double> force;
+    math::vector<double> forces;
   };
 
   /*!

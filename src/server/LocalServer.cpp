@@ -89,6 +89,45 @@ namespace pong
     return id;
   }
 
+  math::vector<double> find_wall_force(const Object& obj, Volume bounds)
+  {
+    math::vector<double> force;
+
+    if(!isInsideVolume(obj.volume, bounds))
+    {
+      std::vector<VolumeSide> vs = allProtrudingSides(obj.volume, bounds);
+      for(VolumeSide s : vs)
+      {
+        switch(s)
+        {
+          case VolumeSide::Top:
+          {
+            force.y = 1;
+            break;
+          }
+          case VolumeSide::Bottom:
+          {
+            force.y = -1;
+            break;
+          }
+          case VolumeSide::Left:
+          {
+            force.x = 1;
+            break;
+          }
+          case VolumeSide::Right:
+          {
+            force.x = -1;
+            break;
+          }
+          default: break;
+        }
+      }
+    }
+
+    return force;
+  }
+
   struct ModifiedObjectReference
   {
     Object obj;
@@ -99,40 +138,13 @@ namespace pong
                                             Quadtree& q,
                                             int game_width, int game_height)
   {
-    math::vector<double> forces = {0,0};
-    Volume bounds = {{0, 0}, static_cast<double>(game_width),
-                             static_cast<double>(game_height)};
-    if(!isInsideVolume(obj.obj.volume, bounds))
-    {
-      std::vector<VolumeSide> vs = allProtrudingSides(obj.obj.volume, bounds);
-      for(VolumeSide s : vs)
-      {
-        switch(s)
-        {
-          case VolumeSide::Top:
-          {
-            forces.y = 1;
-            break;
-          }
-          case VolumeSide::Bottom:
-          {
-            forces.y = -1;
-            break;
-          }
-          case VolumeSide::Left:
-          {
-            forces.x = 1;
-            break;
-          }
-          case VolumeSide::Right:
-          {
-            forces.x = -1;
-            break;
-          }
-          default: break;
-        }
-      }
-    }
+    math::vector<double> forces;
+
+    Volume bounds = {{0,0}, static_cast<double>(game_width),
+                            static_cast<double>(game_height)};
+
+    forces += find_wall_force(obj.obj, bounds);
+
     return forces;
   }
 
@@ -140,34 +152,34 @@ namespace pong
   {
     Object obj = q.findObject(id);
 
-    if(obj.physics_options.type == PhysicsType::Ball)
+    if(isBall(obj))
     {
       math::vector<double>& velocity =
                                      obj.physics_options.ball_options.velocity;
-      math::vector<double>& force = obj.physics_options.ball_options.force;
+      math::vector<double>& forces = obj.physics_options.ball_options.forces;
 
-      if(force.x == 1.0) // We are being forced right.
+      if(forces.x > 0.0) // We are being forced right.
       {
         velocity.x *= velocity.x < 0.0 ? -1 : 1;
       }
-      else if(force.x == -1.0) // We are being forced left.
+      else if(forces.x < 0.0) // We are being forced left.
       {
         velocity.x *= 0.0 < velocity.x ? -1 : 1;
       }
-      if(force.y == 1.0) // We are being forced down.
+      if(forces.y > 0.0) // We are being forced down.
       {
         velocity.y *= velocity.y < 0.0 ? -1 : 1;
       }
-      else if(force.y == -1.0) // We are being forced up.
+      else if(forces.y < 0.0) // We are being forced up.
       {
         velocity.y *= 0.0 < velocity.y ? -1 : 1;
       }
 
       obj.volume.pos += velocity;
 
-      force = find_opposing_forces({obj, id}, q, 1000, 1000);
+      forces = find_opposing_forces({obj, id}, q, 1000, 1000);
     }
-    else if(obj.physics_options.type == PhysicsType::Paddle)
+    else if(isPaddle(obj))
     {
       math::vector<double> original_position = obj.volume.pos;
       obj.volume.pos = obj.physics_options.paddle_options.destination;
@@ -181,15 +193,15 @@ namespace pong
       if(movement.y < 0) movement.y = -1;
 
 
-      math::vector<double> force = find_opposing_forces({obj, id}, q,
-                                                        1000, 1000);
+      math::vector<double> forces =
+                                find_opposing_forces({obj, id}, q, 1000, 1000);
       // If we moved in a direction against our force. Go back
-      if(force.x == -movement.x)
+      if(forces.x == -movement.x)
       {
         obj.volume.pos.x = original_position.x;
       }
       // Same here.
-      if(force.y == -movement.y)
+      if(forces.y == -movement.y)
       {
         obj.volume.pos.y = original_position.y;
       }
