@@ -95,115 +95,114 @@ namespace pong
     id_type id;
   };
 
-  /*!
-   * \brief Finds the force upon object obj in its current position.
-   *
-   * TODO The use of a ModifiedObjectReference is mostly an implementation
-   * detail, figure out a good interface to represent what we want to
-   * represent.
-   */
-  math::vector<double> find_force(const ModifiedObjectReference& obj,
-                                  Quadtree&,
-                                  double game_width,
-                                  double game_height) noexcept
+  math::vector<double> find_opposing_forces(ModifiedObjectReference obj,
+                                            Quadtree& q,
+                                            int game_width, int game_height)
   {
-    // TODO implement paddle forces, somehow?
-    if(obj.obj.physics_options.type != PhysicsType::Ball) return {};
-
-    math::vector<double> force;
-    Volume bounds = {{0,0}, game_width, game_height};
-    VolumeSide side = mostProtrudingSide(bounds, obj.obj.volume);
-    if(side != VolumeSide::None)
+    math::vector<double> forces = {0,0};
+    Volume bounds = {{0, 0}, static_cast<double>(game_width),
+                             static_cast<double>(game_height)};
+    if(!isInsideVolume(obj.obj.volume, bounds))
     {
-      switch(side)
+      std::vector<VolumeSide> vs = allProtrudingSides(obj.obj.volume, bounds);
+      for(VolumeSide s : vs)
       {
-        case VolumeSide::Top:
+        switch(s)
         {
-          force.y = -obj.obj.physics_options.ball_options.velocity.y * 2;
-          break;
-        }
-        case VolumeSide::Bottom:
-        {
-          force.y = -obj.obj.physics_options.ball_options.velocity.y * 2;
-          break;
-        }
-        case VolumeSide::Left:
-        {
-          force.x = -obj.obj.physics_options.ball_options.velocity.x * 2;
-          break;
-        }
-        case VolumeSide::Right:
-        {
-          force.x = -obj.obj.physics_options.ball_options.velocity.x * 2;
-          break;
+          case VolumeSide::Top:
+          {
+            forces.y = 1;
+            break;
+          }
+          case VolumeSide::Bottom:
+          {
+            forces.y = -1;
+            break;
+          }
+          case VolumeSide::Left:
+          {
+            forces.x = 1;
+            break;
+          }
+          case VolumeSide::Right:
+          {
+            forces.x = -1;
+            break;
+          }
+          default: break;
         }
       }
     }
-    return force;
+    return forces;
   }
 
-  void raytrace_ball(id_type ball, Quadtree& q) noexcept
+  void raytrace(id_type id, Quadtree& q) noexcept
   {
-    if(!isBall(q.obj_manager(), ball))
+    Object obj = q.findObject(id);
+
+    if(obj.physics_options.type == PhysicsType::Ball)
     {
-      return;
+      math::vector<double>& velocity =
+                                     obj.physics_options.ball_options.velocity;
+      math::vector<double>& force = obj.physics_options.ball_options.force;
+
+      if(force.x == 1.0) // We are being forced right.
+      {
+        velocity.x *= velocity.x < 0.0 ? -1 : 1;
+      }
+      else if(force.x == -1.0) // We are being forced left.
+      {
+        velocity.x *= 0.0 < velocity.x ? -1 : 1;
+      }
+      if(force.y == 1.0) // We are being forced down.
+      {
+        velocity.y *= velocity.y < 0.0 ? -1 : 1;
+      }
+      else if(force.y == -1.0) // We are being forced up.
+      {
+        velocity.y *= 0.0 < velocity.y ? -1 : 1;
+      }
+
+      obj.volume.pos += velocity;
+
+      force = find_opposing_forces({obj, id}, q, 1000, 1000);
+    }
+    else if(obj.physics_options.type == PhysicsType::Paddle)
+    {
+      math::vector<double> original_position = obj.volume.pos;
+      obj.volume.pos = obj.physics_options.paddle_options.destination;
+
+      math::vector<double> movement{};
+
+      movement = obj.volume.pos - original_position;
+      if(movement.x > 0) movement.x = 1;
+      if(movement.x < 0) movement.x = -1;
+      if(movement.y > 0) movement.y = 1;
+      if(movement.y < 0) movement.y = -1;
+
+
+      math::vector<double> force = find_opposing_forces({obj, id}, q,
+                                                        1000, 1000);
+      // If we moved in a direction against our force. Go back
+      if(force.x == -movement.x)
+      {
+        obj.volume.pos.x = original_position.x;
+      }
+      // Same here.
+      if(force.y == -movement.y)
+      {
+        obj.volume.pos.y = original_position.y;
+      }
     }
 
-    Object ball_obj = q.findObject(ball);
-    math::vector<double> starting_position = ball_obj.volume.pos;
-    math::vector<double> velocity =
-                            ball_obj.physics_options.ball_options.velocity;
-    math::vector<double> end_position = starting_position + velocity;
-
-    // Divide by the smallest amount that will give us less-than-.25 chunks.
-    const int chunks = std::ceil(math::length(velocity) / .25);
-    const double magnitude_per_chunk = math::length(velocity) / chunks;
-
-    for(int chunk = 0; chunk < chunks; ++chunk)
-    {
-      // Calculate the new location.
-      // The magnitude of the change is always magnitude_per_step unless that
-      // distance would move the ball past its allowed distance to travel.
-
-      ball_obj.volume.pos += magnitude_per_chunk * math::normalize(velocity);
-
-      math::vector<double> force = find_force({ball_obj, ball}, q, 1000, 1000);
-
-      if(force.x == 0.0 && force.y == 0.0) continue;
-
-      ball_obj.physics_options.ball_options.velocity += force;
-      velocity =
-            math::normalize(ball_obj.physics_options.ball_options.velocity)
-            * (math::length(velocity) - (chunks * magnitude_per_chunk));
-      starting_position = ball_obj.volume.pos;
-      end_position = ball_obj.volume.pos + velocity;
-    }
-
-    q.setObject(ball, ball_obj);
+    q.setObject(id, obj);
   }
 
   void LocalServer::step() noexcept
   {
     for(id_type id : this->quadtree_.obj_manager().ids())
     {
-      // For every object that needs to move.
-      Object obj = this->quadtree_.findObject(id);
-
-      switch(obj.physics_options.type)
-      {
-        case PhysicsType::Paddle:
-        {
-          obj.volume.pos = obj.physics_options.paddle_options.destination;
-          this->quadtree_.setObject(id, obj);
-          break;
-        }
-        case PhysicsType::Ball:
-        {
-          raytrace_ball(id, this->quadtree_);
-          break;
-        }
-        default: break;
-      };
+      raytrace(id, this->quadtree_);
     }
   }
 }
