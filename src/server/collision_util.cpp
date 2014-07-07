@@ -150,12 +150,17 @@ namespace pong
     return false;
   }
 
-  VolumeSide mostProtrudingSide(const Volume& box, const Volume& obj) noexcept
+  /*!
+   * \brief Returns all sides where the obj is extending beyond the bounds of
+   * box.
+   */
+  std::vector<VolumeSide> allProtrudingSides(const Volume& obj,
+                                             const Volume& box) noexcept
   {
     unordered_map_enumhash<VolumeSide, double> map;
 
-    GENERATE_VOLUME_BOUNDS(box);
     GENERATE_VOLUME_BOUNDS(obj);
+    GENERATE_VOLUME_BOUNDS(box);
 
     map.emplace(VolumeSide::Top, obj_top - box_top);
     map.emplace(VolumeSide::Bottom, box_bottom - obj_bottom);
@@ -175,14 +180,12 @@ namespace pong
       else ++iter;
     }
 
-    // Find the good one.
-    auto it = std::max_element(begin(map), end(map),
-    [](const auto& p1, const auto& p2)
+    std::vector<VolumeSide> sides;
+    for(auto pair : map)
     {
-      return std::get<1>(p1) < std::get<1>(p2);
-    });
-
-    return it == end(map) || map.empty() ? VolumeSide::None : std::get<0>(*it);
+      sides.push_back(pair.first);
+    }
+    return sides;
   }
 
   /*!
