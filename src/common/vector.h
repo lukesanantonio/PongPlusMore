@@ -29,9 +29,7 @@
 namespace pong
 {
   /*!
-   * \brief A namespace for all math related pong things.
-   *
-   * That could be collision detection, vectors, velocities, positions, etc.
+   * \brief Container for vector things.
    */
   namespace math
   {
