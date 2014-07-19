@@ -16,24 +16,38 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * \file render.h
- * \brief Contains render functions for the Ball and Paddle class which could
- * not be put into ppmserv because they would introduce an SDL build
- * dependency.
  */
-#pragma once
-#include "SDL.h"
-#include "common/volume.h"
+#include "volume.h"
 namespace pong
 {
-  void render(SDL_Renderer* renderer, const Volume& volume)
+  /*!
+   * \brief Return all sides where obj is extending beyond the bounds of box.
+   *
+   * \return A bitmask of sides relative to obj.
+   */
+  VolumeSides extending_sides(const Volume& obj, const Volume& box) noexcept
   {
-    SDL_Rect rect;
-    rect.x = volume.pos.x;
-    rect.y = volume.pos.y;
-    rect.w = volume.width;
-    rect.h = volume.height;
-    SDL_RenderFillRect(renderer, &rect);
+    GENERATE_VOLUME_BOUNDS(obj);
+    GENERATE_VOLUME_BOUNDS(box);
+
+    VolumeSides sides = VolumeSide::None;
+    if(obj_top - box_top < 0)
+    {
+      sides |= VolumeSide::Top;
+    }
+    if(box_bottom - obj_bottom < 0)
+    {
+      sides |= VolumeSide::Bottom;
+    }
+    if(obj_left - box_left < 0)
+    {
+      sides |= VolumeSide::Left;
+    }
+    if(box_right - obj_right < 0)
+    {
+      sides |= VolumeSide::Right;
+    }
+
+    return sides;
   }
 }

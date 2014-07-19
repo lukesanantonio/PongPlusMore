@@ -47,16 +47,28 @@ namespace pong
 
   struct Volume
   {
-    math::vector<double> pos;
-    double width, height;
+    using point_type = double;
+    math::vector<point_type> pos;
+    point_type width, height;
 
-    Volume(decltype(pos) pos = decltype(pos){},
-           decltype(width) width = 0, decltype(height) height = 0)
+    Volume(math::vector<point_type> pos = math::vector<point_type>{},
+           point_type width = 0, point_type height = 0)
            : pos(pos), width(width), height(height) {}
   };
+
+  VolumeSides extending_sides(const Volume& obj, const Volume& box) noexcept;
 
   inline bool operator==(const Volume& v1, const Volume& v2) noexcept
   {
     return v1.pos == v2.pos && v1.width == v2.width && v1.height == v2.height;
   }
+
+  /*!
+   * \brief A macro for generating local variables of Volume bounds.
+   */
+  #define GENERATE_VOLUME_BOUNDS(vol) \
+    Volume::point_type vol##_left = vol.pos.x, \
+                       vol##_right = vol.pos.x + vol.width - 1, \
+                       vol##_top = vol.pos.y, \
+                       vol##_bottom = vol.pos.y + vol.height - 1
 }

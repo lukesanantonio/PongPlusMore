@@ -27,7 +27,7 @@
 #include "Label.h"
 #include "render_text.h"
 #include "common/vector.h"
-#include "common/Volume.h"
+#include "common/volume.h"
 namespace pong
 {
   /*!

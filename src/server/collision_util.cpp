@@ -144,44 +144,6 @@ namespace pong
   }
 
   /*!
-   * \brief Returns all sides where the obj is extending beyond the bounds of
-   * box.
-   */
-  std::vector<VolumeSides> allProtrudingSides(const Volume& obj,
-                                             const Volume& box) noexcept
-  {
-    std::unordered_map<VolumeSides, double> map;
-
-    GENERATE_VOLUME_BOUNDS(obj);
-    GENERATE_VOLUME_BOUNDS(box);
-
-    map.emplace(VolumeSide::Top, obj_top - box_top);
-    map.emplace(VolumeSide::Bottom, box_bottom - obj_bottom);
-    map.emplace(VolumeSide::Left, obj_left - box_left);
-    map.emplace(VolumeSide::Right, box_right - obj_right);
-
-    using std::begin; using std::end;
-
-    // Remove the bad ones.
-    for(auto iter = begin(map); iter != end(map);)
-    {
-      double var = iter->second;
-      if(var >= 0)
-      {
-        iter = map.erase(iter);
-      }
-      else ++iter;
-    }
-
-    std::vector<VolumeSides> sides;
-    for(auto pair : map)
-    {
-      sides.push_back(pair.first);
-    }
-    return sides;
-  }
-
-  /*!
    * \brief Snaps a volume to the side of another volume.
    *
    * \param to_move The volume to modify.

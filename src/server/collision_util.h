@@ -26,20 +26,11 @@
 #include <vector>
 #include <array>
 #include "common/vector.h"
-#include "common/Volume.h"
+#include "common/volume.h"
 #include "enum_hash.hpp"
 #include "ObjectManager.h"
 namespace pong
 {
-  /*!
-   * \brief A macro for generating local variables of Volume bounds.
-   */
-  #define GENERATE_VOLUME_BOUNDS(vol) \
-    double vol##_left = vol.pos.x, \
-           vol##_right = vol.pos.x + vol.width - 1, \
-           vol##_top = vol.pos.y, \
-           vol##_bottom = vol.pos.y + vol.height - 1
-
   /*!
    * \brief Returns whether or not check is inside a range inclusive.
    *
@@ -61,8 +52,6 @@ namespace pong
   VolumeSides findClosestSide(const Volume& v1, const Volume& v2) noexcept;
 
   bool isInsideVolume(const Volume& box, const Volume& obj) noexcept;
-  std::vector<VolumeSides> allProtrudingSides(const Volume& obj,
-                                              const Volume& box) noexcept;
 
   void snapVolumeToVolume(Volume&, VolumeSides, const Volume&) noexcept;
   math::vector<double> snapDiff(const Volume&, VolumeSides,
