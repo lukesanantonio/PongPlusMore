@@ -46,13 +46,6 @@ namespace pong
   }
 
   /*!
-   * \brief An unordered map that can use strongly typed enums as keys.
-   */
-  template <typename key_type, typename value_type>
-  using unordered_map_enumhash = std::unordered_map<key_type, value_type,
-                                                    enum_hash<key_type> >;
-
-  /*!
    * \brief Returns the distance of each side from v2 in a map.
    *
    * \param v1 The volume used as a reference.
@@ -62,10 +55,10 @@ namespace pong
    * \returns A hash map describing how much each side of v2 penetrates v1.
    * Values will only be greater than 0.
    */
-  unordered_map_enumhash<VolumeSide, double>
+  std::unordered_map<VolumeSides, double>
   getVolumePenetration(const Volume& v1, const Volume& v2) noexcept
   {
-    using map_type = unordered_map_enumhash<VolumeSide, double>;
+    using map_type = std::unordered_map<VolumeSides, double>;
 
     // If the volumes are not intersecting the results are irrelevant.
     if(!isIntersecting(v1, v2)) return map_type{};
@@ -105,7 +98,7 @@ namespace pong
    *
    * \returns The side of v1 that is closest to v2.
    */
-  VolumeSide findClosestSide(const Volume& v1, const Volume& v2) noexcept
+  VolumeSides findClosestSide(const Volume& v1, const Volume& v2) noexcept
   {
     // Get a description of the intersecting between the two volumes.
     auto bounds = getVolumePenetration(v1, v2);
@@ -154,10 +147,10 @@ namespace pong
    * \brief Returns all sides where the obj is extending beyond the bounds of
    * box.
    */
-  std::vector<VolumeSide> allProtrudingSides(const Volume& obj,
+  std::vector<VolumeSides> allProtrudingSides(const Volume& obj,
                                              const Volume& box) noexcept
   {
-    unordered_map_enumhash<VolumeSide, double> map;
+    std::unordered_map<VolumeSides, double> map;
 
     GENERATE_VOLUME_BOUNDS(obj);
     GENERATE_VOLUME_BOUNDS(box);
@@ -180,7 +173,7 @@ namespace pong
       else ++iter;
     }
 
-    std::vector<VolumeSide> sides;
+    std::vector<VolumeSides> sides;
     for(auto pair : map)
     {
       sides.push_back(pair.first);
@@ -199,7 +192,7 @@ namespace pong
    * to v after the snap. Meaning a snap to the top of v will only cause
    * to_move's Y component to be changed appropriately.
    */
-  void snapVolumeToVolume(Volume& to_move, VolumeSide side,
+  void snapVolumeToVolume(Volume& to_move, VolumeSides side,
                           const Volume& v) noexcept
   {
     switch(side)
@@ -238,7 +231,7 @@ namespace pong
    *
    * \returns A diff from where to_move is and where it needs to be.
    */
-  math::vector<double> snapDiff(const Volume& to_move, VolumeSide side,
+  math::vector<double> snapDiff(const Volume& to_move, VolumeSides side,
                                 const Volume& v) noexcept
   {
     Volume to_move_copy = to_move;
@@ -257,7 +250,7 @@ namespace pong
    * It ends up being that to_move's side is the same side as the parameter.
    */
   math::vector<double> snapToVolumeInsideDiff(const Volume& to_move,
-                                              VolumeSide side,
+                                              VolumeSides side,
                                               const Volume& v) noexcept
   {
     math::vector<double> pos{to_move.pos};

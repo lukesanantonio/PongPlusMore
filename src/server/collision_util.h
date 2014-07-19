@@ -58,23 +58,18 @@ namespace pong
 
   bool isIntersecting(const Volume& v1, const Volume& v2) noexcept;
 
-  enum class VolumeSide : unsigned int
-  {
-    Top, Bottom, Left, Right, None
-  };
-
-  VolumeSide findClosestSide(const Volume& v1, const Volume& v2) noexcept;
+  VolumeSides findClosestSide(const Volume& v1, const Volume& v2) noexcept;
 
   bool isInsideVolume(const Volume& box, const Volume& obj) noexcept;
-  std::vector<VolumeSide> allProtrudingSides(const Volume& obj,
-                                             const Volume& box) noexcept;
+  std::vector<VolumeSides> allProtrudingSides(const Volume& obj,
+                                              const Volume& box) noexcept;
 
-  void snapVolumeToVolume(Volume&, VolumeSide, const Volume&) noexcept;
-  math::vector<double> snapDiff(const Volume&, VolumeSide,
+  void snapVolumeToVolume(Volume&, VolumeSides, const Volume&) noexcept;
+  math::vector<double> snapDiff(const Volume&, VolumeSides,
                                 const Volume&) noexcept;
 
   math::vector<double> snapToVolumeInsideDiff(const Volume& to_move,
-                                              VolumeSide side,
+                                              VolumeSides side,
                                               const Volume& v) noexcept;
 
   std::array<Volume, 4> find_volume_quads(const Volume& vol) noexcept;

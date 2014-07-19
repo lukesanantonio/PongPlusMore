@@ -21,6 +21,30 @@
 #include "common/vector.h"
 namespace pong
 {
+  using VolumeSides = unsigned short;
+  namespace VolumeSide
+  {
+    constexpr VolumeSides None   = 0x00;
+    constexpr VolumeSides Left   = 0x01;
+    constexpr VolumeSides Right  = 0x02;
+    constexpr VolumeSides Top    = 0x04;
+    constexpr VolumeSides Bottom = 0x08;
+  }
+
+  /*!
+   * \brief Returns a bitmask of volume sides that reflect the opposite sides
+   * of the bitmask passed in.
+   */
+  inline VolumeSides flip(VolumeSides s) noexcept
+  {
+    VolumeSides mask = VolumeSide::None;
+    if(s & VolumeSide::Left) mask |= VolumeSide::Right;
+    if(s & VolumeSide::Right) mask |= VolumeSide::Left;
+    if(s & VolumeSide::Top) mask |= VolumeSide::Bottom;
+    if(s & VolumeSide::Bottom) mask |= VolumeSide::Top;
+    return mask;
+  }
+
   struct Volume
   {
     math::vector<double> pos;
