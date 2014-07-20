@@ -25,7 +25,6 @@
 #include "common/util.h"
 #include "ObjectManager.h"
 #include "Node.hpp"
-#include "collision_util.h"
 namespace pong
 {
   struct Node_Content
@@ -95,7 +94,7 @@ namespace pong
       if(!root) return {nullptr};
       if(!root->get_data()) return {nullptr};
 
-      if(isIntersecting(root->get_data()->v, v))
+      if(intersecting(root->get_data()->v, v))
       {
         // If leaf:
         if(root->children().empty()) return {root};

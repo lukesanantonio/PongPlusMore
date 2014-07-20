@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "LocalServer.h"
-#include "collision_util.h"
 namespace pong
 {
   void LocalServer::setDestination(id_type id, math::vector<double> dest)
@@ -79,7 +78,7 @@ namespace pong
         if(col_id == id) continue;
         Volume col_v = n->get_data()->objs->findObject(col_id).volume;
 
-        if(isIntersecting(v, col_v))
+        if(intersecting(v, col_v))
         {
           this->quadtree_.erase(id);
           return 0;

@@ -23,7 +23,6 @@
  */
 #include "Button.h"
 #include "common/center.hpp"
-#include "server/collision_util.h"
 namespace pong
 {
   /*!
@@ -146,8 +145,8 @@ namespace pong
         point.x = event.button.x;
         point.y = event.button.y;
 
-        if(isIn(vol_.pos.x, vol_.pos.x + vol_.width - 1, point.x) &&
-           isIn(vol_.pos.y, vol_.pos.y + vol_.height - 1, point.y))
+        if(is_in(vol_.pos.x, vol_.pos.x + vol_.width - 1, point.x) &&
+           is_in(vol_.pos.y, vol_.pos.y + vol_.height - 1, point.y))
         {
           this->on_click_();
         }

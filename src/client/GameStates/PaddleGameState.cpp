@@ -23,7 +23,6 @@
 #include "PaddleGameState.h"
 #include "../render.h"
 #include "common/crash.hpp"
-#include "server/collision_util.h"
 #include "common/serialize.h"
 namespace pong
 {

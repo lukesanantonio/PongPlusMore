@@ -19,6 +19,8 @@
  */
 #pragma once
 #include "common/vector.h"
+#include <unordered_map>
+#include <array>
 namespace pong
 {
   using VolumeSides = unsigned short;
@@ -56,8 +58,6 @@ namespace pong
            : pos(pos), width(width), height(height) {}
   };
 
-  VolumeSides extending_sides(const Volume& obj, const Volume& box) noexcept;
-
   inline bool operator==(const Volume& v1, const Volume& v2) noexcept
   {
     return v1.pos == v2.pos && v1.width == v2.width && v1.height == v2.height;
@@ -71,4 +71,47 @@ namespace pong
                        vol##_right = vol.pos.x + vol.width - 1, \
                        vol##_top = vol.pos.y, \
                        vol##_bottom = vol.pos.y + vol.height - 1
+
+  /*!
+   * \brief Find all sides where obj is extending beyond the bounds of box.
+   */
+  VolumeSides extending_sides(const Volume& obj, const Volume& box) noexcept;
+
+  /*!
+   * \brief Check whether there is an intersection between two volumes.
+   */
+  bool intersecting(const Volume& v1, const Volume& v2) noexcept;
+
+  /*!
+   * \brief Find the side of v1 that is closest to v2.
+   */
+  VolumeSides closest_side(const Volume& v1, const Volume& v2) noexcept;
+
+  /*!
+   * \brief Find whether obj is inside box (inclusively).
+   */
+  bool inside(const Volume& box, const Volume& obj) noexcept;
+
+  /*!
+   * \brief Find the distance of each side of v1 to each side of v2.
+   */
+  std::unordered_map<VolumeSides, double>
+  volume_difference(const Volume& v1, const Volume& v2) noexcept;
+
+  /*!
+   * \brief Find the required displacement to move v to side s of volume ref.
+   */
+  math::vector<double>
+  outside_snap(const Volume& v, VolumeSides s, const Volume& ref) noexcept;
+
+  /*!
+   * \brief Find the required displacement to move to snap to a side of v.
+   */
+  math::vector<double>
+  inside_snap(const Volume& v, VolumeSides s, const Volume& ref) noexcept;
+
+  /*!
+   * \brief Find the four quads that make up the volume v.
+   */
+  std::array<Volume, 4> volume_quads(const Volume& v) noexcept;
 }

@@ -29,6 +29,22 @@
 namespace pong
 {
   /*!
+   * \brief Return whether or not check is inside (inclusively) a range.
+   *
+   * \param left One end of the range.
+   * \param right Another end of the range.
+   * \param check Number to check.
+   *
+   * \returns True if check is between left..right or right..left
+   * inclusive.
+   */
+  template <typename P1, typename P2, typename P3>
+  constexpr inline bool is_in(P1 left, P2 right, P3 check) noexcept
+  {
+    return std::min(left, right) <= check && check <= std::max(left, right);
+  }
+
+  /*!
    * \brief Container for vector things.
    */
   namespace math

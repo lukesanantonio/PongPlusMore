@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Quadtree.h"
-#include "collision_util.h"
 #include "common/crash.hpp"
 #include <numeric>
 namespace pong
@@ -32,8 +31,8 @@ namespace pong
 
     // Don't do a thing if we aren't even intersecting with the node we need
     // to insert to.
-    if(isIntersecting(root.get_data()->v,
-                      root.get_data()->objs->findObject(id).volume))
+    if(intersecting(root.get_data()->v,
+                    root.get_data()->objs->findObject(id).volume))
     {
       auto& max_objs = root.get_data()->max_objs;
 
@@ -124,7 +123,7 @@ namespace pong
          root.get_data()->current_level+1 <= root.get_data()->max_level)
       {
         // Time to split :/
-        auto quads = find_volume_quads(root.get_data()->v);
+        auto quads = volume_quads(root.get_data()->v);
         auto& objs = root.get_data()->objs;
 
         int& max_objs = root.get_data()->max_objs;
@@ -261,7 +260,7 @@ namespace pong
     bool did_remove = false;
     for(node_type* n : containing_nodes)
     {
-      if(!isIntersecting(obj.volume, n->get_data()->v))
+      if(!intersecting(obj.volume, n->get_data()->v))
       {
         // The object has moved *out* of this particular node.
         using pong::remove;

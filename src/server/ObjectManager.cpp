@@ -19,7 +19,6 @@
  */
 #include "ObjectManager.h"
 #include "Server.h"
-#include "collision_util.h"
 namespace pong
 {
   ObjectManager::ObjectManager(const Server& s) noexcept
