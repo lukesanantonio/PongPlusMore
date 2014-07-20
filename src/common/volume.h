@@ -73,14 +73,14 @@ namespace pong
                        vol##_bottom = vol.pos.y + vol.height - 1
 
   /*!
-   * \brief Find all sides where obj is extending beyond the bounds of box.
-   */
-  VolumeSides extending_sides(const Volume& obj, const Volume& box) noexcept;
-
-  /*!
    * \brief Check whether there is an intersection between two volumes.
    */
   bool intersecting(const Volume& v1, const Volume& v2) noexcept;
+
+  /*!
+   * \brief Find all sides where obj is extending beyond the bounds of box.
+   */
+  VolumeSides extending_sides(const Volume& obj, const Volume& box) noexcept;
 
   /*!
    * \brief Find the side of v1 that is closest to v2.

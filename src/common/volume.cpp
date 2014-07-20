@@ -21,6 +21,26 @@
 namespace pong
 {
   /*!
+   * \returns True if the two volumes intersect in any way, false otherwise.
+   */
+  bool intersecting(const Volume& v1, const Volume& v2) noexcept
+  {
+    GENERATE_VOLUME_BOUNDS(v1);
+    GENERATE_VOLUME_BOUNDS(v2);
+
+    if(is_in(v1_left, v1_right, v2_left) or
+       is_in(v1_left, v1_right, v2_right) or
+       (v2_left <= v1_left && v1_right <= v2_right))
+    {
+      if(is_in(v1_top, v1_bottom, v2_top) or
+         is_in(v1_top, v1_bottom, v2_bottom) or
+         (v2_top <= v1_top && v1_bottom <= v2_bottom)) return true;
+    }
+
+    return false;
+  }
+
+  /*!
    * \return A bitmask of sides relative to obj.
    */
   VolumeSides extending_sides(const Volume& obj, const Volume& box) noexcept
@@ -47,26 +67,6 @@ namespace pong
     }
 
     return sides;
-  }
-
-  /*!
-   * \returns True if the two volumes intersect in any way, false otherwise.
-   */
-  bool intersecting(const Volume& v1, const Volume& v2) noexcept
-  {
-    GENERATE_VOLUME_BOUNDS(v1);
-    GENERATE_VOLUME_BOUNDS(v2);
-
-    if(is_in(v1_left, v1_right, v2_left) or
-       is_in(v1_left, v1_right, v2_right) or
-       (v2_left <= v1_left && v1_right <= v2_right))
-    {
-      if(is_in(v1_top, v1_bottom, v2_top) or
-         is_in(v1_top, v1_bottom, v2_bottom) or
-         (v2_top <= v1_top && v1_bottom <= v2_bottom)) return true;
-    }
-
-    return false;
   }
 
   /*!
@@ -154,7 +154,7 @@ namespace pong
 
     if(s & VolumeSide::Top)
     {
-      pos.y = ref_top - v.height + 1;
+      pos.y = ref_top - v.height;
     }
     if(s & VolumeSide::Bottom)
     {
@@ -162,7 +162,7 @@ namespace pong
     }
     if(s & VolumeSide::Left)
     {
-      pos.x = ref_left - v.width + 1;
+      pos.x = ref_left - v.width;
     }
     if(s & VolumeSide::Right)
     {
@@ -186,7 +186,7 @@ namespace pong
 
     if(s & VolumeSide::Top)
     {
-      pos.y = ref_top + 1;
+      pos.y = ref_top;
     }
     if(s & VolumeSide::Bottom)
     {
@@ -194,7 +194,7 @@ namespace pong
     }
     if(s & VolumeSide::Left)
     {
-      pos.x = ref_left + 1;
+      pos.x = ref_left;
     }
     if(s & VolumeSide::Right)
     {
