@@ -87,133 +87,178 @@ namespace pong
     }
     return id;
   }
-
-  math::vector<double> find_wall_force(const Object& obj, Volume bounds)
+#if 0
+  template <typename point_type>
+  math::vector<point_type> constrain(math::vector<point_type> v,
+                                     VolumeSides constraints) noexcept
   {
-    math::vector<double> force;
+    if(constraints & VolumeSide::Left)
+      v.x = std::max(v.x, 0.0);
+    if(constraints & VolumeSide::Right)
+      v.x = std::min(v.x, 0.0);
+    if(constraints & VolumeSide::Top)
+      v.y = std::max(v.y, 0.0);
+    if(constraints & VolumeSide::Bottom)
+      v.y = std::min(v.y, 0.0);
 
-    if(!isInsideVolume(obj.volume, bounds))
+    return v;
+  }
+
+  math::vector<double> get_displacement(Object obj) noexcept
+  {
+    math::vector<double> disp;
+    if(isPaddle(obj))
     {
-      std::vector<VolumeSide> vs = allProtrudingSides(obj.volume, bounds);
-      for(VolumeSide s : vs)
-      {
-        switch(s)
-        {
-          case VolumeSide::Top:
-          {
-            force.y = 1;
-            break;
-          }
-          case VolumeSide::Bottom:
-          {
-            force.y = -1;
-            break;
-          }
-          case VolumeSide::Left:
-          {
-            force.x = 1;
-            break;
-          }
-          case VolumeSide::Right:
-          {
-            force.x = -1;
-            break;
-          }
-          default: break;
-        }
-      }
+      disp = obj.physics_options.paddle_options.destination - obj.volume.pos;
+    }
+    else
+    {
+      disp = obj.physics_options.ball_options.velocity +
+             obj.physics_options.ball_options.displacement_queue;
     }
 
-    return force;
+    // Dilute our displacement factoring in our movement constraints.
+    return constrain(disp, obj.physics_options.constraints);
   }
+
 
   struct ModifiedObjectReference
   {
-    Object obj;
     id_type id;
+    Object obj;
   };
-
-  math::vector<double> find_opposing_forces(ModifiedObjectReference obj,
-                                            Quadtree& q,
-                                            int game_width, int game_height)
+  void react(ModifiedObjectReference& obj, Quadtree& q) noexcept
   {
-    math::vector<double> forces;
+    obj.obj.physics_options.constraints = 0x00;
 
-    Volume bounds = {{0,0}, static_cast<double>(game_width),
-                            static_cast<double>(game_height)};
+    if(isBall(obj.obj))
+    {
+      // Clear the displacement queue if it makes sense to do so.
+      obj.obj.physics_options.ball_options.displacement_queue = {0,0};
+    }
 
-    forces += find_wall_force(obj.obj, bounds);
+    Volume bounds = {{0,0}, 1000, 1000};
+    VolumeSides sides = protruding_sides(obj.obj.volume, bounds);
 
-    return forces;
+    for(VolumeSides s : sides)
+    {
+      math::vector<double> d =
+                       snapToVolumeInsideDiff(obj.obj.volume, s, bounds);
+      obj.obj.volume.pos += d;
+      if(isBall(obj.obj))
+      {
+        /*
+        VolumeSide::Left:
+        VolumeSide::Right:
+        {
+          obj.obj.physics_options.ball_options.velocity.x *= -1;
+          break;
+        }
+        VolumeSide::Top:
+        VolumeSide::Bottom:
+        {
+          obj.obj.physics_options.ball_options.velocity.y *= -1;
+          break;
+        }*/
+      }
+    }
+
+    for(const auto& obj_pair : q.obj_manager())
+    {
+      if(obj_pair.first == obj.id) continue;
+
+      Object& self = obj.obj;
+      const Object& other = obj_pair.second;
+
+      if(isIntersecting(other.volume, self.volume))
+      {
+        if(isPaddle(self) && isPaddle(other))
+        {
+          // We can't go there. Add a constraint for next time.
+          self.physics_options.constraints |=
+                                    findClosestSide(self.volume, other.volume);
+        }
+        else if(isBall(self))
+        {
+          if(isPaddle(other))
+          {
+            // We can't move, so flip our velocity, queue a return and add a
+            // constraint.
+            VolumeSides s = findClosestSide(self.volume, other.volume);
+            self.physics_options.constraints |= s;
+            switch(s)
+            {
+              case VolumeSide::Left:
+              case VolumeSide::Right:
+              {
+                self.physics_options.ball_options.velocity.x *= -1;
+                break;
+              }
+              case VolumeSide::Top:
+              case VolumeSide::Bottom:
+              {
+                self.physics_options.ball_options.velocity.y *= -1;
+                break;
+              }
+              default: break;
+            }
+
+            auto& q = self.physics_options.ball_options.displacement_queue;
+            q += -snapDiff(other.volume, s, self.volume);
+          }
+          if(isBall(other))
+          {
+            using std::swap;
+            Object other_obj_copy = other;
+
+            // Swap velocities and add constraints.
+            swap(self.physics_options.ball_options.velocity,
+                 other_obj_copy.physics_options.ball_options.velocity);
+
+            // Set the constraint of each.
+            VolumeSides closest_side =
+                                    findClosestSide(self.volume, other.volume);
+            self.physics_options.constraints |= closest_side;
+            other_obj_copy.physics_options.constraints |= closest_side;
+
+            // Update the other obj.
+            q.setObject(obj_pair.first, other_obj_copy);
+          }
+        }
+      }
+    }
   }
 
   void raytrace(id_type id, Quadtree& q) noexcept
   {
-    Object obj = q.findObject(id);
+    ModifiedObjectReference obj = {id, q.findObject(id)};
 
-    if(isBall(obj))
-    {
-      math::vector<double>& velocity =
-                                     obj.physics_options.ball_options.velocity;
-      math::vector<double>& forces = obj.physics_options.ball_options.forces;
+    // Find our displacement.
+    obj.obj.volume.pos += get_displacement(obj.obj);
 
-      if(forces.x > 0.0) // We are being forced right.
-      {
-        velocity.x *= velocity.x < 0.0 ? -1 : 1;
-      }
-      else if(forces.x < 0.0) // We are being forced left.
-      {
-        velocity.x *= 0.0 < velocity.x ? -1 : 1;
-      }
-      if(forces.y > 0.0) // We are being forced down.
-      {
-        velocity.y *= velocity.y < 0.0 ? -1 : 1;
-      }
-      else if(forces.y < 0.0) // We are being forced up.
-      {
-        velocity.y *= 0.0 < velocity.y ? -1 : 1;
-      }
+    // Respond to any collisions and recalculate constraints.
+    react(obj, q);
 
-      obj.volume.pos += velocity;
-
-      forces = find_opposing_forces({obj, id}, q, 1000, 1000);
-    }
-    else if(isPaddle(obj))
-    {
-      math::vector<double> original_position = obj.volume.pos;
-      obj.volume.pos = obj.physics_options.paddle_options.destination;
-
-      math::vector<double> movement{};
-
-      movement = obj.volume.pos - original_position;
-      if(movement.x > 0) movement.x = 1;
-      if(movement.x < 0) movement.x = -1;
-      if(movement.y > 0) movement.y = 1;
-      if(movement.y < 0) movement.y = -1;
-
-
-      math::vector<double> forces =
-                                find_opposing_forces({obj, id}, q, 1000, 1000);
-      // If we moved in a direction against our force. Go back
-      if(forces.x == -movement.x)
-      {
-        obj.volume.pos.x = original_position.x;
-      }
-      // Same here.
-      if(forces.y == -movement.y)
-      {
-        obj.volume.pos.y = original_position.y;
-      }
-    }
-
-    q.setObject(id, obj);
+    // Commit that object to the quad-tree.
+    q.setObject(obj.id, obj.obj);
   }
 
   void LocalServer::step() noexcept
   {
-    for(id_type id : this->quadtree_.obj_manager().ids())
+    std::vector<id_type> ids = this->quadtree_.obj_manager().ids();
+    using std::begin; using std::end;
+    std::sort(begin(ids), end(ids), [&](id_type i1, id_type i2)
+    {
+      return isBall(this->quadtree_.obj_manager(), i1);
+    });
+
+    for(id_type id : ids)
     {
       raytrace(id, this->quadtree_);
     }
+  }
+#endif
+  void LocalServer::step() noexcept
+  {
   }
 }
