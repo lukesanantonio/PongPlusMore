@@ -71,6 +71,7 @@ namespace pong
       PaddleOptions paddle_options;
       BallOptions ball_options;
     };
+    VolumeSides constraints = VolumeSide::None;
   };
 
   using id_type = uint16_t;
