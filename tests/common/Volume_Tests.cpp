@@ -20,6 +20,23 @@
 #include "common/volume.h"
 #include "gtest/gtest.h"
 
+TEST(Volume_Tests, constrain)
+{
+  using namespace pong;
+
+  math::vector<double> test_vector = {0.0, 0.0};
+  EXPECT_EQ(test_vector, constrain<double>({0, -1}, VolumeSide::Top));
+  EXPECT_EQ(test_vector, constrain<double>({-1, 0}, VolumeSide::Left));
+  EXPECT_EQ(test_vector, constrain<double>({-1, -1},
+            VolumeSide::Left | VolumeSide::Top));
+
+  test_vector = {-1, -1};
+  EXPECT_EQ(test_vector, constrain<double>({-1, -1},
+            VolumeSide::Right | VolumeSide::Bottom));
+  test_vector = {0, 1};
+  EXPECT_EQ(test_vector, constrain<double>({1, 1},
+            VolumeSide::Right | VolumeSide::Top));
+}
 TEST(Volume_Tests, flip)
 {
   using namespace pong;
