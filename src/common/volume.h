@@ -34,6 +34,44 @@ namespace pong
   }
 
   /*!
+   * \brief Find vector direction using a VolumeSide bitmask representation.
+   */
+  template <typename point_type>
+  inline VolumeSides find_direction(const math::vector<point_type>& v) noexcept
+  {
+    VolumeSides bit = VolumeSide::None;
+
+    if(v.x < 0) bit |= VolumeSide::Left;
+    if(0 < v.x) bit |= VolumeSide::Right;
+    if(v.y < 0) bit |= VolumeSide::Top;
+    if(0 < v.y) bit |= VolumeSide::Bottom;
+
+    return bit;
+  }
+
+  /*!
+   * \brief Reduces a vector using passed in constraints.
+   *
+   * For each side, the component of the vector moving in that direction is
+   * zeroed out.
+   */
+  template <typename point_type>
+  inline math::vector<point_type> constrain(math::vector<point_type> v,
+                                            VolumeSides constraints) noexcept
+  {
+    if(constraints & VolumeSide::Left)
+      v.x = std::max(v.x, 0.0);
+    if(constraints & VolumeSide::Right)
+      v.x = std::min(v.x, 0.0);
+    if(constraints & VolumeSide::Top)
+      v.y = std::max(v.y, 0.0);
+    if(constraints & VolumeSide::Bottom)
+      v.y = std::min(v.y, 0.0);
+
+    return v;
+  }
+
+  /*!
    * \brief Returns a bitmask of volume sides that reflect the opposite sides
    * of the bitmask passed in.
    */
