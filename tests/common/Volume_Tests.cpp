@@ -20,6 +20,19 @@
 #include "common/volume.h"
 #include "gtest/gtest.h"
 
+TEST(Volume_Tests, find_direction)
+{
+  using namespace pong;
+
+  math::vector<double> test_vector = {0, 1};
+  EXPECT_EQ(VolumeSide::Bottom, find_direction(test_vector));
+
+  test_vector = {1, -1};
+  EXPECT_EQ(VolumeSide::Right | VolumeSide::Top, find_direction(test_vector));
+
+  test_vector = {-1, 1};
+  EXPECT_EQ(VolumeSide::Bottom | VolumeSide::Left,find_direction(test_vector));
+}
 TEST(Volume_Tests, constrain)
 {
   using namespace pong;
