@@ -36,4 +36,48 @@ namespace pong
     rect.h = volume.height;
     SDL_RenderFillRect(renderer, &rect);
   }
+  void render_volume_sides(SDL_Renderer* renderer,
+                           const Volume& v,
+                           VolumeSides sides,
+                           double percentage) noexcept
+  {
+    if(sides & VolumeSide::Left)
+    {
+      SDL_Rect r;
+      r.x = v.pos.x;
+      r.y = v.pos.y;
+      r.w = v.width * percentage;
+      r.h = v.height;
+      SDL_RenderFillRect(renderer, &r);
+    }
+    if(sides & VolumeSide::Right)
+    {
+      SDL_Rect r;
+      auto right = v.pos.x + v.width;
+      r.x = right - v.width * percentage;
+      r.y = v.pos.y;
+      r.w = std::ceil(right - r.x);
+      r.h = v.height;
+      SDL_RenderFillRect(renderer, &r);
+    }
+    if(sides & VolumeSide::Top)
+    {
+      SDL_Rect r;
+      r.x = v.pos.x;
+      r.y = v.pos.y;
+      r.w = v.width;
+      r.h = v.height * percentage;
+      SDL_RenderFillRect(renderer, &r);
+    }
+    if(sides & VolumeSide::Bottom)
+    {
+      SDL_Rect r;
+      auto bottom = v.pos.y + v.height;
+      r.x = v.pos.x;
+      r.y = bottom - v.height * percentage;
+      r.w = v.width;
+      r.h = std::ceil(bottom - r.y);
+      SDL_RenderFillRect(renderer, &r);
+    }
+  }
 }
