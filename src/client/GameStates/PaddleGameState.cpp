@@ -52,6 +52,27 @@ namespace pong
             this->render_quadtree_ = !this->render_quadtree_;
             break;
           }
+          case SDL_SCANCODE_R:
+          {
+            this->render_constraints_ = !this->render_constraints_;
+            break;
+          }
+          case SDL_SCANCODE_T:
+          {
+            this->slow_ = !this->slow_;
+            break;
+          }
+          case SDL_SCANCODE_Y:
+          {
+            ++this->start_count_;
+            break;
+          }
+          case SDL_SCANCODE_U:
+          {
+            if(this->start_count_ <= 1) break;
+            --this->start_count_;
+            break;
+          }
           case SDL_SCANCODE_SPACE:
           {
             this->ball_ = this->server_.createBall({{500,500}, 25, 25});
@@ -139,6 +160,11 @@ namespace pong
 
   void PaddleGameState::update()
   {
+    if(slow_)
+    {
+      if(this->count_-- != 0) return;
+      else this->count_ = this->start_count_;
+    }
     this->server_.step();
   }
 
@@ -177,7 +203,19 @@ namespace pong
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
     for(id_type id : this->server_.objects())
     {
-      pong::render(renderer, this->server_.getObject(id).volume);
+      const Object& obj = this->server_.getObject(id);
+      if(this->render_constraints_)
+      {
+        render_box(renderer, obj.volume);
+        SDL_SetRenderDrawColor(renderer, 0xff, 0x00, 0x00, 0xff);
+        render_volume_sides(renderer, obj.volume,
+                            obj.physics_options.constraints, .2);
+        SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+      }
+      else
+      {
+        pong::render(renderer, obj.volume);
+      }
     }
 
     if(this->render_quadtree_)
