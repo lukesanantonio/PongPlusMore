@@ -20,6 +20,21 @@
 #include "common/volume.h"
 #include "gtest/gtest.h"
 
+TEST(Volume_Tests, flip)
+{
+  using namespace pong;
+
+  EXPECT_EQ(VolumeSide::Top, flip(VolumeSide::Bottom));
+
+  EXPECT_EQ(VolumeSide::Left | VolumeSide::Top,
+            flip(VolumeSide::Right | VolumeSide::Bottom));
+
+  EXPECT_EQ(VolumeSide::Bottom, flip(flip(VolumeSide::Bottom)));
+
+  EXPECT_EQ(VolumeSide::Top | VolumeSide::Left,
+            flip(VolumeSide::Bottom | VolumeSide::Right));
+}
+
 TEST(Volume_Tests, intersecting)
 {
   using namespace pong;
