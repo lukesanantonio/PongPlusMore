@@ -272,7 +272,7 @@ namespace pong
     this->objs_.setObject(id, obj);
 
     using pong::insert;
-    if(did_remove)
+    if(did_remove || containing_nodes.empty())
     {
       insert(this->root_, id);
       recalculate_quads(this->root_);
