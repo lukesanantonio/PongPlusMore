@@ -25,10 +25,15 @@
 #include <iostream>
 namespace pong
 {
+  enum class PaddleOrientation
+  {
+    Vertical,
+    Horizontal
+  };
   struct PaddleGameState : public GameState
   {
   public:
-    PaddleGameState(Game& g, Volume v) : g_(g), server_(v) {}
+    PaddleGameState(Game& g, Volume v, PaddleOrientation o);
     virtual void handleEvent(const SDL_Event& event) override;
     virtual void update() override;
     virtual void render(SDL_Renderer*) const override;

@@ -105,7 +105,8 @@ namespace pong
       game.game_state =
           std::make_shared<PaddleGameState>(game, Volume{{},
                                             static_cast<double>(game.width),
-                                            static_cast<double>(game.height)});
+                                            static_cast<double>(game.height)},
+                                            PaddleOrientation::Vertical);
     });
 
     this->quit_.enabled(true);

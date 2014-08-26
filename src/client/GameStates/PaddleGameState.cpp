@@ -31,23 +31,31 @@ namespace pong
     std::fstream file(filename, std::fstream::out | std::fstream::trunc);
     Json::StyledStreamWriter("  ").write(file, v);
   }
+
+  PaddleGameState::PaddleGameState(Game& g, Volume v,
+                                   PaddleOrientation o) : g_(g), server_(v)
+  {
+    this->ball_ = this->server_.createBall({{475,475}, 25, 25});
+    math::vector<double> velocity;
+    velocity.x = (o == PaddleOrientation::Vertical ? 0.1 : 0.25);
+    velocity.y = (o == PaddleOrientation::Vertical ? 0.25 : 0.1);
+    this->server_.setVelocity(this->ball_, velocity);
+
+    Volume paddle_volume;
+    paddle_volume.width = (o == PaddleOrientation::Vertical ? 200 : 30);
+    paddle_volume.height = (o == PaddleOrientation::Vertical ? 30 : 200);
+    this->top_ = this->server_.createPaddle(paddle_volume);
+    this->server_.setDestination(this->top_, paddle_volume.pos);
+
+    paddle_volume.pos.x = (o == PaddleOrientation::Vertical ? 0 : 970);
+    paddle_volume.pos.y = (o == PaddleOrientation::Vertical ? 970 : 0);
+    this->bottom_ = this->server_.createPaddle(paddle_volume);
+    this->server_.setDestination(this->bottom_, paddle_volume.pos);
+  }
   void PaddleGameState::handleEvent(const SDL_Event& event)
   {
     switch(event.type)
     {
-      case SDL_MOUSEBUTTONDOWN:
-      {
-        if(top_) break;
-        top_ = this->server_.createPaddle({{0, 0}, 200, 50});
-        break;
-      }
-      case SDL_MOUSEMOTION:
-      {
-        if(!this->top_) break;
-        this->server_.setDestination(this->top_,
-                         math::vector<double>(event.motion.x, event.motion.y));
-        break;
-      }
       case SDL_KEYDOWN:
       {
         switch(event.key.keysym.scancode)
@@ -76,63 +84,6 @@ namespace pong
           {
             if(g_.start_count <= 1) break;
             --g_.start_count;
-            break;
-          }
-          case SDL_SCANCODE_SPACE:
-          {
-            this->ball_ = this->server_.createBall({{500,500}, 25, 25});
-
-            if(!this->ball_) break;
-
-            // Get our mouse state.
-            int x, y;
-            SDL_GetMouseState(&x, &y);
-
-            math::vector<double> click(x, y);
-
-            math::vector<double> vel =
-                                     click - math::vector<double>{500.0,500.0};
-            vel = math::normalize(vel) * .25;
-
-            this->server_.setVelocity(this->ball_, vel);
-            break;
-          }
-          case SDL_SCANCODE_Q:
-          {
-            if(this->bottom_) break;
-            bottom_ = this->server_.createPaddle({{0, 0}, 200, 50});
-            break;
-          }
-          case SDL_SCANCODE_W:
-          {
-            if(!this->bottom_) break;
-            auto pos = this->server_.getObject(bottom_).volume.pos;
-            pos.y -= 35;
-            this->server_.setDestination(bottom_, pos);
-            break;
-          }
-          case SDL_SCANCODE_A:
-          {
-            if(!this->bottom_) break;
-            auto pos = this->server_.getObject(bottom_).volume.pos;
-            pos.x -= 35;
-            this->server_.setDestination(bottom_, pos);
-            break;
-          }
-          case SDL_SCANCODE_S:
-          {
-            if(!this->bottom_) break;
-            auto pos = this->server_.getObject(bottom_).volume.pos;
-            pos.y += 35;
-            this->server_.setDestination(bottom_, pos);
-            break;
-          }
-          case SDL_SCANCODE_D:
-          {
-            if(!this->bottom_) break;
-            auto pos = this->server_.getObject(bottom_).volume.pos;
-            pos.x += 35;
-            this->server_.setDestination(bottom_, pos);
             break;
           }
           case SDL_SCANCODE_TAB:
