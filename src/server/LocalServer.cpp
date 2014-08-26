@@ -124,7 +124,6 @@ namespace pong
     o1.volume.pos += outside_snap(o1.volume,
                                   cs & ~o1.physics_options.constraints,
                                   o2.volume);
-
     Volume bounds = {{0,0}, 1000, 1000};
     VolumeSides wall_sides = extending_sides(o1.volume, bounds);
     o1.volume.pos += inside_snap(o1.volume, wall_sides, bounds);
@@ -133,6 +132,8 @@ namespace pong
     o2.volume.pos += outside_snap(o2.volume,
                                   cs & ~o2.physics_options.constraints,
                                   o1.volume);
+    wall_sides = extending_sides(o2.volume, bounds);
+    o2.volume.pos += inside_snap(o2.volume, wall_sides, bounds);
   }
 
   struct ModifiedObjectReference
