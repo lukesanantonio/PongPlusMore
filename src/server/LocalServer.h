@@ -20,6 +20,7 @@
 #pragma once
 #include "Server.h"
 #include "Quadtree.h"
+#include <boost/signals2.hpp>
 namespace pong
 {
   struct ModifiedObjectReference;
@@ -42,7 +43,20 @@ namespace pong
     const Quadtree& quadtree() const noexcept { return this->quadtree_; }
 
     void step() noexcept override;
+
+    using wall_observer_signal_t =
+                          boost::signals2::signal<void (VolumeSides s,
+                                                        id_type id,
+                                                        Quadtree& q)>;
+    using connection_t = boost::signals2::connection;
+
+    using wall_observer_t = wall_observer_signal_t::slot_type;
+
+    inline
+    connection_t add_wall_collision_observer(const wall_observer_t&) noexcept;
   private:
+    wall_observer_signal_t obs_;
+
     Quadtree quadtree_;
 
     void react(ModifiedObjectReference& obj) noexcept;
@@ -56,5 +70,11 @@ namespace pong
   inline id_type LocalServer::createBall(const Volume& v) noexcept
   {
     return this->insertObject(v, PhysicsType::Ball);
+  }
+
+  inline auto LocalServer::add_wall_collision_observer(
+                          const wall_observer_t& slot) noexcept -> connection_t
+  {
+    return this->obs_.connect(slot);
   }
 }

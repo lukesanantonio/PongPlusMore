@@ -152,6 +152,12 @@ namespace pong
       reflect_ball(obj.obj.physics_options.ball_options.velocity, sides);
     }
 
+    // Fire wall intersection signal if necessary.
+    if(sides != VolumeSide::None)
+    {
+      this->obs_(sides, obj.id, this->quadtree_);
+    }
+
     for(const auto& node : find_containing_nodes(this->quadtree_.root(),
                                                  obj.obj.volume))
     {

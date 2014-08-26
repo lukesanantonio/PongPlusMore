@@ -17,4 +17,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 add_library(ppmserv LocalServer.cpp ObjectManager.cpp Quadtree.cpp)
+target_include_directories(ppmserv PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(ppmserv jsoncpp ppmcommon)

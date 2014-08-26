@@ -21,6 +21,8 @@
 #include "../Game.h"
 #include "../GameState.h"
 #include "server/LocalServer.h"
+#include "common/serialize.h"
+#include <iostream>
 namespace pong
 {
   struct PaddleGameState : public GameState

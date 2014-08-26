@@ -23,6 +23,9 @@ project(PpM)
 # Make sure to show our FindSDL2.cmake some love.
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
+# Find boost
+find_package(Boost 1.53.0 REQUIRED)
+
 # Actually build our project, or at least declare it.
 add_subdirectory(gtest)
 add_subdirectory(jsoncpp)
