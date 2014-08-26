@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "LocalServer.h"
+#include <cmath>
 namespace pong
 {
   void LocalServer::setDestination(id_type id, math::vector<double> dest)
@@ -87,22 +88,6 @@ namespace pong
     }
     return id;
   }
-#if 0
-  template <typename point_type>
-  math::vector<point_type> constrain(math::vector<point_type> v,
-                                     VolumeSides constraints) noexcept
-  {
-    if(constraints & VolumeSide::Left)
-      v.x = std::max(v.x, 0.0);
-    if(constraints & VolumeSide::Right)
-      v.x = std::min(v.x, 0.0);
-    if(constraints & VolumeSide::Top)
-      v.y = std::max(v.y, 0.0);
-    if(constraints & VolumeSide::Bottom)
-      v.y = std::min(v.y, 0.0);
-
-    return v;
-  }
 
   math::vector<double> get_displacement(Object obj) noexcept
   {
@@ -113,14 +98,36 @@ namespace pong
     }
     else
     {
-      disp = obj.physics_options.ball_options.velocity +
-             obj.physics_options.ball_options.displacement_queue;
+      disp = obj.physics_options.ball_options.velocity;
     }
 
     // Dilute our displacement factoring in our movement constraints.
     return constrain(disp, obj.physics_options.constraints);
   }
 
+  void reflect_ball(math::vector<double>& velocity, VolumeSides sides)
+  {
+    if(sides & (VolumeSide::Left | VolumeSide::Right))
+    {
+      velocity.x *= -1;
+    }
+    if(sides & (VolumeSide::Top | VolumeSide::Bottom))
+    {
+      velocity.y *= -1;
+    }
+  }
+
+  void try_snap(Object& o1, Object& o2) noexcept
+  {
+    VolumeSides cs = closest_side(o2.volume, o1.volume);
+    o1.volume.pos += outside_snap(o1.volume,
+                                  cs & ~o1.physics_options.constraints,
+                                  o2.volume);
+    cs = flip(cs);
+    o2.volume.pos += outside_snap(o2.volume,
+                                  cs & ~o2.physics_options.constraints,
+                                  o1.volume);
+  }
 
   struct ModifiedObjectReference
   {
@@ -129,118 +136,146 @@ namespace pong
   };
   void react(ModifiedObjectReference& obj, Quadtree& q) noexcept
   {
-    obj.obj.physics_options.constraints = 0x00;
+    Volume bounds = {{0,0}, 1000, 1000};
+    VolumeSides sides = extending_sides(obj.obj.volume, bounds);
 
     if(isBall(obj.obj))
     {
-      // Clear the displacement queue if it makes sense to do so.
-      obj.obj.physics_options.ball_options.displacement_queue = {0,0};
+      // If we have a ball, change it's velocity accordingly. If necessary.
+      reflect_ball(obj.obj.physics_options.ball_options.velocity, sides);
     }
 
-    Volume bounds = {{0,0}, 1000, 1000};
-    VolumeSides sides = protruding_sides(obj.obj.volume, bounds);
-
-    for(VolumeSides s : sides)
+    for(const auto& node : find_containing_nodes(q.root(), obj.obj.volume))
     {
-      math::vector<double> d =
-                       snapToVolumeInsideDiff(obj.obj.volume, s, bounds);
-      obj.obj.volume.pos += d;
-      if(isBall(obj.obj))
+      for(id_type id : node->get_data()->ids)
       {
-        /*
-        VolumeSide::Left:
-        VolumeSide::Right:
-        {
-          obj.obj.physics_options.ball_options.velocity.x *= -1;
-          break;
-        }
-        VolumeSide::Top:
-        VolumeSide::Bottom:
-        {
-          obj.obj.physics_options.ball_options.velocity.y *= -1;
-          break;
-        }*/
-      }
-    }
+        if(id == obj.id) continue;
 
-    for(const auto& obj_pair : q.obj_manager())
-    {
-      if(obj_pair.first == obj.id) continue;
+        Object& self = obj.obj;
+        ModifiedObjectReference other_obj = {id, q.findObject(id)};
+        Object& other = other_obj.obj;
 
-      Object& self = obj.obj;
-      const Object& other = obj_pair.second;
+        if(!intersecting(self.volume, other.volume)) continue;
 
-      if(isIntersecting(other.volume, self.volume))
-      {
-        if(isPaddle(self) && isPaddle(other))
-        {
-          // We can't go there. Add a constraint for next time.
-          self.physics_options.constraints |=
-                                    findClosestSide(self.volume, other.volume);
-        }
-        else if(isBall(self))
+        if(isBall(self))
         {
           if(isPaddle(other))
           {
-            // We can't move, so flip our velocity, queue a return and add a
-            // constraint.
-            VolumeSides s = findClosestSide(self.volume, other.volume);
-            self.physics_options.constraints |= s;
-            switch(s)
-            {
-              case VolumeSide::Left:
-              case VolumeSide::Right:
-              {
-                self.physics_options.ball_options.velocity.x *= -1;
-                break;
-              }
-              case VolumeSide::Top:
-              case VolumeSide::Bottom:
-              {
-                self.physics_options.ball_options.velocity.y *= -1;
-                break;
-              }
-              default: break;
-            }
-
-            auto& q = self.physics_options.ball_options.displacement_queue;
-            q += -snapDiff(other.volume, s, self.volume);
+            // Reflect off that paddle.
+            VolumeSides cs = closest_side(self.volume, other.volume);
+            reflect_ball(self.physics_options.ball_options.velocity, cs);
           }
           if(isBall(other))
           {
-            using std::swap;
-            Object other_obj_copy = other;
-
-            // Swap velocities and add constraints.
-            swap(self.physics_options.ball_options.velocity,
-                 other_obj_copy.physics_options.ball_options.velocity);
-
-            // Set the constraint of each.
-            VolumeSides closest_side =
-                                    findClosestSide(self.volume, other.volume);
-            self.physics_options.constraints |= closest_side;
-            other_obj_copy.physics_options.constraints |= closest_side;
-
-            // Update the other obj.
-            q.setObject(obj_pair.first, other_obj_copy);
+            // Swap velocity.
+            std::swap(self.physics_options.ball_options.velocity,
+                      other.physics_options.ball_options.velocity);
           }
+        }
+
+        if(isBall(self) || (isPaddle(self) && isPaddle(other)))
+        {
+          try_snap(self, other);
+        }
+        if(isPaddle(self) && isBall(other))
+        {
+          try_snap(other, self);
+        }
+
+        q.setObject(other_obj.id, other_obj.obj);
+      }
+    }
+  }
+
+  void add_wall_constraints(Object& obj) noexcept
+  {
+    Volume bounds = {{0,0}, 1000, 1000};
+    VolumeSides sides = extending_sides(obj.volume, bounds);
+
+    // If we hit the wall *somewhere*, add a constraint.
+    obj.physics_options.constraints |= sides;
+  }
+  void add_paddle_constraints(ModifiedObjectReference& obj,
+                              Quadtree& q) noexcept
+  {
+    for(const auto& node : find_containing_nodes(q.root(), obj.obj.volume))
+    {
+      for(id_type other_id : node->get_data()->ids)
+      {
+        if(other_id == obj.id) continue;
+
+        const Object& other_obj = q.findObject(other_id);
+        if(!isPaddle(other_obj)) continue;
+
+        if(intersecting(obj.obj.volume, other_obj.volume))
+        {
+          VolumeSides cs = closest_side(obj.obj.volume, other_obj.volume);
+          obj.obj.physics_options.constraints |= cs;
         }
       }
     }
+  }
+  void add_ball_constraints(ModifiedObjectReference& obj,
+                            Quadtree& q) noexcept
+  {
+    for(const auto& node : find_containing_nodes(q.root(), obj.obj.volume))
+    {
+      for(id_type other_id : node->get_data()->ids)
+      {
+        if(other_id == obj.id) continue;
+
+        Object& self = obj.obj;
+
+        ModifiedObjectReference other_obj = {other_id, q.findObject(other_id)};
+        if(!isBall(other_obj.obj)) continue;
+        const Object& other = other_obj.obj;
+
+        if(!intersecting(self.volume, other.volume)) continue;
+
+        VolumeSides cs = closest_side(self.volume, other.volume);
+        self.physics_options.constraints |=
+                                      other.physics_options.constraints & cs;
+      }
+    }
+  }
+
+  void generate_constraints(ModifiedObjectReference& obj, Quadtree& q) noexcept
+  {
+    obj.obj.physics_options.constraints = VolumeSide::None;
+
+    // Add constraints from the wall.
+    add_wall_constraints(obj.obj);
+
+    // Add constraints from paddles.
+    add_paddle_constraints(obj, q);
+
+    // Add constraints from balls with other constraints.
+    add_ball_constraints(obj, q);
   }
 
   void raytrace(id_type id, Quadtree& q) noexcept
   {
     ModifiedObjectReference obj = {id, q.findObject(id)};
 
-    // Find our displacement.
-    obj.obj.volume.pos += get_displacement(obj.obj);
+    math::vector<double> diff = get_displacement(obj.obj);
 
-    // Respond to any collisions and recalculate constraints.
-    react(obj, q);
+    int steps = std::ceil(math::length(diff));
+    double amount_simulated = 0.0;
+    for(int i = 0; i < steps; ++i)
+    {
+      double to_sim = std::min(math::length(diff) - amount_simulated, 1.0);
+      amount_simulated += to_sim;
+      obj.obj.volume.pos += constrain(math::normalize(diff) * to_sim,
+                                      obj.obj.physics_options.constraints);
 
-    // Commit that object to the quad-tree.
-    q.setObject(obj.id, obj.obj);
+      generate_constraints(obj, q);
+
+      // Respond to any collisions.
+      react(obj, q);
+
+      // Commit that object to the quad-tree.
+      q.setObject(obj.id, obj.obj);
+    }
   }
 
   void LocalServer::step() noexcept
@@ -256,9 +291,5 @@ namespace pong
     {
       raytrace(id, this->quadtree_);
     }
-  }
-#endif
-  void LocalServer::step() noexcept
-  {
   }
 }
