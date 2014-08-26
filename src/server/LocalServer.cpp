@@ -141,7 +141,7 @@ namespace pong
     id_type id;
     Object obj;
   };
-  void react(ModifiedObjectReference& obj, Quadtree& q) noexcept
+  void LocalServer::react(ModifiedObjectReference& obj) noexcept
   {
     Volume bounds = {{0,0}, 1000, 1000};
     VolumeSides sides = extending_sides(obj.obj.volume, bounds);
@@ -152,14 +152,16 @@ namespace pong
       reflect_ball(obj.obj.physics_options.ball_options.velocity, sides);
     }
 
-    for(const auto& node : find_containing_nodes(q.root(), obj.obj.volume))
+    for(const auto& node : find_containing_nodes(this->quadtree_.root(),
+                                                 obj.obj.volume))
     {
       for(id_type id : node->get_data()->ids)
       {
         if(id == obj.id) continue;
 
         Object& self = obj.obj;
-        ModifiedObjectReference other_obj = {id, q.findObject(id)};
+        ModifiedObjectReference other_obj = {id,
+                                             this->quadtree_.findObject(id)};
         Object& other = other_obj.obj;
 
         if(!intersecting(self.volume, other.volume)) continue;
@@ -189,7 +191,7 @@ namespace pong
           try_snap(other, self);
         }
 
-        q.setObject(other_obj.id, other_obj.obj);
+        this->quadtree_.setObject(other_obj.id, other_obj.obj);
       }
     }
   }
@@ -261,9 +263,9 @@ namespace pong
     add_ball_constraints(obj, q);
   }
 
-  void raytrace(id_type id, Quadtree& q) noexcept
+  void LocalServer::raytrace(id_type id) noexcept
   {
-    ModifiedObjectReference obj = {id, q.findObject(id)};
+    ModifiedObjectReference obj = {id, this->quadtree_.findObject(id)};
 
     math::vector<double> diff = get_displacement(obj.obj);
 
@@ -276,13 +278,13 @@ namespace pong
       obj.obj.volume.pos += constrain(math::normalize(diff) * to_sim,
                                       obj.obj.physics_options.constraints);
 
-      generate_constraints(obj, q);
+      generate_constraints(obj, this->quadtree_);
 
       // Respond to any collisions.
-      react(obj, q);
+      react(obj);
 
       // Commit that object to the quad-tree.
-      q.setObject(obj.id, obj.obj);
+      this->quadtree_.setObject(obj.id, obj.obj);
     }
   }
 
@@ -297,7 +299,7 @@ namespace pong
 
     for(id_type id : ids)
     {
-      raytrace(id, this->quadtree_);
+      raytrace(id);
     }
   }
 }

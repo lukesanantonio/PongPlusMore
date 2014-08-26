@@ -22,6 +22,7 @@
 #include "Quadtree.h"
 namespace pong
 {
+  struct ModifiedObjectReference;
   struct LocalServer : public Server
   {
     LocalServer(Volume v) noexcept : quadtree_(v, 3, 5) {}
@@ -43,6 +44,9 @@ namespace pong
     void step() noexcept override;
   private:
     Quadtree quadtree_;
+
+    void react(ModifiedObjectReference& obj) noexcept;
+    void raytrace(id_type id) noexcept;
   };
 
   inline id_type LocalServer::createPaddle(const Volume& v) noexcept
