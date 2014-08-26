@@ -99,7 +99,19 @@ int main(int argc, char** argv)
       ++frames;
       update.reset();
 
-      for(int i = 0; i < sims; i++)
+      if(game.slow)
+      {
+        if(game.count-- != 0)
+        {
+          continue;
+        }
+        else
+        {
+          game.count = game.start_count;
+        }
+      }
+
+      for(int i = 0; i < (game.slow ? 1 : sims); i++)
       {
         game_state->update();
       }

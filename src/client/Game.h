@@ -35,6 +35,10 @@ namespace pong
     std::shared_ptr<GameState> game_state;
     bool exiting = false;
 
+    bool slow = false;
+    int start_count = 20;
+    int count = 0;
+
     Json::Value replay;
   };
 }

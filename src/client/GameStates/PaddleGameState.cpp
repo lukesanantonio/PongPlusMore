@@ -59,18 +59,18 @@ namespace pong
           }
           case SDL_SCANCODE_T:
           {
-            this->slow_ = !this->slow_;
+            g_.slow = !g_.slow;
             break;
           }
           case SDL_SCANCODE_Y:
           {
-            ++this->start_count_;
+            ++g_.start_count;
             break;
           }
           case SDL_SCANCODE_U:
           {
-            if(this->start_count_ <= 1) break;
-            --this->start_count_;
+            if(g_.start_count <= 1) break;
+            --g_.start_count;
             break;
           }
           case SDL_SCANCODE_SPACE:
@@ -160,11 +160,6 @@ namespace pong
 
   void PaddleGameState::update()
   {
-    if(slow_)
-    {
-      if(this->count_-- != 0) return;
-      else this->count_ = this->start_count_;
-    }
     this->server_.step();
   }
 
