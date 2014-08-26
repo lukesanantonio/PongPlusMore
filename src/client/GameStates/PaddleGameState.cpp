@@ -26,6 +26,11 @@
 #include "common/serialize.h"
 namespace pong
 {
+  void dump(std::string filename, Json::Value v) noexcept
+  {
+    std::fstream file(filename, std::fstream::out | std::fstream::trunc);
+    Json::StyledStreamWriter("  ").write(file, v);
+  }
   void PaddleGameState::handleEvent(const SDL_Event& event)
   {
     switch(event.type)
@@ -132,17 +137,9 @@ namespace pong
           }
           case SDL_SCANCODE_TAB:
           {
-            // Print out the Object Manager.
-            std::fstream obj_file("objectmanager.out",
-                                  std::fstream::out | std::fstream::trunc);
-            Json::StyledStreamWriter("  ").write(obj_file,
-                                           dumpJSON(this->server_));
-
-            // Print out the Quadtree.
-            std::fstream qt_file("quadtree.out",
-                                 std::fstream::out | std::fstream::trunc);
-            Json::StyledStreamWriter("  ").write(qt_file,
-                                           dumpJSON(this->server_.quadtree()));
+            // Print out the Object Manager and the quadtree.
+            dump("objectmanager.out", dumpJSON(this->server_));
+            dump("quadtree.out", dumpJSON(this->server_.quadtree()));
             break;
           }
           default:
@@ -153,6 +150,8 @@ namespace pong
       case SDL_QUIT:
       {
         pong::crash("Exiting...");
+        dump("objectmanager.out", dumpJSON(this->server_));
+        dump("quadtree.out", dumpJSON(this->server_.quadtree()));
         break;
       }
     }
