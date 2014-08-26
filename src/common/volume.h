@@ -137,13 +137,13 @@ namespace pong
   volume_difference(const Volume& v1, const Volume& v2) noexcept;
 
   /*!
-   * \brief Find the required displacement to move v to side s of volume ref.
+   * \brief Find the delta required to move v to side s of volume ref.
    */
   math::vector<double>
   outside_snap(const Volume& v, VolumeSides s, const Volume& ref) noexcept;
 
   /*!
-   * \brief Find the required displacement to move to snap to a side of v.
+   * \brief Find the delta required to move v to side s of volume ref.
    */
   math::vector<double>
   inside_snap(const Volume& v, VolumeSides s, const Volume& ref) noexcept;
