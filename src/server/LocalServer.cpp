@@ -21,6 +21,7 @@
 #include <cmath>
 namespace pong
 {
+  // LocalServer function implementations.
   void LocalServer::setDestination(id_type id, math::vector<double> dest)
   {
     // Might throw an exception, fine let it throw!
@@ -187,6 +188,7 @@ namespace pong
     }
   }
 
+  // Constraint utilities.
   void add_wall_constraints(Object& obj) noexcept
   {
     Volume bounds = {{0,0}, 1000, 1000};
