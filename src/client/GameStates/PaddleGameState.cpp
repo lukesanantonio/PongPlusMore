@@ -32,41 +32,33 @@ namespace pong
     Json::StyledStreamWriter("  ").write(file, v);
   }
 
-  PaddleGameState::PaddleGameState(Game& g, Volume v, PaddleOrientation o)
-                                   : g_(g), server_(v), o_(o)
+  PaddleGameState::PaddleGameState(Game& g, Volume v) : g_(g), server_(v)
   {
     this->ball_ = this->server_.createBall({{475,475}, 25, 25});
-    math::vector<double> velocity;
-    velocity.x = (o_ == PaddleOrientation::Vertical ? 0.1 : 0.25);
-    velocity.y = (o_ == PaddleOrientation::Vertical ? 0.25 : 0.1);
-    this->server_.setVelocity(this->ball_, velocity);
+    this->server_.setVelocity(this->ball_, {.1, .25});
 
     Volume paddle_volume;
-    paddle_volume.width = (o_ == PaddleOrientation::Vertical ? 200 : 30);
-    paddle_volume.height = (o_ == PaddleOrientation::Vertical ? 30 : 200);
+    paddle_volume.width = 200;
+    paddle_volume.height = 30;
     this->top_ = this->server_.createPaddle(paddle_volume);
 
-    paddle_volume.pos.x = (o_ == PaddleOrientation::Vertical ? 0 : 970);
-    paddle_volume.pos.y = (o_ == PaddleOrientation::Vertical ? 970 : 0);
+    paddle_volume.pos.x = 0;
+    paddle_volume.pos.y = 970;
     this->bottom_ = this->server_.createPaddle(paddle_volume);
 
     const ObjectManager& obj_manager = this->server_.quadtree().obj_manager();
-    top_input_ = std::make_unique<MouseInput>(this->top_, obj_manager, o_);
-    bot_input_ = std::make_unique<MouseInput>(this->bottom_, obj_manager, o_);
+    top_input_ = std::make_unique<MouseInput>(this->top_, obj_manager);
+    bot_input_ = std::make_unique<MouseInput>(this->bottom_, obj_manager);
 
     // Set point counter handler thang.
     this->server_.add_wall_collision_observer(
     [this](VolumeSides s, id_type id, Quadtree& q)
     {
-      if((this->o_ == PaddleOrientation::Vertical && s == VolumeSide::Top) ||
-         (this->o_ == PaddleOrientation::Horizontal && s == VolumeSide::Left))
+      if(s == VolumeSide::Top)
       {
         ++this->top_score_;
       }
-      else if((this->o_ == PaddleOrientation::Vertical &&
-              s == VolumeSide::Bottom) ||
-              (this->o_ == PaddleOrientation::Horizontal &&
-              s == VolumeSide::Right))
+      else if(s == VolumeSide::Bottom)
       {
         ++this->bottom_score_;
       }
@@ -137,20 +129,11 @@ namespace pong
       o.volume.pos.*component = val;
       this->server_.setDestination(id, o.volume.pos);
     };
-    if(this->o_ == PaddleOrientation::Vertical)
-    {
-      set(this->top_, this->top_input_->get_position(),
-          &math::vector<double>::x);
-      set(this->bottom_, this->bot_input_->get_position(),
-          &math::vector<double>::x);
-    }
-    else
-    {
-      set(this->top_, this->top_input_->get_position(),
-          &math::vector<double>::y);
-      set(this->bottom_, this->bot_input_->get_position(),
-          &math::vector<double>::y);
-    }
+    set(this->top_, this->top_input_->get_position(),
+        &math::vector<double>::x);
+    set(this->bottom_, this->bot_input_->get_position(),
+        &math::vector<double>::x);
+
     this->server_.step();
   }
 

@@ -25,16 +25,9 @@
 #include <iostream>
 namespace pong
 {
-  enum class PaddleOrientation
-  {
-    Vertical,
-    Horizontal
-  };
-
   struct PaddleInput
   {
-    PaddleInput(id_type id, const ObjectManager& objs, PaddleOrientation o)
-                     : id_(id), objs_(objs), o_(o) {}
+    PaddleInput(id_type id, const ObjectManager& objs) : id_(id), objs_(objs){}
     virtual double get_position() const noexcept = 0;
 
     PaddleInput(const PaddleInput&) = delete;
@@ -44,7 +37,6 @@ namespace pong
   protected:
     const id_type id_;
     const ObjectManager& objs_;
-    const PaddleOrientation o_;
   };
 
   struct MouseInput : public PaddleInput
@@ -54,24 +46,15 @@ namespace pong
   };
   double MouseInput::get_position() const noexcept
   {
-    if(this->o_ == PaddleOrientation::Vertical)
-    {
-      int x;
-      SDL_GetMouseState(&x, NULL);
-      return x;
-    }
-    else
-    {
-      int y;
-      SDL_GetMouseState(NULL, &y);
-      return y;
-    }
+    int x;
+    SDL_GetMouseState(&x, NULL);
+    return x;
   }
 
   struct PaddleGameState : public GameState
   {
   public:
-    PaddleGameState(Game& g, Volume v, PaddleOrientation o);
+    PaddleGameState(Game& g, Volume v);
     virtual void handleEvent(const SDL_Event& event) override;
     virtual void update() override;
     virtual void render(SDL_Renderer*) const override;
@@ -86,8 +69,6 @@ namespace pong
 
     int top_score_ = 0;
     int bottom_score_ = 0;
-
-    PaddleOrientation o_;
 
     // Wrapped in a unique_ptr for lazy initialization.
     std::unique_ptr<MouseInput> top_input_;
