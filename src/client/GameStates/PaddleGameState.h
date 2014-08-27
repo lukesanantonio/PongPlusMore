@@ -84,6 +84,9 @@ namespace pong
     bool render_quadtree_ = false;
     bool render_constraints_ = false;
 
+    int top_score_ = 0;
+    int bottom_score_ = 0;
+
     PaddleOrientation o_;
 
     // Wrapped in a unique_ptr for lazy initialization.

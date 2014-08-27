@@ -55,6 +55,24 @@ namespace pong
     const ObjectManager& obj_manager = this->server_.quadtree().obj_manager();
     top_input_ = std::make_unique<MouseInput>(this->top_, obj_manager, o_);
     bot_input_ = std::make_unique<MouseInput>(this->bottom_, obj_manager, o_);
+
+    // Set point counter handler thang.
+    this->server_.add_wall_collision_observer(
+    [this](VolumeSides s, id_type id, Quadtree& q)
+    {
+      if((this->o_ == PaddleOrientation::Vertical && s == VolumeSide::Top) ||
+         (this->o_ == PaddleOrientation::Horizontal && s == VolumeSide::Left))
+      {
+        ++this->top_score_;
+      }
+      else if((this->o_ == PaddleOrientation::Vertical &&
+              s == VolumeSide::Bottom) ||
+              (this->o_ == PaddleOrientation::Horizontal &&
+              s == VolumeSide::Right))
+      {
+        ++this->bottom_score_;
+      }
+    });
   }
   void PaddleGameState::handleEvent(const SDL_Event& event)
   {
