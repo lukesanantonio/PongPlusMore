@@ -45,12 +45,10 @@ namespace pong
     paddle_volume.width = (o_ == PaddleOrientation::Vertical ? 200 : 30);
     paddle_volume.height = (o_ == PaddleOrientation::Vertical ? 30 : 200);
     this->top_ = this->server_.createPaddle(paddle_volume);
-    this->server_.setDestination(this->top_, paddle_volume.pos);
 
     paddle_volume.pos.x = (o_ == PaddleOrientation::Vertical ? 0 : 970);
     paddle_volume.pos.y = (o_ == PaddleOrientation::Vertical ? 970 : 0);
     this->bottom_ = this->server_.createPaddle(paddle_volume);
-    this->server_.setDestination(this->bottom_, paddle_volume.pos);
 
     const ObjectManager& obj_manager = this->server_.quadtree().obj_manager();
     top_input_ = std::make_unique<MouseInput>(this->top_, obj_manager, o_);
