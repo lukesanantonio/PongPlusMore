@@ -65,7 +65,9 @@ namespace pong
 
   inline id_type LocalServer::createPaddle(const Volume& v) noexcept
   {
-    return this->insertObject(v, PhysicsType::Paddle);
+    id_type id = this->insertObject(v, PhysicsType::Paddle);
+    this->setDestination(id, v.pos);
+    return id;
   }
   inline id_type LocalServer::createBall(const Volume& v) noexcept
   {
