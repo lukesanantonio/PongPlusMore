@@ -30,6 +30,44 @@ namespace pong
     Vertical,
     Horizontal
   };
+
+  struct PaddleInput
+  {
+    PaddleInput(id_type id, const ObjectManager& objs, PaddleOrientation o)
+                     : id_(id), objs_(objs), o_(o) {}
+    virtual double get_position() const noexcept = 0;
+
+    PaddleInput(const PaddleInput&) = delete;
+    PaddleInput(PaddleInput&&) = delete;
+    PaddleInput& operator=(const PaddleInput&) = delete;
+    PaddleInput& operator=(PaddleInput&&) = delete;
+  protected:
+    const id_type id_;
+    const ObjectManager& objs_;
+    const PaddleOrientation o_;
+  };
+
+  struct MouseInput : public PaddleInput
+  {
+    using PaddleInput::PaddleInput;
+    inline double get_position() const noexcept override;
+  };
+  double MouseInput::get_position() const noexcept
+  {
+    if(this->o_ == PaddleOrientation::Vertical)
+    {
+      int x;
+      SDL_GetMouseState(&x, NULL);
+      return x;
+    }
+    else
+    {
+      int y;
+      SDL_GetMouseState(NULL, &y);
+      return y;
+    }
+  }
+
   struct PaddleGameState : public GameState
   {
   public:
@@ -45,5 +83,11 @@ namespace pong
     id_type ball_ = 0;
     bool render_quadtree_ = false;
     bool render_constraints_ = false;
+
+    PaddleOrientation o_;
+
+    // Wrapped in a unique_ptr for lazy initialization.
+    std::unique_ptr<MouseInput> top_input_;
+    std::unique_ptr<MouseInput> bot_input_;
   };
 }
