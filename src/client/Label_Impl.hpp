@@ -35,7 +35,7 @@ namespace pong
    * crashes.
    */
   template <class Data>
-  inline int Label<Data>::getSurfaceWidth() const
+  inline int Label<Data>::surface_width() const
   {
     return this->cache_.template grab_dependency<0>().cache()->w;
   }
@@ -49,7 +49,7 @@ namespace pong
    * crashes.
    */
   template <class Data>
-  inline int Label<Data>::getSurfaceHeight() const
+  inline int Label<Data>::surface_height() const
   {
     return this->cache_.template grab_dependency<0>().cache()->h;
   }
@@ -375,8 +375,8 @@ namespace pong
     SDL_Rect dest;
     dest.x = this->pos_.x;
     dest.y = this->pos_.y;
-    dest.w = this->getSurfaceWidth();
-    dest.h = this->getSurfaceHeight();
+    dest.w = this->surface_width();
+    dest.h = this->surface_height();
     SDL_RenderCopy(renderer, this->cache_.cache(), NULL, &dest);
   }
   template <class Data>
@@ -385,8 +385,8 @@ namespace pong
     SDL_Rect dest;
     dest.x = this->pos_.x;
     dest.y = this->pos_.y;
-    dest.w = this->getSurfaceWidth();
-    dest.h = this->getSurfaceHeight();
+    dest.w = this->surface_width();
+    dest.h = this->surface_height();
     SDL_BlitSurface(this->cache_.template grab_dependency<0>().cache(),
                     NULL, surface, &dest);
   }

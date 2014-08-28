@@ -67,8 +67,8 @@ namespace pong
     void render(SDL_Renderer* renderer) const;
     void render(SDL_Surface* s) const;
 
-    inline int getSurfaceWidth() const;
-    inline int getSurfaceHeight() const;
+    inline int surface_width() const;
+    inline int surface_height() const;
 
     inline void data(const Data& data) noexcept;
     inline Data data() const noexcept;

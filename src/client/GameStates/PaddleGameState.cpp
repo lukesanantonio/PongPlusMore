@@ -71,7 +71,7 @@ namespace pong
     this->bottom_score_.font_renderer(g.font_renderer.get());
 
     // Set label position.
-    this->top_score_.position({10, 500 - this->top_score_.getSurfaceHeight()});
+    this->top_score_.position({10, 500 - this->top_score_.surface_height()});
     this->bottom_score_.position({10, 500});
   }
   void PaddleGameState::handleEvent(const SDL_Event& event)

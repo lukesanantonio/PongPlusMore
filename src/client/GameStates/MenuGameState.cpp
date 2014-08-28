@@ -32,7 +32,7 @@ namespace pong
 
     math::vector<int> pos;
     pos.x = game.width;
-    pos.y = game.height - this->pong_.getSurfaceHeight();
+    pos.y = game.height - this->pong_.surface_height();
     this->pong_.position(pos);
   }
 
@@ -43,7 +43,7 @@ namespace pong
     if(step_now_)
     {
       auto new_pos = this->pong_.position();
-      if(new_pos.x <= 0 - pong_.getSurfaceWidth())
+      if(new_pos.x <= 0 - pong_.surface_width())
       {
         on_ = false;
         return;
@@ -81,7 +81,7 @@ namespace pong
     this->title_.font_renderer(font_renderer);
 
     this->title_.position({center(0, game.width,
-                                  this->title_.getSurfaceWidth()),
+                                  this->title_.surface_width()),
                            50});
 
     int width = 750;
