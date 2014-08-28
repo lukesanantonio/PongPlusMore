@@ -57,15 +57,6 @@ namespace pong
 
     id_type insert(const Object& obj) noexcept;
 
-    inline id_type makePaddle(Volume vol) noexcept
-    { return insert(Object{vol, PhysicsType::Paddle}); }
-
-    inline id_type makeBall(Volume vol) noexcept
-    { return insert(Object{vol, PhysicsType::Ball}); }
-
-    inline id_type insertObject(Volume vol, PhysicsOptions opt) noexcept
-    { return insert(Object{vol, opt}); }
-
     ObjectManager::iterator erase(ObjectManager::const_iterator pos);
     ObjectManager::iterator erase(ObjectManager::const_iterator pos,
                                   ObjectManager::const_iterator last);
