@@ -53,9 +53,6 @@ namespace pong
     }
     ObjectManager(const Server& s) noexcept;
 
-    inline id_type makePaddle(Volume vol) noexcept;
-    inline id_type makeBall(Volume vol) noexcept;
-    inline id_type insertObject(Volume vol, PhysicsOptions opt) noexcept;
     inline id_type insert(const Object& obj) noexcept;
 
     inline const Object& find_object(id_type) const;
@@ -83,33 +80,6 @@ namespace pong
     mutable Cache<std::vector<id_type> > ids_cache_;
   };
 
-  /*!
-   * \brief Adds a new Object to the pool with 'Paddle' rules. \sa PhysicsType
-   *
-   * \returns A zero id when insertion failed, otherwise the id of the newly
-   * inserted object.
-   */
-  id_type ObjectManager::makePaddle(Volume vol) noexcept
-  {
-    return this->insert(Object{vol, PhysicsType::Paddle});
-  }
-
-  /*!
-   * \brief Adds a new Object to the pool with 'Ball' rules. \sa PhysicsType
-   *
-   * \returns A zero id when insertion failed, otherwise the id of the newly
-   * inserted object.
-   */
-  id_type ObjectManager::makeBall(Volume vol) noexcept
-  {
-    return this->insert(Object{vol, PhysicsType::Ball});
-  }
-
-  inline id_type ObjectManager::insertObject(Volume vol,
-                                             PhysicsOptions opt) noexcept
-  {
-    return this->insert(Object{vol, opt});
-  }
   inline id_type ObjectManager::insert(const Object& obj) noexcept
   {
     id_type id = this->id_counter_.get();
