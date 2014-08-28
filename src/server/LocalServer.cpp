@@ -65,13 +65,14 @@ namespace pong
    * \note If the object will intersect with any other object the new one *is
    * not* inserted.
    */
-  id_type LocalServer::insertObject(const Volume& v,
-                                    const PhysicsOptions& opt) noexcept
+  id_type LocalServer::insert(const Object& o) noexcept
   {
     // Do this first so that if it fails we can avoid this *relatively*
     // hefty calculation.
-    id_type id = this->quadtree_.insertObject(v, opt);
+    id_type id = this->quadtree_.insert(o);
     if(!id) return id;
+
+    const Volume& v = o.volume;
     auto containing_nodes = find_containing_nodes(this->quadtree_.root(), v);
     for(const Quadtree::node_type* n : containing_nodes)
     {

@@ -36,17 +36,17 @@ namespace pong
                                    : g_(g), server_(v),
                                      top_score_(0, 80), bottom_score_(0, 80)
   {
-    this->ball_ = this->server_.createBall({{475,475}, 25, 25});
+    this->ball_ = this->server_.insert(make_ball({{475,475}, 25, 25}));
     this->server_.setVelocity(this->ball_, {.1, .25});
 
     Volume paddle_volume;
     paddle_volume.width = 200;
     paddle_volume.height = 30;
-    this->top_ = this->server_.createPaddle(paddle_volume);
+    this->top_ = this->server_.insert(make_paddle(paddle_volume));
 
     paddle_volume.pos.x = 0;
     paddle_volume.pos.y = 970;
-    this->bottom_ = this->server_.createPaddle(paddle_volume);
+    this->bottom_ = this->server_.insert(make_paddle(paddle_volume));
 
     const ObjectManager& obj_manager = this->server_.quadtree().obj_manager();
     top_input_ = std::make_unique<MouseInput>(this->top_, obj_manager);

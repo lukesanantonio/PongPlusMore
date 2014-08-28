@@ -85,6 +85,15 @@ namespace pong
     PhysicsOptions physics_options;
   };
 
+  inline Object make_paddle(const Volume& v) noexcept
+  {
+    return Object{v, PhysicsType::Paddle};
+  }
+  inline Object make_ball(const Volume& v) noexcept
+  {
+    return Object{v, PhysicsType::Ball};
+  }
+
   inline bool isPaddle(const Object& obj) noexcept
   {
     return obj.physics_options.type == PhysicsType::Paddle;

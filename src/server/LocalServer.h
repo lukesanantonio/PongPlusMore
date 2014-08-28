@@ -47,10 +47,7 @@ namespace pong
     LocalServer(Volume v) noexcept : quadtree_(v, 3, 5) {}
     ~LocalServer() noexcept = default;
 
-    id_type insertObject(const Volume& v, const PhysicsOptions& opt) noexcept;
-
-    inline id_type createPaddle(const Volume& v) noexcept;
-    inline id_type createBall(const Volume& v) noexcept;
+    id_type insert(const Object& o) noexcept;
 
     inline void enqueue_action(const ServerAction& a) noexcept;
     inline void enqueue_object_creation(const Object& o,
@@ -87,17 +84,6 @@ namespace pong
     void react(ModifiedObjectReference& obj) noexcept;
     void raytrace(id_type id) noexcept;
   };
-
-  inline id_type LocalServer::createPaddle(const Volume& v) noexcept
-  {
-    id_type id = this->insertObject(v, PhysicsType::Paddle);
-    this->setDestination(id, v.pos);
-    return id;
-  }
-  inline id_type LocalServer::createBall(const Volume& v) noexcept
-  {
-    return this->insertObject(v, PhysicsType::Ball);
-  }
 
   inline void LocalServer::enqueue_action(const ServerAction& a) noexcept
   {
