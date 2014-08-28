@@ -87,7 +87,7 @@ namespace pong
      * \note Marked mutable so we can change it's rendering position when
      * rendering (const function).
      */
-    mutable Label label_;
+    mutable Label<std::string> label_;
 
     /*!
      * \brief The volume of the Button.
@@ -121,16 +121,16 @@ namespace pong
    */
   inline void Button::text(const std::string& text)
   {
-    this->label_.text(text);
+    this->label_.data(text);
   }
   /*!
    * \brief Returns the text displayed on the button as a string.
    *
-   * \returns Button::label_.text()
+   * \returns Button::label_.data()
    */
   inline std::string Button::text() const
   {
-    return this->label_.text();
+    return this->label_.data();
   }
 
   /*!

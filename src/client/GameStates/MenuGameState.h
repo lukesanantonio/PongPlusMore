@@ -38,7 +38,7 @@ namespace pong
   private:
     Game& game_;
 
-    Label pong_;
+    Label<std::string> pong_;
 
     bool on_ = true;
     bool step_now_ = true;
@@ -51,7 +51,7 @@ namespace pong
     virtual void update() override;
     virtual void render(SDL_Renderer* renderer) const override;
   private:
-    Label title_;
+    Label<std::string> title_;
     Button singleplayer_, multiplayer_, options_, quit_;
 
     MoPongAnimation anim_;

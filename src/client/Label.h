@@ -37,15 +37,16 @@ namespace pong
    * because it needs to maintain a cache, should it return a bare reference
    * to a member, it could be changed at any given time.
    */
+  template <class Data>
   class Label
   {
   public:
-    explicit Label(const std::string& text = "",
+    explicit Label(const Data& data = Data(),
                    int text_height = 24,
                    math::vector<int> pos = math::vector<int>(),
                    FontRenderer* font_renderer = nullptr) noexcept;
 
-    Label(const std::string& text,
+    Label(const Data& data,
           int text_height,
           math::vector<int> pos,
           SDL_Color text_color,
@@ -60,8 +61,8 @@ namespace pong
     Label(const Label&) noexcept;
     Label(Label&&) noexcept;
 
-    Label& operator=(const Label&) noexcept;
-    Label& operator=(Label&&) noexcept;
+    Label<Data>& operator=(const Label&) noexcept;
+    Label<Data>& operator=(Label&&) noexcept;
 
     void render(SDL_Renderer* renderer) const;
     void render(SDL_Surface* s) const;
@@ -69,8 +70,8 @@ namespace pong
     inline int getSurfaceWidth() const;
     inline int getSurfaceHeight() const;
 
-    inline void text(const std::string& text) noexcept;
-    inline std::string text() const noexcept;
+    inline void data(const Data& data) noexcept;
+    inline Data data() const noexcept;
 
     inline void text_height(int text_height) noexcept;
     inline int text_height() const noexcept;
@@ -88,11 +89,11 @@ namespace pong
     inline FontRenderer* font_renderer() const noexcept;
   private:
     /*!
-     * \brief The text of the label.
+     * \brief The content of the label.
      *
      * \sa Label::text_height_
      */
-    std::string text_;
+    Data data_;
 
     /*!
      * \brief The height in pixels of the label (text).
@@ -125,163 +126,6 @@ namespace pong
 
     mutable Texture_Cache cache_;
   };
-
-  /*!
-   * \brief Returns the width of the cached text surface.
-   *
-   * \returns cache_.cache()->w
-   *
-   * \post Generates the cache if necessary.
-   * \warning This function requires a valid FontRenderer, otherwise it
-   * crashes.
-   */
-  inline int Label::getSurfaceWidth() const
-  {
-    return this->cache_.grab_dependency<0>().cache()->w;
-  }
-  /*!
-   * \brief Returns the height of the cached text surface.
-   *
-   * \returns cache_.cache()->h
-   *
-   * \post Generates the cache if necessary.
-   * \warning This function requires a valid FontRenderer, otherwise it
-   * crashes.
-   */
-  inline int Label::getSurfaceHeight() const
-  {
-    return this->cache_.grab_dependency<0>().cache()->h;
-  }
-
-  /*!
-   * \brief Sets the text of the label.
-   *
-   * \post Invalidates the cache if the passed in text is different from the
-   * one already stored.
-   */
-  inline void Label::text(const std::string& text) noexcept
-  {
-    if(this->text_ == text) return;
-    this->text_ = text;
-    this->cache_.grab_dependency<0>().invalidate();
-    this->cache_.invalidate();
-  }
-  /*!
-   * \brief Gets the text of the label.
-   *
-   * \returns Label::text_
-   */
-  inline std::string Label::text() const noexcept
-  {
-    return this->text_;
-  }
-
-  /*!
-   * \brief Sets the text height of the label.
-   *
-   * \post Invalidates the cache if the passed in text height is different
-   * from the one already stored.
-   */
-  inline void Label::text_height(int text_height) noexcept
-  {
-    if(this->text_height_ == text_height) return;
-    this->text_height_ = text_height;
-    this->cache_.grab_dependency<0>().invalidate();
-    this->cache_.invalidate();
-  }
-  /*!
-   * \brief Returns the text height of the label.
-   *
-   * \returns Label::text_height_
-   */
-  inline int Label::text_height() const noexcept
-  {
-    return this->text_height_;
-  }
-
-  /*!
-   * \brief Sets the position of the top left corner of the surface.
-   *
-   * Does not invalidate the surface.
-   */
-  inline void Label::position(math::vector<int> pos) noexcept
-  {
-    this->pos_ = pos;
-  }
-  /*!
-   * \brief Returns the position of the top left corner of the surface.
-   *
-   * \returns Label::pos_
-   */
-  inline math::vector<int> Label::position() const noexcept
-  {
-    return this->pos_;
-  }
-
-  /*!
-   * \brief Sets the color of the text.
-   *
-   * \post Invalidates the cache if the passed in text color is different
-   * from the one already stored.
-   */
-  inline void Label::text_color(SDL_Color text_color) noexcept
-  {
-    if(this->text_color_ == text_color) return;
-    this->text_color_ = text_color;
-    this->cache_.grab_dependency<0>().invalidate();
-    this->cache_.invalidate();
-  }
-  /*!
-   * \brief Returns the color of the text.
-   *
-   * \returns Label::text_color_
-   */
-  inline SDL_Color Label::text_color() const noexcept
-  {
-    return this->text_color_;
-  }
-
-  /*!
-   * \brief Sets the color of the background of the image blitted.
-   *
-   * \post Invalidates the cache if the passed in back color is different
-   * from the one already stored.
-   */
-  inline void Label::back_color(SDL_Color back_color) noexcept
-  {
-    if(this->back_color_ == back_color) return;
-    this->back_color_ = back_color;
-    this->cache_.grab_dependency<0>().invalidate();
-    this->cache_.invalidate();
-  }
-  /*!
-   * \brief Returns the color of the background of the image blitted.
-   *
-   * \returns Label::back_color_
-   */
-  inline SDL_Color Label::back_color() const noexcept
-  {
-    return this->back_color_;
-  }
-
-  /*!
-   * \brief Sets the font renderer implementation to use.
-   *
-   * \post Invalidates the cache if the passed in font renderer is different
-   * from the one already stored.
-   */
-  inline void Label::font_renderer(FontRenderer* font_renderer) noexcept
-  {
-    if(this->font_renderer_ == font_renderer) return;
-    this->font_renderer_ = font_renderer;
-    this->cache_.grab_dependency<0>().invalidate();
-    this->cache_.invalidate();
-  }
-  /*!
-   * \brief Returns the font renderer.
-   */
-  inline FontRenderer* Label::font_renderer() const noexcept
-  {
-    return this->font_renderer_;
-  }
 }
+
+#include "Label_Impl.hpp"

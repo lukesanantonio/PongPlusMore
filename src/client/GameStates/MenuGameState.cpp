@@ -61,7 +61,8 @@ namespace pong
   {
     std::vector<std::unique_ptr<RenderableObject> > objs;
 
-    using renderable_object_type = RenderableObjectTemplate<Label>;
+    using label_t = Label<std::string>;
+    using renderable_object_type = RenderableObjectTemplate<label_t>;
 
     using std::make_unique;
     objs.push_back(std::make_unique<renderable_object_type>(this->pong_));
