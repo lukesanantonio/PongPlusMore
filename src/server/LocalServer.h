@@ -54,8 +54,8 @@ namespace pong
                                   ObjectCreationAction::callback_t c) noexcept;
     inline void enqueue_object_deletion(id_type id) noexcept;
 
-    void setDestination(id_type, math::vector<double>) override;
-    void setVelocity(id_type, math::vector<double>) override;
+    void set_destination(id_type, math::vector<double>) override;
+    void set_velocity(id_type, math::vector<double>) override;
 
     Object find_object(id_type) const override;
     std::vector<id_type> objects() const noexcept override;

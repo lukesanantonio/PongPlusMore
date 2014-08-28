@@ -37,7 +37,7 @@ namespace pong
                                      top_score_(0, 80), bottom_score_(0, 80)
   {
     this->ball_ = this->server_.insert(make_ball({{475,475}, 25, 25}));
-    this->server_.setVelocity(this->ball_, {.1, .25});
+    this->server_.set_velocity(this->ball_, {.1, .25});
 
     Volume paddle_volume;
     paddle_volume.width = 200;
@@ -137,7 +137,7 @@ namespace pong
     {
       Object o = this->server_.find_object(id);
       o.volume.pos.*component = val;
-      this->server_.setDestination(id, o.volume.pos);
+      this->server_.set_destination(id, o.volume.pos);
     };
     set(this->top_, this->top_input_->get_position(),
         &math::vector<double>::x);

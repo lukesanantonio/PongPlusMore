@@ -22,7 +22,7 @@
 namespace pong
 {
   // LocalServer function implementations.
-  void LocalServer::setDestination(id_type id, math::vector<double> dest)
+  void LocalServer::set_destination(id_type id, math::vector<double> dest)
   {
     // Might throw an exception, fine let it throw!
     Object obj = this->quadtree_.find_object(id);
@@ -36,7 +36,7 @@ namespace pong
 
     this->quadtree_.set_object(id, obj);
   }
-  void LocalServer::setVelocity(id_type id, math::vector<double> vel)
+  void LocalServer::set_velocity(id_type id, math::vector<double> vel)
   {
     Object obj = this->quadtree_.find_object(id);
     PhysicsOptions& physopt = obj.physics_options;

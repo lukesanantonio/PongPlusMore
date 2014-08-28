@@ -35,14 +35,14 @@ namespace pong
      *
      * \throws std::out_of_range if an object with that id doesn't exist.
      */
-    virtual void setDestination(id_type id, math::vector<double> dest) = 0;
+    virtual void set_destination(id_type id, math::vector<double> dest) = 0;
     /*!
      * \brief Sets the velocity of the object making it a ball if it isn't
      * already.
      *
      * \throw std::out_of_range if an object with that id doesn't exist.
      */
-    virtual void setVelocity(id_type id, math::vector<double> vel) = 0;
+    virtual void set_velocity(id_type id, math::vector<double> vel) = 0;
 
     /*!
      * \brief Finds some object by id, returning a copy of it.
