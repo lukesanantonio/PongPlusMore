@@ -20,6 +20,7 @@
 #pragma once
 #include "../Game.h"
 #include "../GameState.h"
+#include "../Label.h"
 #include "server/LocalServer.h"
 #include "common/serialize.h"
 #include <iostream>
@@ -67,8 +68,8 @@ namespace pong
     bool render_quadtree_ = false;
     bool render_constraints_ = false;
 
-    int top_score_ = 0;
-    int bottom_score_ = 0;
+    Label<int> top_score_;
+    Label<int> bottom_score_;
 
     // Wrapped in a unique_ptr for lazy initialization.
     std::unique_ptr<MouseInput> top_input_;

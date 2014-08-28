@@ -32,7 +32,9 @@ namespace pong
     Json::StyledStreamWriter("  ").write(file, v);
   }
 
-  PaddleGameState::PaddleGameState(Game& g, Volume v) : g_(g), server_(v)
+  PaddleGameState::PaddleGameState(Game& g, Volume v)
+                                   : g_(g), server_(v),
+                                     top_score_(0, 80), bottom_score_(0, 80)
   {
     this->ball_ = this->server_.createBall({{475,475}, 25, 25});
     this->server_.setVelocity(this->ball_, {.1, .25});
@@ -56,13 +58,21 @@ namespace pong
     {
       if(s == VolumeSide::Top)
       {
-        ++this->top_score_;
+        this->top_score_.data(this->top_score_.data() + 1);
       }
       else if(s == VolumeSide::Bottom)
       {
-        ++this->bottom_score_;
+        this->bottom_score_.data(this->bottom_score_.data() + 1);
       }
     });
+
+    // Set the label font renderer.
+    this->top_score_.font_renderer(g.font_renderer.get());
+    this->bottom_score_.font_renderer(g.font_renderer.get());
+
+    // Set label position.
+    this->top_score_.position({10, 500 - this->top_score_.getSurfaceHeight()});
+    this->bottom_score_.position({10, 500});
   }
   void PaddleGameState::handleEvent(const SDL_Event& event)
   {
@@ -169,6 +179,10 @@ namespace pong
 
   void PaddleGameState::render(SDL_Renderer* renderer) const
   {
+    // Render the score labels.
+    this->top_score_.render(renderer);
+    this->bottom_score_.render(renderer);
+
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
     for(id_type id : this->server_.objects())
     {
