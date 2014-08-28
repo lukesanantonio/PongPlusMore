@@ -19,6 +19,7 @@
  */
 #include <memory>
 #include <vector>
+#include <algorithm>
 #include "common/util.h"
 #include "Node_Iterator.hpp"
 #include "common/Cache.h"

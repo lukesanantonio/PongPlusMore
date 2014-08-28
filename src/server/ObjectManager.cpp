@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "ObjectManager.h"
+#include <algorithm>
 #include "Server.h"
 namespace pong
 {
