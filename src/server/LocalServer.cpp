@@ -296,6 +296,32 @@ namespace pong
 
   void LocalServer::step() noexcept
   {
+    {
+      // Handle server actions
+      struct ServerActionHandler : public boost::static_visitor<>
+      {
+        ServerActionHandler(LocalServer& l) : l_(l) {}
+        void operator()(const ObjectCreationAction& a) noexcept
+        {
+          a.callback(l_.quadtree_.insert(a.obj));
+        }
+        void operator()(const ObjectDeletionAction& a) noexcept
+        {
+          l_.quadtree_.erase(a.id);
+        }
+      private:
+        LocalServer& l_;
+      };
+
+      ServerActionHandler handler(*this);
+      while(this->action_queue_.size() > 0)
+      {
+        ServerAction a = this->action_queue_.front();
+        this->action_queue_.pop();
+        boost::apply_visitor(handler, a);
+      }
+    }
+
     std::vector<id_type> ids = this->quadtree_.obj_manager().ids();
     using std::begin; using std::end;
     std::sort(begin(ids), end(ids), [&](id_type i1, id_type i2)
