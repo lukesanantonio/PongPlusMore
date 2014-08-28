@@ -58,7 +58,7 @@ namespace pong
     inline id_type insertObject(Volume vol, PhysicsOptions opt) noexcept;
     inline id_type insert(const Object& obj) noexcept;
 
-    inline const Object& findObject(id_type) const;
+    inline const Object& find_object(id_type) const;
     inline void setObject(id_type, const Object&);
 
     inline iterator erase(const_iterator pos);
@@ -151,7 +151,7 @@ namespace pong
    * \brief Returns a const reference to the object with the passed in id.
    * \throws std::out_of_range if the id doesn't correlate with any Object.
    */
-  const Object& ObjectManager::findObject(id_type id) const
+  const Object& ObjectManager::find_object(id_type id) const
   {
     return objs_.at(id);
   }
@@ -170,13 +170,13 @@ namespace pong
    */
   inline bool isPaddle(const ObjectManager& objs, id_type id)
   {
-    return isPaddle(objs.findObject(id));
+    return isPaddle(objs.find_object(id));
   }
   /*!
    * \brief Returns whether or not the id is of an object that is a ball.
    */
   inline bool isBall(const ObjectManager& objs, id_type id)
   {
-    return isBall(objs.findObject(id));
+    return isBall(objs.find_object(id));
   }
 }

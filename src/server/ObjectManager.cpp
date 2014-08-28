@@ -27,7 +27,7 @@ namespace pong
     if(s.objects().empty()) return;
     for(id_type id : s.objects())
     {
-      objs_.emplace(id, s.getObject(id));
+      objs_.emplace(id, s.find_object(id));
     }
 
     // Make id_counter_ the max, then add the missing ones in between to

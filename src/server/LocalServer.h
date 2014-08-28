@@ -60,7 +60,7 @@ namespace pong
     void setDestination(id_type, math::vector<double>) override;
     void setVelocity(id_type, math::vector<double>) override;
 
-    Object getObject(id_type) const override;
+    Object find_object(id_type) const override;
     std::vector<id_type> objects() const noexcept override;
 
     const Quadtree& quadtree() const noexcept { return this->quadtree_; }

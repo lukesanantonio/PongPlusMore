@@ -25,7 +25,7 @@ namespace pong
   void LocalServer::setDestination(id_type id, math::vector<double> dest)
   {
     // Might throw an exception, fine let it throw!
-    Object obj = this->quadtree_.findObject(id);
+    Object obj = this->quadtree_.find_object(id);
     PhysicsOptions& physobj = obj.physics_options;
     if(physobj.type != PhysicsType::Paddle)
     {
@@ -38,7 +38,7 @@ namespace pong
   }
   void LocalServer::setVelocity(id_type id, math::vector<double> vel)
   {
-    Object obj = this->quadtree_.findObject(id);
+    Object obj = this->quadtree_.find_object(id);
     PhysicsOptions& physopt = obj.physics_options;
     if(physopt.type != PhysicsType::Ball)
     {
@@ -50,9 +50,9 @@ namespace pong
     this->quadtree_.setObject(id, obj);
   }
 
-  Object LocalServer::getObject(id_type id) const
+  Object LocalServer::find_object(id_type id) const
   {
-    return this->quadtree_.findObject(id);
+    return this->quadtree_.find_object(id);
   }
   std::vector<id_type> LocalServer::objects() const noexcept
   {
@@ -78,7 +78,7 @@ namespace pong
       for(id_type col_id : n->get_data()->ids)
       {
         if(col_id == id) continue;
-        Volume col_v = n->get_data()->objs->findObject(col_id).volume;
+        Volume col_v = n->get_data()->objs->find_object(col_id).volume;
 
         if(intersecting(v, col_v))
         {
@@ -167,7 +167,7 @@ namespace pong
 
         Object& self = obj.obj;
         ModifiedObjectReference other_obj = {id,
-                                             this->quadtree_.findObject(id)};
+                                             this->quadtree_.find_object(id)};
         Object& other = other_obj.obj;
 
         if(!intersecting(self.volume, other.volume)) continue;
@@ -220,7 +220,7 @@ namespace pong
       {
         if(other_id == obj.id) continue;
 
-        const Object& other_obj = q.findObject(other_id);
+        const Object& other_obj = q.find_object(other_id);
         if(!isPaddle(other_obj)) continue;
 
         if(intersecting(obj.obj.volume, other_obj.volume))
@@ -242,7 +242,7 @@ namespace pong
 
         Object& self = obj.obj;
 
-        ModifiedObjectReference other_obj = {other_id, q.findObject(other_id)};
+        ModifiedObjectReference other_obj = {other_id,q.find_object(other_id)};
         if(!isBall(other_obj.obj)) continue;
         const Object& other = other_obj.obj;
 
@@ -271,7 +271,7 @@ namespace pong
 
   void LocalServer::raytrace(id_type id) noexcept
   {
-    ModifiedObjectReference obj = {id, this->quadtree_.findObject(id)};
+    ModifiedObjectReference obj = {id, this->quadtree_.find_object(id)};
 
     math::vector<double> diff = get_displacement(obj.obj);
 

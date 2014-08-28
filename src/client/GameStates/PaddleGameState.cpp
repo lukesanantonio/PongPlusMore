@@ -135,7 +135,7 @@ namespace pong
     auto set = [this](const id_type id, const double val,
                       double math::vector<double>::*component)
     {
-      Object o = this->server_.getObject(id);
+      Object o = this->server_.find_object(id);
       o.volume.pos.*component = val;
       this->server_.setDestination(id, o.volume.pos);
     };
@@ -186,7 +186,7 @@ namespace pong
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
     for(id_type id : this->server_.objects())
     {
-      const Object& obj = this->server_.getObject(id);
+      const Object& obj = this->server_.find_object(id);
       if(this->render_constraints_)
       {
         render_box(renderer, obj.volume);

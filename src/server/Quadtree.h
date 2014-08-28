@@ -52,7 +52,7 @@ namespace pong
              : root_(std::make_unique<Node_Content>(&objs_, max_objs,
                                                     1, max_level,  v)) {}
 
-    const Object& findObject(id_type) const;
+    const Object& find_object(id_type) const;
     void setObject(id_type, const Object&);
 
     id_type insert(const Object& obj) noexcept;

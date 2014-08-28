@@ -32,7 +32,7 @@ namespace pong
     // Don't do a thing if we aren't even intersecting with the node we need
     // to insert to.
     if(intersecting(root.get_data()->v,
-                    root.get_data()->objs->findObject(id).volume))
+                    root.get_data()->objs->find_object(id).volume))
     {
       auto& max_objs = root.get_data()->max_objs;
 
@@ -245,17 +245,17 @@ namespace pong
     return this->objs_.erase(id);
   }
 
-  const Object& Quadtree::findObject(id_type id) const
+  const Object& Quadtree::find_object(id_type id) const
   {
     // TODO: could this be more efficient searching for the id taking into
     // account its volume?
-    return this->objs_.findObject(id);
+    return this->objs_.find_object(id);
   }
   void Quadtree::setObject(id_type id, const Object& obj)
   {
     auto containing_nodes =
                        find_containing_nodes(&this->root_,
-                                             this->findObject(id).volume);
+                                             this->find_object(id).volume);
 
     bool did_remove = false;
     for(node_type* n : containing_nodes)

@@ -49,7 +49,7 @@ namespace pong
      *
      * \throws std::out_of_range if an object with that id doesn't exist.
      */
-    virtual Object getObject(id_type id) const = 0;
+    virtual Object find_object(id_type id) const = 0;
 
     /*!
      * \brief Returns the id of every object in the world currently.
