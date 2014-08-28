@@ -34,7 +34,7 @@ namespace pong
     }
     physobj.paddle_options.destination = dest;
 
-    this->quadtree_.setObject(id, obj);
+    this->quadtree_.set_object(id, obj);
   }
   void LocalServer::setVelocity(id_type id, math::vector<double> vel)
   {
@@ -47,7 +47,7 @@ namespace pong
     }
     physopt.ball_options.velocity = vel;
 
-    this->quadtree_.setObject(id, obj);
+    this->quadtree_.set_object(id, obj);
   }
 
   Object LocalServer::find_object(id_type id) const
@@ -198,7 +198,7 @@ namespace pong
           try_snap(other, self);
         }
 
-        this->quadtree_.setObject(other_obj.id, other_obj.obj);
+        this->quadtree_.set_object(other_obj.id, other_obj.obj);
       }
     }
   }
@@ -291,7 +291,7 @@ namespace pong
       react(obj);
 
       // Commit that object to the quad-tree.
-      this->quadtree_.setObject(obj.id, obj.obj);
+      this->quadtree_.set_object(obj.id, obj.obj);
     }
   }
 

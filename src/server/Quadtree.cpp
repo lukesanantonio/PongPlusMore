@@ -251,7 +251,7 @@ namespace pong
     // account its volume?
     return this->objs_.find_object(id);
   }
-  void Quadtree::setObject(id_type id, const Object& obj)
+  void Quadtree::set_object(id_type id, const Object& obj)
   {
     auto containing_nodes =
                        find_containing_nodes(&this->root_,
@@ -269,7 +269,7 @@ namespace pong
       // We were previously and are still intersecting node n.
     }
 
-    this->objs_.setObject(id, obj);
+    this->objs_.set_object(id, obj);
 
     using pong::insert;
     if(did_remove || containing_nodes.empty())

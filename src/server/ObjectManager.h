@@ -56,7 +56,7 @@ namespace pong
     inline id_type insert(const Object& obj) noexcept;
 
     inline const Object& find_object(id_type) const;
-    inline void setObject(id_type, const Object&);
+    inline void set_object(id_type, const Object&);
 
     inline iterator erase(const_iterator pos);
     inline iterator erase(const_iterator first, const_iterator last);
@@ -125,7 +125,7 @@ namespace pong
   {
     return objs_.at(id);
   }
-  void ObjectManager::setObject(id_type id, const Object& obj)
+  void ObjectManager::set_object(id_type id, const Object& obj)
   {
     this->objs_.at(id) = obj;
   }

@@ -53,7 +53,7 @@ namespace pong
                                                     1, max_level,  v)) {}
 
     const Object& find_object(id_type) const;
-    void setObject(id_type, const Object&);
+    void set_object(id_type, const Object&);
 
     id_type insert(const Object& obj) noexcept;
 

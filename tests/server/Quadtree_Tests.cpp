@@ -84,7 +84,7 @@ TEST(Quadtree_Tests, SetObjectWorks)
   // Move that ball somewhere relevant. A place that will cause some
   // side-effect.
   using pong::Object; using pong::Volume; using pong::PhysicsType;
-  q.setObject(ball, Object{{{450,450}, 20, 20}, PhysicsType::Ball});
+  q.set_object(ball, Object{{{450,450}, 20, 20}, PhysicsType::Ball});
 
   // We should have a split.
   ASSERT_EQ(4, q.root()->children().size());
