@@ -134,7 +134,7 @@ Get the source:
 Build it:
 
     $ mkdir build && cd build
-    $ cmake ../PpM/
+    $ cmake ../PongPlusMore/
     $ make -j4
 
 Enjoy it:
@@ -143,7 +143,7 @@ Enjoy it:
 
 ##### Mac OS X:
 Soon, I'll add a [Homebrew][3] formula for PpM so you can install it right
-font your terminal. For now though, just use it to install dependencies and
+from your terminal. For now though, just use it to install dependencies and
 follow the Linux compiling constructions above.
 
 ##### Windows:
@@ -169,15 +169,11 @@ FAQ
 This game is basically a learning experience. If I happen to make a great pong
 clone in the process, then awesome!
 
-#### Luke, you've been working on this game since March, what's taking so long?
-Eh, procrastination mostly. Development *has* picked up recently though, which
-is nice!
-
 #### Why the GPL?
 I thought about the MIT license and the BSD license, but my conclusion was
 that even though those license are great for libraries, for PpM I really
-do think that any changes to should benefit everyone. That's why I picked the
-GPL!
+do think that any changes to should benefit everyone. That's why the GPL was
+chosen!
 
 [1]: <https://trello.com/b/6kkfz2kJ/pong-plus-more>
 [2]: <https://github.com/neovim/neovim#new-plugin-architecture>
