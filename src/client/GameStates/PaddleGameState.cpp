@@ -70,16 +70,39 @@ namespace pong
 
     // Set point counter handler thang.
     this->server_.add_wall_collision_observer(
-    [this](VolumeSides s, id_type id, Quadtree& q)
+    [this, ball_volume](VolumeSides s, id_type id, Quadtree& q)
     {
+      if(!isBall(q.find_object(id))) return;
+
+      id_type winning_paddle;
       if(s == VolumeSide::Top)
       {
         this->top_score_.data(this->top_score_.data() + 1);
+        winning_paddle = this->bottom_;
       }
       else if(s == VolumeSide::Bottom)
       {
         this->bottom_score_.data(this->bottom_score_.data() + 1);
+        winning_paddle = this->top_;
       }
+      else return;
+
+      // Queue deletion.
+      this->server_.enqueue_object_deletion(this->ball_);
+      this->ball_ = 0;
+
+      // Make a new ball, with a velocity moving towards the winning paddle.
+      Object new_ball = make_ball(ball_volume);
+      this->server_.enqueue_object_creation(new_ball,
+      [=](id_type id)
+      {
+        this->ball_ = id;
+        set_ball_velocity_towards(this->ball_,
+                                  ball_volume,
+                                  this->ball_magnitude_,
+                                  winning_paddle,
+                                  this->server_);
+      });
     });
 
     // Set the label font renderer.
