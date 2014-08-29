@@ -32,22 +32,38 @@ namespace pong
     Json::StyledStreamWriter("  ").write(file, v);
   }
 
+  void set_ball_velocity_towards(id_type ball,
+                                 const Volume& ball_volume,
+                                 double length,
+                                 id_type obj,
+                                 Server& s) noexcept
+  {
+    s.set_velocity(ball,
+              vector_towards(ball_volume, s.find_object(obj).volume) * 2.7);
+  }
+
   PaddleGameState::PaddleGameState(Game& g, Volume v)
                                    : g_(g), server_(v),
                                      top_score_(0, 80), bottom_score_(0, 80)
   {
-    this->ball_ = this->server_.insert(make_ball({{475,475}, 25, 25}));
-    this->server_.set_velocity(this->ball_, {.1, .25});
-
+    // Insert top paddle.
     Volume paddle_volume;
     paddle_volume.width = 200;
     paddle_volume.height = 30;
     this->top_ = this->server_.insert(make_paddle(paddle_volume));
 
+    // Insert bottom paddle.
     paddle_volume.pos.x = 0;
     paddle_volume.pos.y = 970;
     this->bottom_ = this->server_.insert(make_paddle(paddle_volume));
 
+    // Insert the ball with a starting velocity towards the top paddle.
+    const Volume ball_volume = {{475,475}, 25, 25};
+    this->ball_ = this->server_.insert(make_ball(ball_volume));
+    set_ball_velocity_towards(this->ball_, ball_volume, this->ball_magnitude_,
+                              this->top_, this->server_);
+
+    // Initialize inputs.
     const ObjectManager& obj_manager = this->server_.quadtree().obj_manager();
     top_input_ = std::make_unique<MouseInput>(this->top_, obj_manager);
     bot_input_ = std::make_unique<MouseInput>(this->bottom_, obj_manager);
