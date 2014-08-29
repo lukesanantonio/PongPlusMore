@@ -55,7 +55,7 @@ to add:
    on my TV.
    - It would be pretty cool to work with the Wii remote tilt function.
    - Joystick/Controller support is a must.
-   - What the hell, why not have it run in a console, while playing against a
+   - What the hell, why not have it run in a terminal, while playing against a
    friend, I don't discriminate.
 
 Roadmap
