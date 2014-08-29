@@ -152,4 +152,23 @@ namespace pong
    * \brief Find the four quads that make up the volume v.
    */
   std::array<Volume, 4> volume_quads(const Volume& v) noexcept;
+
+  /*!
+   * \brief Find the center point of a given volume.
+   */
+  inline math::vector<double> center(const Volume& v) noexcept
+  {
+    GENERATE_VOLUME_BOUNDS(v);
+    return {v_left + v.width / 2, v_top + v.height / 2};
+  }
+
+  /*!
+   * \brief Find the normalized vector representing the direction from origin
+   * to target.
+   */
+  inline math::vector<double>
+  vector_towards(const Volume& origin, const Volume& target) noexcept
+  {
+    return math::normalize(center(target) - center(origin));
+  }
 }
