@@ -286,13 +286,13 @@ namespace pong
                                       obj.obj.physics_options.constraints);
 
       generate_constraints(obj, this->quadtree_);
-
-      // Respond to any collisions.
-      react(obj);
-
-      // Commit that object to the quad-tree.
-      this->quadtree_.set_object(obj.id, obj.obj);
     }
+
+    // Respond to any collisions.
+    react(obj);
+
+    // Commit that object to the quad-tree.
+    this->quadtree_.set_object(obj.id, obj.obj);
   }
 
   void LocalServer::step() noexcept
