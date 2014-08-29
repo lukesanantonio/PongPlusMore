@@ -17,37 +17,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include "../Game.h"
-#include "../GameState.h"
-#include "../Label.h"
-#include "../input_impls.h"
-#include "server/LocalServer.h"
-#include "common/serialize.h"
-#include <iostream>
+#include "input_impls.h"
+#include "SDL/SDL.h"
 namespace pong
 {
-  struct PaddleGameState : public GameState
+  double MouseInput::get_position() const noexcept
   {
-  public:
-    PaddleGameState(Game& g, Volume v);
-    virtual void handleEvent(const SDL_Event& event) override;
-    virtual void update() override;
-    virtual void render(SDL_Renderer*) const override;
-  private:
-    Game& g_;
-    LocalServer server_;
-    id_type top_ = 0;
-    id_type bottom_ = 0;
-    id_type ball_ = 0;
-    bool render_quadtree_ = false;
-    bool render_constraints_ = false;
-
-    Label<int> top_score_;
-    Label<int> bottom_score_;
-
-    // Wrapped in a unique_ptr for lazy initialization.
-    std::unique_ptr<PaddleInput> top_input_;
-    std::unique_ptr<PaddleInput> bot_input_;
-  };
+    int x;
+    SDL_GetMouseState(&x, NULL);
+    return x;
+  }
+  double TestingAI::get_position() const noexcept
+  {
+    // Find the first ball.
+    for(id_type id : this->objs_.ids())
+    {
+      const Object& obj = this->objs_.find_object(id);
+      if(isBall(this->objs_.find_object(id)))
+      {
+        this->last_x_ = obj.volume.pos.x;
+        return this->last_x_;
+      }
+    }
+    return this->last_x_;
+  }
 }

@@ -18,36 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "../Game.h"
-#include "../GameState.h"
-#include "../Label.h"
-#include "../input_impls.h"
-#include "server/LocalServer.h"
-#include "common/serialize.h"
-#include <iostream>
+#include "PaddleInput.h"
 namespace pong
 {
-  struct PaddleGameState : public GameState
+  struct MouseInput : public PaddleInput
   {
-  public:
-    PaddleGameState(Game& g, Volume v);
-    virtual void handleEvent(const SDL_Event& event) override;
-    virtual void update() override;
-    virtual void render(SDL_Renderer*) const override;
+    using PaddleInput::PaddleInput;
+    double get_position() const noexcept override;
+  };
+  struct TestingAI : public PaddleInput
+  {
+    using PaddleInput::PaddleInput;
+    double get_position() const noexcept override;
   private:
-    Game& g_;
-    LocalServer server_;
-    id_type top_ = 0;
-    id_type bottom_ = 0;
-    id_type ball_ = 0;
-    bool render_quadtree_ = false;
-    bool render_constraints_ = false;
-
-    Label<int> top_score_;
-    Label<int> bottom_score_;
-
-    // Wrapped in a unique_ptr for lazy initialization.
-    std::unique_ptr<PaddleInput> top_input_;
-    std::unique_ptr<PaddleInput> bot_input_;
+    mutable double last_x_ = 0.0;
   };
 }

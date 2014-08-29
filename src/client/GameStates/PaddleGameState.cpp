@@ -64,7 +64,7 @@ namespace pong
 
     // Initialize inputs.
     const ObjectManager& obj_manager = this->server_.quadtree().obj_manager();
-    top_input_ = std::make_unique<MouseInput>(this->top_, obj_manager);
+    top_input_ = std::make_unique<TestingAI>(this->top_, obj_manager);
     bot_input_ = std::make_unique<MouseInput>(this->bottom_, obj_manager);
 
     // Set point counter handler thang.
