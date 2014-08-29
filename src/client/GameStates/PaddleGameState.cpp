@@ -34,7 +34,6 @@ namespace pong
 
   void set_ball_velocity_towards(id_type ball,
                                  const Volume& ball_volume,
-                                 double length,
                                  id_type obj,
                                  Server& s) noexcept
   {
@@ -60,7 +59,7 @@ namespace pong
     // Insert the ball with a starting velocity towards the top paddle.
     const Volume ball_volume = {{475,475}, 25, 25};
     this->ball_ = this->server_.insert(make_ball(ball_volume));
-    set_ball_velocity_towards(this->ball_, ball_volume, this->ball_magnitude_,
+    set_ball_velocity_towards(this->ball_, ball_volume,
                               this->top_, this->server_);
 
     // Initialize inputs.
@@ -99,7 +98,6 @@ namespace pong
         this->ball_ = id;
         set_ball_velocity_towards(this->ball_,
                                   ball_volume,
-                                  this->ball_magnitude_,
                                   winning_paddle,
                                   this->server_);
       });
