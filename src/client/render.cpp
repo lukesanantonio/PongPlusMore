@@ -20,6 +20,21 @@
 #include "render.h"
 namespace pong
 {
+  void render_debug(const Game& game, SDL_Renderer* renderer) noexcept
+  {
+    std::string stats = "FPS: " + std::to_string(game.fps);
+    UniquePtrSurface s = game.font_renderer->render_text(stats, 20,
+                                                     {0xff, 0xff, 0xff, 0xff},
+                                                     {0x00, 0x00, 0x00, 0x00});
+    SDL_Texture* t = SDL_CreateTextureFromSurface(renderer, s.get());
+    SDL_Rect dest;
+    dest.w = s->w;
+    dest.h = s->h;
+    dest.y = 1000 - s->h;
+    dest.x = 1000 - s->w;
+    SDL_RenderCopy(renderer, t, NULL, &dest);
+  }
+
   void render(SDL_Renderer* renderer, const Volume& volume) noexcept
   {
     SDL_Rect rect;

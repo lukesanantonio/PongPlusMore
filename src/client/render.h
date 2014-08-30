@@ -23,10 +23,13 @@
  * dependency.
  */
 #pragma once
+#include "Game.h"
 #include "SDL.h"
 #include "common/volume.h"
 namespace pong
 {
+  void render_debug(const Game& game, SDL_Renderer* renderer) noexcept;
+
   void render(SDL_Renderer* renderer, const Volume& volume) noexcept;
 
   void render_volume_sides(SDL_Renderer* renderer,
