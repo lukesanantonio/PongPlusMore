@@ -19,8 +19,17 @@
  */
 #include "LocalServer.h"
 #include <cmath>
+#include "log.h"
 namespace pong
 {
+  LocalServer::LocalServer(Volume v) noexcept : quadtree_(v, 3, 5)
+  {
+    log(severity::info, "Initializing LocalServer");
+  }
+  LocalServer::~LocalServer() noexcept
+  {
+    log(severity::info, "Uninitializing LocalServer");
+  }
   // LocalServer function implementations.
   void LocalServer::set_destination(id_type id, math::vector<double> dest)
   {

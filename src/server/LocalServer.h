@@ -44,8 +44,8 @@ namespace pong
   struct ModifiedObjectReference;
   struct LocalServer : public Server
   {
-    LocalServer(Volume v) noexcept : quadtree_(v, 3, 5) {}
-    ~LocalServer() noexcept = default;
+    LocalServer(Volume v) noexcept;
+    ~LocalServer() noexcept;
 
     id_type insert(const Object& o) noexcept;
 
