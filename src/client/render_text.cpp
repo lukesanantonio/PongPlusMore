@@ -161,6 +161,8 @@ namespace pong
       pen_x += this->face_->glyph->advance.x / 64;
     }
 
+    SDL_SetSurfaceBlendMode(image, SDL_BLENDMODE_BLEND);
+
     return UniquePtrSurface(image);
   }
 

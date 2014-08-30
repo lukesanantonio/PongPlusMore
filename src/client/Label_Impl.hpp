@@ -251,14 +251,16 @@ namespace pong
                      cache_(make_label_cache(*this))
   {
     //Set defaults.
-    //Text color default: white
+    //Text color default: opaque white
     this->text_color_.r = 0xff;
     this->text_color_.g = 0xff;
     this->text_color_.b = 0xff;
+    this->text_color_.a = 0xff;
 
-    //Background color default: black
+    //Background color default: transparent black
     this->back_color_.r = 0x00;
     this->back_color_.g = 0x00;
+    this->back_color_.b = 0x00;
     this->back_color_.b = 0x00;
   }
 
