@@ -31,18 +31,6 @@ int main(int argc, char** argv)
   using pong::crash;
   pong::Game game;
 
-  if(argc > 1)
-  {
-    std::ifstream file(argv[1]);
-    if(!file.good())
-    {
-      crash("Replay file invalid!");
-    }
-
-    // Read the Json structure.
-    Json::Reader r(Json::Features::strictMode());
-    r.parse(file, game.replay, false);
-  }
   if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
   {
     crash("Failed to initialize SDL2.");

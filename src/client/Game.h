@@ -41,7 +41,5 @@ namespace pong
 
     // debugging stats
     int fps = 0;
-
-    Json::Value replay;
   };
 }
