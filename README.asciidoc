@@ -41,6 +41,7 @@ Luke, '13
 === v0.1
 
 The Alpha is out. It includes:
+
 - Singleplayer against an AI that doesn't mess up.
 
 Supported command line options:
