@@ -41,5 +41,8 @@ namespace pong
 
     // debugging stats
     int fps = 0;
+
+    // client config
+    bool render_debug = false;
   };
 }

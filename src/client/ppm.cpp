@@ -25,11 +25,21 @@
 #include "common/crash.hpp"
 #include "client/Game.h"
 #include "client/GameStates/MenuGameState.h"
+#include "render.h"
 
 int main(int argc, char** argv)
 {
   using pong::crash;
   pong::Game game;
+
+  if(argc > 1)
+  {
+    std::vector<std::string> args(argv + 1, argv + argc);
+    for(const std::string& s : args)
+    {
+      if(s == "--render-debug") game.render_debug = true;
+    }
+  }
 
   if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
   {
@@ -111,6 +121,13 @@ int main(int argc, char** argv)
       SDL_RenderClear(renderer);
 
       game_state->render(renderer);
+
+      // render debug if requested
+      if(game.render_debug)
+      {
+        render_debug(game, renderer);
+      }
+
       SDL_RenderPresent(renderer);
     }
     if(fps.hasBeen(std::chrono::seconds(1)))
