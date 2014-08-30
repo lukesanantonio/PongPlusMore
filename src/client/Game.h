@@ -39,6 +39,9 @@ namespace pong
     int start_count = 20;
     int count = 0;
 
+    // debugging stats
+    int fps = 0;
+
     Json::Value replay;
   };
 }

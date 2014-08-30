@@ -127,7 +127,7 @@ int main(int argc, char** argv)
     }
     if(fps.hasBeen(std::chrono::seconds(1)))
     {
-      std::cout << "fps: " << frames << std::endl;
+      game.fps = frames;
       frames = 0;
       fps.reset();
     }
