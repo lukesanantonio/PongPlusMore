@@ -36,6 +36,19 @@ board [here][1].
 -
 Luke, '13
 
+Changelog
+---------
+
+##### v0.1
+
+The Alpha is out. It includes:
+ - Singleplayer against an AI that doesn't mess up.
+
+Supported command line options:
+
+    --render-debug | Enable rendering of debug stats in the bottom-right corner
+                     of the screen at all times.
+
 Planned Features
 ----------------
 
