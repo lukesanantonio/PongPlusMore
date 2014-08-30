@@ -159,9 +159,11 @@ namespace pong
       }
       case SDL_QUIT:
       {
-        pong::crash("Exiting...");
         dump("objectmanager.out", dumpJSON(this->server_));
         dump("quadtree.out", dumpJSON(this->server_.quadtree()));
+
+        // Signal game loop exit
+        this->g_.exiting = true;
         break;
       }
     }
