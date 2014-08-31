@@ -46,8 +46,7 @@ namespace pong
       time = "badtime";
     }
 
-    // Drop the null terminator put in by the strftime function also.
-    time.resize(count - 1);
+    time.resize(count);
 
     std::clog << "(" << time << "): " << severity << ": " << msg << std::endl;
   }
