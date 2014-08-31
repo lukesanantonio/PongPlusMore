@@ -21,6 +21,7 @@
 #include "Server.h"
 #include "Quadtree.h"
 #include <boost/signals2.hpp>
+#include <uv.h>
 namespace pong
 {
   enum class ActionType
@@ -74,6 +75,8 @@ namespace pong
 
     inline
     connection_t add_wall_collision_observer(const wall_observer_t&) noexcept;
+
+    void log(const severity& s, const std::string& msg) noexcept override;
   private:
     wall_observer_signal_t obs_;
 
@@ -83,6 +86,8 @@ namespace pong
 
     void react(ModifiedObjectReference& obj) noexcept;
     void raytrace(id_type id) noexcept;
+
+    uv_loop_t* uv_loop_;
   };
 
   inline void LocalServer::enqueue_action(const ServerAction& a) noexcept

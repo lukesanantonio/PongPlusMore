@@ -19,16 +19,73 @@
  */
 #include "LocalServer.h"
 #include <cmath>
-#include "log.h"
+#include <cstdlib>
 namespace pong
 {
+  struct write_req_t
+  {
+    uv_fs_t req;
+    uv_buf_t buf;
+  };
+
+  void after_write(uv_fs_t* fs_req)
+  {
+    write_req_t* req = (write_req_t*) fs_req;
+
+    // Uninitialize actual uv request.
+    uv_fs_req_cleanup(&req->req);
+
+    // Deallocate buffer.
+    std::free(req->buf.base);
+
+    // Deallocate request subclass.
+    std::free(req);
+  }
+  void LocalServer::log(const severity& s, const std::string& msg) noexcept
+  {
+    // Stringify severity
+    std::string severity;
+    if(s == severity::info) severity = "info";
+    else if(s == severity::warning) severity = "warning";
+    else if(s == severity::error) severity = "error";
+    else severity = "unspecified";
+
+    // Stringify current time.
+    std::string time;
+    time.resize(20);
+
+    std::time_t t = std::time(NULL);
+    std::size_t count = std::strftime(&time[0], 20, "%F|%T", std::gmtime(&t));
+    if(count == 0)
+    {
+      time = "badtime";
+    }
+
+    time.resize(count);
+
+    std::string final_msg = "(" + time + "): " + severity + ": " + msg + "\n";
+    char* msg_data = (char*) std::malloc(sizeof(char) * final_msg.size());
+    std::memcpy(msg_data, final_msg.data(), final_msg.size());
+
+    write_req_t* req = (write_req_t*) malloc(sizeof(write_req_t));
+    req->buf = uv_buf_init(msg_data, final_msg.size());
+
+    uv_fs_write(this->uv_loop_, (uv_fs_t*)req, 1, &req->buf, 1, -1,
+                after_write);
+  }
+
   LocalServer::LocalServer(Volume v) noexcept : quadtree_(v, 3, 5)
   {
-    log(severity::info, "Initializing LocalServer");
+    this->uv_loop_ = uv_loop_new();
+
+    this->log(severity::info, "Initializing LocalServer");
   }
   LocalServer::~LocalServer() noexcept
   {
-    log(severity::info, "Uninitializing LocalServer");
+    this->log(severity::info, "Uninitializing LocalServer");
+
+    uv_run(this->uv_loop_, UV_RUN_DEFAULT);
+    uv_loop_delete(this->uv_loop_);
   }
   // LocalServer function implementations.
   void LocalServer::set_destination(id_type id, math::vector<double> dest)
@@ -306,6 +363,8 @@ namespace pong
 
   void LocalServer::step() noexcept
   {
+    uv_run(this->uv_loop_, UV_RUN_DEFAULT);
+
     {
       // Handle server actions
       struct ServerActionHandler : public boost::static_visitor<>

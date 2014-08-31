@@ -24,6 +24,14 @@
 #include "ObjectManager.h"
 namespace pong
 {
+  enum class severity
+  {
+    info,
+    warning,
+    error,
+    unspecified
+  };
+
   struct Server
   {
     Server() noexcept = default;
@@ -57,5 +65,7 @@ namespace pong
     virtual std::vector<id_type> objects() const noexcept = 0;
 
     virtual void step() noexcept = 0;
+
+    virtual void log(const severity& s, const std::string& msg) noexcept = 0;
   };
 }
