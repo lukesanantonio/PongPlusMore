@@ -110,6 +110,9 @@ namespace pong
     // Set label position.
     this->top_score_.position({10, 500 - this->top_score_.surface_height()});
     this->bottom_score_.position({10, 500});
+
+    // Hide the mouse cursor.
+    SDL_ShowCursor(SDL_DISABLE);
   }
   void PaddleGameState::handleEvent(const SDL_Event& event)
   {
