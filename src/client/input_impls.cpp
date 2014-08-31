@@ -29,13 +29,15 @@ namespace pong
   }
   double TestingAI::get_position() const noexcept
   {
+    const Object& self = this->objs_.find_object(this->id_);
+
     // Find the first ball.
     for(id_type id : this->objs_.ids())
     {
       const Object& obj = this->objs_.find_object(id);
       if(isBall(this->objs_.find_object(id)))
       {
-        this->last_x_ = obj.volume.pos.x;
+        this->last_x_ = obj.volume.pos.x - self.volume.width / 2;
         return this->last_x_;
       }
     }
