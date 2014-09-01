@@ -363,7 +363,7 @@ namespace pong
 
   void LocalServer::step() noexcept
   {
-    uv_run(this->uv_loop_, UV_RUN_DEFAULT);
+    uv_run(this->uv_loop_, UV_RUN_NOWAIT);
 
     {
       // Handle server actions
