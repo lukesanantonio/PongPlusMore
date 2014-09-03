@@ -20,6 +20,7 @@
 #include "LocalServer.h"
 #include <cmath>
 #include <cstdlib>
+#include "ControlInterface.h"
 namespace pong
 {
   struct write_req_t
@@ -77,6 +78,8 @@ namespace pong
   LocalServer::LocalServer(Volume v) noexcept : quadtree_(v, 3, 5)
   {
     this->uv_loop_ = uv_loop_new();
+
+    enqueue_events(this->uv_loop_, *this);
 
     this->log(severity::info, "Initializing LocalServer");
   }
@@ -370,7 +373,10 @@ namespace pong
       struct ServerActionHandler : public boost::static_visitor<>
       {
         ServerActionHandler(LocalServer& l) : l_(l) {}
-        void operator()(const NullAction& a) noexcept {}
+        void operator()(const NullAction& a) noexcept
+        {
+          l_.log(severity::info, "Null Action!");
+        }
         void operator()(const ObjectCreationAction& a) noexcept
         {
           a.callback(l_.quadtree_.insert(a.obj));
