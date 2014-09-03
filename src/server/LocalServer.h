@@ -24,24 +24,6 @@
 #include <uv.h>
 namespace pong
 {
-  enum class ActionType
-  {
-    ObjectCreation,
-    ObjectDeletion
-  };
-  struct ObjectCreationAction
-  {
-    Object obj;
-    using callback_t = std::function<void (id_type)>;
-    callback_t callback;
-  };
-  struct ObjectDeletionAction
-  {
-    id_type id;
-  };
-  using ServerAction = boost::variant<ObjectCreationAction,
-                                      ObjectDeletionAction>;
-
   struct ModifiedObjectReference;
   struct LocalServer : public Server
   {
@@ -49,11 +31,6 @@ namespace pong
     ~LocalServer() noexcept;
 
     id_type insert(const Object& o) noexcept;
-
-    inline void enqueue_action(const ServerAction& a) noexcept;
-    inline void enqueue_object_creation(const Object& o,
-                                  ObjectCreationAction::callback_t c) noexcept;
-    inline void enqueue_object_deletion(id_type id) noexcept;
 
     void set_destination(id_type, math::vector<double>) override;
     void set_velocity(id_type, math::vector<double>) override;
@@ -82,32 +59,12 @@ namespace pong
 
     Quadtree quadtree_;
 
-    std::queue<ServerAction> action_queue_;
-
     void react(ModifiedObjectReference& obj) noexcept;
     void raytrace(id_type id) noexcept;
 
     uv_loop_t* uv_loop_;
   };
 
-  inline void LocalServer::enqueue_action(const ServerAction& a) noexcept
-  {
-    this->action_queue_.push(a);
-  }
-  inline void LocalServer::enqueue_object_creation(const Object& obj,
-                                   ObjectCreationAction::callback_t c) noexcept
-  {
-    ObjectCreationAction a;
-    a.obj = obj;
-    a.callback = c;
-    this->enqueue_action(a);
-  }
-  inline void LocalServer::enqueue_object_deletion(id_type id) noexcept
-  {
-    ObjectDeletionAction a;
-    a.id = id;
-    this->enqueue_action(a);
-  }
 
   inline auto LocalServer::add_wall_collision_observer(
                           const wall_observer_t& slot) noexcept -> connection_t

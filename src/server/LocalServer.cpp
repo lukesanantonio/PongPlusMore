@@ -370,6 +370,7 @@ namespace pong
       struct ServerActionHandler : public boost::static_visitor<>
       {
         ServerActionHandler(LocalServer& l) : l_(l) {}
+        void operator()(const NullAction& a) noexcept {}
         void operator()(const ObjectCreationAction& a) noexcept
         {
           a.callback(l_.quadtree_.insert(a.obj));

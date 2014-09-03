@@ -22,8 +22,30 @@
 #include <vector>
 #include "Object.h"
 #include "ObjectManager.h"
+#include <boost/variant.hpp>
 namespace pong
 {
+  enum class ActionType
+  {
+    Null,
+    ObjectCreation,
+    ObjectDeletion
+  };
+  struct NullAction {};
+  struct ObjectCreationAction
+  {
+    Object obj;
+    using callback_t = std::function<void (id_type)>;
+    callback_t callback;
+  };
+  struct ObjectDeletionAction
+  {
+    id_type id;
+  };
+  using ServerAction = boost::variant<NullAction,
+                                      ObjectCreationAction,
+                                      ObjectDeletionAction>;
+
   enum class severity
   {
     info,
@@ -67,5 +89,32 @@ namespace pong
     virtual void step() noexcept = 0;
 
     virtual void log(const severity& s, const std::string& msg) noexcept = 0;
+
+    inline void enqueue_action(const ServerAction& a) noexcept;
+    inline void enqueue_object_creation(const Object& o,
+                                  ObjectCreationAction::callback_t c) noexcept;
+    inline void enqueue_object_deletion(id_type id) noexcept;
+
+  protected:
+    std::queue<ServerAction> action_queue_;
   };
+
+  inline void Server::enqueue_action(const ServerAction& a) noexcept
+  {
+    this->action_queue_.push(a);
+  }
+  inline void Server::enqueue_object_creation(const Object& obj,
+                                   ObjectCreationAction::callback_t c) noexcept
+  {
+    ObjectCreationAction a;
+    a.obj = obj;
+    a.callback = c;
+    this->enqueue_action(a);
+  }
+  inline void Server::enqueue_object_deletion(id_type id) noexcept
+  {
+    ObjectDeletionAction a;
+    a.id = id;
+    this->enqueue_action(a);
+  }
 }
