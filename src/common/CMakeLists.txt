@@ -16,5 +16,5 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_library(ppmcommon util.cpp serialize.cpp volume.cpp)
+add_library(ppmcommon util.cpp serialize.cpp deserialize.cpp volume.cpp)
 target_link_libraries(ppmcommon jsoncpp)
