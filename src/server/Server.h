@@ -25,6 +25,14 @@
 #include <boost/variant.hpp>
 namespace pong
 {
+  enum class severity
+  {
+    info,
+    warning,
+    error,
+    unspecified
+  };
+
   enum class ActionType
   {
     Null,
@@ -32,6 +40,11 @@ namespace pong
     ObjectDeletion
   };
   struct NullAction {};
+  struct LogAction
+  {
+    severity severity;
+    std::string msg;
+  };
   struct ObjectCreationAction
   {
     Object obj;
@@ -43,16 +56,9 @@ namespace pong
     id_type id;
   };
   using ServerAction = boost::variant<NullAction,
+                                      LogAction,
                                       ObjectCreationAction,
                                       ObjectDeletionAction>;
-
-  enum class severity
-  {
-    info,
-    warning,
-    error,
-    unspecified
-  };
 
   struct Server
   {

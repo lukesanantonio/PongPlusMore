@@ -373,9 +373,10 @@ namespace pong
       struct ServerActionHandler : public boost::static_visitor<>
       {
         ServerActionHandler(LocalServer& l) : l_(l) {}
-        void operator()(const NullAction& a) noexcept
+        void operator()(const NullAction& a) noexcept {}
+        void operator()(const LogAction& a) noexcept
         {
-          l_.log(severity::info, "Null Action!");
+          l_.log(a.severity, a.msg);
         }
         void operator()(const ObjectCreationAction& a) noexcept
         {
