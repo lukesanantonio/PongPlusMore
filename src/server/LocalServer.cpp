@@ -79,7 +79,9 @@ namespace pong
   {
     this->uv_loop_ = uv_loop_new();
 
-    enqueue_events(this->uv_loop_, *this);
+    std::vector<std::string> args;
+    args.push_back("cat");
+    spawn_plugin(*this, args, this->uv_loop_);
 
     this->log(severity::info, "Initializing LocalServer");
   }

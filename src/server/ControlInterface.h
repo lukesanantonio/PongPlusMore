@@ -24,21 +24,5 @@
 #include <uv.h>
 namespace pong
 {
-  struct ControlInterface
-  {
-    ControlInterface();
-
-    id_type make_command() noexcept;
-
-    template <class Iter>
-    void set_buffer(id_type, Iter, Iter) noexcept;
-
-    bool compile_command(id_type) noexcept;
-
-    std::function<void ()> get_command(id_type) noexcept;
-  };
-
-  ServerAction compile_command(const std::vector<char>& buf) noexcept;
-
-  void enqueue_events(uv_loop_t* loop, Server& s) noexcept;
+  void spawn_plugin(Server& s, std::vector<std::string> args, uv_loop_t*);
 }
