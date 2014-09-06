@@ -83,7 +83,7 @@ namespace pong
     a.id = params[0].asInt();
     return a;
   }
-  LogAction build_log_action(const Json::Value& params) noexcept
+  LogAction parse_log_action(const Json::Value& params) noexcept
   {
     LogAction a;
     a.severity = parse_severity(params[0].asString());
