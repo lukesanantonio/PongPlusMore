@@ -60,4 +60,34 @@ namespace pong
 
     return o;
   }
+
+  Severity parse_severity(const Json::Value& val) noexcept
+  {
+    std::string s = val.asString();
+    if(s == "info") return Severity::Info;
+    if(s == "warning") return Severity::Warning;
+    if(s == "error") return Severity::Error;
+    return Severity::Unspecified;
+  }
+
+  ObjectCreationAction parse_create_action(const Json::Value& params) noexcept
+  {
+    ObjectCreationAction a;
+    a.obj = parse_object(params[0]);
+    return a;
+  }
+
+  ObjectDeletionAction parse_delete_action(const Json::Value& params) noexcept
+  {
+    ObjectDeletionAction a;
+    a.id = params[0].asInt();
+    return a;
+  }
+  LogAction build_log_action(const Json::Value& params) noexcept
+  {
+    LogAction a;
+    a.severity = parse_severity(params[0].asString());
+    a.msg = params[1].asString();
+    return a;
+  }
 }

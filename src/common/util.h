@@ -21,6 +21,7 @@
 #include <type_traits>
 #include <functional>
 #include <vector>
+#include <string>
 namespace pong
 {
   namespace detail
@@ -77,5 +78,10 @@ namespace pong
   std::vector<Dest> get_data_vector(const std::vector<SP>& v) noexcept
   {
     return vector_cast<Dest>(v, [](const SP& p) { return p.get(); });
+  }
+
+  inline std::vector<char> vec_from_string(const std::string& s) noexcept
+  {
+    return std::vector<char>(s.begin(), s.end());
   }
 }
