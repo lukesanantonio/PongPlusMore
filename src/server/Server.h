@@ -22,17 +22,10 @@
 #include <vector>
 #include "Object.h"
 #include "ObjectManager.h"
+#include "Logger.h"
 #include <boost/variant.hpp>
 namespace pong
 {
-  enum class severity
-  {
-    info,
-    warning,
-    error,
-    unspecified
-  };
-
   enum class ActionType
   {
     Null,
@@ -42,7 +35,7 @@ namespace pong
   struct NullAction {};
   struct LogAction
   {
-    severity severity;
+    Severity severity;
     std::string msg;
   };
   struct ObjectCreationAction
@@ -94,7 +87,7 @@ namespace pong
 
     virtual void step() noexcept = 0;
 
-    virtual void log(const severity& s, const std::string& msg) noexcept = 0;
+    virtual Logger& logger() noexcept = 0;
 
     inline void enqueue_action(const ServerAction& a) noexcept;
     inline void enqueue_object_creation(const Object& o,

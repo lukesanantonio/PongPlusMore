@@ -42,6 +42,8 @@ namespace pong
 
     void step() noexcept override;
 
+    inline Logger& logger() noexcept override;
+
     using wall_observer_signal_t =
                           boost::signals2::signal<void (VolumeSides s,
                                                         id_type id,
@@ -52,8 +54,6 @@ namespace pong
 
     inline
     connection_t add_wall_collision_observer(const wall_observer_t&) noexcept;
-
-    void log(const severity& s, const std::string& msg) noexcept override;
   private:
     wall_observer_signal_t obs_;
 
@@ -62,9 +62,13 @@ namespace pong
     void react(ModifiedObjectReference& obj) noexcept;
     void raytrace(id_type id) noexcept;
 
-    uv_loop_t* uv_loop_;
+    Logger log_;
   };
 
+  inline Logger& LocalServer::logger() noexcept
+  {
+    return this->log_;
+  }
 
   inline auto LocalServer::add_wall_collision_observer(
                           const wall_observer_t& slot) noexcept -> connection_t

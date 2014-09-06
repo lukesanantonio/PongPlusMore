@@ -18,11 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "Server.h"
-#include "ObjectManager.h"
-#include "LocalServer.h"
+#include <string>
 #include <uv.h>
 namespace pong
 {
-  void spawn_plugin(Server& s, std::vector<std::string> args, uv_loop_t*);
+  enum class Severity
+  {
+    Info, Warning, Error, Unspecified
+  };
+  struct Logger
+  {
+    Logger() noexcept;
+   ~Logger() noexcept;
+
+    void log(Severity s, const std::string& msg) noexcept;
+    void step() noexcept;
+  private:
+    uv_loop_t* loop_;
+  };
 }
