@@ -57,6 +57,7 @@ namespace pong
           }
           write_buffer(out);
         };
+        return a;
       }
       if(method == "Server.DeleteObject")
       {
