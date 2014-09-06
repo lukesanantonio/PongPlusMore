@@ -44,6 +44,7 @@ namespace pong
     Pipe* in_pipe;
     Pipe* err_pipe;
     Server* server;
+    uv_loop_t* loop;
   };
 
   struct SpawnOptions

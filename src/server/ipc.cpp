@@ -44,6 +44,9 @@ namespace pong
                                    " (PID) returned with status " +
                                    std::to_string(exit));
 
+    // Tidy up.
+    uv_run(proc->loop, UV_RUN_DEFAULT);
+
     // Close the process then uninitialize.
     uv_close((uv_handle_t*) proc, NULL);
     delete_process(proc);
@@ -55,6 +58,7 @@ namespace pong
   {
     Process* self = new Process;
     self->server = &server;
+    self->loop = loop;
 
     // Allocate the pipes.
     self->out_pipe = create_pipe(self);
@@ -110,6 +114,8 @@ namespace pong
 
   void delete_process(Process* self) noexcept
   {
+    uv_run(self->loop, UV_RUN_DEFAULT);
+
     auto uninit_pipe = [](Pipe** pipe)
     {
       if(!*pipe) return;
