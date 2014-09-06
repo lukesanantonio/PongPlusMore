@@ -30,7 +30,6 @@ namespace pong
   struct PaddleOptions
   {
     math::vector<double> destination;
-    double max_velocity = 1.0;
   };
   struct BallOptions
   {
