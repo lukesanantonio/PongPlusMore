@@ -20,15 +20,44 @@
 #include "deserialize.h"
 namespace pong
 {
-  Volume parse_volume(Json::Value root) noexcept
+  math::vector<double> parse_vector(const Json::Value& root) noexcept
+  {
+    math::vector<double> v;
+    v.x = root["x"].asDouble();
+    v.y = root["y"].asDouble();
+    return v;
+  }
+  Volume parse_volume(const Json::Value& root) noexcept
   {
     Volume v;
 
-    v.pos.x = root["Position"]["x"].asDouble();
-    v.pos.x = root["Position"]["y"].asDouble();
+    v.pos = parse_vector(root["Position"]);
     v.width = root["Width"].asDouble();
     v.height = root["Height"].asDouble();
 
     return v;
+  }
+  Object parse_object(const Json::Value& root) noexcept
+  {
+    Object o;
+    o.volume = parse_volume(root["Volume"]);
+
+    PhysicsOptions& opt = o.physics_options;
+
+    Json::Value phys_json = root["PhysicsOptions"];
+    if(phys_json["Velocity"].isObject())
+    {
+      opt.type = PhysicsType::Ball;
+      opt.ball_options = BallOptions();
+      opt.ball_options.velocity = parse_vector(phys_json["Velocity"]);
+    }
+    else if(phys_json["Destination"].isObject())
+    {
+      opt.type = PhysicsType::Paddle;
+      opt.paddle_options = PaddleOptions();
+      opt.paddle_options.destination = parse_vector(phys_json["Desination"]);
+    }
+
+    return o;
   }
 }

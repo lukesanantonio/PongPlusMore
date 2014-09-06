@@ -19,8 +19,11 @@
  */
 #pragma once
 #include "volume.h"
+#include "server/Object.h"
 #include "json/json.h"
 namespace pong
 {
-  Volume parse_volume(Json::Value root) noexcept;
+  math::vector<double> parse_vector(const Json::Value& root) noexcept;
+  Volume parse_volume(const Json::Value& root) noexcept;
+  Object parse_object(const Json::Value& root) noexcept;
 }
