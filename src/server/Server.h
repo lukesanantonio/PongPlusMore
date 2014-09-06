@@ -23,36 +23,9 @@
 #include "Object.h"
 #include "ObjectManager.h"
 #include "Logger.h"
-#include <boost/variant.hpp>
+#include "server_actions.h"
 namespace pong
 {
-  enum class ActionType
-  {
-    Null,
-    ObjectCreation,
-    ObjectDeletion
-  };
-  struct NullAction {};
-  struct LogAction
-  {
-    Severity severity;
-    std::string msg;
-  };
-  struct ObjectCreationAction
-  {
-    Object obj;
-    using callback_t = std::function<void (id_type)>;
-    callback_t callback;
-  };
-  struct ObjectDeletionAction
-  {
-    id_type id;
-  };
-  using ServerAction = boost::variant<NullAction,
-                                      LogAction,
-                                      ObjectCreationAction,
-                                      ObjectDeletionAction>;
-
   struct Server
   {
     Server() noexcept = default;
