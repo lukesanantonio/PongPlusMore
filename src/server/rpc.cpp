@@ -89,6 +89,9 @@ namespace pong
 
   void enqueue_buffer(Pipe* pipe, Pipe* out_pipe) noexcept
   {
+    // Don't do anything if the pipe doesn't have any command buffered!
+    if(pipe->buf->empty()) return;
+
     // Compile the command.
     ServerAction a = compile_buffer(pipe, out_pipe);
     // Queue the command.
