@@ -31,7 +31,7 @@ namespace pong
   {
     Json::Value res;
 
-    res["result"] = dumpJSON(result);
+    res["result"] = dump_json(result);
     res["id"] = response_id;
 
     return res;
@@ -41,7 +41,7 @@ namespace pong
   {
     Json::Value res;
 
-    res["error"] = dumpJSON(err);
+    res["error"] = dump_json(err);
     res["id"] = response_id;
 
     return res;

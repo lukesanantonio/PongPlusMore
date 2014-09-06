@@ -151,8 +151,8 @@ namespace pong
           case SDL_SCANCODE_TAB:
           {
             // Print out the Object Manager and the quadtree.
-            dump("objectmanager.out", dumpJSON(this->server_));
-            dump("quadtree.out", dumpJSON(this->server_.quadtree()));
+            dump("objectmanager.out", dump_json(this->server_));
+            dump("quadtree.out", dump_json(this->server_.quadtree()));
             break;
           }
           default:
@@ -162,8 +162,8 @@ namespace pong
       }
       case SDL_QUIT:
       {
-        dump("objectmanager.out", dumpJSON(this->server_));
-        dump("quadtree.out", dumpJSON(this->server_.quadtree()));
+        dump("objectmanager.out", dump_json(this->server_));
+        dump("quadtree.out", dump_json(this->server_.quadtree()));
 
         // Signal game loop exit
         this->g_.exiting = true;

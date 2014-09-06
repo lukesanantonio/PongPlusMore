@@ -34,39 +34,39 @@ namespace pong
 
   template <typename T,
             class = std::enable_if_t<boost::is_fundamental<T>::value, T> >
-  inline Json::Value dumpJSON(const T& t) noexcept;
+  inline Json::Value dump_json(const T& t) noexcept;
 
   template <class Iter1, class Iter2>
-  Json::Value dumpJSON(Iter1 i1, Iter2 i2) noexcept;
+  Json::Value dump_json(Iter1 i1, Iter2 i2) noexcept;
 
   template <typename point_type>
-  Json::Value dumpJSON(const math::vector<point_type>& v) noexcept;
+  Json::Value dump_json(const math::vector<point_type>& v) noexcept;
 
   template <typename NT, class ND>
-  Json::Value dumpJSON(const Node<NT, ND>& n) noexcept;
+  Json::Value dump_json(const Node<NT, ND>& n) noexcept;
 
   // Templates
 
   // Primitive-Types cover-all.
   template <typename T, class>
-  inline Json::Value dumpJSON(const T& t) noexcept
+  inline Json::Value dump_json(const T& t) noexcept
   {
     return Json::Value(t);
   }
 
   template <class Iter1, class Iter2>
-  Json::Value dumpJSON(Iter1 i1, Iter2 i2) noexcept
+  Json::Value dump_json(Iter1 i1, Iter2 i2) noexcept
   {
     Json::Value v(Json::arrayValue);
     for(; i1 != i2; ++i1)
     {
-      v.append(dumpJSON(*i1));
+      v.append(dump_json(*i1));
     }
     return v;
   }
 
   template <typename point_type>
-  Json::Value dumpJSON(const math::vector<point_type>& v) noexcept
+  Json::Value dump_json(const math::vector<point_type>& v) noexcept
   {
     Json::Value root(Json::objectValue);
 
@@ -77,18 +77,18 @@ namespace pong
   }
 
   template <typename NT, class ND>
-  Json::Value dumpJSON(const Node<NT, ND>& n) noexcept
+  Json::Value dump_json(const Node<NT, ND>& n) noexcept
   {
     Json::Value v(Json::objectValue);
 
     if(n.get_data())
     {
-      v["Data"] = dumpJSON(*n.get_data().get());
+      v["Data"] = dump_json(*n.get_data().get());
     }
 
     for(const auto& c : n.children())
     {
-      v["Children"].append(dumpJSON(*c));
+      v["Children"].append(dump_json(*c));
     }
     return v;
   }
@@ -96,33 +96,33 @@ namespace pong
   // Concrete.
 
   struct Volume;
-  Json::Value dumpJSON(const Volume&) noexcept;
+  Json::Value dump_json(const Volume&) noexcept;
 
   struct PhysicsOptions;
-  Json::Value dumpJSON(const PhysicsOptions&) noexcept;
+  Json::Value dump_json(const PhysicsOptions&) noexcept;
 
   struct Object;
-  Json::Value dumpJSON(const Object&) noexcept;
+  Json::Value dump_json(const Object&) noexcept;
 
-  Json::Value dumpJSON(const ObjectManager& objs) noexcept;
+  Json::Value dump_json(const ObjectManager& objs) noexcept;
 
   struct Server;
-  inline Json::Value dumpJSON(const Server& s) noexcept
+  inline Json::Value dump_json(const Server& s) noexcept
   {
-    return dumpJSON(ObjectManager(s));
+    return dump_json(ObjectManager(s));
   }
 
   struct Node_Content;
-  Json::Value dumpJSON(const Node_Content& q) noexcept;
+  Json::Value dump_json(const Node_Content& q) noexcept;
 
-  inline Json::Value dumpJSON(const Quadtree& q) noexcept
+  inline Json::Value dump_json(const Quadtree& q) noexcept
   {
-    return dumpJSON(*q.root());
+    return dump_json(*q.root());
   }
 
   Volume getVolume(const Json::Value& v) noexcept;
 
-  inline Json::Value dumpJSON(const std::string& s) noexcept
+  inline Json::Value dump_json(const std::string& s) noexcept
   {
     return Json::Value(s);
   }

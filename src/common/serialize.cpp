@@ -28,10 +28,10 @@
 #include <boost/lexical_cast.hpp>
 namespace pong
 {
-  Json::Value dumpJSON(const Volume& v) noexcept
+  Json::Value dump_json(const Volume& v) noexcept
   {
     Json::Value root(Json::objectValue);
-    Json::Value pos = dumpJSON(v.pos);
+    Json::Value pos = dump_json(v.pos);
 
     root["Position"] = pos;
     root["Width"] = v.width;
@@ -40,26 +40,26 @@ namespace pong
     return root;
   }
 
-  Json::Value dumpJSON(const PhysicsOptions& phys) noexcept
+  Json::Value dump_json(const PhysicsOptions& phys) noexcept
   {
     Json::Value root(Json::objectValue);
 
     if(phys.type == PhysicsType::Paddle)
     {
-      root["Destination"] = dumpJSON(phys.paddle_options.destination);
+      root["Destination"] = dump_json(phys.paddle_options.destination);
     }
     if(phys.type == PhysicsType::Ball)
     {
-      root["Velocity"] = dumpJSON(phys.ball_options.velocity);
+      root["Velocity"] = dump_json(phys.ball_options.velocity);
     }
 
     return root;
   }
-  Json::Value dumpJSON(const Object& obj) noexcept
+  Json::Value dump_json(const Object& obj) noexcept
   {
     Json::Value root(Json::objectValue);
-    Json::Value vol = dumpJSON(obj.volume);
-    Json::Value phys = dumpJSON(obj.physics_options);
+    Json::Value vol = dump_json(obj.volume);
+    Json::Value phys = dump_json(obj.physics_options);
 
     root["Volume"] = vol;
     root["PhysicsOptions"] = phys;
@@ -67,13 +67,13 @@ namespace pong
     return root;
   }
 
-  Json::Value dumpJSON(const ObjectManager& objs) noexcept
+  Json::Value dump_json(const ObjectManager& objs) noexcept
   {
     Json::Value ar(Json::arrayValue);
 
     for(const auto& pair : objs)
     {
-      Json::Value object = dumpJSON(std::get<1>(pair));
+      Json::Value object = dump_json(std::get<1>(pair));
       object["Id"] = std::get<0>(pair);
 
       ar.append(object);
@@ -81,18 +81,18 @@ namespace pong
 
     return ar;
   }
-  Json::Value dumpJSON(const Node_Content& q) noexcept
+  Json::Value dump_json(const Node_Content& q) noexcept
   {
     Json::Value v(Json::objectValue);
 
     v["ObjectManager"] = boost::lexical_cast<std::string>(q.objs);
-    v["Volume"] = dumpJSON(q.v);
+    v["Volume"] = dump_json(q.v);
     v["Max Objects"] = q.max_objs;
     v["Max Depth"] = q.max_level;
     v["Current Depth"] = q.current_level;
 
     using std::begin; using std::end;
-    v["Ids"] = dumpJSON(begin(q.ids), end(q.ids));
+    v["Ids"] = dump_json(begin(q.ids), end(q.ids));
 
     return v;
   }
