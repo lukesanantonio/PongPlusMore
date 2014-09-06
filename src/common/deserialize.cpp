@@ -55,7 +55,7 @@ namespace pong
     {
       opt.type = PhysicsType::Paddle;
       opt.paddle_options = PaddleOptions();
-      opt.paddle_options.destination = parse_vector(phys_json["Desination"]);
+      opt.paddle_options.destination = parse_vector(phys_json["Destination"]);
     }
 
     return o;
