@@ -23,11 +23,16 @@ namespace pong
 
   LocalServer::LocalServer(Volume v) noexcept : quadtree_(v, 3, 5)
   {
+    this->loop_ = uv_loop_new();
+
     this->log_.log(Severity::Info, "Initializing LocalServer");
   }
   LocalServer::~LocalServer() noexcept
   {
     this->log_.log(Severity::Info, "Uninitializing LocalServer");
+
+    uv_run(this->loop_, UV_RUN_DEFAULT);
+    uv_loop_delete(this->loop_);
   }
   // LocalServer function implementations.
   void LocalServer::set_destination(id_type id, math::vector<double> dest)
@@ -305,6 +310,7 @@ namespace pong
 
   void LocalServer::step() noexcept
   {
+    uv_run(this->loop_, UV_RUN_NOWAIT);
     this->log_.step();
     {
       // Handle server actions

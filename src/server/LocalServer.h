@@ -63,6 +63,8 @@ namespace pong
     void raytrace(id_type id) noexcept;
 
     Logger log_;
+
+    uv_loop_t* loop_;
   };
 
   inline Logger& LocalServer::logger() noexcept
