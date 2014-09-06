@@ -121,4 +121,9 @@ namespace pong
   }
 
   Volume getVolume(const Json::Value& v) noexcept;
+
+  inline Json::Value dumpJSON(const std::string& s) noexcept
+  {
+    return Json::Value(s);
+  }
 }

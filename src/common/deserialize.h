@@ -34,4 +34,10 @@ namespace pong
   ObjectCreationAction parse_create_action(const Json::Value& params) noexcept;
   ObjectDeletionAction parse_delete_action(const Json::Value& params) noexcept;
   LogAction parse_log_action(const Json::Value& params) noexcept;
+
+  inline std::string parse_string(const Json::Value& v) noexcept
+  {
+    Json::FastWriter w;
+    return w.write(v);
+  }
 }
