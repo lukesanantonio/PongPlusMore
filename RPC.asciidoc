@@ -1,0 +1,57 @@
+////
+ PpM - Pong Plus More - A pong clone full of surprises written with C++11.
+ Copyright (C) 2013  Luke San Antonio
+
+ You can contact me (Luke San Antonio) at lukesanantonio@gmail.com!
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////
+
+= RPC Interface
+
+== Plugin architecture
+
+A plugin is merely a child process communicating with PpM using IPC. The two
+processes communicate using a slightly limited variant of jsonrpc 2.0. *
+
++*+ Specifically arrays of requests are not implemented, in addition request ids
+must always be integers. Also a "jsonrpc":"2.0" member is not required and
+therefore will be ignored. Every "params" member should be an array regardless
+of the number of arguments required/provided.
+
+== Available commands
+
+    Server.CreateObject
+
+Spawns an object given it's volume and physics properties.
+
+Param 1: An Object
+
+Optional Response (if ID member is provided in request): A boolean. Whether or
+not the object was created successfully.
+
+    Server.DeleteObject
+
+Deletes an object given an id.
+
+Param 1: An integer (id)
+
+Optional Response (if ID member is provided in request): A boolean. Whether or
+not the object was deleted successfully.
+
+    Server.Log
+
+Logs a message given a severity and string.
+
+No response; ID member will be ignored.
