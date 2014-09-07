@@ -29,10 +29,24 @@ namespace pong
     uv_pipe_t pipe;
     std::vector<char>* buf;
     Process* proc;
+    void (*action_cb)(Pipe* p);
   };
 
   Pipe* create_pipe(Process* = nullptr) noexcept;
   void delete_pipe(Pipe*) noexcept;
+  void init_pipe(Pipe& self, Process* proc = nullptr) noexcept;
+  void uninit_pipe(Pipe& self) noexcept;
+
+  struct DuplexPipe
+  {
+    Pipe in;
+    Pipe out;
+  };
+
+  DuplexPipe* create_duplex_pipe(Process* = nullptr) noexcept;
+  void delete_duplex_pipe(DuplexPipe* self) noexcept;
+  void init_duplex_pipe(DuplexPipe& self, Process* = nullptr) noexcept;
+  void uninit_duplex_pipe(DuplexPipe& self) noexcept;
 
   using on_write_cb = void (*)(Pipe*);
   void write_buffer(Pipe* pipe, on_write_cb after_write = nullptr) noexcept;
@@ -40,9 +54,8 @@ namespace pong
   struct Process
   {
     uv_process_t proc;
-    Pipe* out_pipe;
-    Pipe* in_pipe;
-    Pipe* err_pipe;
+    DuplexPipe io;
+    Pipe err;
     Server* server;
     uv_loop_t* loop;
   };

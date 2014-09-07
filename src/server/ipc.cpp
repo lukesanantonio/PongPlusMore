@@ -21,17 +21,52 @@
 #include <string>
 namespace pong
 {
+  // Pipe initialization functions.
   Pipe* create_pipe(Process* proc) noexcept
   {
     Pipe* self = new Pipe;
-    self->buf = new std::vector<char>();
-    self->proc = proc;
+    init_pipe(*self);
     return self;
   }
   void delete_pipe(Pipe* self) noexcept
   {
-    delete self->buf;
+    uninit_pipe(*self);
     delete self;
+  }
+  void init_pipe(Pipe& self, Process* proc) noexcept
+  {
+    self.buf = new std::vector<char>();
+    self.proc = proc;
+  }
+
+  void uninit_pipe(Pipe& self) noexcept
+  {
+    delete self.buf;
+  }
+
+  // DuplexPipe initialization functions.
+  DuplexPipe* create_duplex_pipe(Process* proc) noexcept
+  {
+    DuplexPipe* self = new DuplexPipe;
+    init_duplex_pipe(*self, proc);
+    return self;
+  }
+  void delete_duplex_pipe(DuplexPipe* self) noexcept
+  {
+    uninit_duplex_pipe(*self);
+    delete self;
+  }
+
+  void init_duplex_pipe(DuplexPipe& self, Process* proc) noexcept
+  {
+    // The pipes are already allocated, so we just need to initialize them.
+    init_pipe(self.in, proc);
+    init_pipe(self.out, proc);
+  }
+  void uninit_duplex_pipe(DuplexPipe& self) noexcept
+  {
+    uninit_pipe(self.in);
+    uninit_pipe(self.out);
   }
 
   void on_process_exit(uv_process_t* p, int64_t exit, int sig) noexcept
@@ -60,15 +95,13 @@ namespace pong
     self->server = &server;
     self->loop = loop;
 
-    // Allocate the pipes.
-    self->out_pipe = create_pipe(self);
-    self->in_pipe = create_pipe(self);
-    self->err_pipe = create_pipe(self);
-
     // Initialize pipes.
-    uv_pipe_init(loop, (uv_pipe_t*) self->out_pipe, 1);
-    uv_pipe_init(loop, (uv_pipe_t*) self->in_pipe, 1);
-    uv_pipe_init(loop, (uv_pipe_t*) self->err_pipe, 1);
+    init_duplex_pipe(self->io, self);
+    init_pipe(self->err, self);
+
+    uv_pipe_init(loop, (uv_pipe_t*) &self->io.in, 1);
+    uv_pipe_init(loop, (uv_pipe_t*) &self->io.out, 1);
+    uv_pipe_init(loop, (uv_pipe_t*) &self->err, 1);
 
     uv_process_options_t options = {0};
 
@@ -82,13 +115,13 @@ namespace pong
 
     // Set up pipes to connect to the child's stdin, stdout, and stderr.
     stdio[0].flags = uv_stdio_flags(UV_CREATE_PIPE | UV_READABLE_PIPE);
-    stdio[0].data.stream = (uv_stream_t*) self->out_pipe;
+    stdio[0].data.stream = (uv_stream_t*) &self->io.out;
 
     stdio[1].flags = uv_stdio_flags(UV_CREATE_PIPE | UV_WRITABLE_PIPE);
-    stdio[1].data.stream = (uv_stream_t*) self->in_pipe;
+    stdio[1].data.stream = (uv_stream_t*) &self->io.in;
 
     stdio[2].flags = uv_stdio_flags(UV_CREATE_PIPE | UV_WRITABLE_PIPE);
-    stdio[2].data.stream = (uv_stream_t*) self->err_pipe;
+    stdio[2].data.stream = (uv_stream_t*) &self->err;
 
     options.stdio = stdio;
 
@@ -114,21 +147,18 @@ namespace pong
 
   void delete_process(Process* self) noexcept
   {
+    // Tidy up all pending events.
     uv_run(self->loop, UV_RUN_DEFAULT);
 
-    auto uninit_pipe = [](Pipe** pipe)
-    {
-      if(!*pipe) return;
+    // Close and uninitialize pipes connected to the child process.
+    uv_close((uv_handle_t*) &self->io.in, NULL);
+    uninit_pipe(self->io.in);
 
-      uv_close((uv_handle_t*) *pipe, NULL);
-      delete_pipe(*pipe);
-      *pipe = nullptr;
-    };
+    uv_close((uv_handle_t*) &self->io.out, NULL);
+    uninit_pipe(self->io.out);
 
-    // Uninitialize pipes to the child process.
-    uninit_pipe(&self->out_pipe);
-    uninit_pipe(&self->in_pipe);
-    uninit_pipe(&self->err_pipe);
+    uv_close((uv_handle_t*) &self->err, NULL);
+    uninit_pipe(self->err);
 
     delete self;
   }
