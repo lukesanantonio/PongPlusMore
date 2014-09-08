@@ -331,7 +331,8 @@ namespace pong
         }
         void operator()(const ObjectCreationAction& a) noexcept
         {
-          a.callback(l_.quadtree_.insert(a.obj));
+          id_type id = l_.quadtree_.insert(a.obj);
+          if(a.callback) a.callback(id);
         }
         void operator()(const ObjectDeletionAction& a) noexcept
         {
