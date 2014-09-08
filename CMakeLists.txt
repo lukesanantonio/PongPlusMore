@@ -26,6 +26,24 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 # Find boost
 find_package(Boost 1.53.0 REQUIRED)
 
+macro(add_data_target target)
+  add_custom_target(${target} ${ARGV1})
+endmacro()
+macro(add_target_data target filename)
+  add_custom_command(TARGET ${target} COMMAND ${CMAKE_COMMAND}
+                     ARGS -E copy_if_different
+                     ${CMAKE_CURRENT_SOURCE_DIR}/${filename}
+                     ${CMAKE_CURRENT_BINARY_DIR}/${filename})
+  install(FILES ${filename} DESTINATION share/PpM)
+endmacro()
+macro(add_target_directory target dirname)
+  add_custom_command(TARGET ${target} COMMAND ${CMAKE_COMMAND}
+                     ARGS -E copy_directory
+                     ${CMAKE_CURRENT_SOURCE_DIR}/${dirname}
+                     ${CMAKE_CURRENT_BINARY_DIR}/${dirname})
+  install(DIRECTORY ${dirname} DESTINATION share/PpM)
+endmacro()
+
 # Actually build our project, or at least declare it.
 add_subdirectory(gtest)
 add_subdirectory(jsoncpp)
