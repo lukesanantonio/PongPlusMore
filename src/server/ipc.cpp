@@ -73,11 +73,20 @@ namespace pong
   {
     Process* proc = (Process*) p;
 
-    Server& s = *proc->server;
-    s.logger().log(Severity::Info, "Process " +
-                                   std::to_string(proc->proc.pid) +
-                                   " (PID) returned with status " +
-                                   std::to_string(exit));
+    Logger& log = proc->server->logger();
+    if(sig)
+    {
+      log.log(Severity::Info, "Process killed (PID: " +
+                              std::to_string(proc->proc.pid) +
+                              ", Exit Status: " + std::to_string(exit) +
+                              ", Signal: " + std::to_string(sig) + ")");
+    }
+    else
+    {
+      log.log(Severity::Info, "Process exited normally (PID: " +
+                              std::to_string(proc->proc.pid) +
+                              ", Exit Status: " + std::to_string(exit) + ")");
+    }
 
     // Tidy up.
     uv_run(proc->loop, UV_RUN_DEFAULT);
@@ -140,8 +149,9 @@ namespace pong
     }
 
     server.logger().log(Severity::Info,
-                        "Successfully spawned: '" + proc_name +
-                        "' with PID = " + std::to_string(self->proc.pid));
+                        "Successfully spawned process (Process Name: '" +
+                        proc_name + "', PID: " +
+                        std::to_string(self->proc.pid) + ")");
     return self;
   }
 
