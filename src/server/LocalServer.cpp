@@ -19,6 +19,7 @@
  */
 #include "LocalServer.h"
 #include "rpc.h"
+#include <csignal>
 namespace pong
 {
 
@@ -37,6 +38,12 @@ namespace pong
   LocalServer::~LocalServer() noexcept
   {
     this->log_.log(Severity::Info, "Uninitializing LocalServer");
+
+    for(Process* proc : this->processes_)
+    {
+      // This seems like something that should be happening in rpc.cpp :/
+      if(proc) { kill_process(proc, SIGINT); }
+    }
 
     uv_run(this->loop_, UV_RUN_DEFAULT);
     uv_loop_delete(this->loop_);
