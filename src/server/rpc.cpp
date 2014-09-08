@@ -42,21 +42,24 @@ namespace pong
       if(method == "Server.CreateObject")
       {
         ObjectCreationAction a = parse_create_action(root["params"]);
-        a.callback = [request_id, pipe](id_type obj_id)
+        if(request_id)
         {
-          if(obj_id)
+          a.callback = [request_id, pipe](id_type obj_id)
           {
-            std::string res = parse_string(make_result(request_id, obj_id));
-            *pipe->out.buf = vec_from_string(res);
-          }
-          else
-          {
-            std::string err_msg = "Failed to create object";
-            std::string res = parse_string(make_error(request_id, err_msg));
-            *pipe->out.buf = vec_from_string(res);
-          }
-          write_buffer(&pipe->out);
-        };
+            if(obj_id)
+            {
+              std::string res = parse_string(make_result(request_id, obj_id));
+              *pipe->out.buf = vec_from_string(res);
+            }
+            else
+            {
+              std::string err_msg = "Failed to create object";
+              std::string res = parse_string(make_error(request_id, err_msg));
+              *pipe->out.buf = vec_from_string(res);
+            }
+            write_buffer(&pipe->out);
+          };
+        }
         return a;
       }
       if(method == "Server.DeleteObject")
