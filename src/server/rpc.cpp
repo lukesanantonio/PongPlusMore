@@ -142,7 +142,8 @@ namespace pong
     p->proc->server->logger().log(Severity::Error, msg);
   }
 
-  void spawn_plugin(Server& s, std::vector<std::string> args, uv_loop_t* loop)
+  Process* spawn_plugin(Server& s, std::vector<std::string> args,
+                        uv_loop_t* loop)
   {
     // Make a char** from the vector.
     std::vector<char*> str_args;
@@ -172,5 +173,7 @@ namespace pong
 
     *p->io.out.buf = vec_from_string("PpM");
     write_buffer(&p->io.out);
+
+    return p;
   }
 }

@@ -47,5 +47,5 @@ namespace pong
     return res;
   }
 
-  void spawn_plugin(Server& s, std::vector<std::string> args, uv_loop_t*);
+  Process* spawn_plugin(Server& s, std::vector<std::string> args, uv_loop_t*);
 }
