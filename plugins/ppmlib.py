@@ -1,6 +1,9 @@
 import io
 import sys
 import json
+import random
+import time
+import signal
 
 class Vec:
     def __init__(self, x = 0.0, y = 0.0):
@@ -79,6 +82,16 @@ def dump_create_action(action):
     json['params'] = [dump_object(action.obj)]
     return json
 
+class ObjectDeletionAction(Action):
+    def __init__(self, action_id):
+        super().__init__(action_id, 'Server.DeleteObject')
+        self.obj_id = 0
+
+def dump_delete_action(action):
+    json = dump_action(action)
+    json['params'] = [action.obj_id]
+    return json
+
 def wait_for_header(fd):
     header = fd.read(3)
     if header != 'PpM':
@@ -87,13 +100,29 @@ def wait_for_header(fd):
 if __name__ == '__main__':
     wait_for_header(sys.stdin)
 
-    action = ObjectCreationAction(1)
-    action.obj.volume.pos = Vec(425, 425)
-    action.obj.volume.width = 150
-    action.obj.volume.height = 150
-    action.obj.physics_options.destination = action.obj.volume.pos
+    obj = Object()
 
-    print(json.dumps(dump_create_action(action)))
+    try:
+        while True:
+            obj.volume.width = random.randrange(20, 120)
+            obj.volume.height = random.randrange(20, 120)
+            obj.volume.pos = Vec(random.randrange(100, 900),
+                                 random.randrange(100, 900))
+            obj.physics_options.destination = obj.volume.pos
 
-    f = open('out', 'w')
-    f.write(sys.stdin.readline())
+            action = ObjectCreationAction(1)
+            action.obj = obj
+            print(json.dumps(dump_create_action(action)))
+
+            # Wait for the object to be created and the id to be returned.
+            obj_id = json.loads(sys.stdin.readline())['result']
+
+            # Wait a random amount of time.
+            time.sleep(1)
+
+            # Then delete the object... and do it again!
+            action = ObjectDeletionAction(1)
+            action.obj_id = obj_id
+            print(json.dumps(dump_delete_action(action)))
+    except KeyboardInterrupt:
+        pass
