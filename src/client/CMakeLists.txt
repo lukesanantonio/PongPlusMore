@@ -31,3 +31,5 @@ target_include_directories(ppmclient PUBLIC ${SDL2_INCLUDE_DIRS}
 
 add_executable(ppm ppm.cpp)
 target_link_libraries(ppm ppmclient)
+
+install(TARGETS ppm RUNTIME DESTINATION bin)

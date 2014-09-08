@@ -16,5 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_library(ppmcommon STATIC util.cpp serialize.cpp deserialize.cpp volume.cpp)
-target_link_libraries(ppmcommon jsoncpp)
+add_data_target(resources ALL)
+add_target_data(resources config.json)
+add_target_directory(resources image)

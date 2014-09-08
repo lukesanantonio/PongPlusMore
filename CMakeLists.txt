@@ -47,6 +47,7 @@ endmacro()
 # Actually build our project, or at least declare it.
 add_subdirectory(gtest)
 add_subdirectory(jsoncpp)
+add_subdirectory(resources)
 add_subdirectory(src)
 add_subdirectory(tests)
 
