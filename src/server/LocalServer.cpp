@@ -30,7 +30,7 @@ namespace pong
     args.push_back("python");
     args.push_back("-u");
     args.push_back("plugins/ppmlib.py");
-    spawn_plugin(*this, args, this->loop_);
+    this->processes_.push_back(spawn_plugin(*this, args, this->loop_));
 
     this->log_.log(Severity::Info, "Initializing LocalServer");
   }

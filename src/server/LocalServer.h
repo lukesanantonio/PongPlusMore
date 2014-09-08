@@ -21,7 +21,7 @@
 #include "Server.h"
 #include "Quadtree.h"
 #include <boost/signals2.hpp>
-#include <uv.h>
+#include "ipc.h"
 namespace pong
 {
   struct ModifiedObjectReference;
@@ -63,6 +63,8 @@ namespace pong
     void raytrace(id_type id) noexcept;
 
     Logger log_;
+
+    std::vector<Process*> processes_;
 
     uv_loop_t* loop_;
   };
