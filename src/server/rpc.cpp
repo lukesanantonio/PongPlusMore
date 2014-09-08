@@ -167,7 +167,7 @@ namespace pong
     // TODO: Inform the child process of Server state here.
     uv_write_t* req = new uv_write_t;
 
-    *p->io.out.buf = vec_from_string("PPM");
+    *p->io.out.buf = vec_from_string("PpM");
     write_buffer(&p->io.out);
   }
 }
