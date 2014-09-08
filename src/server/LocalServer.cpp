@@ -18,12 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "LocalServer.h"
+#include "rpc.h"
 namespace pong
 {
 
   LocalServer::LocalServer(Volume v) noexcept : quadtree_(v, 3, 5)
   {
     this->loop_ = uv_loop_new();
+
+    std::vector<std::string> args;
+    args.push_back("python");
+    args.push_back("-u");
+    args.push_back("plugins/ppmlib.py");
+    spawn_plugin(*this, args, this->loop_);
 
     this->log_.log(Severity::Info, "Initializing LocalServer");
   }
