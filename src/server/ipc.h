@@ -70,4 +70,5 @@ namespace pong
                           const SpawnOptions& spawn_opt,
                           Server& server) noexcept;
   void delete_process(Process*) noexcept;
+  void kill_process(Process*, int signum) noexcept;
 };

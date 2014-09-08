@@ -173,6 +173,18 @@ namespace pong
     delete self;
   }
 
+  void kill_process(Process* proc, int signum) noexcept
+  {
+    int err = uv_process_kill((uv_process_t*) proc, signum);
+    if(err && err != UV_ESRCH)
+    {
+      proc->server->logger().log(Severity::Error,
+                                 "Failed to kill process (PID: " +
+                                 std::to_string(proc->proc.pid) +
+                                 ", Signal: " + std::to_string(signum) + ")");
+    }
+  }
+
   struct WriteBufReq
   {
     uv_write_t req;
