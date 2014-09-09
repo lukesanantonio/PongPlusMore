@@ -20,6 +20,7 @@
  * \file Cache.h
  * \brief Contains the Cache_Impl class declaration (and aliases).
  */
+#pragma once
 #include <tuple>
 #include <type_traits>
 namespace pong

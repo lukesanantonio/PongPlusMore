@@ -19,6 +19,7 @@
  */
 #include "Logger.h"
 #include <ctime>
+#include <cstring>
 namespace pong
 {
   Logger::Logger() noexcept

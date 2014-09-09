@@ -28,7 +28,7 @@ namespace pong
 {
   struct Server
   {
-    Server() noexcept = default;
+    Server() noexcept {};
     virtual ~Server() noexcept = default;
 
     /*!
