@@ -343,7 +343,7 @@ namespace pong
         }
         void operator()(const net::req::DeleteObject& req) noexcept
         {
-          l_.quadtree_.erase(req.id);
+          l_.quadtree_.erase(req.obj_id);
         }
       private:
         LocalServer& l_;

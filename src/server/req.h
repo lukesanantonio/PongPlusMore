@@ -23,23 +23,56 @@
 #include <string>
 #include <functional>
 #include <boost/variant/variant.hpp>
+
+#define DECLARE_STRING(str) static constexpr const char* method_name = str
+#define BASE_CONSTRUCTION(classname) \
+classname(Request_Base const& base) : Request_Base(base) {}
+
 namespace pong { namespace net { namespace req
 {
-  struct Null {};
-  struct Log
+  struct Request_Base
   {
+    virtual ~Request_Base() noexcept {};
+
+    id_type id;
+  };
+
+  struct Null : public Request_Base
+  {
+    Null() noexcept = default;
+    BASE_CONSTRUCTION(Null);
+
+    DECLARE_STRING("Server.Null");
+  };
+  struct Log : public Request_Base
+  {
+    Log() = default;
+    BASE_CONSTRUCTION(Log);
+
     Severity severity;
     std::string msg;
+
+    DECLARE_STRING("Server.Log");
   };
-  struct CreateObject
+  struct CreateObject : public Request_Base
   {
+    CreateObject() = default;
+    BASE_CONSTRUCTION(CreateObject);
+
     Object obj;
     using callback_t = std::function<void (id_type)>;
     callback_t callback;
+
+    DECLARE_STRING("Server.CreateObject");
   };
-  struct DeleteObject
+  struct DeleteObject : public Request_Base
   {
-    id_type id;
+    DeleteObject() noexcept = default;
+    BASE_CONSTRUCTION(DeleteObject);
+
+    id_type obj_id;
+
+    DECLARE_STRING("Server.DeleteObject");
   };
 
   using Request = boost::variant<Null, Log, CreateObject, DeleteObject>;

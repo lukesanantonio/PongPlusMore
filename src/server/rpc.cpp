@@ -25,72 +25,96 @@
 #include "common/util.h"
 namespace pong
 {
-  namespace detail
+  net::req::Request create_request(Json::Value const& root) noexcept
   {
-    net::req::Request parse(Json::Value root, DuplexPipe* pipe)
+    const std::string& method = root["method"].asString();
+
+    net::req::Request_Base base;
+    base.id = root["id"].asInt();
+
+    if(method == net::req::Log::method_name)
     {
-      // Get the method.
-      std::string method = root["method"].asString();
+      return net::req::Log(base);
+    }
+    if(method == net::req::CreateObject::method_name)
+    {
+      return net::req::CreateObject(base);
+    }
+    if(method == net::req::DeleteObject::method_name)
+    {
+      return net::req::DeleteObject(base);
+    }
+    else
+    {
+      return net::req::Null(base);
+    }
+  }
 
-      // Get the request id, if applicable.
-      id_type request_id = 0;
-      if(root["id"].isInt())
+  net::req::Request fill_request(Json::Value const& root,
+                                 DuplexPipe* pipe) noexcept
+  {
+    net::req::Request req = create_request(root);
+
+    struct Request_Filler : public boost::static_visitor<void>
+    {
+      Request_Filler(Json::Value const& root, DuplexPipe* pipe)
+                     : root_(root), pipe_(pipe) {}
+      void operator()(net::req::Null&) const {}
+      void operator()(net::req::Log& req) const
       {
-        request_id = root["id"].asInt();
+        req.severity = parse_severity(this->root_["params"][0]);
+        req.msg = this->root_["params"][1].asString();
       }
-
-      if(method == "Server.CreateObject")
+      void operator()(net::req::CreateObject& req) const
       {
-        net::req::CreateObject req =
-                                 parse_create_request(root["params"]);
-        if(request_id)
+        req.obj = parse_object(this->root_["params"][0]);
+        DuplexPipe* pipe = this->pipe_;
+        req.callback = [&req, pipe](id_type obj_id)
         {
-          req.callback = [request_id, pipe](id_type obj_id)
+          if(obj_id)
           {
-            if(obj_id)
-            {
-              std::string res = parse_string(make_result(request_id, obj_id));
-              *pipe->out.buf = vec_from_string(res);
-            }
-            else
-            {
-              std::string err_msg = "Failed to create object";
-              std::string res = parse_string(make_error(request_id, err_msg));
-              *pipe->out.buf = vec_from_string(res);
-            }
-            write_buffer(&pipe->out);
-          };
-        }
-        return req;
+            std::string res = parse_string(make_result(req.id, obj_id));
+            *pipe->out.buf = vec_from_string(res);
+          }
+          else
+          {
+            std::string err_msg = "Failed to create object";
+            std::string res = parse_string(make_error(req.id, err_msg));
+            *pipe->out.buf = vec_from_string(res);
+          }
+          write_buffer(&pipe->out);
+        };
       }
-      if(method == "Server.DeleteObject")
+      void operator()(net::req::DeleteObject& req) const
       {
-        return parse_delete_request(root["params"]);
+        req.obj_id = this->root_["params"][0].asInt();
       }
-      if(method == "Server.Log")
-      {
-        return parse_log_request(root["params"]);
-      }
+    private:
+      Json::Value const& root_;
+      DuplexPipe* pipe_;
+    };
 
-      return net::req::Null{};
-    }
+    boost::apply_visitor(Request_Filler(root, pipe), req);
+    return req;
+  }
 
-    net::req::Request compile_buffer(DuplexPipe* pipe) noexcept
+  net::req::Request parse_buffer(DuplexPipe* pipe) noexcept
+  {
+    Json::Reader reader(Json::Features::strictMode());
+    Json::Value req;
+
+    std::string doc(pipe->in.buf->begin(), pipe->in.buf->end());
+    if(!reader.parse(doc, req))
     {
-      Json::Reader reader(Json::Features::strictMode());
-      Json::Value req;
-
-      std::string doc(pipe->in.buf->begin(), pipe->in.buf->end());
-      if(!reader.parse(doc, req))
-      {
-        // Log the parse error.
-        return net::req::Log{Severity::Warning,
-                             "Failed to compile command: '" + doc + "'"};
-      }
-
-      // Parse the request object.
-      return detail::parse(req, pipe);
+      // Log the parse error.
+      net::req::Log req;
+      req.severity = Severity::Warning;
+      req.msg = "Failed to compile command: '" + doc + "'";
+      return req;
     }
+
+    // Parse the request object.
+    return fill_request(req, pipe);
   }
 
   void alloc(uv_handle_t* handle, size_t ssize, uv_buf_t* buf)
@@ -135,7 +159,7 @@ namespace pong
 
   void compile_buffer(Pipe* p) noexcept
   {
-    p->proc->server->enqueue_request(detail::compile_buffer((DuplexPipe*) p));
+    p->proc->server->enqueue_request(parse_buffer((DuplexPipe*) p));
   }
   void log_buffer(Pipe* p) noexcept
   {

@@ -87,7 +87,8 @@ namespace pong
       else return;
 
       // Queue deletion.
-      net::req::DeleteObject delete_req{this->ball_};
+      net::req::DeleteObject delete_req;
+      delete_req.obj_id = this->ball_;
       this->server_.enqueue_request(delete_req);
       this->ball_ = 0;
 
