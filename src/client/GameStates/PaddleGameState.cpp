@@ -87,20 +87,23 @@ namespace pong
       else return;
 
       // Queue deletion.
-      this->server_.enqueue_object_deletion(this->ball_);
+      net::req::DeleteObject delete_req{this->ball_};
+      this->server_.enqueue_request(delete_req);
       this->ball_ = 0;
 
       // Make a new ball, with a velocity moving towards the winning paddle.
       Object new_ball = make_ball(ball_volume);
-      this->server_.enqueue_object_creation(new_ball,
-      [=](id_type id)
+      net::req::CreateObject create_req;
+      create_req.obj = new_ball;
+      create_req.callback = [=](id_type id)
       {
         this->ball_ = id;
         set_ball_velocity_towards(this->ball_,
                                   ball_volume,
                                   winning_paddle,
                                   this->server_);
-      });
+      };
+      this->server_.enqueue_request(create_req);
     });
 
     // Set the label font renderer.

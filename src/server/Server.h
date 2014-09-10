@@ -23,7 +23,7 @@
 #include "Object.h"
 #include "ObjectManager.h"
 #include "Logger.h"
-#include "server_actions.h"
+#include "req.h"
 namespace pong
 {
   struct Server
@@ -62,31 +62,13 @@ namespace pong
 
     virtual Logger& logger() noexcept = 0;
 
-    inline void enqueue_action(const ServerAction& a) noexcept;
-    inline void enqueue_object_creation(const Object& o,
-                                  ObjectCreationAction::callback_t c) noexcept;
-    inline void enqueue_object_deletion(id_type id) noexcept;
-
+    inline void enqueue_request(net::req::Request const&) noexcept;
   protected:
-    std::queue<ServerAction> action_queue_;
+    std::queue<net::req::Request> req_queue_;
   };
 
-  inline void Server::enqueue_action(const ServerAction& a) noexcept
+  inline void Server::enqueue_request(net::req::Request const& r) noexcept
   {
-    this->action_queue_.push(a);
-  }
-  inline void Server::enqueue_object_creation(const Object& obj,
-                                   ObjectCreationAction::callback_t c) noexcept
-  {
-    ObjectCreationAction a;
-    a.obj = obj;
-    a.callback = c;
-    this->enqueue_action(a);
-  }
-  inline void Server::enqueue_object_deletion(id_type id) noexcept
-  {
-    ObjectDeletionAction a;
-    a.id = id;
-    this->enqueue_action(a);
+    this->req_queue_.push(r);
   }
 }

@@ -19,7 +19,7 @@
  */
 #pragma once
 #include "volume.h"
-#include "server/server_actions.h"
+#include "server/req.h"
 #include "server/Logger.h"
 #include "server/Object.h"
 #include "json/json.h"
@@ -31,9 +31,9 @@ namespace pong
 
   Severity parse_severity(const Json::Value& val) noexcept;
 
-  ObjectCreationAction parse_create_action(const Json::Value& params) noexcept;
-  ObjectDeletionAction parse_delete_action(const Json::Value& params) noexcept;
-  LogAction parse_log_action(const Json::Value& params) noexcept;
+  net::req::CreateObject parse_create_request(Json::Value const&) noexcept;
+  net::req::DeleteObject parse_delete_request(Json::Value const&) noexcept;
+  net::req::Log parse_log_request(Json::Value const&) noexcept;
 
   inline std::string parse_string(const Json::Value& v) noexcept
   {

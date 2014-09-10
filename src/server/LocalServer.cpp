@@ -327,33 +327,33 @@ namespace pong
     uv_run(this->loop_, UV_RUN_NOWAIT);
     this->log_.step();
     {
-      // Handle server actions
-      struct ServerActionHandler : public boost::static_visitor<>
+      // Handle server requests
+      struct RequestHandler : public boost::static_visitor<>
       {
-        ServerActionHandler(LocalServer& l) : l_(l) {}
-        void operator()(const NullAction& a) noexcept {}
-        void operator()(const LogAction& a) noexcept
+        RequestHandler(LocalServer& l) : l_(l) {}
+        void operator()(const net::req::Null& req) noexcept {}
+        void operator()(const net::req::Log& req) noexcept
         {
-          l_.log_.log(a.severity, a.msg);
+          l_.log_.log(req.severity, req.msg);
         }
-        void operator()(const ObjectCreationAction& a) noexcept
+        void operator()(const net::req::CreateObject& req) noexcept
         {
-          id_type id = l_.quadtree_.insert(a.obj);
-          if(a.callback) a.callback(id);
+          id_type id = l_.quadtree_.insert(req.obj);
+          if(req.callback) req.callback(id);
         }
-        void operator()(const ObjectDeletionAction& a) noexcept
+        void operator()(const net::req::DeleteObject& req) noexcept
         {
-          l_.quadtree_.erase(a.id);
+          l_.quadtree_.erase(req.id);
         }
       private:
         LocalServer& l_;
       };
 
-      ServerActionHandler handler(*this);
-      while(this->action_queue_.size() > 0)
+      RequestHandler handler(*this);
+      while(this->req_queue_.size() > 0)
       {
-        ServerAction a = this->action_queue_.front();
-        this->action_queue_.pop();
+        net::req::Request a = this->req_queue_.front();
+        this->req_queue_.pop();
         boost::apply_visitor(handler, a);
       }
     }

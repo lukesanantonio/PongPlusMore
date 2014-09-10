@@ -23,27 +23,24 @@
 #include <string>
 #include <functional>
 #include <boost/variant/variant.hpp>
-namespace pong
+namespace pong { namespace net { namespace req
 {
-  struct NullAction {};
-  struct LogAction
+  struct Null {};
+  struct Log
   {
     Severity severity;
     std::string msg;
   };
-  struct ObjectCreationAction
+  struct CreateObject
   {
     Object obj;
     using callback_t = std::function<void (id_type)>;
     callback_t callback;
   };
-  struct ObjectDeletionAction
+  struct DeleteObject
   {
     id_type id;
   };
 
-  using ServerAction = boost::variant<NullAction,
-                                      LogAction,
-                                      ObjectCreationAction,
-                                      ObjectDeletionAction>;
-}
+  using Request = boost::variant<Null, Log, CreateObject, DeleteObject>;
+} } }

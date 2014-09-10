@@ -70,24 +70,24 @@ namespace pong
     return Severity::Unspecified;
   }
 
-  ObjectCreationAction parse_create_action(const Json::Value& params) noexcept
+  net::req::CreateObject parse_create_request(Json::Value const& p) noexcept
   {
-    ObjectCreationAction a;
-    a.obj = parse_object(params[0]);
-    return a;
+    net::req::CreateObject req;
+    req.obj = parse_object(p[0]);
+    return req;
   }
 
-  ObjectDeletionAction parse_delete_action(const Json::Value& params) noexcept
+  net::req::DeleteObject parse_delete_request(Json::Value const& p) noexcept
   {
-    ObjectDeletionAction a;
-    a.id = params[0].asInt();
-    return a;
+    net::req::DeleteObject req;
+    req.id = p[0].asInt();
+    return req;
   }
-  LogAction parse_log_action(const Json::Value& params) noexcept
+  net::req::Log parse_log_request(Json::Value const& p) noexcept
   {
-    LogAction a;
-    a.severity = parse_severity(params[0].asString());
-    a.msg = params[1].asString();
-    return a;
+    net::req::Log req;
+    req.severity = parse_severity(p[0].asString());
+    req.msg = p[1].asString();
+    return req;
   }
 }

@@ -19,7 +19,7 @@
  */
 #include "rpc.h"
 #include "ipc.h"
-#include "server_actions.h"
+#include "req.h"
 #include "common/serialize.h"
 #include "common/deserialize.h"
 #include "common/util.h"
@@ -27,7 +27,7 @@ namespace pong
 {
   namespace detail
   {
-    ServerAction parse(Json::Value root, DuplexPipe* pipe)
+    net::req::Request parse(Json::Value root, DuplexPipe* pipe)
     {
       // Get the method.
       std::string method = root["method"].asString();
@@ -41,10 +41,11 @@ namespace pong
 
       if(method == "Server.CreateObject")
       {
-        ObjectCreationAction a = parse_create_action(root["params"]);
+        net::req::CreateObject req =
+                                 parse_create_request(root["params"]);
         if(request_id)
         {
-          a.callback = [request_id, pipe](id_type obj_id)
+          req.callback = [request_id, pipe](id_type obj_id)
           {
             if(obj_id)
             {
@@ -60,21 +61,21 @@ namespace pong
             write_buffer(&pipe->out);
           };
         }
-        return a;
+        return req;
       }
       if(method == "Server.DeleteObject")
       {
-        return parse_delete_action(root["params"]);
+        return parse_delete_request(root["params"]);
       }
       if(method == "Server.Log")
       {
-        return parse_log_action(root["params"]);
+        return parse_log_request(root["params"]);
       }
 
-      return NullAction{};
+      return net::req::Null{};
     }
 
-    ServerAction compile_buffer(DuplexPipe* pipe) noexcept
+    net::req::Request compile_buffer(DuplexPipe* pipe) noexcept
     {
       Json::Reader reader(Json::Features::strictMode());
       Json::Value req;
@@ -83,8 +84,8 @@ namespace pong
       if(!reader.parse(doc, req))
       {
         // Log the parse error.
-        return LogAction{Severity::Warning,
-                         "Failed to compile command: '" + doc + "'"};
+        return net::req::Log{Severity::Warning,
+                             "Failed to compile command: '" + doc + "'"};
       }
 
       // Parse the request object.
@@ -134,7 +135,7 @@ namespace pong
 
   void compile_buffer(Pipe* p) noexcept
   {
-    p->proc->server->enqueue_action(detail::compile_buffer((DuplexPipe*) p));
+    p->proc->server->enqueue_request(detail::compile_buffer((DuplexPipe*) p));
   }
   void log_buffer(Pipe* p) noexcept
   {
