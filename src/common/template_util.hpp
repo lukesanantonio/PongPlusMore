@@ -63,4 +63,13 @@ namespace pong
   {
     return call<N+1, F>(f, t, std::forward<Args>(args)..., std::get<N>(t));
   }
+
+  template <int N, typename... Params>
+  struct pack_element
+  {
+    using type = std::tuple_element_t<N, std::tuple<Params...> >;
+  };
+
+  template <int N, typename... Params>
+  using pack_element_t = typename pack_element<N, Params...>::type;
 }
