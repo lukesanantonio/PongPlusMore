@@ -22,6 +22,7 @@ add_executable(PpM_Tests EXCLUDE_FROM_ALL
                common/Vector_Tests.cpp
                common/IDManager_Tests.cpp
                common/Cache_Tests.cpp
+               common/Parse_Tests.cpp
                common/Util_Tests.cpp
                common/Volume_Tests.cpp
                server/Node_Tests.cpp
