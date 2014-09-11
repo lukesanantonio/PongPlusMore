@@ -18,16 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "deserialize.h"
+#define DEFINE_PARSER(type, vname)\
+type parser<type>::parse(Json::Value const& vname) noexcept
+
 namespace pong
 {
-  math::vector<double> parse_vector(const Json::Value& root) noexcept
+  DEFINE_PARSER(math::vector<double>, json)
   {
-    math::vector<double> v;
-    v.x = root["x"].asDouble();
-    v.y = root["y"].asDouble();
-    return v;
+    math::vector<double> vec;
+    vec.x = json["x"].asInt();
+    vec.y = json["y"].asInt();
+    return vec;
   }
-  Volume parse_volume(const Json::Value& root) noexcept
+  DEFINE_PARSER(Volume, root)
   {
     Volume v;
 
@@ -37,7 +40,7 @@ namespace pong
 
     return v;
   }
-  Object parse_object(const Json::Value& root) noexcept
+  DEFINE_PARSER(Object, root)
   {
     Object o;
     o.volume = parse_volume(root["Volume"]);
@@ -61,7 +64,7 @@ namespace pong
     return o;
   }
 
-  Severity parse_severity(const Json::Value& val) noexcept
+  DEFINE_PARSER(Severity, val)
   {
     std::string s = val.asString();
     if(s == "info") return Severity::Info;
@@ -69,25 +72,6 @@ namespace pong
     if(s == "error") return Severity::Error;
     return Severity::Unspecified;
   }
-
-  net::req::CreateObject parse_create_request(Json::Value const& p) noexcept
-  {
-    net::req::CreateObject req;
-    req.obj = parse_object(p[0]);
-    return req;
-  }
-
-  net::req::DeleteObject parse_delete_request(Json::Value const& p) noexcept
-  {
-    net::req::DeleteObject req;
-    req.id = p[0].asInt();
-    return req;
-  }
-  net::req::Log parse_log_request(Json::Value const& p) noexcept
-  {
-    net::req::Log req;
-    req.severity = parse_severity(p[0].asString());
-    req.msg = p[1].asString();
-    return req;
-  }
 }
+
+#undef DEFINE_PARSER

@@ -135,7 +135,7 @@ namespace pong
       const net::req::Request_Base& base = net::req::to_base(req);
       if(!base.id) return;
       Json::Value json = base.response_json();
-      std::string string_result = parse_string(json);
+      std::string string_result = to_string(json);
 
       // And send it off to the output of the process of origin.
       *pipe->out.buf = vec_from_string(string_result);

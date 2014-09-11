@@ -23,21 +23,31 @@
 #include "server/Logger.h"
 #include "server/Object.h"
 #include "json/json.h"
+
+#define DECLARE_PARSER(type, func_suffix)\
+template <> struct parser<type> {\
+  static type parse(Json::Value const&) noexcept;\
+};\
+inline type parse_##func_suffix(Json::Value const& json) noexcept\
+{\
+  return parser<type>::parse(json);\
+}
+
 namespace pong
 {
-  math::vector<double> parse_vector(const Json::Value& root) noexcept;
-  Volume parse_volume(const Json::Value& root) noexcept;
-  Object parse_object(const Json::Value& root) noexcept;
+  template <typename Type>
+  class parser;
 
-  Severity parse_severity(const Json::Value& val) noexcept;
+  DECLARE_PARSER(math::vector<double>, vector);
+  DECLARE_PARSER(Volume, volume);
+  DECLARE_PARSER(Object, object);
+  DECLARE_PARSER(Severity, severity);
 
-  net::req::CreateObject parse_create_request(Json::Value const&) noexcept;
-  net::req::DeleteObject parse_delete_request(Json::Value const&) noexcept;
-  net::req::Log parse_log_request(Json::Value const&) noexcept;
-
-  inline std::string parse_string(const Json::Value& v) noexcept
+  inline std::string to_string(const Json::Value& v) noexcept
   {
     Json::FastWriter w;
     return w.write(v);
   }
 }
+
+#undef DECLARE_PARSER
