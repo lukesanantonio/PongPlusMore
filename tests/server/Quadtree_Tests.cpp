@@ -23,17 +23,19 @@
 TEST(Quadtree_Tests, ErasingWorks)
 {
   using pong::Quadtree;
+  using pong::make_ball;
+
   Quadtree q({{0, 0}, 1000, 1000}, 1);
 
   using pong::ObjectManager;
   const ObjectManager& objs = q.obj_manager();
 
   using pong::Volume;
-  q.makeBall(Volume{{0,0}, 1, 1});
-  q.makeBall(Volume{{10,10}, 1, 1});
-  q.makeBall(Volume{{20,20}, 1, 1});
-  q.makeBall(Volume{{30,30}, 1, 1});
-  q.makeBall(Volume{{40,40}, 1, 1});
+  q.insert(make_ball(Volume{{0,0}, 1, 1}));
+  q.insert(make_ball(Volume{{10,10}, 1, 1}));
+  q.insert(make_ball(Volume{{20,20}, 1, 1}));
+  q.insert(make_ball(Volume{{30,30}, 1, 1}));
+  q.insert(make_ball(Volume{{40,40}, 1, 1}));
 
   EXPECT_EQ(5, objs.size());
   q.erase(objs.begin());
@@ -50,11 +52,13 @@ TEST(Quadtree_Tests, ErasingWorks)
 TEST(Quadtree_Tests, ObjectMaxWorks)
 {
   using pong::Quadtree;
+  using pong::make_paddle;
+
   Quadtree q({{0, 0}, 1000, 1000}, 1);
 
   using pong::Object; using pong::PhysicsType; using pong::id_type;
-  id_type good = q.makePaddle({{5, 5}, 20, 20});
-  id_type id = q.makeBall({{750, 750}, 20, 20});
+  id_type good = q.insert(make_paddle({{5, 5}, 20, 20}));
+  id_type id = q.insert(make_paddle({{750, 750}, 20, 20}));
 
   // We should have a root with four children.
   const Quadtree::node_type* root = q.root();
@@ -72,14 +76,16 @@ TEST(Quadtree_Tests, ObjectMaxWorks)
 TEST(Quadtree_Tests, SetObjectWorks)
 {
   using pong::Quadtree;
+  using pong::make_ball;
+
   Quadtree q({{0, 0}, 1000, 1000}, 1);
 
   // Insert some ball somewhere.
-  q.makeBall({{50,50}, 50, 50});
+  q.insert(make_ball({{50,50}, 50, 50}));
 
   // Insert a ball somewhere.
   using pong::id_type;
-  id_type ball = q.makeBall({{750,750}, 50, 50});
+  id_type ball = q.insert(make_ball({{750,750}, 50, 50}));
 
   // Move that ball somewhere relevant. A place that will cause some
   // side-effect.
@@ -103,14 +109,16 @@ TEST(Quadtree_Tests, SetObjectWorks)
 TEST(Quadtree_Tests, FindContainingNodeWorks)
 {
   using pong::Quadtree;
+  using pong::make_ball;
+
   Quadtree q({{0, 0}, 1000, 1000}, 1);
 
   // In between children 0 and 1.
   using pong::id_type;
-  q.makeBall({{950, 950}, 50, 50});
+  q.insert(make_ball({{950, 950}, 50, 50}));
 
   pong::Volume ball_v = {{475, 0}, 50, 50};
-  id_type id = q.makeBall(ball_v);
+  id_type id = q.insert(make_ball(ball_v));
   ASSERT_TRUE(id);
 
   std::vector<const Quadtree::node_type*> expected{q.root()->children()[0],

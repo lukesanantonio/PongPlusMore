@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "gtest/gtest.h"
+#include <memory>
 #include "common/util.h"
 
 TEST(Util_Tests, VectorCast)
