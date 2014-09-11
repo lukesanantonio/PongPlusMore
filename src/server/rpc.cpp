@@ -23,42 +23,18 @@
 #include "common/serialize.h"
 #include "common/deserialize.h"
 #include "common/util.h"
+#include "common/template_util.hpp"
 namespace pong
 {
-  net::req::Request create_request(Json::Value const& root) noexcept
+  net::req::Request fill_request(Json::Value const& root) noexcept
   {
-    const std::string& method = root["method"].asString();
-
-    net::req::Request_Base base;
-    base.id = root["id"].asInt();
-
-    if(method == net::req::Log::method_name)
-    {
-      return net::req::Log(base);
-    }
-    if(method == net::req::CreateObject::method_name)
-    {
-      return net::req::CreateObject(base);
-    }
-    if(method == net::req::DeleteObject::method_name)
-    {
-      return net::req::DeleteObject(base);
-    }
-    else
-    {
-      return net::req::Null(base);
-    }
-  }
-
-  net::req::Request fill_request(Json::Value const& root,
-                                 DuplexPipe* pipe) noexcept
-  {
-    net::req::Request req = create_request(root);
+    net::req::Request req = net::req::create_request(root["method"].asString(),
+                                                     root["id"].asInt());
 
     struct Request_Filler : public boost::static_visitor<void>
     {
-      Request_Filler(Json::Value const& root, DuplexPipe* pipe)
-                     : root_(root), pipe_(pipe) {}
+      Request_Filler(Json::Value const& root)
+                     : root_(root) {}
       void operator()(net::req::Null&) const {}
       void operator()(net::req::Log& req) const
       {
@@ -68,22 +44,6 @@ namespace pong
       void operator()(net::req::CreateObject& req) const
       {
         req.obj = parse_object(this->root_["params"][0]);
-        DuplexPipe* pipe = this->pipe_;
-        req.callback = [&req, pipe](id_type obj_id)
-        {
-          if(obj_id)
-          {
-            std::string res = parse_string(make_result(req.id, obj_id));
-            *pipe->out.buf = vec_from_string(res);
-          }
-          else
-          {
-            std::string err_msg = "Failed to create object";
-            std::string res = parse_string(make_error(req.id, err_msg));
-            *pipe->out.buf = vec_from_string(res);
-          }
-          write_buffer(&pipe->out);
-        };
       }
       void operator()(net::req::DeleteObject& req) const
       {
@@ -91,19 +51,18 @@ namespace pong
       }
     private:
       Json::Value const& root_;
-      DuplexPipe* pipe_;
     };
 
-    boost::apply_visitor(Request_Filler(root, pipe), req);
+    boost::apply_visitor(Request_Filler(root), req);
     return req;
   }
 
-  net::req::Request parse_buffer(DuplexPipe* pipe) noexcept
+  net::req::Request parse_buffer(Pipe* pipe) noexcept
   {
     Json::Reader reader(Json::Features::strictMode());
     Json::Value req;
 
-    std::string doc(pipe->in.buf->begin(), pipe->in.buf->end());
+    std::string doc(pipe->buf->begin(), pipe->buf->end());
     if(!reader.parse(doc, req))
     {
       // Log the parse error.
@@ -114,7 +73,7 @@ namespace pong
     }
 
     // Parse the request object.
-    return fill_request(req, pipe);
+    return fill_request(req);
   }
 
   void alloc(uv_handle_t* handle, size_t ssize, uv_buf_t* buf)
@@ -159,7 +118,25 @@ namespace pong
 
   void compile_buffer(Pipe* p) noexcept
   {
-    p->proc->server->enqueue_request(parse_buffer((DuplexPipe*) p));
+    // Parse the request.
+    net::req::Request req = parse_buffer(p);
+
+    DuplexPipe* pipe = (DuplexPipe*) p;
+
+    // Enqueue the request.
+    p->proc->server->enqueue_request(req,
+    [pipe](net::req::Request const& req)
+    {
+      // Once it is finished, build the response.
+      const net::req::Request_Base& base = net::req::to_base(req);
+      if(!base.id) return;
+      Json::Value json = base.response_json();
+      std::string string_result = parse_string(json);
+
+      // And send it off to the output of the process of origin.
+      *pipe->out.buf = vec_from_string(string_result);
+      write_buffer(&pipe->out);
+    });
   }
   void log_buffer(Pipe* p) noexcept
   {

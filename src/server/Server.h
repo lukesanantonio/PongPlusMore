@@ -62,13 +62,16 @@ namespace pong
 
     virtual Logger& logger() noexcept = 0;
 
-    inline void enqueue_request(net::req::Request const&) noexcept;
+    using request_callback = std::function<void (net::req::Request const&)>;
+    inline void enqueue_request(net::req::Request const&,
+                                request_callback) noexcept;
   protected:
-    std::queue<net::req::Request> req_queue_;
+    std::queue<std::pair<net::req::Request, request_callback> > req_queue_;
   };
 
-  inline void Server::enqueue_request(net::req::Request const& r) noexcept
+  inline void Server::enqueue_request(net::req::Request const& r,
+                                      request_callback cb) noexcept
   {
-    this->req_queue_.push(r);
+    this->req_queue_.push({r, cb});
   }
 }

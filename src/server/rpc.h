@@ -26,26 +26,5 @@
 #include "common/serialize.h"
 namespace pong
 {
-  template <class T>
-  Json::Value make_result(id_type response_id, const T& result) noexcept
-  {
-    Json::Value res;
-
-    res["result"] = dump_json(result);
-    res["id"] = response_id;
-
-    return res;
-  }
-  template <class T>
-  Json::Value make_error(id_type response_id, const T& err) noexcept
-  {
-    Json::Value res;
-
-    res["error"] = dump_json(err);
-    res["id"] = response_id;
-
-    return res;
-  }
-
   Process* spawn_plugin(Server& s, std::vector<std::string> args, uv_loop_t*);
 }

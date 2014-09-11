@@ -24,6 +24,7 @@
 #include "../render.h"
 #include "common/crash.hpp"
 #include "common/serialize.h"
+#include <boost/variant/get.hpp>
 namespace pong
 {
   void dump(std::string filename, Json::Value v) noexcept
@@ -89,22 +90,22 @@ namespace pong
       // Queue deletion.
       net::req::DeleteObject delete_req;
       delete_req.obj_id = this->ball_;
-      this->server_.enqueue_request(delete_req);
+      this->server_.enqueue_request(delete_req, nullptr);
       this->ball_ = 0;
 
       // Make a new ball, with a velocity moving towards the winning paddle.
       Object new_ball = make_ball(ball_volume);
       net::req::CreateObject create_req;
       create_req.obj = new_ball;
-      create_req.callback = [=](id_type id)
+      this->server_.enqueue_request(create_req,
+      [this, ball_volume, winning_paddle](net::req::Request const& req)
       {
-        this->ball_ = id;
+        this->ball_ = boost::get<net::req::CreateObject>(req).result.obj_id;
         set_ball_velocity_towards(this->ball_,
                                   ball_volume,
                                   winning_paddle,
                                   this->server_);
-      };
-      this->server_.enqueue_request(create_req);
+      });
     });
 
     // Set the label font renderer.

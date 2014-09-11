@@ -121,7 +121,7 @@ if __name__ == '__main__':
             time.sleep(1)
 
             # Then delete the object... and do it again!
-            action = ObjectDeletionAction(1)
+            action = ObjectDeletionAction(0)
             action.obj_id = obj_id
             print(json.dumps(dump_delete_action(action)))
     except KeyboardInterrupt:

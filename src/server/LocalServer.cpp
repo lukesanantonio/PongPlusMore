@@ -22,7 +22,6 @@
 #include <csignal>
 namespace pong
 {
-
   LocalServer::LocalServer(Volume v) noexcept : quadtree_(v, 3, 5)
   {
     this->loop_ = uv_loop_new();
@@ -331,19 +330,20 @@ namespace pong
       struct RequestHandler : public boost::static_visitor<>
       {
         RequestHandler(LocalServer& l) : l_(l) {}
-        void operator()(const net::req::Null& req) noexcept {}
-        void operator()(const net::req::Log& req) noexcept
+        void operator()(net::req::Null& req) noexcept {}
+        void operator()(net::req::Log& req) noexcept
         {
           l_.log_.log(req.severity, req.msg);
+          req.result.success = true;
         }
-        void operator()(const net::req::CreateObject& req) noexcept
+        void operator()(net::req::CreateObject& req) noexcept
         {
-          id_type id = l_.quadtree_.insert(req.obj);
-          if(req.callback) req.callback(id);
+          req.result.obj_id = l_.quadtree_.insert(req.obj);
         }
-        void operator()(const net::req::DeleteObject& req) noexcept
+        void operator()(net::req::DeleteObject& req) noexcept
         {
           l_.quadtree_.erase(req.obj_id);
+          req.result.success = true;
         }
       private:
         LocalServer& l_;
@@ -352,9 +352,10 @@ namespace pong
       RequestHandler handler(*this);
       while(this->req_queue_.size() > 0)
       {
-        net::req::Request a = this->req_queue_.front();
+        auto pair = this->req_queue_.front();
         this->req_queue_.pop();
-        boost::apply_visitor(handler, a);
+        boost::apply_visitor(handler, pair.first);
+        if(pair.second) { pair.second(pair.first); }
       }
     }
 

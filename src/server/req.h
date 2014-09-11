@@ -23,57 +23,88 @@
 #include <string>
 #include <functional>
 #include <boost/variant/variant.hpp>
+#include "json/json.h"
 
 #define DECLARE_STRING(str) static constexpr const char* method_name = str
-#define BASE_CONSTRUCTION(classname) \
-classname(Request_Base const& base) : Request_Base(base) {}
 
 namespace pong { namespace net { namespace req
 {
   struct Request_Base
   {
+    Request_Base(id_type id = 0) : id(id) {}
     virtual ~Request_Base() noexcept {};
 
     id_type id;
+
+    Json::Value response_json() const noexcept;
+  private:
+    virtual bool error_() const noexcept = 0;
+    virtual Json::Value result_() const noexcept = 0;
   };
 
   struct Null : public Request_Base
   {
-    Null() noexcept = default;
-    BASE_CONSTRUCTION(Null);
-
+    using Request_Base::Request_Base;
     DECLARE_STRING("Server.Null");
+
+    struct {
+    } result;
+
+  private:
+    bool error_() const noexcept override;
+    Json::Value result_() const noexcept override;
   };
   struct Log : public Request_Base
   {
-    Log() = default;
-    BASE_CONSTRUCTION(Log);
+    using Request_Base::Request_Base;
+    DECLARE_STRING("Server.Log");
 
     Severity severity;
     std::string msg;
 
-    DECLARE_STRING("Server.Log");
+    struct {
+      bool success;
+    } result;
+
+    bool error_() const noexcept override;
+    Json::Value result_() const noexcept override;
   };
   struct CreateObject : public Request_Base
   {
-    CreateObject() = default;
-    BASE_CONSTRUCTION(CreateObject);
+    using Request_Base::Request_Base;
+    DECLARE_STRING("Server.CreateObject");
 
     Object obj;
-    using callback_t = std::function<void (id_type)>;
-    callback_t callback;
 
-    DECLARE_STRING("Server.CreateObject");
+    struct {
+      id_type obj_id;
+    } result;
+
+  private:
+    bool error_() const noexcept override;
+    Json::Value result_() const noexcept override;
   };
   struct DeleteObject : public Request_Base
   {
-    DeleteObject() noexcept = default;
-    BASE_CONSTRUCTION(DeleteObject);
+    using Request_Base::Request_Base;
+    DECLARE_STRING("Server.DeleteObject");
 
     id_type obj_id;
 
-    DECLARE_STRING("Server.DeleteObject");
+    struct {
+      bool success;
+    } result;
+
+  private:
+    bool error_() const noexcept override;
+    Json::Value result_() const noexcept override;
   };
 
   using Request = boost::variant<Null, Log, CreateObject, DeleteObject>;
+
+  Request_Base const& to_base(Request const&) noexcept;
+  Request create_request(std::string const& method, id_type id) noexcept;
 } } }
+
+#undef DECLARE_STRING
+#undef BASE_CONSTRUCTION
