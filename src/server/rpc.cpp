@@ -49,6 +49,10 @@ namespace pong
       {
         req.obj_id = this->root_["params"][0].asInt();
       }
+      void operator()(net::req::QueryObject& req) const
+      {
+        req.obj_id = this->root_["params"][0].asInt();
+      }
     private:
       Json::Value const& root_;
     };

@@ -16,6 +16,9 @@ def dump_vec(vec):
     json['y'] = vec.y
     return json
 
+def parse_vec(json):
+    return Vec(json['x'], json['y'])
+
 class Volume:
     def __init__(self, pos = Vec(), width = 0.0, height = 0.0):
         self.pos = pos
@@ -28,6 +31,9 @@ def dump_volume(vol):
     json['Width'] = vol.width
     json['Height'] = vol.height
     return json
+
+def parse_volume(json):
+    return Volume(parse_vec(json['Position']), json['Width'], json['Height'])
 
 class PhysicsOptions:
     def __init__(self):
@@ -46,6 +52,15 @@ def dump_physics(phys):
 
     return json
 
+def parse_physics(json):
+    phys = PhysicsOptions()
+    del phys.destination
+    if 'Velocity' in json:
+        phys.velocity = parse_vec(json['Velocity'])
+    elif 'Destination' in json:
+        phys.destination = parse_vec(json['Destination'])
+    return phys
+
 class Object:
     def __init__(self, vol = Volume(), phys_opt = PhysicsOptions()):
         self.volume = vol
@@ -58,6 +73,11 @@ def dump_object(obj):
     json['PhysicsOptions'] = dump_physics(obj.physics_options)
 
     return json
+
+def parse_object(json):
+    return Object(parse_volume(json['Volume']),
+                  parse_physics(json['PhysicsOptions']))
+
 
 class Action:
     def __init__(self, action_id, method):
@@ -92,6 +112,16 @@ def dump_delete_action(action):
     json['params'] = [action.obj_id]
     return json
 
+class QueryObjectRequest(Action):
+    def __init__(self, action_id):
+        super().__init__(action_id, 'Server.QueryObject')
+        self.obj_id = 0
+
+def dump_query_request(action):
+    json = dump_action(action)
+    json['params'] = [action.obj_id]
+    return json
+
 def wait_for_header(fd):
     header = fd.read(3)
     if header != 'PpM':
@@ -100,29 +130,15 @@ def wait_for_header(fd):
 if __name__ == '__main__':
     wait_for_header(sys.stdin)
 
-    obj = Object()
+    q = QueryObjectRequest(1)
+    q.obj_id = 1
+    print(json.dumps(dump_query_request(q)))
 
-    try:
-        while True:
-            obj.volume.width = random.randrange(20, 120)
-            obj.volume.height = random.randrange(20, 120)
-            obj.volume.pos = Vec(random.randrange(100, 900),
-                                 random.randrange(100, 900))
-            obj.physics_options.destination = obj.volume.pos
+    object_json = json.loads(sys.stdin.readline())
+    if 'error' in object_json:
+        sys.stderr.write('Failed to query object ' + q.obj_id)
+        sys.stderr.write('\n')
+    o = parse_object(object_json['result'])
 
-            action = ObjectCreationAction(1)
-            action.obj = obj
-            print(json.dumps(dump_create_action(action)))
-
-            # Wait for the object to be created and the id to be returned.
-            obj_id = json.loads(sys.stdin.readline())['result']
-
-            # Wait a random amount of time.
-            time.sleep(1)
-
-            # Then delete the object... and do it again!
-            action = ObjectDeletionAction(0)
-            action.obj_id = obj_id
-            print(json.dumps(dump_delete_action(action)))
-    except KeyboardInterrupt:
-        pass
+    sys.stderr.write(json.dumps(dump_object(o)))
+    sys.stderr.write('\n')

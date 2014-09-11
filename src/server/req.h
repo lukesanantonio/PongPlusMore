@@ -99,8 +99,24 @@ namespace pong { namespace net { namespace req
     bool error_() const noexcept override;
     Json::Value result_() const noexcept override;
   };
+  struct QueryObject : public Request_Base
+  {
+    using Request_Base::Request_Base;
+    DECLARE_STRING("Server.QueryObject");
 
-  using Request = boost::variant<Null, Log, CreateObject, DeleteObject>;
+    id_type obj_id;
+    struct {
+      bool success;
+      Object obj;
+    } result;
+
+  private:
+    bool error_() const noexcept override;
+    Json::Value result_() const noexcept override;
+  };
+
+  using Request = boost::variant<Null, Log, CreateObject, DeleteObject,
+                                 QueryObject>;
 
   Request_Base const& to_base(Request const&) noexcept;
   Request create_request(std::string const& method, id_type id) noexcept;

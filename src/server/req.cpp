@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "req.h"
+#include "common/serialize.h"
 namespace pong { namespace net { namespace req
 {
   Json::Value Request_Base::response_json() const noexcept
@@ -61,6 +62,17 @@ namespace pong { namespace net { namespace req
     return Json::Value(result.success);
   }
 
+  bool QueryObject::error_() const noexcept { return !this->result.success; }
+  Json::Value QueryObject::result_() const noexcept
+  {
+    if(this->result.success)
+    {
+      return dump_json(this->result.obj);
+    }
+
+    return "Failed to query object with id: " + std::to_string(this->obj_id);
+  }
+
   Request_Base const& to_base(Request const& req) noexcept
   {
     struct Base_Visitor : boost::static_visitor<const Request_Base&>
@@ -86,6 +98,10 @@ namespace pong { namespace net { namespace req
     if(method == DeleteObject::method_name)
     {
       return DeleteObject(id);
+    }
+    if(method == QueryObject::method_name)
+    {
+      return QueryObject(id);
     }
 
     return Null(id);

@@ -345,6 +345,17 @@ namespace pong
           l_.quadtree_.erase(req.obj_id);
           req.result.success = true;
         }
+        void operator()(net::req::QueryObject& req) noexcept
+        {
+          try
+          {
+            req.result.obj = l_.find_object(req.obj_id);
+            req.result.success = true;
+          } catch(std::out_of_range& e)
+          {
+            req.result.success = false;
+          }
+        }
       private:
         LocalServer& l_;
       };
