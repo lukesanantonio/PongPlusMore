@@ -38,6 +38,9 @@ namespace pong
   template <typename Type>
   class parser;
 
+  DECLARE_PARSER(int, int);
+  DECLARE_PARSER(std::string, string);
+
   DECLARE_PARSER(math::vector<double>, vector);
   DECLARE_PARSER(Volume, volume);
   DECLARE_PARSER(Object, object);
