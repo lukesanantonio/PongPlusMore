@@ -20,6 +20,7 @@
 #pragma once
 #include "vector.h"
 #include "parse/helper.h"
+#include "dump/helper.h"
 #include <unordered_map>
 #include <array>
 namespace pong
@@ -98,6 +99,7 @@ namespace pong
 
     DECLARE_PROPERTY_VALUES(3, "Position", "Width", "Height");
     DECLARE_PROPERTIES_TUPLE(math::vector<double>, double, double);
+    DECLARE_PROPERTIES(this->pos, this->width, this->height);
   };
 
   inline bool operator==(const Volume& v1, const Volume& v2) noexcept

@@ -19,6 +19,7 @@
  */
 #include "gtest/gtest.h"
 #include "common/vector.h"
+#include "common/volume.h"
 #include "common/dump/Value.hpp"
 #include "common/dump/Object.hpp"
 
@@ -42,4 +43,17 @@ TEST(Dump_Tests, DumpVector)
   result["y"] = 10.0;
 
   EXPECT_EQ(result, dump_t::dump({5.0, 10.0}));
+}
+
+TEST(Dump_Tests, DumpVolume)
+{
+  using dump_t = pong::dump::Object<pong::Volume>;
+
+  Json::Value result;
+  result["Width"] = 500.0;
+  result["Height"] = 50.0;
+  result["Position"]["x"] = 5.0;
+  result["Position"]["y"] = 15.0;
+
+  EXPECT_EQ(result, dump_t::dump({{5,15}, 500, 50}));
 }
