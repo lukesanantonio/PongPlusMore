@@ -29,8 +29,8 @@ namespace pong { namespace dump
   };
 
   template <class Type>
-  using dumper_t = std::conditional_t<std::is_fundamental<Type>::value,
-                                      Value<Type>, Object<Type> >;
+  using find_dumper_t = std::conditional_t<std::is_fundamental<Type>::value,
+                                           Value<Type>, Object<Type> >;
 
   template <class Type, int N, class TupleType>
   std::enable_if_t<N >= std::tuple_size<TupleType>::value>
@@ -40,7 +40,9 @@ namespace pong { namespace dump
   std::enable_if_t<N < std::tuple_size<TupleType>::value>
   populate_json(Json::Value& json, TupleType const& tup) noexcept
   {
-    json[Type::property_values[N]] = std::get<N>(tup);
+    using active_t = std::tuple_element_t<N, TupleType>;
+    using dumper_t = find_dumper_t<active_t>;
+    json[Type::property_values[N]] = dumper_t::dump(std::get<N>(tup));
     populate_json<Type, N+1>(json, tup);
   }
 
