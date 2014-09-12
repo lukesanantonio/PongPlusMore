@@ -21,7 +21,6 @@
 #include <tuple>
 #include "common/parse/Value.hpp"
 #include "common/parse/Tuple.hpp"
-#include "common/parse/Generator.hpp"
 #include "json/json.h"
 
 TEST(Parse_Tests, ParseValue)
