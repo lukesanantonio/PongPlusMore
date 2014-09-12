@@ -23,14 +23,6 @@ type parser<type>::parse(Json::Value const& vname) noexcept
 
 namespace pong
 {
-  DEFINE_PARSER(int, json)
-  {
-    return json.asInt();
-  }
-  DEFINE_PARSER(std::string, json)
-  {
-    return json.asString();
-  }
   DEFINE_PARSER(math::vector<double>, json)
   {
     math::vector<double> vec;

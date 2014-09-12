@@ -33,13 +33,28 @@ inline type parse_##func_suffix(Json::Value const& json) noexcept\
   return parser<type>::parse(json);\
 }
 
+#define DEFINE_FUNDAMENTAL_PARSER(type, func_suffix, json_method)\
+template <> struct parser<type> {\
+  inline static type parse(Json::Value const& json) noexcept\
+  {\
+    return json.json_method();\
+  }\
+};\
+inline type parse_##func_suffix(Json::Value const& json) noexcept\
+{\
+  return parser<type>::parse(json);\
+}
+
 namespace pong
 {
   template <typename Type>
   class parser;
 
-  DECLARE_PARSER(int, int);
-  DECLARE_PARSER(std::string, string);
+  DEFINE_FUNDAMENTAL_PARSER(int, int, asInt);
+  DEFINE_FUNDAMENTAL_PARSER(float, float, asFloat);
+  DEFINE_FUNDAMENTAL_PARSER(double, double, asDouble);
+  DEFINE_FUNDAMENTAL_PARSER(bool, bool, asBool);
+  DEFINE_FUNDAMENTAL_PARSER(std::string, string, asString);
 
   DECLARE_PARSER(math::vector<double>, vector);
   DECLARE_PARSER(Volume, volume);
