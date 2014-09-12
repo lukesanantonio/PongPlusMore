@@ -17,24 +17,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include <array>
-#include <tuple>
+#include "gtest/gtest.h"
+#include "common/vector.h"
+#include "common/dump/Value.hpp"
+#include "common/dump/Object.hpp"
 
-#define DECLARE_PROPERTY_VALUES(size, ...)\
-  constexpr static const int property_values_size = size;\
-  constexpr static const std::array<const char*, property_values_size>\
-  property_values = {__VA_ARGS__}
-#define DEFINE_PROPERTY_VALUES(type)\
-  constexpr const std::array<const char*, type::property_values_size>\
-  type::property_values
+TEST(Dump_Tests, DumpValue)
+{
+  using dump_t = pong::dump::Value<int>;
 
-#define DEFINE_TEMPLATE_PROPERTY_VALUES(type)\
-  template <typename T>\
-  constexpr const std::array<const char*, type<T>::property_values_size>\
-  type<T>::property_values
+  Json::Value result(5);
+  EXPECT_EQ(result, dump_t::dump(5));
 
-#define DECLARE_PROPERTIES_TUPLE(...)\
-  using properties_tuple = std::tuple<__VA_ARGS__>
+  result = 10;
+  EXPECT_EQ(result, dump_t::dump(10));
+}
 
-#define PROPERTIES_TUPLE_TYPE properties_tuple
+TEST(Dump_Tests, DumpVector)
+{
+  using dump_t = pong::dump::Object<pong::math::vector<double> >;
+
+  Json::Value result;
+  result["x"] = 5.0;
+  result["y"] = 10.0;
+
+  EXPECT_EQ(result, dump_t::dump({5.0, 10.0}));
+}

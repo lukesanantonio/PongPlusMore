@@ -18,23 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include <array>
-#include <tuple>
+#include "json/json.h"
+namespace pong { namespace dump
+{
+  template <class Type>
+  struct Value
+  {
+    static Json::Value dump(Type const&) noexcept;
+  };
 
-#define DECLARE_PROPERTY_VALUES(size, ...)\
-  constexpr static const int property_values_size = size;\
-  constexpr static const std::array<const char*, property_values_size>\
-  property_values = {__VA_ARGS__}
-#define DEFINE_PROPERTY_VALUES(type)\
-  constexpr const std::array<const char*, type::property_values_size>\
-  type::property_values
-
-#define DEFINE_TEMPLATE_PROPERTY_VALUES(type)\
-  template <typename T>\
-  constexpr const std::array<const char*, type<T>::property_values_size>\
-  type<T>::property_values
-
-#define DECLARE_PROPERTIES_TUPLE(...)\
-  using properties_tuple = std::tuple<__VA_ARGS__>
-
-#define PROPERTIES_TUPLE_TYPE properties_tuple
+  template <class Type>
+  Json::Value Value<Type>::dump(Type const& val) noexcept
+  {
+    return Json::Value(val);
+  }
+} }
