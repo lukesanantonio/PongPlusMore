@@ -33,23 +33,21 @@ namespace pong { namespace parse
   template <class Type>
   using prop_tuple_t = typename Type::properties_tuple;
 
-  template <class Type, int N, class Array_Type>
+  template <class Type, int N>
   std::enable_if_t<N >= std::tuple_size<prop_tuple_t<Type> >::value >
   parse_tuple_element(Json::Value const& json,
-                      typename Type::properties_tuple& tup,
-                      const Array_Type& prop) noexcept {}
+                      typename Type::properties_tuple& tup) noexcept {}
 
-  template <class Type, int N, class Array_Type>
+  template <class Type, int N>
   std::enable_if_t<N<std::tuple_size<prop_tuple_t<Type> >::value >
   parse_tuple_element(Json::Value const& json,
-                      typename Type::properties_tuple& tup,
-                      const Array_Type& prop)
+                      typename Type::properties_tuple& tup)
   {
     using active_type = std::tuple_element_t<N, prop_tuple_t<Type> >;
     using parser_t = typename find_parser<active_type>::type;
 
-    std::get<N>(tup) = parser_t::parse(json[prop[N]]);
-    parse_tuple_element<Type, N+1>(json, tup, prop);
+    std::get<N>(tup) = parser_t::parse(json[Type::property_values[N]]);
+    parse_tuple_element<Type, N+1>(json, tup);
   }
 
   template <class Type, int N, class TupleType, class... Args>
@@ -72,7 +70,7 @@ namespace pong { namespace parse
   {
     typename Type::properties_tuple tup;
 
-    parse_tuple_element<Type, 0>(root, tup, Type::property_values);
+    parse_tuple_element<Type, 0>(root, tup);
 
     return construct_from_tuple<Type, 0>(tup);
   }
