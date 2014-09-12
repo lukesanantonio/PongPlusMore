@@ -21,6 +21,8 @@
 #include <algorithm>
 namespace pong
 {
+  DEFINE_PROPERTY_VALUES(Volume);
+
   /*!
    * \returns True if the two volumes intersect in any way, false otherwise.
    */

@@ -21,6 +21,7 @@
 #include <tuple>
 #include "common/parse/Value.hpp"
 #include "common/parse/Tuple.hpp"
+#include "common/parse/Object.hpp"
 #include "json/json.h"
 
 TEST(Parse_Tests, ParseValue)
@@ -55,4 +56,30 @@ TEST(Parse_Tests, ParseTuple)
   std::get<1>(std::get<1>(result)) = 0;
 
   EXPECT_EQ(result, parser::parse(tup));
+}
+TEST(Parse_Tests, ParseVector)
+{
+  // vector parser.
+  using parser = pong::parse::Object<pong::math::vector<double> >;
+
+  Json::Value val;
+  val["x"] = 1.0;
+  val["y"] = 10.0;
+
+  pong::math::vector<double> result = {1.0, 10.0};
+  EXPECT_EQ(result, parser::parse(val));
+}
+TEST(Parse_Tests, ParseVolume)
+{
+  // volume parser.
+  using parser = pong::parse::Object<pong::Volume>;
+
+  Json::Value val;
+  val["Width"] = 5.0;
+  val["Height"] = 50.0;
+  val["Position"]["x"] = 10.0;
+  val["Position"]["y"] = 100.0;
+
+  pong::Volume result = {{10,100}, 5, 50};
+  EXPECT_EQ(result, parser::parse(val));
 }

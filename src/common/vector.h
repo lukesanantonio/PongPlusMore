@@ -26,6 +26,7 @@
 #include <cstdint>
 #include <cmath>
 #include <iostream>
+#include "parse/helper.h"
 namespace pong
 {
   /*!
@@ -84,7 +85,12 @@ namespace pong
        * \brief Y value for anything imaginable.
        */
       point_type y = 0;
+
+      DECLARE_PROPERTY_VALUES(2, "x", "y");
+      DECLARE_PROPERTIES_TUPLE(point_type, point_type);
     };
+
+    DEFINE_TEMPLATE_PROPERTY_VALUES(math::vector);
 
     template <typename point_type1, typename point_type2>
     inline bool operator==(const vector<point_type1>& lhs,
