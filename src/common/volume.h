@@ -98,7 +98,7 @@ namespace pong
            : pos(pos), width(width), height(height) {}
 
     DECLARE_PROPERTY_VALUES(3, "Position", "Width", "Height");
-    DECLARE_PROPERTIES_TUPLE(math::vector<double>, double, double);
+    DECLARE_PROPERTIES_TUPLE(math::vector<point_type>, point_type, point_type);
     DECLARE_PROPERTIES(this->pos, this->width, this->height);
   };
 
