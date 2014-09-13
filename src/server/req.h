@@ -123,8 +123,25 @@ namespace pong { namespace net { namespace req
     void parse_(Json::Value const&) override;
   };
 
+  struct SetObject : public Request_Base
+  {
+    using Request_Base::Request_Base;
+    DECLARE_STRING("Server.SetObject");
+
+    boost::variant<Object, Volume, PhysicsOptions> data;
+    id_type obj_id;
+
+    struct {
+      bool success;
+    } result;
+  private:
+    bool error_() const noexcept override { return !this->result.success; }
+    Json::Value result_() const noexcept override;
+    void parse_(Json::Value const&) override;
+  };
+
   using Request_Types = std::tuple<Null, Log, CreateObject, DeleteObject,
-                                   QueryObject>;
+                                   QueryObject, SetObject>;
 
   using Request = wrap_types<Request_Types, boost::variant>::type;
 

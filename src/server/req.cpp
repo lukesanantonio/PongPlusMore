@@ -104,6 +104,29 @@ namespace pong { namespace net { namespace req
     this->obj_id = json[0].asInt();
   }
 
+  Json::Value SetObject::result_() const noexcept
+  {
+    return this->result.success;
+  }
+  void SetObject::parse_(Json::Value const& json)
+  {
+    this->obj_id = json[0].asInt();
+
+    const Json::Value& data = json[1];
+    if(data.isMember("Volume") && data.isMember("PhysicsOptions"))
+    {
+      this->data = parse_object(data);
+    }
+    else if(data.isMember("x") && data.isMember("y"))
+    {
+      this->data = parse_volume(data);
+    }
+    else
+    {
+      this->data = parse_physics(data);
+    }
+  }
+
   Request_Base const& to_base(Request const& req) noexcept
   {
     struct Base_Visitor : public boost::static_visitor<Request_Base const&>

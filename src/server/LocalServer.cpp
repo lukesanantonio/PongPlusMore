@@ -326,6 +326,54 @@ namespace pong
     uv_run(this->loop_, UV_RUN_NOWAIT);
     this->log_.step();
     {
+      struct ModifyObject_Visitor : public boost::static_visitor<bool>
+      {
+        ModifyObject_Visitor(LocalServer& l, id_type id) : l_(l), id_(id) {}
+        bool operator()(Object const& obj) const
+        {
+          try
+          {
+            l_.quadtree_.set_object(id_, obj);
+          }
+          catch(std::exception&)
+          {
+            return false;
+          }
+          return true;
+        }
+        bool operator()(Volume const& vol) const
+        {
+          try
+          {
+            Object obj = l_.quadtree_.find_object(id_);
+            obj.volume = vol;
+            l_.quadtree_.set_object(id_, obj);
+          }
+          catch(std::exception&)
+          {
+            return false;
+          }
+          return true;
+        }
+        bool operator()(PhysicsOptions const& phys) const
+        {
+          try
+          {
+            Object obj = l_.quadtree_.find_object(id_);
+            obj.physics_options = phys;
+            l_.quadtree_.set_object(id_, obj);
+          }
+          catch(std::exception&)
+          {
+            return false;
+          }
+          return true;
+        }
+      private:
+        LocalServer& l_;
+        id_type id_;
+      };
+
       // Handle server requests
       struct RequestHandler : public boost::static_visitor<>
       {
@@ -355,6 +403,11 @@ namespace pong
           {
             req.result.success = false;
           }
+        }
+        void operator()(net::req::SetObject& req) noexcept
+        {
+          ModifyObject_Visitor visitor(l_, req.obj_id);
+          req.result.success = boost::apply_visitor(visitor, req.data);
         }
       private:
         LocalServer& l_;
