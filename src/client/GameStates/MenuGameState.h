@@ -22,28 +22,9 @@
 #include "../Label.h"
 #include "../Button.h"
 #include "../Game.h"
-#include "../AnimationBase.h"
 
 namespace pong
 {
-  // TODO: This is kind of rigid. Find a nice, json way to do this later.
-  struct MoPongAnimation : public AnimationBase
-  {
-    MoPongAnimation(Game& game) noexcept;
-
-    void step() noexcept override;
-
-    std::vector<std::unique_ptr<RenderableObject> >
-    objects() const noexcept override;
-  private:
-    Game& game_;
-
-    Label<std::string> pong_;
-
-    bool on_ = true;
-    bool step_now_ = true;
-  };
-
   struct MenuGameState : public GameState
   {
     MenuGameState(Game& game);
@@ -53,7 +34,5 @@ namespace pong
   private:
     Label<std::string> title_;
     Button singleplayer_, multiplayer_, options_, quit_;
-
-    MoPongAnimation anim_;
   };
 }
