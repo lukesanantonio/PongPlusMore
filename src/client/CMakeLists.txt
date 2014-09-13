@@ -22,7 +22,8 @@ find_package(Freetype REQUIRED)
 add_library(ppmclient STATIC render_text.cpp Button.cpp input_impls.cpp
                              render.cpp
                              GameStates/MenuGameState.cpp
-                             GameStates/PaddleGameState.cpp)
+                             GameStates/PaddleGameState.cpp
+                             settings.cpp)
 
 target_link_libraries(ppmclient ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
 target_link_libraries(ppmclient ppmserv)

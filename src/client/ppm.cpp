@@ -26,6 +26,7 @@
 #include "client/Game.h"
 #include "client/GameStates/MenuGameState.h"
 #include "render.h"
+#include "settings.h"
 
 int main(int argc, char** argv)
 {
