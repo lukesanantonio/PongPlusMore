@@ -97,19 +97,6 @@ namespace pong
     return v;
   }
 
-  Volume getVolume(const Json::Value& root) noexcept
-  {
-    Volume vol;
-
-    vol.height = root["Height"].asInt();
-    vol.width = root["Width"].asInt();
-
-    vol.pos.x = root["Position"]["x"].asDouble();
-    vol.pos.y = root["Position"]["y"].asDouble();
-
-    return vol;
-  }
-
   struct Response_Visitor : public boost::static_visitor<Json::Value>
   {
     template <class T>

@@ -120,8 +120,6 @@ namespace pong
     return dump_json(*q.root());
   }
 
-  Volume getVolume(const Json::Value& v) noexcept;
-
   inline Json::Value dump_json(const std::string& s) noexcept
   {
     return Json::Value(s);
