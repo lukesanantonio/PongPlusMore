@@ -59,6 +59,7 @@ namespace pong
 
   DECLARE_PARSER(math::vector<double>, vector);
   DECLARE_PARSER(Volume, volume);
+  DECLARE_PARSER(PhysicsOptions, physics);
   DECLARE_PARSER(Object, object);
   DECLARE_PARSER(Severity, severity);
 

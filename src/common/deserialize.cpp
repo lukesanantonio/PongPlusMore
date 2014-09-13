@@ -40,14 +40,9 @@ namespace pong
 
     return v;
   }
-  DEFINE_PARSER(Object, root)
+  DEFINE_PARSER(PhysicsOptions, phys_json)
   {
-    Object o;
-    o.volume = parse_volume(root["Volume"]);
-
-    PhysicsOptions& opt = o.physics_options;
-
-    Json::Value phys_json = root["PhysicsOptions"];
+    PhysicsOptions opt;
     if(phys_json["Velocity"].isObject())
     {
       opt.type = PhysicsType::Ball;
@@ -60,7 +55,13 @@ namespace pong
       opt.paddle_options = PaddleOptions();
       opt.paddle_options.destination = parse_vector(phys_json["Destination"]);
     }
-
+    return opt;
+  }
+  DEFINE_PARSER(Object, root)
+  {
+    Object o;
+    o.volume = parse_volume(root["Volume"]);
+    o.physics_options = parse_physics(root["PhysicsOptions"]);
     return o;
   }
 
