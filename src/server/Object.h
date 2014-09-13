@@ -19,6 +19,8 @@
  */
 #pragma once
 #include "common/volume.h"
+#include "common/dump/helper.h"
+#include "common/parse/helper.h"
 namespace pong
 {
   enum class PhysicsType
@@ -30,10 +32,18 @@ namespace pong
   struct PaddleOptions
   {
     math::vector<double> destination;
+
+    DECLARE_PROPERTY_VALUES(1, "Destination");
+    DECLARE_PROPERTIES_TUPLE(math::vector<double>);
+    DECLARE_PROPERTIES(this->destination);
   };
   struct BallOptions
   {
     math::vector<double> velocity;
+
+    DECLARE_PROPERTY_VALUES(1, "Velocity");
+    DECLARE_PROPERTIES_TUPLE(math::vector<double>);
+    DECLARE_PROPERTIES(this->velocity);
   };
 
   /*!
@@ -81,6 +91,10 @@ namespace pong
 
     Volume volume;
     PhysicsOptions physics_options;
+
+    DECLARE_PROPERTY_VALUES(2, "Volume", "PhysicsOptions");
+    DECLARE_PROPERTIES_TUPLE(Volume, PhysicsOptions);
+    DECLARE_PROPERTIES(this->volume, this->physics_options);
   };
 
   inline Object make_paddle(const Volume& v) noexcept

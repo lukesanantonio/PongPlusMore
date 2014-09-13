@@ -17,6 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 add_library(ppmserv STATIC LocalServer.cpp ObjectManager.cpp Quadtree.cpp
-                           Logger.cpp rpc.cpp ipc.cpp req.cpp)
+                           Logger.cpp rpc.cpp ipc.cpp req.cpp Object.cpp)
 target_include_directories(ppmserv PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(ppmserv jsoncpp ppmcommon)
