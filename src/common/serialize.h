@@ -26,14 +26,13 @@
 #include "server/Node.hpp"
 #include "server/ObjectManager.h"
 #include "server/Quadtree.h"
-#include <boost/type_traits/is_fundamental.hpp>
 
 namespace pong
 {
   // Template forward-declarations.
 
   template <typename T,
-            class = std::enable_if_t<boost::is_fundamental<T>::value, T> >
+            class = std::enable_if_t<std::is_fundamental<T>::value, T> >
   inline Json::Value dump_json(const T& t) noexcept;
 
   template <class Iter1, class Iter2>
