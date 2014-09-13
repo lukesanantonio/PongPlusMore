@@ -109,4 +109,17 @@ namespace pong
 
     return vol;
   }
+
+  struct Response_Visitor : public boost::static_visitor<Json::Value>
+  {
+    template <class T>
+    result_type operator()(T const& t) const noexcept
+    {
+      return t.response_json();
+    }
+  };
+  Json::Value dump_json(const net::req::Request& req) noexcept
+  {
+    return boost::apply_visitor(Response_Visitor(), req);
+  }
 }

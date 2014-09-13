@@ -72,6 +72,13 @@ namespace pong
     if(s == "error") return Severity::Error;
     return Severity::Unspecified;
   }
+
+  DEFINE_PARSER(net::req::Request, json)
+  {
+    using parser_t = wrap_types_t<net::req::Request_Types,
+                                  net::req::Request_Parser>;
+    return parser_t::parse(json);
+  }
 }
 
 #undef DEFINE_PARSER

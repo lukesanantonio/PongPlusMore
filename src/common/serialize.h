@@ -26,6 +26,7 @@
 #include "server/Node.hpp"
 #include "server/ObjectManager.h"
 #include "server/Quadtree.h"
+#include "server/req.h"
 
 namespace pong
 {
@@ -125,4 +126,6 @@ namespace pong
   {
     return Json::Value(s);
   }
+
+  Json::Value dump_json(const net::req::Request&) noexcept;
 }

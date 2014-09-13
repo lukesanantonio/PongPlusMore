@@ -26,41 +26,6 @@
 #include "common/template_util.hpp"
 namespace pong
 {
-  net::req::Request fill_request(Json::Value const& root) noexcept
-  {
-    net::req::Request req = net::req::create_request(root["method"].asString(),
-                                                     root["id"].asInt());
-
-    struct Request_Filler : public boost::static_visitor<void>
-    {
-      Request_Filler(Json::Value const& root)
-                     : root_(root) {}
-      void operator()(net::req::Null&) const {}
-      void operator()(net::req::Log& req) const
-      {
-        req.severity = parse_severity(this->root_["params"][0]);
-        req.msg = this->root_["params"][1].asString();
-      }
-      void operator()(net::req::CreateObject& req) const
-      {
-        req.obj = parse_object(this->root_["params"][0]);
-      }
-      void operator()(net::req::DeleteObject& req) const
-      {
-        req.obj_id = this->root_["params"][0].asInt();
-      }
-      void operator()(net::req::QueryObject& req) const
-      {
-        req.obj_id = this->root_["params"][0].asInt();
-      }
-    private:
-      Json::Value const& root_;
-    };
-
-    boost::apply_visitor(Request_Filler(root), req);
-    return req;
-  }
-
   net::req::Request parse_buffer(Pipe* pipe) noexcept
   {
     Json::Reader reader(Json::Features::strictMode());
@@ -77,7 +42,7 @@ namespace pong
     }
 
     // Parse the request object.
-    return fill_request(req);
+    return parse_request(req);
   }
 
   void alloc(uv_handle_t* handle, size_t ssize, uv_buf_t* buf)

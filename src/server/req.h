@@ -23,6 +23,7 @@
 #include <string>
 #include <functional>
 #include <boost/variant/variant.hpp>
+#include "common/template_util.hpp"
 #include "json/json.h"
 
 #define DECLARE_STRING(str) static constexpr const char* method_name = str
@@ -37,9 +38,11 @@ namespace pong { namespace net { namespace req
     id_type id;
 
     Json::Value response_json() const noexcept;
+    bool parse(Json::Value const&) noexcept;
   private:
     virtual bool error_() const noexcept = 0;
     virtual Json::Value result_() const noexcept = 0;
+    virtual void parse_(Json::Value const&) = 0;
   };
 
   struct Null : public Request_Base
@@ -53,6 +56,7 @@ namespace pong { namespace net { namespace req
   private:
     bool error_() const noexcept override;
     Json::Value result_() const noexcept override;
+    void parse_(Json::Value const&) override {}
   };
   struct Log : public Request_Base
   {
@@ -68,6 +72,7 @@ namespace pong { namespace net { namespace req
 
     bool error_() const noexcept override;
     Json::Value result_() const noexcept override;
+    void parse_(Json::Value const&) override;
   };
   struct CreateObject : public Request_Base
   {
@@ -83,6 +88,7 @@ namespace pong { namespace net { namespace req
   private:
     bool error_() const noexcept override;
     Json::Value result_() const noexcept override;
+    void parse_(Json::Value const&) override;
   };
   struct DeleteObject : public Request_Base
   {
@@ -98,6 +104,7 @@ namespace pong { namespace net { namespace req
   private:
     bool error_() const noexcept override;
     Json::Value result_() const noexcept override;
+    void parse_(Json::Value const&) override;
   };
   struct QueryObject : public Request_Base
   {
@@ -113,13 +120,77 @@ namespace pong { namespace net { namespace req
   private:
     bool error_() const noexcept override;
     Json::Value result_() const noexcept override;
+    void parse_(Json::Value const&) override;
   };
 
-  using Request = boost::variant<Null, Log, CreateObject, DeleteObject,
-                                 QueryObject>;
+  using Request_Types = std::tuple<Null, Log, CreateObject, DeleteObject,
+                                   QueryObject>;
+
+  using Request = wrap_types<Request_Types, boost::variant>::type;
 
   Request_Base const& to_base(Request const&) noexcept;
-  Request create_request(std::string const& method, id_type id) noexcept;
+
+  template <class... Reqs>
+  struct Request_Parser
+  {
+    static boost::variant<Reqs...> parse(Json::Value const&) noexcept;
+  };
+
+  template <int N, class... Reqs>
+  std::enable_if_t<N >= sizeof...(Reqs), boost::variant<Reqs...> >
+  try_parse(Json::Value const& json) noexcept
+  {
+    // If we haven't found a method match, throw an error up the stack.
+    throw std::runtime_error("Undefined method name");
+  }
+
+  template <int N, class... Reqs>
+  std::enable_if_t<N < sizeof...(Reqs), boost::variant<Reqs...> >
+  try_parse(Json::Value const& json) noexcept
+  {
+    using cur_t = pack_element_t<N, Reqs...>;
+    if(cur_t::method_name == json["method"].asString())
+    {
+      // Construct an object of the request type that matched.
+      cur_t req;
+      try
+      {
+        // Set the id.
+        req.id = json["id"].asInt();
+      }
+      catch(std::runtime_error const& e)
+      {
+        // Good method, but bad id so we can't continue.
+        throw std::runtime_error("Failed to parse id: '" +
+                                 json["id"].asString() + "'");
+      }
+      // Parse the json parameters
+      if(!req.parse(json["params"]))
+      {
+        throw std::runtime_error("Invalid parameters");
+      }
+      return req;
+    }
+    return try_parse<N+1, Reqs...>(json);
+  }
+
+  template <class... Reqs>
+  boost::variant<Reqs...>
+  Request_Parser<Reqs...>::parse(Json::Value const& json) noexcept
+  {
+    try
+    {
+      return try_parse<0, Reqs...>(json);
+    }
+    catch(std::runtime_error& e)
+    {
+      // For now if there is an error, log it.
+      Log req;
+      req.severity = Severity::Error;
+      req.msg = e.what();
+      return req;
+    }
+  }
 } } }
 
 #undef DECLARE_STRING

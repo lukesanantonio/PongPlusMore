@@ -23,6 +23,7 @@
 #include "server/Logger.h"
 #include "server/Object.h"
 #include "json/json.h"
+#include "server/req.h"
 
 #define DECLARE_PARSER(type, func_suffix)\
 template <> struct parser<type> {\
@@ -60,6 +61,8 @@ namespace pong
   DECLARE_PARSER(Volume, volume);
   DECLARE_PARSER(Object, object);
   DECLARE_PARSER(Severity, severity);
+
+  DECLARE_PARSER(net::req::Request, request);
 
   inline std::string to_string(const Json::Value& v) noexcept
   {

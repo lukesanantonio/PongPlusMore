@@ -19,6 +19,8 @@
  */
 #include "req.h"
 #include "common/serialize.h"
+#include "common/deserialize.h"
+#include <stdexcept>
 namespace pong { namespace net { namespace req
 {
   Json::Value Request_Base::response_json() const noexcept
@@ -37,6 +39,18 @@ namespace pong { namespace net { namespace req
     return obj;
   }
 
+  bool Request_Base::parse(Json::Value const& params) noexcept
+  {
+    try
+    {
+      this->parse_(params);
+    } catch(std::runtime_error& e)
+    {
+      return false;
+    }
+    return true;
+  }
+
   bool Null::error_() const noexcept { return false; }
   Json::Value Null::result_() const noexcept
   {
@@ -48,11 +62,20 @@ namespace pong { namespace net { namespace req
   {
     return Json::Value(result.success);
   }
+  void Log::parse_(Json::Value const& json)
+  {
+    this->severity = parse_severity(json[0]);
+    this->msg = json[1].asString();
+  }
 
   bool CreateObject::error_() const noexcept { return !result.obj_id; }
   Json::Value CreateObject::result_() const noexcept
   {
     return Json::Value(result.obj_id);
+  }
+  void CreateObject::parse_(Json::Value const& json)
+  {
+    this->obj = parse_object(json[0]);
   }
 
   bool DeleteObject::error_() const noexcept
@@ -60,6 +83,10 @@ namespace pong { namespace net { namespace req
   Json::Value DeleteObject::result_() const noexcept
   {
     return Json::Value(result.success);
+  }
+  void DeleteObject::parse_(Json::Value const& json)
+  {
+    this->obj_id = json[0].asInt();
   }
 
   bool QueryObject::error_() const noexcept { return !this->result.success; }
@@ -72,10 +99,14 @@ namespace pong { namespace net { namespace req
 
     return "Failed to query object with id: " + std::to_string(this->obj_id);
   }
+  void QueryObject::parse_(Json::Value const& json)
+  {
+    this->obj_id = json[0].asInt();
+  }
 
   Request_Base const& to_base(Request const& req) noexcept
   {
-    struct Base_Visitor : boost::static_visitor<const Request_Base&>
+    struct Base_Visitor : public boost::static_visitor<Request_Base const&>
     {
       Request_Base const& operator()(Request_Base const& req) const noexcept
       {
@@ -83,27 +114,5 @@ namespace pong { namespace net { namespace req
       }
     };
     return boost::apply_visitor(Base_Visitor(), req);
-  }
-
-  Request create_request(std::string const& method, id_type id) noexcept
-  {
-    if(method == Log::method_name)
-    {
-      return Log(id);
-    }
-    if(method == CreateObject::method_name)
-    {
-      return CreateObject(id);
-    }
-    if(method == DeleteObject::method_name)
-    {
-      return DeleteObject(id);
-    }
-    if(method == QueryObject::method_name)
-    {
-      return QueryObject(id);
-    }
-
-    return Null(id);
   }
 } } }
