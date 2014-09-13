@@ -72,4 +72,14 @@ namespace pong
 
   template <int N, typename... Params>
   using pack_element_t = typename pack_element<N, Params...>::type;
+
+  template <class, template <class...> class>
+  struct wrap_types {};
+
+  template <template <class...> class Wrap, template <class...> class New,
+            class... Types>
+  struct wrap_types<Wrap<Types...>, New> { using type = New<Types...>; };
+
+  template <class Wrapper, template <class...> class New>
+  using wrap_types_t = typename wrap_types<Wrapper, New>::type;
 }
