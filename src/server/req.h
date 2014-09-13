@@ -123,4 +123,3 @@ namespace pong { namespace net { namespace req
 } } }
 
 #undef DECLARE_STRING
-#undef BASE_CONSTRUCTION
