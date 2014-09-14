@@ -95,6 +95,16 @@ namespace pong
                                          SDL_Color background_color) override;
   };
 
+  class GrayscaleTextRenderer : public FontRenderer
+  {
+    using FontRenderer::FontRenderer;
+
+    virtual UniquePtrSurface render_text(const std::string&, int,
+                                         SDL_Color, SDL_Color) override;
+  };
+
+  void initialize_grayscale_palette(SDL_Surface* surface,
+                                    SDL_Color, SDL_Color);
   void setupGrayscalePalette(SDL_Surface*& surface, int num_colors);
 
   void invertPalette(SDL_Surface*& surface);

@@ -24,10 +24,12 @@
 #include "render_text.h"
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 #include <string>
 #include "common/vector.h"
 #include "common/center.hpp"
 #include "common/crash.hpp"
+#include FT_GLYPH_H
 namespace pong
 {
   /*!
@@ -166,14 +168,151 @@ namespace pong
     return UniquePtrSurface(image);
   }
 
+  UniquePtrSurface GrayscaleTextRenderer::render_text(const std::string& text,
+                                                      int pixel_size,
+                                                      SDL_Color front_color,
+                                                      SDL_Color back_color)
+  {
+    // Set text sizes.
+    FT_Set_Pixel_Sizes(this->face_, pixel_size, 0);
+
+    // Load glyphs.
+    struct Glyph
+    {
+      FT_UInt index;
+      FT_Glyph glyph;
+    };
+    std::vector<Glyph> glyphs;
+
+    for(char c : text)
+    {
+      Glyph glyph;
+
+      glyph.index = FT_Get_Char_Index(this->face_, c);
+
+      if(FT_Load_Glyph(this->face_, glyph.index, FT_LOAD_DEFAULT))
+      {
+        throw std::runtime_error("Failed to load glyph.");
+      }
+      if(FT_Get_Glyph(this->face_->glyph, &glyph.glyph))
+      {
+        throw std::runtime_error("Failed to 'get' glyph.");
+      }
+
+      glyphs.push_back(glyph);
+    }
+
+    // Find the extents of the all the glyphs while factoring kerning and such.
+    int min_y = 0, max_y = 0;
+    int pen_x = 0;
+    for(auto iter = glyphs.begin(); iter != glyphs.end(); ++iter)
+    {
+      FT_BBox box;
+      FT_Glyph_Get_CBox(iter->glyph, FT_GLYPH_BBOX_PIXELS, &box);
+
+      min_y = std::min<int>(min_y, box.yMin);
+      max_y = std::max<int>(max_y, box.yMax);
+
+      pen_x += iter->glyph->advance.x >> 16;
+
+      if(iter != glyphs.begin())
+      {
+        FT_Vector delta;
+        FT_Get_Kerning(this->face_, (iter-1)->index, iter->index,
+                       FT_KERNING_DEFAULT, &delta);
+        pen_x += delta.x >> 6;
+      }
+    }
+
+    // Initialize the final image.
+    UniquePtrSurface surface(SDL_CreateRGBSurface(0, pen_x, max_y - min_y,
+                                                  8, 0, 0, 0, 0));
+    SDL_SetSurfaceBlendMode(surface.get(), SDL_BLENDMODE_BLEND);
+    initialize_grayscale_palette(surface.get(), front_color, back_color);
+
+    // Blit the glpyhs onto the final image.
+    pen_x = 0;
+    int baseline_y = max_y;
+    for(auto g = glyphs.begin(); g != glyphs.end(); ++g)
+    {
+      if(FT_Glyph_To_Bitmap(&g->glyph, FT_RENDER_MODE_NORMAL, 0, 1))
+      {
+        throw std::runtime_error("Failed to get convert glyph to bitmap.");
+      }
+      FT_BitmapGlyph bitmap = (FT_BitmapGlyph) g->glyph;
+
+      // Make a surface for this glyph, from the bitmap.
+      UniquePtrSurface glyph_surface(
+                  SDL_CreateRGBSurface(0, bitmap->bitmap.width,
+                                       bitmap->bitmap.rows, 8, 0, 0, 0, 0));
+      initialize_grayscale_palette(glyph_surface.get(),
+                                   front_color, back_color);
+
+      // Copy data.
+      SDL_LockSurface(glyph_surface.get());
+      for(int i = 0; i < bitmap->bitmap.rows; ++i)
+      {
+        for(int j = 0; j < bitmap->bitmap.width; ++j)
+        {
+          unsigned char* buf = bitmap->bitmap.buffer;
+          unsigned char* surf_buf = (unsigned char*) glyph_surface->pixels;
+          surf_buf[i * glyph_surface->pitch + j] =
+                                             buf[i * bitmap->bitmap.pitch + j];
+        }
+      }
+      SDL_UnlockSurface(glyph_surface.get());
+
+      // Blit to master surface.
+      SDL_Rect dest;
+      dest.x = pen_x + bitmap->left;
+
+      // Kerning?
+      if(g != glyphs.begin())
+      {
+        FT_Vector delta;
+        FT_Get_Kerning(this->face_, (g - 1)->index, g->index,
+                       FT_KERNING_DEFAULT, &delta);
+        dest.x += delta.x >> 6;
+      }
+
+      dest.y = baseline_y - bitmap->top;
+      SDL_BlitSurface(glyph_surface.get(), NULL, surface.get(), &dest);
+
+      // Move forward
+      pen_x += g->glyph->advance.x >> 16;
+    }
+
+    // Uninitialize glyphs
+    for (Glyph glyph : glyphs)
+    {
+      FT_Done_Glyph(glyph.glyph);
+    }
+
+    return surface;
+  }
+
+  double mix(double left, double right, double where)
+  {
+    return left + (right - left) * where;
+  }
+
   /*!
    * \brief Sets up a grayscale palette for an SDL_Surface.
-   *
-   * \param surface Surface to modify in-place.
-   * \param num_colors The amount of shades of gray to generate for the
-   * palette.
-   * \note For an 8-bit surface, this should not exceed 256.
    */
+  void initialize_grayscale_palette(SDL_Surface* surface,
+                                    SDL_Color front, SDL_Color back)
+  {
+    constexpr int size = 256;
+    std::array<SDL_Color, size> colors;
+    for(int i = 0; i < size; ++i)
+    {
+      colors[i].r = mix(back.r, front.r, i / 256.0);
+      colors[i].g = mix(back.g, front.g, i / 256.0);
+      colors[i].b = mix(back.b, front.b, i / 256.0);
+      colors[i].a = mix(back.a, front.a, i / 256.0);
+    }
+    SDL_SetPaletteColors(surface->format->palette, &colors[0], 0, size);
+  }
   void setupGrayscalePalette(SDL_Surface*& surface, int num_colors)
   {
     SDL_Color colors[num_colors];

@@ -65,7 +65,7 @@ int main(int argc, char** argv)
   game.width = 1000;
   game.height = 1000;
   game.font_renderer.reset(
-                  new pong::MonoTextRenderer("/home/luke/.fonts/Railway.ttf"));
+             new pong::GrayscaleTextRenderer("/home/luke/.fonts/Railway.ttf"));
   game.game_state.reset(new pong::MenuGameState(game));
 
   pong::Timer<> update;
