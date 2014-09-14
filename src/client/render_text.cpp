@@ -313,47 +313,4 @@ namespace pong
     }
     SDL_SetPaletteColors(surface->format->palette, &colors[0], 0, size);
   }
-
-  /*!
-   * \brief Inverts the palette of the passed in surface.
-   *
-   * \param surface Surface whose palette to invert.
-   */
-  void invertPalette(SDL_Surface*& surface)
-  {
-    //Make our surface's palette easier to reference.
-    SDL_Palette* palette = surface->format->palette;
-
-    //Get a vector of all the colors...
-    std::vector<SDL_Color> colors(palette->colors,
-                                  palette->colors + palette->ncolors);
-    //Reverse our colors.
-    std::reverse(colors.begin(), colors.end());
-
-    //Set our palette to the reversed copy of the original.
-    SDL_SetPaletteColors(palette, &colors[0], 0, palette->ncolors);
-  }
-
-  /*!
-   * \brief Generates a rectange SDL_Surface of any color, width, or height.
-   *
-   * \returns An SDL_Create(d)RGBSurface() of the color passed in.
-   * \returns nullptr on error.
-   */
-  UniquePtrSurface generateRectangle(int width, int height,
-                                     SDL_Color color)
-  {
-    SDL_Surface* surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                                width, height, 8,
-                                                0, 0, 0, 0);
-
-    runtime_assert_surface(surface, width, height);
-
-    SDL_SetPaletteColors(surface->format->palette, &color, 0, 1);
-    SDL_FillRect(surface, nullptr, SDL_MapRGB(surface->format,
-                                              color.r,
-                                              color.g,
-                                              color.b));
-    return UniquePtrSurface(surface);
-  }
 };

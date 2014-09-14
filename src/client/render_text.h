@@ -105,10 +105,5 @@ namespace pong
 
   void initialize_grayscale_palette(SDL_Surface* surface,
                                     SDL_Color, SDL_Color);
-
-  void invertPalette(SDL_Surface*& surface);
-
-  UniquePtrSurface generateRectangle(int width, int height,
-                                     SDL_Color color);
 };
 
