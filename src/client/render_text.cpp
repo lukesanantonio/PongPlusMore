@@ -313,17 +313,6 @@ namespace pong
     }
     SDL_SetPaletteColors(surface->format->palette, &colors[0], 0, size);
   }
-  void setupGrayscalePalette(SDL_Surface*& surface, int num_colors)
-  {
-    SDL_Color colors[num_colors];
-    for(unsigned int i = 0; i < num_colors; ++i)
-    {
-      colors[i].r = i;
-      colors[i].g = i;
-      colors[i].b = i;
-    }
-    SDL_SetPaletteColors(surface->format->palette, colors, 0, num_colors);
-  }
 
   /*!
    * \brief Inverts the palette of the passed in surface.
