@@ -257,11 +257,11 @@ namespace pong
     this->text_color_.b = 0xff;
     this->text_color_.a = 0xff;
 
-    //Background color default: transparent black
-    this->back_color_.r = 0x00;
-    this->back_color_.g = 0x00;
-    this->back_color_.b = 0x00;
-    this->back_color_.b = 0x00;
+    //Background color default: transparent white
+    this->back_color_.r = 0xff;
+    this->back_color_.g = 0xff;
+    this->back_color_.b = 0xff;
+    this->back_color_.a = 0x00;
   }
 
   /*!

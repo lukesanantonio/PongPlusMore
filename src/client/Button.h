@@ -44,7 +44,7 @@ namespace pong
                     bool enabled = true,
                     FontRenderer* font_renderer = nullptr,
                     SDL_Color text_color = {0x00, 0x00, 0x00, 0xff},
-                    SDL_Color back_color = {0xff, 0xff, 0xff, 0xff},
+                    SDL_Color back_color = {0xff, 0xff, 0xff, 0x00},
                     SDL_Color disabled_color = {0x77, 0x77, 0x77, 0xff});
 
     ~Button() noexcept = default;

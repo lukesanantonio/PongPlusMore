@@ -25,7 +25,7 @@ namespace pong
     std::string stats = "FPS: " + std::to_string(game.fps);
     UniquePtrSurface s = game.font_renderer->render_text(stats, 20,
                                                      {0xff, 0xff, 0xff, 0xff},
-                                                     {0x00, 0x00, 0x00, 0x00});
+                                                     {0xff, 0xff, 0xff, 0x00});
     SDL_Texture* t = SDL_CreateTextureFromSurface(renderer, s.get());
     SDL_Rect dest;
     dest.w = s->w;
