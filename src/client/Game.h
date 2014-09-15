@@ -23,6 +23,7 @@
 #include "render_text.h"
 #include "GameState.h"
 #include <json/json.h>
+#include "settings.h"
 namespace pong
 {
   struct Game
@@ -30,8 +31,6 @@ namespace pong
     Game() = default;
     Game(const Game&) = delete;
 
-    std::unique_ptr<FontRenderer> font_renderer;
-    int width, height;
     std::shared_ptr<GameState> game_state;
     bool exiting = false;
 
@@ -42,7 +41,6 @@ namespace pong
     // debugging stats
     int fps = 0;
 
-    // client config
-    bool render_debug = false;
+    ClientSettings settings;
   };
 }

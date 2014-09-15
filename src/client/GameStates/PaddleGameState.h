@@ -30,7 +30,7 @@ namespace pong
   struct PaddleGameState : public GameState
   {
   public:
-    PaddleGameState(Game& g, Volume v);
+    PaddleGameState(Game& g);
     virtual void handleEvent(const SDL_Event& event) override;
     virtual void update() override;
     virtual void render(SDL_Renderer*) const override;

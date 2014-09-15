@@ -42,8 +42,10 @@ namespace pong
               vector_towards(ball_volume, s.find_object(obj).volume) * 2.7);
   }
 
-  PaddleGameState::PaddleGameState(Game& g, Volume v)
-                                   : g_(g), server_(v),
+  PaddleGameState::PaddleGameState(Game& g)
+                                   : g_(g),
+                                     server_({{}, (double) g.settings.extent.x,
+                                              (double) g.settings.extent.y}),
                                      top_score_(0, 80), bottom_score_(0, 80)
   {
     // Insert top paddle.
@@ -109,8 +111,8 @@ namespace pong
     });
 
     // Set the label font renderer.
-    this->top_score_.font_renderer(g.font_renderer.get());
-    this->bottom_score_.font_renderer(g.font_renderer.get());
+    this->top_score_.font_renderer(g.settings.font.get());
+    this->bottom_score_.font_renderer(g.settings.font.get());
 
     // Set label position.
     this->top_score_.position({10, 500 - this->top_score_.surface_height()});

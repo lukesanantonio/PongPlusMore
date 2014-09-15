@@ -31,16 +31,16 @@ namespace pong
                                options_("Options"),
                                quit_("Quit")
   {
-    FontRenderer* font_renderer = &(*game.font_renderer);
+    FontRenderer* font_renderer = game.settings.font.get();
     this->title_.font_renderer(font_renderer);
 
-    this->title_.position({center(0, game.width,
+    this->title_.position({center(0, game.settings.extent.x,
                                   this->title_.surface_width()),
                            50});
 
     int width = 750;
     int height = 90;
-    int position_x = center(0, game.width, width);
+    int position_x = center(0, game.settings.extent.x, width);
     int starting_y = 280;
 
     for(Button* button : {&singleplayer_, &multiplayer_, &options_, &quit_})
@@ -57,10 +57,7 @@ namespace pong
     this->singleplayer_.enabled(true);
     this->singleplayer_.onClick([&]()
     {
-      game.game_state =
-          std::make_shared<PaddleGameState>(game, Volume{{},
-                                            static_cast<double>(game.width),
-                                            static_cast<double>(game.height)});
+      game.game_state = std::make_shared<PaddleGameState>(game);
     });
 
     this->quit_.enabled(true);

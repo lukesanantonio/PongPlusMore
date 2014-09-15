@@ -23,7 +23,7 @@ namespace pong
   void render_debug(const Game& game, SDL_Renderer* renderer) noexcept
   {
     std::string stats = "FPS: " + std::to_string(game.fps);
-    UniquePtrSurface s = game.font_renderer->render_text(stats, 20,
+    UniquePtrSurface s = game.settings.font->render_text(stats, 20,
                                                      {0xff, 0xff, 0xff, 0xff},
                                                      {0xff, 0xff, 0xff, 0x00});
     SDL_Texture* t = SDL_CreateTextureFromSurface(renderer, s.get());

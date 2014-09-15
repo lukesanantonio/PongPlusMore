@@ -33,13 +33,9 @@ int main(int argc, char** argv)
   using pong::crash;
   pong::Game game;
 
-  if(argc > 1)
   {
-    std::vector<std::string> args(argv + 1, argv + argc);
-    for(const std::string& s : args)
-    {
-      if(s == "--render-debug") game.render_debug = true;
-    }
+    pong::Logger l;
+    game.settings = pong::load_config(&l);
   }
 
   if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -62,10 +58,6 @@ int main(int argc, char** argv)
     crash("Failed to create an SDL_Renderer*!");
   }
 
-  game.width = 1000;
-  game.height = 1000;
-  game.font_renderer.reset(
-             new pong::GrayscaleTextRenderer("/home/luke/.fonts/Railway.ttf"));
   game.game_state.reset(new pong::MenuGameState(game));
 
   pong::Timer<> update;
@@ -124,7 +116,7 @@ int main(int argc, char** argv)
       game_state->render(renderer);
 
       // render debug if requested
-      if(game.render_debug)
+      if(game.settings.render_debug)
       {
         render_debug(game, renderer);
       }
