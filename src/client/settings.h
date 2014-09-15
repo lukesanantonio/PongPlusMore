@@ -24,6 +24,7 @@
 #include "common/vector.h"
 #include "json/json.h"
 #include "render_text.h"
+#include "server/Logger.h"
 namespace pong
 {
   struct PluginInfo
@@ -43,5 +44,5 @@ namespace pong
     bool render_debug = false;
   };
 
-  ClientSettings load_config() noexcept;
+  ClientSettings load_config(Logger* l) noexcept;
 }

@@ -26,10 +26,10 @@ namespace pong
                              ClientSettings("/home/luke/.fonts/Railway.ttf") {}
 
   ClientSettings::ClientSettings(std::string const& filename) noexcept :
-                            font(std::make_unique<MonoTextRenderer>(filename)),
-                            extent(1000, 1000), plugins() {}
+                       font(std::make_unique<GrayscaleTextRenderer>(filename)),
+                       extent(1000, 1000), plugins() {}
 
-  ClientSettings load_config(Logger& l) noexcept
+  ClientSettings load_config(Logger* l) noexcept
   {
     Json::Reader read(Json::Features::strictMode());
     Json::Value root;
@@ -37,7 +37,7 @@ namespace pong
       std::ifstream input("resources/config.json");
       if(!read.parse(input, root))
       {
-        l.log(Severity::Error, read.getFormattedErrorMessages());
+        if(l) l->log(Severity::Error, read.getFormattedErrorMessages());
         return ClientSettings{};
       }
     }
