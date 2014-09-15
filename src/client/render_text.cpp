@@ -202,27 +202,40 @@ namespace pong
       glyphs.push_back(glyph);
     }
 
+    auto foreach_glyph = [&](auto func)
+    {
+      bool has_kerning = FT_HAS_KERNING(this->face_);
+      int pen_x = 0;
+      for(auto iter = glyphs.begin(); iter != glyphs.end(); ++iter)
+      {
+        // Check possible kerning.
+        if(iter != glyphs.begin() && has_kerning)
+        {
+          FT_Vector delta;
+          FT_Get_Kerning(this->face_, (iter - 1)->index, iter->index,
+                         FT_KERNING_DEFAULT, &delta);
+          pen_x += delta.x >> 6;
+        }
+
+        func(*iter, pen_x);
+
+        // Move forward.
+        pen_x += iter->glyph->advance.x >> 16;
+      }
+
+      return pen_x;
+    };
+
     // Find the extents of the all the glyphs while factoring kerning and such.
     int min_y = 0, max_y = 0;
-    int pen_x = 0;
-    for(auto iter = glyphs.begin(); iter != glyphs.end(); ++iter)
+    int pen_x = foreach_glyph([&min_y, &max_y](Glyph& glyph, int)
     {
       FT_BBox box;
-      FT_Glyph_Get_CBox(iter->glyph, FT_GLYPH_BBOX_PIXELS, &box);
+      FT_Glyph_Get_CBox(glyph.glyph, FT_GLYPH_BBOX_PIXELS, &box);
 
       min_y = std::min<int>(min_y, box.yMin);
       max_y = std::max<int>(max_y, box.yMax);
-
-      pen_x += iter->glyph->advance.x >> 16;
-
-      if(iter != glyphs.begin())
-      {
-        FT_Vector delta;
-        FT_Get_Kerning(this->face_, (iter-1)->index, iter->index,
-                       FT_KERNING_DEFAULT, &delta);
-        pen_x += delta.x >> 6;
-      }
-    }
+    });
 
     // Initialize the final image.
     UniquePtrSurface surface(SDL_CreateRGBSurface(0, pen_x, max_y - min_y,
@@ -231,56 +244,32 @@ namespace pong
     initialize_grayscale_palette(surface.get(), front_color, back_color);
 
     // Blit the glpyhs onto the final image.
-    pen_x = 0;
-    int baseline_y = max_y;
-    for(auto g = glyphs.begin(); g != glyphs.end(); ++g)
+    SDL_LockSurface(surface.get());
+    foreach_glyph([&, baseline = max_y](Glyph& glyph, int pen_x)
     {
-      if(FT_Glyph_To_Bitmap(&g->glyph, FT_RENDER_MODE_NORMAL, 0, 1))
+      if(FT_Glyph_To_Bitmap(&glyph.glyph, FT_RENDER_MODE_NORMAL, 0, 1))
       {
         throw std::runtime_error("Failed to get convert glyph to bitmap.");
       }
-      FT_BitmapGlyph bitmap = (FT_BitmapGlyph) g->glyph;
+      FT_BitmapGlyph bitmap = (FT_BitmapGlyph) glyph.glyph;
 
-      // Make a surface for this glyph, from the bitmap.
-      UniquePtrSurface glyph_surface(
-                  SDL_CreateRGBSurface(0, bitmap->bitmap.width,
-                                       bitmap->bitmap.rows, 8, 0, 0, 0, 0));
-      initialize_grayscale_palette(glyph_surface.get(),
-                                   front_color, back_color);
+      int start_col = pen_x + bitmap->left;
+      int start_row = baseline - bitmap->top;
 
       // Copy data.
-      SDL_LockSurface(glyph_surface.get());
+      unsigned char* src = bitmap->bitmap.buffer;
       for(int i = 0; i < bitmap->bitmap.rows; ++i)
       {
         for(int j = 0; j < bitmap->bitmap.width; ++j)
         {
-          unsigned char* buf = bitmap->bitmap.buffer;
-          unsigned char* surf_buf = (unsigned char*) glyph_surface->pixels;
-          surf_buf[i * glyph_surface->pitch + j] =
-                                             buf[i * bitmap->bitmap.pitch + j];
+          int index = (i + start_row) * surface->pitch + (start_col + j);
+          unsigned char* dst = (unsigned char*) surface->pixels;
+          unsigned char* src_ptr = src + (i * bitmap->bitmap.pitch + j);
+          if(*src_ptr) dst[index] = *src_ptr;
         }
       }
-      SDL_UnlockSurface(glyph_surface.get());
-
-      // Blit to master surface.
-      SDL_Rect dest;
-      dest.x = pen_x + bitmap->left;
-
-      // Kerning?
-      if(g != glyphs.begin())
-      {
-        FT_Vector delta;
-        FT_Get_Kerning(this->face_, (g - 1)->index, g->index,
-                       FT_KERNING_DEFAULT, &delta);
-        dest.x += delta.x >> 6;
-      }
-
-      dest.y = baseline_y - bitmap->top;
-      SDL_BlitSurface(glyph_surface.get(), NULL, surface.get(), &dest);
-
-      // Move forward
-      pen_x += g->glyph->advance.x >> 16;
-    }
+    });
+    SDL_UnlockSurface(surface.get());
 
     // Uninitialize glyphs
     for (Glyph glyph : glyphs)
@@ -306,10 +295,10 @@ namespace pong
     std::array<SDL_Color, size> colors;
     for(int i = 0; i < size; ++i)
     {
-      colors[i].r = mix(back.r, front.r, i / 256.0);
-      colors[i].g = mix(back.g, front.g, i / 256.0);
-      colors[i].b = mix(back.b, front.b, i / 256.0);
-      colors[i].a = mix(back.a, front.a, i / 256.0);
+      colors[i].r = mix(back.r, front.r, i / 255.0);
+      colors[i].g = mix(back.g, front.g, i / 255.0);
+      colors[i].b = mix(back.b, front.b, i / 255.0);
+      colors[i].a = mix(back.a, front.a, i / 255.0);
     }
     SDL_SetPaletteColors(surface->format->palette, &colors[0], 0, size);
   }
