@@ -22,7 +22,8 @@
 #include "../render_text.h"
 namespace pong
 {
-  OptionsMenuState::OptionsMenuState(Game& game) : g_(game)
+  OptionsMenuState::OptionsMenuState(Game& game, std::shared_ptr<GameState> rs)
+                                     : g_(game), back_state_(rs)
   {
     Volume vol = {};
     vol.width = 750;
@@ -44,6 +45,18 @@ namespace pong
     render_debug_switch.add_switch("Yes", true);
 
     render_debug_.onClick(render_debug_switch);
+
+    vol.width = 250;
+    vol.height = 90;
+    vol.pos.x = 40;
+    vol.pos.y = game.settings.extent.y - 130;
+    back_.text("Back");
+    back_.volume(vol);
+    back_.font_renderer(game.settings.font.get());
+    back_.onClick([&]()
+    {
+      game.game_state = this->back_state_;
+    });
   }
   void OptionsMenuState::handleEvent(const SDL_Event& event)
   {
@@ -52,10 +65,12 @@ namespace pong
       g_.exiting = true;
     }
     render_debug_.handleEvent(event);
+    back_.handleEvent(event);
   }
   void OptionsMenuState::update() {}
   void OptionsMenuState::render(SDL_Renderer* renderer) const
   {
     render_debug_.render(renderer);
+    back_.render(renderer);
   }
 }

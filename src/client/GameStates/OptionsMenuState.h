@@ -28,12 +28,14 @@ namespace pong
 {
   struct OptionsMenuState : public GameState
   {
-    OptionsMenuState(Game& game);
+    OptionsMenuState(Game& game, std::shared_ptr<GameState> return_state);
     virtual void handleEvent(const SDL_Event& event) override;
     virtual void update() override;
     virtual void render(SDL_Renderer* renderer) const override;
   private:
     Game& g_;
+    std::shared_ptr<GameState> back_state_;
     Button render_debug_;
+    Button back_;
   };
 }

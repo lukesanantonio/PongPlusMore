@@ -64,7 +64,8 @@ namespace pong
     this->options_.enabled(true);
     this->options_.onClick([&]()
     {
-      game.game_state = std::make_shared<OptionsMenuState>(game);
+      game.game_state = std::make_shared<OptionsMenuState>(game,
+                                                           game.game_state);
     });
 
     this->quit_.enabled(true);
