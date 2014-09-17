@@ -151,31 +151,6 @@ namespace pong
   }
 
   /*!
-   * \brief Sets the color of the background of the image blitted.
-   *
-   * \post Invalidates the cache if the passed in back color is different
-   * from the one already stored.
-   */
-  template <class Data>
-  inline void Label<Data>::back_color(SDL_Color back_color) noexcept
-  {
-    if(this->back_color_ == back_color) return;
-    this->back_color_ = back_color;
-    this->cache_.template grab_dependency<0>().invalidate();
-    this->cache_.invalidate();
-  }
-  /*!
-   * \brief Returns the color of the background of the image blitted.
-   *
-   * \returns Label::back_color_
-   */
-  template <class Data>
-  inline SDL_Color Label<Data>::back_color() const noexcept
-  {
-    return this->back_color_;
-  }
-
-  /*!
    * \brief Sets the font renderer implementation to use.
    *
    * \post Invalidates the cache if the passed in font renderer is different
@@ -215,10 +190,11 @@ namespace pong
     {
       if(p) return p;
       std::string text = boost::lexical_cast<std::string>(l.data());
-      p = std::move(l.font_renderer()->render_text(text,
-                                                   l.text_height(),
+      SDL_Color back_color = l.text_color();
+      back_color.a = 0x00;
+      p = std::move(l.font_renderer()->render_text(text, l.text_height(),
                                                    l.text_color(),
-                                                   l.back_color()));
+                                                   back_color));
       return p;
     });
     return c;
@@ -233,6 +209,7 @@ namespace pong
    * pong::render_text.
    * \param pos The position of the top left corner where the surface will be
    * blitted.
+   * \param text_color The color of the text.
    * \param font_renderer The font renderer implementation to use when
    * rasterizing the text!
    *
@@ -243,53 +220,12 @@ namespace pong
   Label<Data>::Label(const Data& data,
                      int text_height,
                      math::vector<int> pos,
-                     FontRenderer* font_renderer) noexcept :
-                     data_(data),
-                     text_height_(text_height),
-                     pos_(pos),
-                     font_renderer_(font_renderer),
-                     cache_(make_label_cache(*this))
-  {
-    //Set defaults.
-    //Text color default: opaque white
-    this->text_color_.r = 0xff;
-    this->text_color_.g = 0xff;
-    this->text_color_.b = 0xff;
-    this->text_color_.a = 0xff;
-
-    //Background color default: transparent white
-    this->back_color_.r = 0xff;
-    this->back_color_.g = 0xff;
-    this->back_color_.b = 0xff;
-    this->back_color_.a = 0x00;
-  }
-
-  /*!
-   * \brief Initializes a label with everything + a custom text and background
-   * color.
-   *
-   * \param data The content of the label.
-   * \param text_height The pixel size of the text.
-   * \param pos The position of the label when blitting.
-   * \see Label::render(SDL_Surface*)
-   * \param text_color The color of the text.
-   * \param back_color The color of the empty space (if any) in the generated
-   * SDL_Surface*.
-   * \param font_renderer The existing FontRenderer implementation, will
-   * not be deleted at any time!
-   */
-  template <class Data>
-  Label<Data>::Label(const Data& data,
-                     int text_height,
-                     math::vector<int> pos,
                      SDL_Color text_color,
-                     SDL_Color back_color,
                      FontRenderer* font_renderer) noexcept :
                      data_(data),
                      text_height_(text_height),
                      pos_(pos),
                      text_color_(text_color),
-                     back_color_(back_color),
                      font_renderer_(font_renderer),
                      cache_(make_label_cache(*this)) {}
 
@@ -304,7 +240,6 @@ namespace pong
                      text_height_(label.text_height_),
                      pos_(label.pos_),
                      text_color_(label.text_color_),
-                     back_color_(label.back_color_),
                      font_renderer_(label.font_renderer_),
                      cache_(label.cache_){}
   /*!
@@ -318,7 +253,6 @@ namespace pong
                      text_height_(label.text_height_),
                      pos_(label.pos_),
                      text_color_(label.text_color_),
-                     back_color_(label.back_color_),
                      font_renderer_(label.font_renderer_),
                      cache_(std::move(label.cache_)) {}
 
@@ -336,7 +270,6 @@ namespace pong
     this->position(label.pos_);
 
     this->text_color(label.text_color_);
-    this->back_color(label.back_color_);
 
     this->cache_ = label.cache_;
 
@@ -357,7 +290,6 @@ namespace pong
     this->position(label.pos_);
 
     this->text_color(label.text_color_);
-    this->back_color(label.back_color_);
 
     this->cache_ = std::move(label.cache_);
 

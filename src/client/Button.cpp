@@ -41,13 +41,12 @@ namespace pong
                  SDL_Color text_color,
                  SDL_Color back_color,
                  SDL_Color disabled_color) :
-                 label_(text, 0, {0,0}, font_renderer)
+                 label_(text, 0, {0,0}, text_color, font_renderer)
   {
     // Use the function so that the extra logic is done and so we don't have
     // to repeat it here.
     this->volume(vol);
     this->enabled(enabled);
-    this->text_color(text_color);
     this->background_color(back_color);
     this->disabled_color(disabled_color);
   }
@@ -61,17 +60,13 @@ namespace pong
    */
   void Button::render(SDL_Renderer* renderer) const
   {
-    // Choose button (and label back) color.
+    // Choose button color.
     const SDL_Color* color;
     if(this->enabled_ && !this->on_click_.empty())
     {
       color = &this->background_color_;
     }
     else color = &this->disabled_color_;
-
-    // Set the label, this won't regenerate the label unless of course
-    // it has a different back color, which is obviously necessary.
-    this->label_.back_color(*color);
 
     // Get our previous draw color, and "push" it, sort of speak.
     SDL_Color prev_color;

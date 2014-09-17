@@ -44,14 +44,8 @@ namespace pong
     explicit Label(const Data& data = Data(),
                    int text_height = 24,
                    math::vector<int> pos = math::vector<int>(),
+                   SDL_Color text_color = {0xff, 0xff, 0xff, 0xff},
                    FontRenderer* font_renderer = nullptr) noexcept;
-
-    Label(const Data& data,
-          int text_height,
-          math::vector<int> pos,
-          SDL_Color text_color,
-          SDL_Color back_color,
-          FontRenderer* font_renderer) noexcept;
 
     /*!
      * \brief Free's the text cache if necessary.
@@ -82,9 +76,6 @@ namespace pong
     inline void text_color(SDL_Color text_color) noexcept;
     inline SDL_Color text_color() const noexcept;
 
-    inline void back_color(SDL_Color back_color) noexcept;
-    inline SDL_Color back_color() const noexcept;
-
     inline void font_renderer(FontRenderer* font_renderer) noexcept;
     inline FontRenderer* font_renderer() const noexcept;
   private:
@@ -113,11 +104,6 @@ namespace pong
      * \brief The color of the text in the SDL_Surface generated of the text.
      */
     SDL_Color text_color_;
-    /*!
-     * \brief The background color, (anything not text) in the SDL_Surface
-     * cached and rendered.
-     */
-    SDL_Color back_color_;
 
     /*!
      * \brief The fontrenderer implementation...
