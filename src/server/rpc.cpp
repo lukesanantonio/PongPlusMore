@@ -45,12 +45,6 @@ namespace pong
     return parse_request(req);
   }
 
-  void alloc(uv_handle_t* handle, size_t ssize, uv_buf_t* buf)
-  {
-    buf->base = new char[ssize];
-    buf->len = ssize;
-  }
-
   void on_finish_write(uv_write_t* req, int status)
   {
     delete req;
