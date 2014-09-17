@@ -270,6 +270,7 @@ namespace pong
     this->position(label.pos_);
 
     this->text_color(label.text_color_);
+    this->font_renderer(label.font_renderer_);
 
     this->cache_ = label.cache_;
 
@@ -290,6 +291,7 @@ namespace pong
     this->position(label.pos_);
 
     this->text_color(label.text_color_);
+    this->font_renderer(label.font_renderer_);
 
     this->cache_ = std::move(label.cache_);
 
