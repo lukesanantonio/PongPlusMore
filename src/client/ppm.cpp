@@ -60,6 +60,8 @@ int main(int argc, char** argv)
 
   game.game_state.reset(new pong::MenuGameState(game));
 
+  SDL_StartTextInput();
+
   pong::Timer<> update;
   pong::Timer<> fps;
   int excess = 0;
@@ -130,6 +132,8 @@ int main(int argc, char** argv)
       fps.reset();
     }
   }
+
+  SDL_StopTextInput();
 
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
