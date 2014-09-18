@@ -58,6 +58,9 @@ namespace pong
 
     boost::signals2::connection onClick(const signal_t::slot_type& slot);
 
+    void add_hotkey(SDL_Scancode s) noexcept;
+    void remove_hotkey(SDL_Scancode s) noexcept;
+
     void handleEvent(const SDL_Event&);
 
     inline void text(const std::string& text);
@@ -88,6 +91,11 @@ namespace pong
      * rendering (const function).
      */
     mutable Label<std::string> label_;
+
+    /*!
+     * \brief A list of keys that activate the button.
+     */
+    std::vector<SDL_Scancode> hotkeys_;
 
     /*!
      * \brief The volume of the Button.

@@ -51,6 +51,17 @@ namespace pong
     this->disabled_color(disabled_color);
   }
 
+  void Button::add_hotkey(SDL_Scancode s) noexcept
+  {
+    this->hotkeys_.push_back(s);
+  }
+  void Button::remove_hotkey(SDL_Scancode s) noexcept
+  {
+    using std::begin; using std::end;
+    auto new_end = std::remove(begin(hotkeys_), end(hotkeys_), s);
+    this->hotkeys_.erase(new_end, end(hotkeys_));
+  }
+
   /*!
    * \brief Renders the button with the label using the rendering context
    * passed in.
@@ -145,6 +156,15 @@ namespace pong
         {
           this->on_click_();
         }
+      }
+    }
+    if(event.type == SDL_KEYDOWN && !this->hotkeys_.empty())
+    {
+      SDL_Scancode pressed = event.key.keysym.scancode;
+      using std::begin; using std::end;
+      if(std::find(begin(hotkeys_), end(hotkeys_), pressed) != end(hotkeys_))
+      {
+        this->on_click_();
       }
     }
   }

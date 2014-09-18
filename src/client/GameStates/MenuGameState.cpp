@@ -69,6 +69,7 @@ namespace pong
     });
 
     this->quit_.enabled(true);
+    this->quit_.add_hotkey(SDL_SCANCODE_ESCAPE);
     this->quit_.onClick([&]()
     {
       game.exiting = true;
