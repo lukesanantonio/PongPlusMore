@@ -20,7 +20,7 @@ find_package(SDL2 REQUIRED)
 find_package(Freetype REQUIRED)
 
 add_library(ppmclient STATIC render_text.cpp input_impls.cpp
-                             render.cpp
+                             render.cpp layout.cpp
                              widgets/Text_Box.cpp
                              widgets/Button.cpp
                              GameStates/MenuGameState.cpp
