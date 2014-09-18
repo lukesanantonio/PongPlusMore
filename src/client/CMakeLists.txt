@@ -19,8 +19,9 @@
 find_package(SDL2 REQUIRED)
 find_package(Freetype REQUIRED)
 
-add_library(ppmclient STATIC render_text.cpp Button.cpp input_impls.cpp
+add_library(ppmclient STATIC render_text.cpp input_impls.cpp
                              render.cpp
+                             widgets/Button.cpp
                              GameStates/MenuGameState.cpp
                              GameStates/PaddleGameState.cpp
                              GameStates/OptionsMenuState.cpp

@@ -20,7 +20,7 @@
 #pragma once
 #include "../Game.h"
 #include "../GameState.h"
-#include "../Label.h"
+#include "../widgets/Label.h"
 #include "../input_impls.h"
 #include "server/LocalServer.h"
 #include "common/serialize.h"

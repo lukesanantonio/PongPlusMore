@@ -25,7 +25,7 @@
 #include <boost/signals2.hpp>
 #include "SDL.h"
 #include "Label.h"
-#include "render_text.h"
+#include "../render_text.h"
 #include "common/vector.h"
 #include "common/volume.h"
 namespace pong
