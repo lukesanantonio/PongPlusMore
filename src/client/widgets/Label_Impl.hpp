@@ -23,6 +23,7 @@
  */
 #include <boost/lexical_cast.hpp>
 #include "common/crash.hpp"
+#include <vector>
 namespace pong
 {
   /*!
@@ -190,12 +191,63 @@ namespace pong
     {
       if(p) return p;
       std::string text = boost::lexical_cast<std::string>(l.data());
+
+      // Lines?
+      std::vector<std::string> lines;
+
+      using std::begin; using std::end;
+      std::string::iterator prev_found = begin(text);
+      std::string::iterator found;
+      while((found = std::find(prev_found, end(text), '\n')) != end(text))
+      {
+        lines.push_back(std::string(prev_found, found));
+        prev_found = found + 1;
+      }
+      if(prev_found != end(text))
+      {
+        lines.push_back(std::string(prev_found, end(text)));
+      }
+
+      if(lines.empty()) return Surface_Cache::ptr_type(nullptr);
+
       SDL_Color back_color = l.text_color();
       back_color.a = 0x00;
-      p = std::move(l.font_renderer()->render_text(text, l.text_height(),
-                                                   l.text_color(),
-                                                   back_color));
-      return p;
+
+      std::vector<UniquePtrSurface> line_surfs;
+      for(std::string line : lines)
+      {
+        line_surfs.push_back(l.font_renderer()->render_text(line,
+                                                            l.text_height(),
+                                                            l.text_color(),
+                                                            back_color));
+      }
+
+      int width = 0;
+      int line_height = l.text_height() * 1.2;
+      int line_pen = line_height * (lines.size() - 1);
+      for(UniquePtrSurface const& surf : line_surfs)
+      {
+        width = std::max(width, surf->w);
+      }
+      int height = l.text_height();
+
+      SDL_Surface* result = SDL_CreateRGBSurface(0, width, height + line_pen,
+                                               8, 0, 0, 0, 0);
+      SDL_SetSurfaceBlendMode(result, SDL_BLENDMODE_BLEND);
+      initialize_grayscale_palette(result, l.text_color(), back_color);
+
+      int pen_y = 0;
+      for(UniquePtrSurface const& surf : line_surfs)
+      {
+        SDL_Rect dest;
+        dest.x = 0;
+        dest.y = pen_y;
+        SDL_SetSurfaceBlendMode(surf.get(), SDL_BLENDMODE_NONE);
+        SDL_BlitSurface(surf.get(), NULL, result, &dest);
+        pen_y += line_height;
+      }
+
+      return Surface_Cache::ptr_type(result);
     });
     return c;
   }
@@ -308,6 +360,8 @@ namespace pong
 
     this->cache_.template set_dependency<1>(renderer);
 
+    if(!this->cache_.cache()) return;
+
     SDL_Rect dest;
     dest.x = this->pos_.x;
     dest.y = this->pos_.y;
@@ -318,12 +372,14 @@ namespace pong
   template <class Data>
   void Label<Data>::render(SDL_Surface* surface) const
   {
+    SDL_Surface* src = this->cache_.template grab_dependency<0>().cache();
+    if(!src) return;
+
     SDL_Rect dest;
     dest.x = this->pos_.x;
     dest.y = this->pos_.y;
     dest.w = this->surface_width();
     dest.h = this->surface_height();
-    SDL_BlitSurface(this->cache_.template grab_dependency<0>().cache(),
-                    NULL, surface, &dest);
+    SDL_BlitSurface(src, NULL, surface, &dest);
   }
 }
