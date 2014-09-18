@@ -53,6 +53,7 @@ namespace pong
     back_.text("Back");
     back_.volume(vol);
     back_.font_renderer(game.settings.font.get());
+    back_.add_hotkey(SDL_SCANCODE_ESCAPE);
     back_.onClick([&]()
     {
       game.game_state = this->back_state_;
