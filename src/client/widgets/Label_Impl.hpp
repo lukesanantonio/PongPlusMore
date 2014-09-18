@@ -229,7 +229,7 @@ namespace pong
       {
         width = std::max(width, surf->w);
       }
-      int height = l.text_height();
+      int height = lines.size() == 1 ? line_surfs.front()->h : l.text_height();
 
       SDL_Surface* result = SDL_CreateRGBSurface(0, width, height + line_pen,
                                                8, 0, 0, 0, 0);
