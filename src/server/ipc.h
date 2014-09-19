@@ -20,9 +20,10 @@
 #pragma once
 #include <uv.h>
 #include <vector>
-#include "Server.h"
 namespace pong
 {
+  struct Server;
+
   struct Process;
   struct Pipe
   {

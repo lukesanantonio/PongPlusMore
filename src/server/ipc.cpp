@@ -19,6 +19,7 @@
  */
 #include "ipc.h"
 #include <string>
+#include "Server.h"
 namespace pong
 {
   // Pipe initialization functions.
