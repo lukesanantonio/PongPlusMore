@@ -82,4 +82,17 @@ namespace pong
 
   template <class Wrapper, template <class...> class New>
   using wrap_types_t = typename wrap_types<Wrapper, New>::type;
+
+  template <int N, class F, class TupleType, class... Args>
+  inline std::enable_if_t<N >= std::tuple_size<TupleType>::value >
+  call_foreach(F f, TupleType&& tup, Args&&... args) {}
+
+  template <int N, class F, class TupleType, class... Args>
+  inline std::enable_if_t<N < std::tuple_size<TupleType>::value >
+  call_foreach(F f, TupleType&& tup, Args&&... args)
+  {
+    f(std::forward<Args>(args)..., std::get<N>(tup));
+    call_foreach<N+1>(f, std::forward<TupleType>(tup),
+                      std::forward<Args>(args)...);
+  }
 }
