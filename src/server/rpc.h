@@ -26,12 +26,5 @@
 #include "common/serialize.h"
 namespace pong
 {
-  // libuv allocator.
-  inline void alloc(uv_handle_t* handle, size_t ssize, uv_buf_t* buf)
-  {
-    buf->base = new char[ssize];
-    buf->len = ssize;
-  }
-
   Process* spawn_plugin(Server& s, std::vector<std::string> args, uv_loop_t*);
 }

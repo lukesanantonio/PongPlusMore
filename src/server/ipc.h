@@ -73,4 +73,12 @@ namespace pong
                           Logger& l) noexcept;
   void delete_process(Process*) noexcept;
   void kill_process(Process*, int signum) noexcept;
+
+  // libuv allocator.
+  inline void alloc(uv_handle_t* handle, size_t ssize, uv_buf_t* buf)
+  {
+    buf->base = new char[ssize];
+    buf->len = ssize;
+  }
+
 };
