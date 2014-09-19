@@ -25,24 +25,11 @@ namespace pong
   LocalServer::LocalServer(Volume v) noexcept : quadtree_(v, 3, 5)
   {
     this->loop_ = uv_loop_new();
-
-    std::vector<std::string> args;
-    args.push_back("python");
-    args.push_back("-u");
-    args.push_back("plugins/ppmlib.py");
-    this->processes_.push_back(spawn_plugin(*this, args, this->loop_));
-
     this->log_.log(Severity::Info, "Initializing LocalServer");
   }
   LocalServer::~LocalServer() noexcept
   {
     this->log_.log(Severity::Info, "Uninitializing LocalServer");
-
-    for(Process* proc : this->processes_)
-    {
-      // This seems like something that should be happening in rpc.cpp :/
-      if(proc) { kill_process(proc, SIGINT); }
-    }
 
     uv_run(this->loop_, UV_RUN_DEFAULT);
     uv_loop_delete(this->loop_);

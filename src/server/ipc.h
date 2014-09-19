@@ -22,8 +22,6 @@
 #include <vector>
 namespace pong
 {
-  struct Server;
-
   struct Process;
   struct Pipe
   {
@@ -31,6 +29,7 @@ namespace pong
     std::vector<char>* buf;
     Process* proc;
     void (*action_cb)(Pipe* p);
+    void* user_data;
   };
 
   Pipe* create_pipe(Process* = nullptr) noexcept;
@@ -52,13 +51,15 @@ namespace pong
   using on_write_cb = void (*)(Pipe*);
   void write_buffer(Pipe* pipe, on_write_cb after_write = nullptr) noexcept;
 
+  struct Logger;
   struct Process
   {
     uv_process_t proc;
     DuplexPipe io;
     Pipe err;
-    Server* server;
+    Logger* log;
     uv_loop_t* loop;
+    bool running;
   };
 
   struct SpawnOptions
@@ -69,7 +70,7 @@ namespace pong
 
   Process* create_process(uv_loop_t* loop,
                           const SpawnOptions& spawn_opt,
-                          Server& server) noexcept;
+                          Logger& l) noexcept;
   void delete_process(Process*) noexcept;
   void kill_process(Process*, int signum) noexcept;
 };
