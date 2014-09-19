@@ -45,7 +45,7 @@ namespace pong
     render_debug_switch.add_switch("No", false);
     render_debug_switch.add_switch("Yes", true);
 
-    render_debug_.onClick(render_debug_switch);
+    render_debug_.on_click(render_debug_switch);
 
     back_.text("Back");
 
@@ -54,7 +54,7 @@ namespace pong
 
     back_.font_renderer(game.settings.font.get());
     back_.add_hotkey(SDL_SCANCODE_ESCAPE);
-    back_.onClick([&]()
+    back_.on_click([&]()
     {
       game.game_state = this->back_state_;
     });

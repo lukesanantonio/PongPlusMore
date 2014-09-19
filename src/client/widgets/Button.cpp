@@ -120,7 +120,7 @@ namespace pong
   {
     // Choose button color.
     const SDL_Color* color;
-    if(this->enabled_ && !this->on_click_.empty())
+    if(this->enabled_ && this->on_click_)
     {
       color = &this->background_color_;
     }
@@ -164,19 +164,6 @@ namespace pong
     this->label_.position(label_pos);
 
     this->label_.render(renderer);
-  }
-
-  /*!
-   * \brief Add a functor to the list of functions which need to be called
-   * if the button should be clicked on.
-   *
-   * \returns The connection returned by boost::signals2::signal::connect().
-   * \sa Button::on_click_
-   */
-  boost::signals2::connection Button::onClick(
-                       const boost::signals2::signal<void ()>::slot_type& slot)
-  {
-    return this->on_click_.connect(slot);
   }
 
   /*!

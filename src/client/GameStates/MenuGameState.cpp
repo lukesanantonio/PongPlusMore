@@ -56,13 +56,13 @@ namespace pong
     }
 
     this->singleplayer_.enabled(true);
-    this->singleplayer_.onClick([&]()
+    this->singleplayer_.on_click([&]()
     {
       game.game_state = std::make_shared<PaddleGameState>(game);
     });
 
     this->options_.enabled(true);
-    this->options_.onClick([&]()
+    this->options_.on_click([&]()
     {
       game.game_state = std::make_shared<OptionsMenuState>(game,
                                                            game.game_state);
@@ -70,7 +70,7 @@ namespace pong
 
     this->quit_.enabled(true);
     this->quit_.add_hotkey(SDL_SCANCODE_ESCAPE);
-    this->quit_.onClick([&]()
+    this->quit_.on_click([&]()
     {
       game.exiting = true;
     });

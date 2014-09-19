@@ -22,7 +22,7 @@
  */
 #pragma once
 #include <string>
-#include <boost/signals2.hpp>
+#include <functional>
 #include "SDL.h"
 #include "Label.h"
 #include "../render_text.h"
@@ -36,7 +36,7 @@ namespace pong
   class Button
   {
   public:
-    using signal_t = boost::signals2::signal<void ()>;
+    using click_cb = std::function<void ()>;
 
   public:
     explicit Button(const std::string& text = "",
@@ -56,7 +56,7 @@ namespace pong
 
     void render(SDL_Renderer*) const;
 
-    boost::signals2::connection onClick(const signal_t::slot_type& slot);
+    void on_click(click_cb const& cb);
 
     void add_hotkey(SDL_Scancode s) noexcept;
     void remove_hotkey(SDL_Scancode s) noexcept;
@@ -117,11 +117,11 @@ namespace pong
     bool enabled_;
 
     /*!
-     * \brief This signal is emitted when the button is clicked on.
+     * \brief This function is called when the button is clicked on.
      *
-     * \sa Button::onClick()
+     * \sa Button::on_click()
      */
-    signal_t on_click_;
+    click_cb on_click_;
 };
 
   /*!
@@ -239,5 +239,15 @@ namespace pong
   inline FontRenderer* Button::font_renderer() const noexcept
   {
     return this->label_.font_renderer();
+  }
+
+  /*!
+   * \brief Set the function to be called when the button is clicked.
+   *
+   * \sa Button::on_click_
+   */
+  inline void Button::on_click(click_cb const& cb)
+  {
+    this->on_click_ = cb;
   }
 };
