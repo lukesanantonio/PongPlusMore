@@ -20,11 +20,11 @@
 #include "OptionsMenuState.h"
 #include "common/center.hpp"
 #include "../render_text.h"
-#include "../layout.h"
+#include "../widgets/helper.h"
 namespace pong
 {
   OptionsMenuState::OptionsMenuState(Game& game, std::shared_ptr<GameState> rs)
-                                     : g_(game), back_state_(rs)
+                                     : g_(game), back_(back_button(game, rs))
   {
     Volume vol = {};
     vol.width = 750;
@@ -46,18 +46,6 @@ namespace pong
     render_debug_switch.add_switch("Yes", true);
 
     render_debug_.on_click(render_debug_switch);
-
-    back_.text("Back");
-
-    back_.volume({{}, 250, 90});
-    layout_back(back_, game.settings.extent);
-
-    back_.font_renderer(game.settings.font.get());
-    back_.add_hotkey(SDL_SCANCODE_ESCAPE);
-    back_.on_click([&]()
-    {
-      game.game_state = this->back_state_;
-    });
   }
   void OptionsMenuState::handleEvent(const SDL_Event& event)
   {

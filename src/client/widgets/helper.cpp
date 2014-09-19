@@ -17,10 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include "widgets/Button.h"
-#include "common/vector.h"
+#include "helper.h"
 namespace pong
 {
-  void layout_back(Button& b, math::vector<int> extents) noexcept;
 }

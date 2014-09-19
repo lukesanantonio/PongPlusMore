@@ -17,15 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "layout.h"
+#pragma once
+#include <memory>
+#include "Button.h"
+#include "../Game.h"
+#include "../GameState.h"
+#include "common/vector.h"
 namespace pong
 {
-  void layout_back(Button& b, math::vector<int> extents) noexcept
+  inline Button back_button(Game& g,
+                            std::shared_ptr<GameState> prev_state) noexcept
   {
-    constexpr static int from_sidewall = 35;
-    Volume vol = b.volume();
-    vol.pos.x = from_sidewall;
-    vol.pos.y = extents.y - vol.height - from_sidewall;
-    b.volume(vol);
+    Button b;
+    b.text("Back");
+    b.on_click([=, &g]()
+    {
+      g.game_state = prev_state;
+    });
+    b.add_hotkey(SDL_SCANCODE_ESCAPE);
+    b.font_renderer(g.settings.font.get());
+
+    constexpr static int from_side = 35;
+    Volume v = {{}, 300, 75};
+    v.pos.x = from_side;
+    v.pos.y = g.settings.extent.y - v.height - from_side;
+    b.volume(v);
+
+    return b;
   }
 }
