@@ -81,4 +81,5 @@ namespace pong
     buf->len = ssize;
   }
 
+  void collect_lines(uv_stream_t* s, ssize_t nread, const uv_buf_t* buf);
 };

@@ -50,35 +50,6 @@ namespace pong
     delete req;
   }
 
-  void collect_lines(uv_stream_t* s, ssize_t nread, const uv_buf_t* buf)
-  {
-    Pipe* p = (Pipe*) s;
-    if(nread == UV_EOF)
-    {
-      // Call the action as long as the buffer is not empty.
-      if(!p->buf->empty()) { p->action_cb(p); }
-      uv_read_stop(s);
-    }
-    else
-    {
-      for(char* cur = buf->base; cur != buf->base + nread; ++cur)
-      {
-        if(*cur == '\n')
-        {
-          if(!p->buf->empty()) { p->action_cb(p); }
-
-          // Clear the buffer.
-          p->buf->clear();
-        }
-        else
-        {
-          p->buf->push_back(*cur);
-        }
-      }
-    }
-    delete[] buf->base;
-  }
-
   void compile_buffer(Pipe* p) noexcept
   {
     // Parse the request.
