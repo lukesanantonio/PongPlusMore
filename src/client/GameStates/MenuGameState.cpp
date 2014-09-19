@@ -22,6 +22,7 @@
 #include "common/center.hpp"
 #include "PaddleGameState.h"
 #include "OptionsMenuState.h"
+#include "MultiplayerSelectState.h"
 
 namespace pong
 {
@@ -59,6 +60,13 @@ namespace pong
     this->singleplayer_.on_click([&]()
     {
       game.game_state = std::make_shared<PaddleGameState>(game);
+    });
+
+    this->multiplayer_.enabled(true);
+    this->multiplayer_.on_click([&]()
+    {
+      game.game_state =
+               std::make_shared<MultiplayerSelectState>(game, game.game_state);
     });
 
     this->options_.enabled(true);

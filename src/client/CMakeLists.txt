@@ -26,6 +26,7 @@ add_library(ppmclient STATIC render_text.cpp input_impls.cpp
                              GameStates/MenuGameState.cpp
                              GameStates/PaddleGameState.cpp
                              GameStates/OptionsMenuState.cpp
+                             GameStates/MultiplayerSelectState.cpp
                              settings.cpp)
 
 target_link_libraries(ppmclient ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
