@@ -49,10 +49,10 @@ namespace pong
 
     ~Button() noexcept = default;
 
-    Button(const Button&) = delete;
-    Button(Button&&) = delete;
-    Button& operator=(const Button&) = delete;
-    Button& operator=(Button&&) = delete;
+    Button(const Button&) noexcept;
+    Button(Button&&) noexcept;
+    Button& operator=(const Button&) noexcept;
+    Button& operator=(Button&&) noexcept;
 
     void render(SDL_Renderer*) const;
 

@@ -51,6 +51,53 @@ namespace pong
     this->disabled_color(disabled_color);
   }
 
+  Button::Button(const Button& b) noexcept
+                 : label_(b.label_),
+                   hotkeys_(b.hotkeys_),
+                   vol_(b.vol_),
+                   background_color_(b.background_color_),
+                   disabled_color_(b.disabled_color_),
+                   enabled_(b.enabled_),
+                   on_click_(b.on_click_) {}
+
+  Button::Button(Button&& b) noexcept
+                 : label_(std::move(b.label_)),
+                   hotkeys_(std::move(b.hotkeys_)),
+                   vol_(std::move(b.vol_)),
+                   background_color_(b.background_color_),
+                   disabled_color_(b.disabled_color_),
+                   enabled_(b.enabled_),
+                   on_click_(std::move(b.on_click_)) {}
+
+  Button& Button::operator=(const Button& b) noexcept
+  {
+    this->label_ = b.label_;
+    this->hotkeys_ = b.hotkeys_;
+    this->vol_ = b.vol_;
+
+    this->background_color_ = b.background_color_;
+    this->disabled_color_ = b.disabled_color_;
+    this->enabled_ = b.enabled_;
+
+    this->on_click_ = b.on_click_;
+
+    return *this;
+  }
+  Button& Button::operator=(Button&& b) noexcept
+  {
+    this->label_ = std::move(b.label_);
+    this->hotkeys_ = std::move(b.hotkeys_);
+    this->vol_ = std::move(b.vol_);
+
+    this->background_color_ = b.background_color_;
+    this->disabled_color_ = b.disabled_color_;
+    this->enabled_ = b.enabled_;
+
+    this->on_click_ = std::move(b.on_click_);
+
+    return *this;
+  }
+
   void Button::add_hotkey(SDL_Scancode s) noexcept
   {
     this->hotkeys_.push_back(s);
