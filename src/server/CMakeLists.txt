@@ -18,6 +18,6 @@
 
 add_library(ppmserv STATIC LocalServer.cpp ObjectManager.cpp Quadtree.cpp
                            Logger.cpp ipc.cpp req.cpp Object.cpp
-                           external_io.cpp)
+                           external_io.cpp net.cpp)
 target_include_directories(ppmserv PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(ppmserv jsoncpp ppmcommon)
