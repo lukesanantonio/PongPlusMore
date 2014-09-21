@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "LocalServer.h"
-#include "rpc.h"
 #include <csignal>
 namespace pong
 {
