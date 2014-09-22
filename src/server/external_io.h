@@ -20,8 +20,10 @@
 #pragma once
 #include <uv.h>
 #include <vector>
+#include <string>
 #include <functional>
 #include "ipc.h"
+#include "net.h"
 namespace pong
 {
   struct External_IO
@@ -70,6 +72,20 @@ namespace pong
     void step() noexcept override;
   private:
     Process* process_;
+    uv_loop_t loop_;
+  };
+
+  struct Net_IO : public External_IO
+  {
+    Net_IO(std::string const& bind_ip, uint16_t const bind_port,
+           std::string const& write_ip, uint16_t const write_port) noexcept;
+    ~Net_IO() noexcept;
+
+    void write(std::vector<char> const& buf) noexcept override;
+    void step() noexcept override;
+  private:
+    struct sockaddr_in write_addr_;
+    net::Net_Pipe pipe_;
     uv_loop_t loop_;
   };
 }
