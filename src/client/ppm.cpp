@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <thread>
 #include "common/Timer.hpp"
 #include "SDL.h"
 #include "common/crash.hpp"
@@ -131,6 +132,8 @@ int main(int argc, char** argv)
       frames = 0;
       fps.reset();
     }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(3));
   }
 
   SDL_StopTextInput();
