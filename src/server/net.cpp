@@ -64,10 +64,11 @@ namespace pong { namespace net
     delete[] buf->base;
   }
 
-  Net_Pipe* create_net_pipe(uv_loop_t* loop) noexcept
+  Net_Pipe* create_net_pipe(uv_loop_t* loop, std::string const& bind_ip,
+                            uint16_t const port) noexcept
   {
     Net_Pipe* self = new Net_Pipe;
-    init_net_pipe(*self, loop);
+    init_net_pipe(*self, loop, bind_ip, port);
     return self;
   }
   void delete_net_pipe(Net_Pipe* self) noexcept
@@ -75,7 +76,8 @@ namespace pong { namespace net
     uninit_net_pipe(*self);
     delete self;
   }
-  void init_net_pipe(Net_Pipe& self, uv_loop_t* loop) noexcept
+  void init_net_pipe(Net_Pipe& self, uv_loop_t* loop,
+                     std::string const& bind_ip, uint16_t const port) noexcept
   {
     self.user_data = nullptr;
     self.read_cb = nullptr;
@@ -86,9 +88,9 @@ namespace pong { namespace net
 
     // Bind the input socket to accept all connections.
     struct sockaddr_in addr;
-    if(uv_ip4_addr("0.0.0.0", 10001, &addr))
+    if(uv_ip4_addr(bind_ip.c_str(), port, &addr))
     {
-      throw AddrError("Failed to resolve hostname");
+      throw AddrError("Failed to bind to address");
     }
 
     uv_udp_bind(&self.in.handle, (sockaddr*) &addr, 0);
@@ -102,13 +104,13 @@ namespace pong { namespace net
     uninit_udp_handle(self.out);
   }
 
-  struct Send_Req
-  {
-    uv_udp_send_t req;
-    uv_buf_t buf;
-    Net_Pipe* pipe;
-  };
   namespace {
+    struct Send_Req
+    {
+      uv_udp_send_t req;
+      uv_buf_t buf;
+      Net_Pipe* pipe;
+    };
     void after_write(uv_udp_send_t* r, int status)
     {
       Send_Req* req = (Send_Req*) r;

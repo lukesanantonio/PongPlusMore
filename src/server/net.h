@@ -21,6 +21,8 @@
 #include <uv.h>
 #include <stdexcept>
 #include <vector>
+#include <string>
+#include <cstdint>
 namespace pong { namespace net
 {
   struct AddrError : public std::runtime_error
@@ -51,9 +53,11 @@ namespace pong { namespace net
     action_cb write_cb;
   };
 
-  Net_Pipe* create_net_pipe(uv_loop_t*) noexcept;
+  Net_Pipe* create_net_pipe(uv_loop_t*, std::string const& bind_ip,
+                            uint16_t const port) noexcept;
   void delete_net_pipe(Net_Pipe*) noexcept;
-  void init_net_pipe(Net_Pipe&, uv_loop_t*) noexcept;
+  void init_net_pipe(Net_Pipe&, uv_loop_t*, std::string const& bind_ip,
+                     uint16_t const port) noexcept;
   void uninit_net_pipe(Net_Pipe&) noexcept;
 
   void write_buffer(Net_Pipe& p, sockaddr const* dest) noexcept;
