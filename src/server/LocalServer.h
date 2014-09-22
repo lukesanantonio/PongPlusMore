@@ -40,8 +40,6 @@ namespace pong
 
     const Quadtree& quadtree() const noexcept { return this->quadtree_; }
 
-    void step() noexcept override;
-
     inline Logger& logger() noexcept override;
 
     using wall_observer_signal_t =
@@ -54,6 +52,8 @@ namespace pong
 
     inline
     connection_t add_wall_collision_observer(const wall_observer_t&) noexcept;
+  protected:
+    void step_() noexcept override;
   private:
     wall_observer_signal_t obs_;
 

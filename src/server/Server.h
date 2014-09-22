@@ -23,6 +23,7 @@
 #include "Object.h"
 #include "ObjectManager.h"
 #include "Logger.h"
+#include "plugins.h"
 #include "req.h"
 namespace pong
 {
@@ -58,20 +59,43 @@ namespace pong
      */
     virtual std::vector<id_type> objects() const noexcept = 0;
 
-    virtual void step() noexcept = 0;
+    inline void step() noexcept;
 
     virtual Logger& logger() noexcept = 0;
 
     using request_callback = std::function<void (net::req::Request const&)>;
     inline void enqueue_request(net::req::Request const&,
                                 request_callback) noexcept;
+
+    inline void install_plugin(std::unique_ptr<Server_Plugin> sp) noexcept;
   protected:
     std::queue<std::pair<net::req::Request, request_callback> > req_queue_;
+    std::vector<std::unique_ptr<Server_Plugin> > plugins_;
+
+    virtual void step_() noexcept = 0;
   };
 
   inline void Server::enqueue_request(net::req::Request const& r,
                                       request_callback cb) noexcept
   {
     this->req_queue_.push({r, cb});
+  }
+  inline void Server::step() noexcept
+  {
+    for(auto& plugin : plugins_)
+    {
+      net::req::Request req;
+      while(plugin->poll_request(req))
+      {
+        // TODO Use a reasonable callback.
+        this->enqueue_request(req, [](net::req::Request const&){});
+      }
+    }
+    step_();
+  }
+  inline void
+  Server::install_plugin(std::unique_ptr<Server_Plugin> sp) noexcept
+  {
+    plugins_.push_back(std::move(sp));
   }
 }

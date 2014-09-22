@@ -307,7 +307,7 @@ namespace pong
     this->quadtree_.set_object(obj.id, obj.obj);
   }
 
-  void LocalServer::step() noexcept
+  void LocalServer::step_() noexcept
   {
     uv_run(this->loop_, UV_RUN_NOWAIT);
     this->log_.step();
