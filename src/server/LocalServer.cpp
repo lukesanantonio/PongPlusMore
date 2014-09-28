@@ -19,11 +19,22 @@
  */
 #include "LocalServer.h"
 #include <csignal>
+#include "ipc.h"
 namespace pong
 {
   LocalServer::LocalServer(Volume v) noexcept : quadtree_(v, 3, 5)
   {
     this->loop_ = uv_loop_new();
+
+    std::vector<char*> args;
+    args.push_back((char*) "python");
+    args.push_back((char*) "plugins/ppmlib.py");
+    args.push_back(NULL);
+    SpawnOptions opt;
+    opt.args = &args[0];
+    opt.cwd = NULL;
+    this->install_plugin(make_json_plugin<ChildProcess>(opt, log_));
+
     this->log_.log(Severity::Info, "Initializing LocalServer");
   }
   LocalServer::~LocalServer() noexcept
