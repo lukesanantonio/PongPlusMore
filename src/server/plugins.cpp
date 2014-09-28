@@ -47,6 +47,7 @@ namespace pong
       if(!bufs_.size()) return false;
     }
 
+    bufs_.pop();
     req = parse_request(val);
     return true;
   }
