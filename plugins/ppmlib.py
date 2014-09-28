@@ -130,15 +130,11 @@ def wait_for_header(fd):
 if __name__ == '__main__':
     wait_for_header(sys.stdin)
 
-    q = QueryObjectRequest(1)
-    q.obj_id = 1
-    print(json.dumps(dump_query_request(q)))
-
-    object_json = json.loads(sys.stdin.readline())
-    if 'error' in object_json:
-        sys.stderr.write('Failed to query object ' + q.obj_id)
-        sys.stderr.write('\n')
-    o = parse_object(object_json['result'])
-
-    sys.stderr.write(json.dumps(dump_object(o)))
-    sys.stderr.write('\n')
+    time.sleep(1)
+    action = ObjectCreationAction(1)
+    action.obj.volume.pos.x = 500;
+    action.obj.volume.pos.y = 500;
+    action.obj.volume.width = 20;
+    action.obj.volume.height = 20;
+    action.obj.physics_options.destination = action.obj.volume.pos;
+    print(json.dumps(dump_create_action(action)));
