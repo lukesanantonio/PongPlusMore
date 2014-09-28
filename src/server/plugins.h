@@ -36,8 +36,7 @@ namespace pong
 
   struct Json_Plugin : public Server_Plugin
   {
-    template <class IO_Type, class... Args>
-    Json_Plugin(Args&&...) noexcept;
+    Json_Plugin(std::unique_ptr<External_IO> io) noexcept;
     ~Json_Plugin() noexcept = default;
 
     Json_Plugin(Json_Plugin&&) noexcept = default;
@@ -52,14 +51,4 @@ namespace pong
     std::unique_ptr<External_IO> io_;
     std::queue<std::vector<char> > bufs_;
   };
-
-  template <class IO_Type, class... Args>
-  Json_Plugin::Json_Plugin(Args&&... args) noexcept
-                  : io_(std::make_unique<IO_Type>(std::forward<Args>(args)...))
-  {
-    io_->set_read_callback([this](const std::vector<char>& buf)
-    {
-      bufs_.push(buf);
-    });
-  }
 }

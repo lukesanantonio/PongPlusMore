@@ -20,6 +20,14 @@
 #include "plugins.h"
 namespace pong
 {
+  Json_Plugin::Json_Plugin(std::unique_ptr<External_IO> io) noexcept
+                           : io_(std::move(io))
+  {
+    io_->set_read_callback([this](const std::vector<char>& buf)
+    {
+      bufs_.push(buf);
+    });
+  }
   bool Json_Plugin::poll_request(net::req::Request& req) noexcept
   {
     io_->step();
