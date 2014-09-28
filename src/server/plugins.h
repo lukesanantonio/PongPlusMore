@@ -51,4 +51,11 @@ namespace pong
     std::unique_ptr<External_IO> io_;
     std::queue<std::vector<char> > bufs_;
   };
+
+  template <class IO_Type, class... Args>
+  std::unique_ptr<Json_Plugin> make_json_plugin(Args&&... args) noexcept
+  {
+    auto io = std::make_unique<IO_Type>(std::forward<Args>(args)...);
+    return std::make_unique<Json_Plugin>(std::move(io));
+  }
 }
