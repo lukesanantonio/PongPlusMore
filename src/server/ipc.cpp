@@ -145,7 +145,8 @@ namespace pong
     if(err)
     {
       self->log->log(Severity::Error,
-                     "Failed to spawn process: '" + proc_name +"'");
+                     "Failed to spawn process: '" + proc_name +"' (Error: '" +
+                     uv_strerror(err) + "')");
       delete_process(self);
       return nullptr;
     }
