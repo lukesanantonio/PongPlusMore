@@ -87,8 +87,10 @@ namespace pong
       net::req::Request req;
       while(plugin->poll_request(req))
       {
-        // TODO Use a reasonable callback.
-        this->enqueue_request(req, [](net::req::Request const&){});
+        this->enqueue_request(req, [&](net::req::Request const& filled_req)
+        {
+          plugin->post_result(filled_req);
+        });
       }
     }
     step_();

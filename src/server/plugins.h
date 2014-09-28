@@ -25,11 +25,13 @@
 #include "common/deserialize.h"
 #include "json/json.h"
 #include "external_io.h"
+#include "common/util.h"
 namespace pong
 {
   struct Server_Plugin
   {
     virtual bool poll_request(net::req::Request& req) noexcept = 0;
+    virtual void post_result(net::req::Request const& req) noexcept = 0;
   };
 
   template <class IO_Type>
@@ -45,6 +47,7 @@ namespace pong
     Json_Plugin& operator=(Json_Plugin const&) noexcept = default;
 
     bool poll_request(net::req::Request& req) noexcept override;
+    void post_result(net::req::Request const& req) noexcept override;
   private:
     std::unique_ptr<External_IO> io_;
     std::queue<std::vector<char> > bufs_;
@@ -82,5 +85,13 @@ namespace pong
 
     req = parse_request(val);
     return true;
+  }
+
+  template <class IO_Type>
+  void Json_Plugin<IO_Type>::post_result(net::req::Request const& req) noexcept
+  {
+    Json::FastWriter w;
+    net::req::Request_Base const& base_req = net::req::to_base(req);
+    io_->write(vec_from_string(w.write(base_req.response_json())));
   }
 }
