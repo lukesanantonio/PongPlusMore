@@ -20,4 +20,33 @@
 #include "plugins.h"
 namespace pong
 {
+  bool Json_Plugin::poll_request(net::req::Request& req) noexcept
+  {
+    io_->step();
+    if(!bufs_.size()) return false;
+
+    Json::Value val;
+
+    Json::Reader read(Json::Features::strictMode());
+
+    using std::begin; using std::end;
+    // While the queued buffer is failing to compile.
+    while(!read.parse(std::string(begin(bufs_.front()), end(bufs_.front())),
+                      val))
+    {
+      // Ignore it and continue on.
+      bufs_.pop();
+      if(!bufs_.size()) return false;
+    }
+
+    req = parse_request(val);
+    return true;
+  }
+
+  void Json_Plugin::post_result(net::req::Request const& req) noexcept
+  {
+    Json::FastWriter w;
+    net::req::Request_Base const& base_req = net::req::to_base(req);
+    io_->write(vec_from_string(w.write(base_req.response_json())));
+  }
 }
