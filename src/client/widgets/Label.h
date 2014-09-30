@@ -26,7 +26,7 @@
 #include "SDL.h"
 #include "../sdl_cache.hpp"
 #include "common/vector.h"
-#include "../render_text.h"
+#include "../text.h"
 #include "../util.hpp"
 namespace pong
 {
@@ -45,7 +45,8 @@ namespace pong
                    int text_height = 24,
                    math::vector<int> pos = math::vector<int>(),
                    SDL_Color text_color = {0xff, 0xff, 0xff, 0xff},
-                   FontRenderer* font_renderer = nullptr) noexcept;
+                   text::Face* face = nullptr,
+                   text::Rasterizer* rasterizer = nullptr) noexcept;
 
     /*!
      * \brief Free's the text cache if necessary.
@@ -76,8 +77,11 @@ namespace pong
     inline void text_color(SDL_Color text_color) noexcept;
     inline SDL_Color text_color() const noexcept;
 
-    inline void font_renderer(FontRenderer* font_renderer) noexcept;
-    inline FontRenderer* font_renderer() const noexcept;
+    inline void font_face(text::Face* face) noexcept;
+    inline text::Face* font_face() const noexcept;
+
+    inline void rasterizer(text::Rasterizer* rasterizer) noexcept;
+    inline text::Rasterizer* rasterizer() const noexcept;
   private:
     /*!
      * \brief The content of the label.
@@ -105,10 +109,11 @@ namespace pong
      */
     SDL_Color text_color_;
 
+    text::Face* font_face_;
     /*!
-     * \brief The fontrenderer implementation...
+     * \brief The font rasterizer implementation...
      */
-    FontRenderer* font_renderer_;
+    text::Rasterizer* rasterizer_;
 
     mutable Texture_Cache cache_;
   };

@@ -35,7 +35,8 @@ namespace pong
       g.game_state = prev_state;
     });
     b.add_hotkey(SDL_SCANCODE_ESCAPE);
-    b.font_renderer(g.settings.font.get());
+    b.font_face(g.settings.font_face.get());
+    b.rasterizer(g.settings.font_rasterizer.get());
 
     constexpr static int from_side = 35;
     Volume v = {{}, 300, 75};

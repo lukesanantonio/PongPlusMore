@@ -33,8 +33,10 @@ namespace pong
                                options_("Options"),
                                quit_("Quit")
   {
-    FontRenderer* font_renderer = game.settings.font.get();
-    this->title_.font_renderer(font_renderer);
+    text::Face* face = game.settings.font_face.get();
+    text::Rasterizer* rasterizer = game.settings.font_rasterizer.get();
+    this->title_.font_face(face);
+    this->title_.rasterizer(rasterizer);
 
     this->title_.position({center(0, game.settings.extent.x,
                                   this->title_.surface_width()),
@@ -49,7 +51,8 @@ namespace pong
     {
       button->volume({math::vector<double>(position_x, starting_y),
                      static_cast<double>(width), static_cast<double>(height)});
-      button->font_renderer(font_renderer);
+      button->font_face(face);
+      button->rasterizer(rasterizer);
       button->enabled(false);
       button->background_color({0xff, 0xff, 0xff, 0xff});
       button->text_color({0x00, 0x00, 0x00, 0xff});

@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "../render_text.h"
 #include "common/volume.h"
 #include <string>
 #include "Label.h"
@@ -27,7 +26,8 @@ namespace pong
   struct Text_Box
   {
     Text_Box(Volume const& vol = Volume(), int text_size = 15,
-             int blink_rate = 50, FontRenderer* = nullptr) noexcept;
+             int blink_rate = 50, text::Face* face = nullptr,
+             text::Rasterizer* = nullptr) noexcept;
 
     void handle_event(const SDL_Event& e) noexcept;
     void render(SDL_Renderer* r) const noexcept;
@@ -47,8 +47,11 @@ namespace pong
     inline std::string buffer() const noexcept;
     inline void buffer(std::string const&) noexcept;
 
-    inline FontRenderer* font_renderer() const noexcept;
-    inline void font_renderer(FontRenderer*) noexcept;
+    inline text::Face* font_face() const noexcept;
+    inline void font_face(text::Face*) noexcept;
+
+    inline text::Rasterizer* rasterizer() const noexcept;
+    inline void rasterizer(text::Rasterizer*) noexcept;
   private:
     Volume vol_;
     int cur_pos_;
@@ -100,12 +103,20 @@ namespace pong
   {
     this->label_.data(buf);
   }
-  inline FontRenderer* Text_Box::font_renderer() const noexcept
+  inline text::Face* Text_Box::font_face() const noexcept
   {
-    return this->label_.font_renderer();
+    return this->label_.font_face();
   }
-  inline void Text_Box::font_renderer(FontRenderer* font) noexcept
+  inline void Text_Box::font_face(text::Face* face) noexcept
   {
-    return this->label_.font_renderer(font);
+    this->label_.font_face(face);
+  }
+  inline text::Rasterizer* Text_Box::rasterizer() const noexcept
+  {
+    return this->label_.rasterizer();
+  }
+  inline void Text_Box::rasterizer(text::Rasterizer* raster) noexcept
+  {
+    return this->label_.rasterizer(raster);
   }
 }

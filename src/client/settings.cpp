@@ -22,12 +22,14 @@
 #include "common/deserialize.h"
 namespace pong
 {
-  ClientSettings::ClientSettings() noexcept :
-                             ClientSettings("/home/luke/.fonts/Railway.ttf") {}
+  ClientSettings::ClientSettings(Logger* l) noexcept :
+                         ClientSettings("/home/luke/.fonts/Railway.ttf", l) {}
 
-  ClientSettings::ClientSettings(std::string const& filename) noexcept :
-                       font(std::make_unique<GrayscaleTextRenderer>(filename)),
-                       extent(1000, 1000), plugins() {}
+  ClientSettings::ClientSettings(std::string const& filename,
+                                 Logger* l) noexcept :
+                  font_face(std::make_unique<text::Face>(filename, l)),
+                  font_rasterizer(std::make_unique<text::AntiAliasedRaster>()),
+                  extent(1000, 1000), plugins() {}
 
   ClientSettings load_config(Logger* l) noexcept
   {
@@ -38,11 +40,11 @@ namespace pong
       if(!read.parse(input, root))
       {
         if(l) l->log(Severity::Error, read.getFormattedErrorMessages());
-        return ClientSettings{};
+        return ClientSettings{l};
       }
     }
 
-    ClientSettings settings(root["Font"]["Path"].asString());
+    ClientSettings settings(root["Font"]["Path"].asString(), l);
 
     settings.extent.x = root["Extent"]["Width"].asInt();
     settings.extent.y = root["Extent"]["Height"].asInt();

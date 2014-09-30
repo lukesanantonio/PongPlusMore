@@ -25,7 +25,7 @@
 #include <functional>
 #include "SDL.h"
 #include "Label.h"
-#include "../render_text.h"
+#include "../text.h"
 #include "common/vector.h"
 #include "common/volume.h"
 namespace pong
@@ -42,7 +42,8 @@ namespace pong
     explicit Button(const std::string& text = "",
                     Volume vol = {{0,0},0,0},
                     bool enabled = true,
-                    FontRenderer* font_renderer = nullptr,
+                    text::Face* face = nullptr,
+                    text::Rasterizer* rasterizer = nullptr,
                     SDL_Color text_color = {0x00, 0x00, 0x00, 0xff},
                     SDL_Color back_color = {0xff, 0xff, 0xff, 0x00},
                     SDL_Color disabled_color = {0x77, 0x77, 0x77, 0xff});
@@ -81,8 +82,11 @@ namespace pong
     inline void enabled(bool enabled) noexcept;
     inline bool enabled() const noexcept;
 
-    inline void font_renderer(FontRenderer* font_renderer) noexcept;
-    inline FontRenderer* font_renderer() const noexcept;
+    inline void font_face(text::Face* face) noexcept;
+    inline text::Face* font_face() const noexcept;
+
+    inline void rasterizer(text::Rasterizer* rasterizer) noexcept;
+    inline text::Rasterizer* rasterizer() const noexcept;
   private:
     /*!
      * \brief The internal label used to render the text onto the button.
@@ -221,24 +225,22 @@ namespace pong
     return this->enabled_;
   }
 
-  /*!
-   * \brief Sets the font renderer in the internal label, discarding the one
-   * already in there.
-   *
-   * \note The Font Renderer implementations need to be managed from the
-   * outside.
-   */
-  inline void Button::font_renderer(FontRenderer* font_renderer) noexcept
+  inline void Button::font_face(text::Face* face) noexcept
   {
-    this->label_.font_renderer(font_renderer);
+    this->label_.font_face(face);
   }
-  /*!
-   * \brief Returns a pointer to the current font renderer active in the
-   * internal label.
-   */
-  inline FontRenderer* Button::font_renderer() const noexcept
+  inline text::Face* Button::font_face() const noexcept
   {
-    return this->label_.font_renderer();
+    return this->label_.font_face();
+  }
+
+  inline void Button::rasterizer(text::Rasterizer* rasterizer) noexcept
+  {
+    this->label_.rasterizer(rasterizer);
+  }
+  inline text::Rasterizer* Button::rasterizer() const noexcept
+  {
+    return this->label_.rasterizer();
   }
 
   /*!

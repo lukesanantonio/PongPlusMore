@@ -21,11 +21,12 @@
 namespace pong
 {
   Text_Box::Text_Box(Volume const& vol, int text_size, int blink_rate,
-                     FontRenderer* fnt) noexcept
+                     text::Face* face, text::Rasterizer* rasterizer) noexcept
                      : vol_(vol), cur_pos_(0), blink_rate_(blink_rate)
   {
     this->label_.position(vol.pos);
-    this->label_.font_renderer(fnt);
+    this->label_.rasterizer(rasterizer);
+    this->label_.font_face(face);
   }
   void Text_Box::render(SDL_Renderer* r) const noexcept
   {

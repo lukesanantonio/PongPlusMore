@@ -31,17 +31,16 @@ namespace pong
    * \param text The text to display centered in the button.
    * \param vol The volume of the button. Position, Width, and Height.
    * \param enabled Whether or not the button should be clickable.
-   * \param font_renderer Font Renderer implementation passed directly to
-   * the internal label: Button::label_
    */
   Button::Button(const std::string& text,
                  Volume vol,
                  bool enabled,
-                 FontRenderer* font_renderer,
+                 text::Face* face,
+                 text::Rasterizer* rasterizer,
                  SDL_Color text_color,
                  SDL_Color back_color,
                  SDL_Color disabled_color) :
-                 label_(text, 0, {0,0}, text_color, font_renderer)
+                 label_(text, 0, {0,0}, text_color, face, rasterizer)
   {
     // Use the function so that the extra logic is done and so we don't have
     // to repeat it here.

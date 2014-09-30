@@ -32,7 +32,7 @@ namespace pong
    * \returns cache_.cache()->w
    *
    * \post Generates the cache if necessary.
-   * \warning This function requires a valid FontRenderer, otherwise it
+   * \warning This function requires a valid Rasterizer, otherwise it
    * crashes.
    */
   template <class Data>
@@ -46,7 +46,7 @@ namespace pong
    * \returns cache_.cache()->h
    *
    * \post Generates the cache if necessary.
-   * \warning This function requires a valid FontRenderer, otherwise it
+   * \warning This function requires a valid Rasterizer, otherwise it
    * crashes.
    */
   template <class Data>
@@ -151,17 +151,32 @@ namespace pong
     return this->text_color_;
   }
 
+  template <class Data>
+  inline void Label<Data>::font_face(text::Face* face) noexcept
+  {
+    if(this->font_face_ == face) return;
+    this->font_face_ = face;
+    this->cache_.template grab_dependency<0>().invalidate();
+    this->cache_.invalidate();
+  }
+
+  template <class Data>
+  inline text::Face* Label<Data>::font_face() const noexcept
+  {
+    return this->font_face_;
+  }
+
   /*!
-   * \brief Sets the font renderer implementation to use.
+   * \brief Sets the rasterizer implementation to use.
    *
-   * \post Invalidates the cache if the passed in font renderer is different
-   * from the one already stored.
+   * \post Invalidates the cache if the passed in rasterizer is different from
+   * the one already stored.
    */
   template <class Data>
-  inline void Label<Data>::font_renderer(FontRenderer* font_renderer) noexcept
+  inline void Label<Data>::rasterizer(text::Rasterizer* rasterizer) noexcept
   {
-    if(this->font_renderer_ == font_renderer) return;
-    this->font_renderer_ = font_renderer;
+    if(this->rasterizer_ == rasterizer) return;
+    this->rasterizer_ = rasterizer;
     this->cache_.template grab_dependency<0>().invalidate();
     this->cache_.invalidate();
   }
@@ -169,9 +184,9 @@ namespace pong
    * \brief Returns the font renderer.
    */
   template <class Data>
-  inline FontRenderer* Label<Data>::font_renderer() const noexcept
+  inline text::Rasterizer* Label<Data>::rasterizer() const noexcept
   {
-    return this->font_renderer_;
+    return this->rasterizer_;
   }
 
   template <class Data>
@@ -192,6 +207,55 @@ namespace pong
       if(p) return p;
       std::string text = boost::lexical_cast<std::string>(l.data());
 
+      std::vector<std::pair<text::Metrics, text::Unique_Surface> > glyphs;
+      int width = 0, max_above = 0, max_below = 0;
+      for(char c : text)
+      {
+        FT_Glyph g = l.font_face()->glyph(l.text_height(), c);
+
+        auto metrics = text::metrics(g);
+        width += metrics.advance;
+        max_above = std::max(metrics.ascent, max_above);
+        max_below = std::max(metrics.descent, max_below);
+
+        text::Unique_Surface surf =
+                       std::move(l.rasterizer()->rasterize(g, l.text_color()));
+        glyphs.emplace_back(metrics, std::move(surf));
+      }
+
+      SDL_Surface* line = SDL_CreateRGBSurface(0, width,
+                                               max_below + max_above, 32,
+                                               0xff000000,
+                                               0x00ff0000,
+                                               0x0000ff00,
+                                               0x000000ff);
+
+      // Make a white-but-transparent background to work with.
+      for(int row = 0; row < line->h; ++row)
+      {
+        uint8_t* out_row = (uint8_t*) line->pixels + (row * line->pitch);
+        for(int pix = 0; pix < line->w; ++pix)
+        {
+          uint32_t* out = (uint32_t*) out_row + pix;
+          *out = 0xffffff00;
+        }
+      }
+
+      int pen_x = 0;
+      for(auto& glyph : glyphs)
+      {
+        SDL_Rect dest;
+        dest.x = pen_x + std::get<0>(glyph).bearing;
+        dest.y = max_above - std::get<0>(glyph).ascent;
+        SDL_BlitSurface(std::get<1>(glyph).get(), NULL, line, &dest);
+
+        pen_x += std::get<0>(glyph).advance;
+      }
+
+      return Surface_Cache::ptr_type(line);
+    });
+    return c;
+#if 0
       // Lines?
       std::vector<std::string> lines;
 
@@ -210,46 +274,89 @@ namespace pong
 
       if(lines.empty()) return Surface_Cache::ptr_type(nullptr);
 
-      SDL_Color back_color = l.text_color();
-      back_color.a = 0x00;
-
-      std::vector<UniquePtrSurface> line_surfs;
+      // Get all the necessary glyphs.
+      std::vector<std::vector<text::Glyph*> > glyphs;
       for(std::string line : lines)
       {
-        line_surfs.push_back(l.font_renderer()->render_text(line,
-                                                            l.text_height(),
-                                                            l.text_color(),
-                                                            back_color));
+        std::vector<text::Glyph*> glyphs_on_line;
+        for(char c : line)
+        {
+          glyphs_on_line.push_back(&l.font_face()->glyph(l.text_height(), c));
+        }
+        glyphs.push_back(glyphs_on_line);
       }
 
-      int width = 0;
-      int line_height = l.text_height() * 1.2;
-      int line_pen = line_height * (lines.size() - 1);
-      for(UniquePtrSurface const& surf : line_surfs)
+      int baseline_descent = l.text_height() * 0.8;
+
+      std::vector<text::Unique_Surface> line_surfs;
+      // For every line
+      for(int i = 0; i < lines.size(); i++)
       {
-        width = std::max(width, surf->w);
-      }
-      int height = lines.size() == 1 ? line_surfs.front()->h : l.text_height();
+        std::string line = lines[i];
+        int width = 0, minY = 0, maxY = 0;
+        for(text::Glyph* g : glyphs[i])
+        {
+          auto metrics = text::metrics(*g);
+          width += metrics.advance;
+          minY = std::min(metrics.descent, minY);
+          maxY = std::max(metrics.ascent, maxY);
+        }
+        int height = minY + maxY;
+        // Determine the line and height.
 
-      SDL_Surface* result = SDL_CreateRGBSurface(0, width, height + line_pen,
-                                               8, 0, 0, 0, 0);
-      SDL_SetSurfaceBlendMode(result, SDL_BLENDMODE_BLEND);
-      initialize_grayscale_palette(result, l.text_color(), back_color);
+        SDL_Surface* line_surf = SDL_CreateRGBSurface(0, width, height, 8,
+                                                      0, 0, 0, 0);
+        text::initialize_grayscale_palette(line_surf, {0xff, 0xff, 0xff, 0xff},
+                                           {0x00, 0x00, 0x00, 0x00});
+        int pen_x = 0;
+        for(text::Glyph* g : glyphs[i])
+        {
+          text::Unique_Surface surf = l.rasterizer()->rasterize(*g);
+
+          SDL_Rect dest;
+          dest.x = pen_x;
+          dest.y = baseline_descent;
+          SDL_BlitSurface(surf.get(), NULL, line_surf, &dest);
+
+          auto metrics = text::metrics(*g);
+          pen_x += metrics.advance;
+        }
+
+        line_surfs.push_back(text::Unique_Surface(line_surf));
+      }
+
+      // Make the final surface to blit to.
+      int width = 0;
+      for(auto& surf : line_surfs)
+      {
+        width = std::max(surf->w, width);
+      }
+
+      int line_pen = 0;
+      int vertical_advance = l.text_height() * 1.3;
+      int height = lines.size() == 1 ? line_surfs.front()->h
+                                     : vertical_advance * lines.size();
+      SDL_Surface* result = SDL_CreateRGBSurface(0, width, height,
+                                                 8, 0, 0, 0, 0);
+      //SDL_SetSurfaceBlendMode(result, SDL_BLENDMODE_BLEND);
+      text::initialize_grayscale_palette(result, {0xff, 0xff, 0xff, 0xff},
+                                         {0x00, 0x00, 0x00, 0x00});
 
       int pen_y = 0;
-      for(UniquePtrSurface const& surf : line_surfs)
+      for(text::Unique_Surface const& surf : line_surfs)
       {
         SDL_Rect dest;
         dest.x = 0;
-        dest.y = pen_y;
-        SDL_SetSurfaceBlendMode(surf.get(), SDL_BLENDMODE_NONE);
+        dest.y = pen_y + baseline_descent;
+        //SDL_SetSurfaceBlendMode(surf.get(), SDL_BLENDMODE_NONE);
         SDL_BlitSurface(surf.get(), NULL, result, &dest);
-        pen_y += line_height;
+        pen_y += vertical_advance;
       }
 
       return Surface_Cache::ptr_type(result);
     });
     return c;
+#endif
   }
 
   /*!
@@ -262,23 +369,21 @@ namespace pong
    * \param pos The position of the top left corner where the surface will be
    * blitted.
    * \param text_color The color of the text.
-   * \param font_renderer The font renderer implementation to use when
-   * rasterizing the text!
-   *
-   * \note The text will be rendered monochrome in white. The background will
-   * be solid black.
+   * \param rasterizer The implementation to use when rasterizing text!
    */
   template <class Data>
   Label<Data>::Label(const Data& data,
                      int text_height,
                      math::vector<int> pos,
                      SDL_Color text_color,
-                     FontRenderer* font_renderer) noexcept :
+                     text::Face* face,
+                     text::Rasterizer* rasterizer) noexcept :
                      data_(data),
                      text_height_(text_height),
                      pos_(pos),
                      text_color_(text_color),
-                     font_renderer_(font_renderer),
+                     font_face_(face),
+                     rasterizer_(rasterizer),
                      cache_(make_label_cache(*this)) {}
 
   /*!
@@ -292,7 +397,8 @@ namespace pong
                      text_height_(label.text_height_),
                      pos_(label.pos_),
                      text_color_(label.text_color_),
-                     font_renderer_(label.font_renderer_),
+                     font_face_(label.font_face_),
+                     rasterizer_(label.rasterizer_),
                      cache_(label.cache_){}
   /*!
    * \brief Move constructor.
@@ -305,7 +411,8 @@ namespace pong
                      text_height_(label.text_height_),
                      pos_(label.pos_),
                      text_color_(label.text_color_),
-                     font_renderer_(label.font_renderer_),
+                     font_face_(label.font_face_),
+                     rasterizer_(label.rasterizer_),
                      cache_(std::move(label.cache_)) {}
 
   /*!
@@ -322,7 +429,8 @@ namespace pong
     this->position(label.pos_);
 
     this->text_color(label.text_color_);
-    this->font_renderer(label.font_renderer_);
+    this->font_face(label.font_face_);
+    this->rasterizer(label.rasterizer_);
 
     this->cache_ = label.cache_;
 
@@ -343,7 +451,8 @@ namespace pong
     this->position(label.pos_);
 
     this->text_color(label.text_color_);
-    this->font_renderer(label.font_renderer_);
+    this->font_face(label.font_face_);
+    this->rasterizer(label.rasterizer_);
 
     this->cache_ = std::move(label.cache_);
 

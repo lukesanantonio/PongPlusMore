@@ -19,7 +19,6 @@
  */
 #include "OptionsMenuState.h"
 #include "common/center.hpp"
-#include "../render_text.h"
 #include "../widgets/helper.h"
 namespace pong
 {
@@ -33,7 +32,8 @@ namespace pong
     vol.pos.y = 375;
 
     render_debug_.volume(vol);
-    render_debug_.font_renderer(game.settings.font.get());
+    render_debug_.font_face(game.settings.font_face.get());
+    render_debug_.rasterizer(game.settings.font_rasterizer.get());
 
     ButtonSwitch<bool> render_debug_switch(render_debug_, "Render Debug: ");
 

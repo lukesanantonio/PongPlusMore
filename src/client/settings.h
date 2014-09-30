@@ -23,7 +23,7 @@
 #include <memory>
 #include "common/vector.h"
 #include "json/json.h"
-#include "render_text.h"
+#include "text.h"
 #include "server/Logger.h"
 namespace pong
 {
@@ -34,10 +34,11 @@ namespace pong
   };
   struct ClientSettings
   {
-    ClientSettings(std::string const& filename) noexcept;
-    ClientSettings() noexcept;
+    ClientSettings(std::string const& filename, Logger* l = nullptr) noexcept;
+    ClientSettings(Logger* l = nullptr) noexcept;
 
-    std::unique_ptr<FontRenderer> font;
+    std::unique_ptr<text::Face> font_face;
+    std::unique_ptr<text::Rasterizer> font_rasterizer;
     math::vector<int> extent;
     std::vector<PluginInfo> plugins;
 

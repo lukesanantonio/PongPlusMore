@@ -111,8 +111,10 @@ namespace pong
     });
 
     // Set the label font renderer.
-    this->top_score_.font_renderer(g.settings.font.get());
-    this->bottom_score_.font_renderer(g.settings.font.get());
+    this->top_score_.font_face(g.settings.font_face.get());
+    this->bottom_score_.font_face(g.settings.font_face.get());
+    this->top_score_.rasterizer(g.settings.font_rasterizer.get());
+    this->bottom_score_.rasterizer(g.settings.font_rasterizer.get());
 
     // Set label position.
     this->top_score_.position({10, 500 - this->top_score_.surface_height()});

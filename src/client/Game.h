@@ -20,7 +20,6 @@
 #pragma once
 #include <cstdint>
 #include <memory>
-#include "render_text.h"
 #include "GameState.h"
 #include <json/json.h>
 #include "settings.h"

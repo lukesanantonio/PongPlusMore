@@ -18,21 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "render.h"
+#include "widgets/Label.h"
 namespace pong
 {
   void render_debug(const Game& game, SDL_Renderer* renderer) noexcept
   {
     std::string stats = "FPS: " + std::to_string(game.fps);
-    UniquePtrSurface s = game.settings.font->render_text(stats, 20,
-                                                     {0xff, 0xff, 0xff, 0xff},
-                                                     {0xff, 0xff, 0xff, 0x00});
-    SDL_Texture* t = SDL_CreateTextureFromSurface(renderer, s.get());
-    SDL_Rect dest;
-    dest.w = s->w;
-    dest.h = s->h;
-    dest.y = 1000 - s->h;
-    dest.x = 1000 - s->w;
-    SDL_RenderCopy(renderer, t, NULL, &dest);
+    Label<std::string> label(stats, 20, {}, {0xff, 0xff, 0xff, 0xff},
+                             game.settings.font_face.get(),
+                             game.settings.font_rasterizer.get());
+
+    label.position({1000-label.surface_width(), 1000-label.surface_height()});
+    label.render(renderer);
   }
 
   void render(SDL_Renderer* renderer, const Volume& volume) noexcept

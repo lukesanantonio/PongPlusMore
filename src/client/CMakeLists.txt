@@ -19,7 +19,7 @@
 find_package(SDL2 REQUIRED)
 find_package(Freetype REQUIRED)
 
-add_library(ppmclient STATIC render_text.cpp input_impls.cpp
+add_library(ppmclient STATIC text.cpp input_impls.cpp
                              render.cpp widgets/helper.cpp
                              widgets/Text_Box.cpp
                              widgets/Button.cpp

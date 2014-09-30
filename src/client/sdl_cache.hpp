@@ -30,26 +30,26 @@ namespace pong
    * \brief A simple deleter which frees `SDL_Surface`s - for use with smart
    * pointers, etc.
    */
-  struct SurfaceDeleter
+  struct Surface_Deleter
   {
     void operator()(SDL_Surface* surface)
     {
       SDL_FreeSurface(surface);
     }
   };
-  using Surface_Cache = Cache_With_Deleter<SDL_Surface, SurfaceDeleter>;
+  using Surface_Cache = Cache_With_Deleter<SDL_Surface, Surface_Deleter>;
 
   /*!
    * \brief A simple deleter which frees `SDL_Texture`s - for use with smart
    * pointers, etc.
    */
-  struct TextureDeleter
+  struct Texture_Deleter
   {
     void operator()(SDL_Texture* texture)
     {
       SDL_DestroyTexture(texture);
     }
   };
-  using Texture_Cache = Cache_With_Deleter<SDL_Texture, TextureDeleter,
+  using Texture_Cache = Cache_With_Deleter<SDL_Texture, Texture_Deleter,
                                            Surface_Cache, SDL_Renderer*>;
 }

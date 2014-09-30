@@ -34,7 +34,8 @@ namespace pong
     vol.pos.y = center(0, g.settings.extent.y, vol.height);
     this->addr_input_.volume(vol);
 
-    this->addr_input_.font_renderer(g.settings.font.get());
+    this->addr_input_.font_face(g.settings.font_face.get());
+    this->addr_input_.rasterizer(g.settings.font_rasterizer.get());
   }
   void MultiplayerSelectState::update() noexcept {}
 
