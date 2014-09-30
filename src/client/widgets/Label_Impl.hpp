@@ -24,6 +24,7 @@
 #include <boost/lexical_cast.hpp>
 #include "common/crash.hpp"
 #include <vector>
+#include <utility>
 namespace pong
 {
   /*!
@@ -207,156 +208,77 @@ namespace pong
       if(p) return p;
       std::string text = boost::lexical_cast<std::string>(l.data());
 
-      std::vector<std::pair<text::Metrics, text::Unique_Surface> > glyphs;
-      int width = 0, max_above = 0, max_below = 0;
-      for(char c : text)
-      {
-        FT_Glyph g = l.font_face()->glyph(l.text_height(), c);
-
-        auto metrics = text::metrics(g);
-        width += metrics.advance;
-        max_above = std::max(metrics.ascent, max_above);
-        max_below = std::max(metrics.descent, max_below);
-
-        text::Unique_Surface surf =
-                       std::move(l.rasterizer()->rasterize(g, l.text_color()));
-        glyphs.emplace_back(metrics, std::move(surf));
-      }
-
-      SDL_Surface* line = SDL_CreateRGBSurface(0, width,
-                                               max_below + max_above, 32,
-                                               0xff000000,
-                                               0x00ff0000,
-                                               0x0000ff00,
-                                               0x000000ff);
-
-      // Make a white-but-transparent background to work with.
-      for(int row = 0; row < line->h; ++row)
-      {
-        uint8_t* out_row = (uint8_t*) line->pixels + (row * line->pitch);
-        for(int pix = 0; pix < line->w; ++pix)
-        {
-          uint32_t* out = (uint32_t*) out_row + pix;
-          *out = 0xffffff00;
-        }
-      }
-
-      int pen_x = 0;
-      for(auto& glyph : glyphs)
-      {
-        SDL_Rect dest;
-        dest.x = pen_x + std::get<0>(glyph).bearing;
-        dest.y = max_above - std::get<0>(glyph).ascent;
-        SDL_BlitSurface(std::get<1>(glyph).get(), NULL, line, &dest);
-
-        pen_x += std::get<0>(glyph).advance;
-      }
-
-      return Surface_Cache::ptr_type(line);
-    });
-    return c;
-#if 0
-      // Lines?
+      // Separate the text into lines.
       std::vector<std::string> lines;
-
-      using std::begin; using std::end;
-      std::string::iterator prev_found = begin(text);
-      std::string::iterator found;
-      while((found = std::find(prev_found, end(text), '\n')) != end(text))
       {
-        lines.push_back(std::string(prev_found, found));
-        prev_found = found + 1;
-      }
-      if(prev_found != end(text))
-      {
-        lines.push_back(std::string(prev_found, end(text)));
+        using std::begin; using std::end;
+        std::string::iterator prev_found = begin(text);
+        std::string::iterator found;
+        while((found = std::find(prev_found, end(text), '\n')) != end(text))
+        {
+          lines.push_back(std::string(prev_found, found));
+          prev_found = found + 1;
+        }
+        if(prev_found != end(text))
+        {
+          lines.push_back(std::string(prev_found, end(text)));
+        }
+
+        if(lines.empty()) return Surface_Cache::ptr_type(nullptr);
       }
 
-      if(lines.empty()) return Surface_Cache::ptr_type(nullptr);
-
-      // Get all the necessary glyphs.
-      std::vector<std::vector<text::Glyph*> > glyphs;
+      // Rasterize all the glyphs but record their metrics.
+      std::vector<std::vector<std::pair<text::Metrics,
+                                        text::Unique_Surface> > > glyphs;
+      glyphs.reserve(lines.size());
       for(std::string line : lines)
       {
-        std::vector<text::Glyph*> glyphs_on_line;
+        glyphs.emplace_back();
+        glyphs.back().reserve(line.size());
         for(char c : line)
         {
-          glyphs_on_line.push_back(&l.font_face()->glyph(l.text_height(), c));
+          auto glyph = l.font_face()->glyph(l.text_height(), c);
+          auto m = text::metrics(glyph);
+          glyphs.back().emplace_back(m,
+                             l.rasterizer()->rasterize(glyph, l.text_color()));
         }
-        glyphs.push_back(glyphs_on_line);
       }
 
-      int baseline_descent = l.text_height() * 0.8;
-
+      // Make lines
       std::vector<text::Unique_Surface> line_surfs;
-      // For every line
-      for(int i = 0; i < lines.size(); i++)
+      line_surfs.reserve(lines.size());
+      for(int i = 0; i < lines.size(); ++i)
       {
-        std::string line = lines[i];
-        int width = 0, minY = 0, maxY = 0;
-        for(text::Glyph* g : glyphs[i])
-        {
-          auto metrics = text::metrics(*g);
-          width += metrics.advance;
-          minY = std::min(metrics.descent, minY);
-          maxY = std::max(metrics.ascent, maxY);
-        }
-        int height = minY + maxY;
-        // Determine the line and height.
+        std::string const& line = lines[i];
 
-        SDL_Surface* line_surf = SDL_CreateRGBSurface(0, width, height, 8,
-                                                      0, 0, 0, 0);
-        text::initialize_grayscale_palette(line_surf, {0xff, 0xff, 0xff, 0xff},
-                                           {0x00, 0x00, 0x00, 0x00});
+        text::Bitmap_Metrics bm(line, l.text_height(), *l.font_face());
+        text::Unique_Surface line_surf(SDL_CreateRGBSurface(0,
+                                                            bm.extent.x,
+                                                            bm.extent.y,
+                                                            32,
+                                                            0xff000000,
+                                                            0x00ff0000,
+                                                            0x0000ff00,
+                                                            0x000000ff));
+
         int pen_x = 0;
-        for(text::Glyph* g : glyphs[i])
+        for(auto& glyph : glyphs[i])
         {
-          text::Unique_Surface surf = l.rasterizer()->rasterize(*g);
-
           SDL_Rect dest;
-          dest.x = pen_x;
-          dest.y = baseline_descent;
-          SDL_BlitSurface(surf.get(), NULL, line_surf, &dest);
+          dest.x = pen_x + std::get<0>(glyph).bearing;
+          dest.y = bm.baseline - std::get<0>(glyph).ascent;
+          SDL_BlitSurface(std::get<1>(glyph).get(), NULL,
+                          line_surf.get(), &dest);
 
-          auto metrics = text::metrics(*g);
-          pen_x += metrics.advance;
+          pen_x += std::get<0>(glyph).advance;
         }
-
-        line_surfs.push_back(text::Unique_Surface(line_surf));
+        line_surfs.push_back(std::move(line_surf));
       }
 
-      // Make the final surface to blit to.
-      int width = 0;
-      for(auto& surf : line_surfs)
-      {
-        width = std::max(surf->w, width);
-      }
-
-      int line_pen = 0;
-      int vertical_advance = l.text_height() * 1.3;
-      int height = lines.size() == 1 ? line_surfs.front()->h
-                                     : vertical_advance * lines.size();
-      SDL_Surface* result = SDL_CreateRGBSurface(0, width, height,
-                                                 8, 0, 0, 0, 0);
-      //SDL_SetSurfaceBlendMode(result, SDL_BLENDMODE_BLEND);
-      text::initialize_grayscale_palette(result, {0xff, 0xff, 0xff, 0xff},
-                                         {0x00, 0x00, 0x00, 0x00});
-
-      int pen_y = 0;
-      for(text::Unique_Surface const& surf : line_surfs)
-      {
-        SDL_Rect dest;
-        dest.x = 0;
-        dest.y = pen_y + baseline_descent;
-        //SDL_SetSurfaceBlendMode(surf.get(), SDL_BLENDMODE_NONE);
-        SDL_BlitSurface(surf.get(), NULL, result, &dest);
-        pen_y += vertical_advance;
-      }
-
-      return Surface_Cache::ptr_type(result);
+      return std::move(line_surfs.back());
     });
     return c;
-#endif
+
   }
 
   /*!

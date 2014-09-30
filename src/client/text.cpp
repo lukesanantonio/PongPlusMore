@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "text.h"
+#include <vector>
 #include <algorithm>
 namespace pong { namespace text
 {
@@ -107,6 +108,19 @@ namespace pong { namespace text
     metrics.advance = glyph->advance.x >> 16;
 
     return metrics;
+  }
+
+  Bitmap_Metrics::Bitmap_Metrics(std::string const& str, int size,
+                                 Face& f) noexcept
+  {
+    std::vector<FT_Glyph> glyphs;
+    for(char c : str)
+    {
+      glyphs.push_back(f.glyph(size, c));
+    }
+
+    using std::begin; using std::end;
+    *this = bitmap_metrics(begin(glyphs), end(glyphs));
   }
 
   Unique_Surface MonoRaster::rasterize(FT_Glyph glyph,

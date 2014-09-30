@@ -107,6 +107,56 @@ namespace pong { namespace text
   };
   Metrics metrics(FT_Glyph glyph) noexcept;
 
+  struct Bitmap_Metrics
+  {
+    Bitmap_Metrics() noexcept = default;
+
+    template <class Iter>
+    inline Bitmap_Metrics(Iter begin, Iter end) noexcept;
+    Bitmap_Metrics(std::string const&, int, Face&) noexcept;
+
+    Bitmap_Metrics(Bitmap_Metrics const&) = default;
+    Bitmap_Metrics& operator=(Bitmap_Metrics const&) noexcept = default;
+    Bitmap_Metrics(Bitmap_Metrics&&) noexcept = default;
+    Bitmap_Metrics& operator=(Bitmap_Metrics&&) = default;
+
+    math::vector<int> extent = {};
+    int baseline = 0;
+  };
+
+  template <class Iter>
+  Bitmap_Metrics bitmap_metrics(Iter begin, Iter end) noexcept
+  {
+    Bitmap_Metrics bm;
+
+    int max_ascent = 0, max_descent = 0;
+    for(Iter cur = begin; cur != end; ++cur)
+    {
+      // Get the metrics for the current glyph
+      FT_Glyph g = *cur;
+      auto cur_metrics = metrics(g);
+
+      // Extend the image the amount the glyph needs to advance.
+      bm.extent.x += cur_metrics.advance;
+
+      // The baseline is going to be the largest ascent, which will also be
+      // the ascent that determines the minimum height of the bitmap.
+      bm.baseline = std::max(bm.baseline, cur_metrics.ascent);
+
+      // The height is the maximum height of the bitmap.
+      max_ascent = std::max(max_ascent, cur_metrics.ascent);
+      max_descent = std::max(max_descent, cur_metrics.descent);
+    }
+
+    bm.extent.y = max_ascent + max_descent;
+
+    return bm;
+  }
+
+  template <class Iter>
+  inline Bitmap_Metrics::Bitmap_Metrics(Iter begin, Iter end) noexcept
+                                : Bitmap_Metrics(bitmap_metrics(begin, end)) {}
+
   /*!
    * \brief A unique_ptr which deletes an SDL_Surface* properly.
    */
