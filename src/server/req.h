@@ -23,7 +23,7 @@
 #include <string>
 #include <functional>
 #include <boost/variant/variant.hpp>
-#include "common/template_util.hpp"
+#include "core/common/template_utility.hpp"
 #include "json/json.h"
 
 #define DECLARE_STRING(str) static constexpr const char* method_name = str

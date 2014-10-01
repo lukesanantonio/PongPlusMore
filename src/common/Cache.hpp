@@ -24,7 +24,7 @@
  * to be put in the header. This is just for the sake of separation.
  */
 #pragma once
-#include "template_util.hpp"
+#include "core/common/template_utility.hpp"
 namespace pong
 {
   /*!
