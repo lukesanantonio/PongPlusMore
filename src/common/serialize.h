@@ -22,7 +22,7 @@
  */
 #pragma once
 #include <json/json.h>
-#include "vector.h"
+#include "core/common/vector.h"
 #include "server/Node.hpp"
 #include "server/ObjectManager.h"
 #include "server/Quadtree.h"

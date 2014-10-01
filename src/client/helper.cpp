@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "helper.h"
-#include "common/vector.h"
+#include "core/common/vector.h"
 namespace pong
 {
   Button back_button(Game& g, std::shared_ptr<GameState> prev_state) noexcept

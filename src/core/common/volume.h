@@ -19,8 +19,8 @@
  */
 #pragma once
 #include "vector.h"
-#include "parse/helper.h"
-#include "dump/helper.h"
+#include "common/parse/helper.h"
+#include "common/dump/helper.h"
 #include <unordered_map>
 #include <array>
 namespace pong

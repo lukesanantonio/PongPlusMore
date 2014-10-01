@@ -21,7 +21,7 @@
  * \brief All the functions relating to serialization of objects to JSON.
  */
 #include "serialize.h"
-#include "volume.h"
+#include "core/common/volume.h"
 #include "server/Object.h"
 #include "server/ObjectManager.h"
 #include "server/Server.h"

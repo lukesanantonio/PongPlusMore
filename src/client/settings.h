@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "common/vector.h"
+#include "core/common/vector.h"
 #include "json/json.h"
 #include "core/text.h"
 #include "core/io/Logger.h"

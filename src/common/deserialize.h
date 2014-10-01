@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "volume.h"
+#include "core/common/volume.h"
 #include "server/req.h"
 #include "core/io//Logger.h"
 #include "server/Object.h"

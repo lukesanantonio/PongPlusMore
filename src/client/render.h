@@ -25,7 +25,7 @@
 #pragma once
 #include "Game.h"
 #include "SDL.h"
-#include "common/volume.h"
+#include "core/common/volume.h"
 namespace pong
 {
   void render_debug(const Game& game, SDL_Renderer* renderer) noexcept;

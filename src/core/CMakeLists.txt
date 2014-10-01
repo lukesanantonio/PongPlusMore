@@ -19,7 +19,8 @@
 find_package(SDL2 REQUIRED)
 find_package(Freetype REQUIRED)
 
-add_library(ppmcore STATIC io/external_io.cpp
+add_library(ppmcore STATIC common/volume.cpp
+                           io/external_io.cpp
                            io/ipc.cpp
                            io/Logger.cpp
                            io/net.cpp

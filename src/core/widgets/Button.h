@@ -26,8 +26,8 @@
 #include "SDL.h"
 #include "Label.h"
 #include "../text.h"
-#include "common/vector.h"
-#include "common/volume.h"
+#include "core/common/vector.h"
+#include "core/common/volume.h"
 namespace pong
 {
   /*!
