@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "net.h"
-#include "rpc.h"
+#include "ipc.h"
 namespace pong { namespace net
 {
   UDP_Handle* create_udp_handle(uv_loop_t* loop) noexcept

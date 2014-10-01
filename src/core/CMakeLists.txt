@@ -16,7 +16,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_library(ppmserv STATIC LocalServer.cpp ObjectManager.cpp Quadtree.cpp
-                           plugins.cpp req.cpp Object.cpp)
-target_include_directories(ppmserv PUBLIC ${Boost_INCLUDE_DIRS})
-target_link_libraries(ppmserv jsoncpp ppmcommon ppmcore)
+find_package(SDL2 REQUIRED)
+find_package(Freetype REQUIRED)
+
+add_library(ppmcore STATIC io/external_io.cpp
+                           io/ipc.cpp
+                           io/Logger.cpp
+                           io/net.cpp
+                           widgets/Button.cpp
+                           widgets/Text_Box.cpp
+                           text.cpp)
+
+target_link_libraries(ppmcore ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
+target_link_libraries(ppmcore jsoncpp)
+target_include_directories(ppmcore PUBLIC ${SDL2_INCLUDE_DIRS}
+                                          ${FREETYPE_INCLUDE_DIRS})
+
+add_executable(pong_engine engine.cpp)
+target_link_libraries(pong_engine ppmcore)
+
+install(TARGETS pong_engine RUNTIME DESTINATION bin)
+

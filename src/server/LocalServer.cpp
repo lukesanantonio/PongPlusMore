@@ -19,7 +19,6 @@
  */
 #include "LocalServer.h"
 #include <csignal>
-#include "ipc.h"
 namespace pong
 {
   LocalServer::LocalServer(Volume v) noexcept : quadtree_(v, 3, 5)

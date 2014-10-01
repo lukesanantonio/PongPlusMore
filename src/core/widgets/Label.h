@@ -24,10 +24,10 @@
 #pragma once
 #include <string>
 #include "SDL.h"
-#include "../sdl_cache.hpp"
+#include "client/sdl_cache.hpp"
 #include "common/vector.h"
 #include "../text.h"
-#include "../util.hpp"
+#include "client/util.hpp"
 namespace pong
 {
   /*!

@@ -19,22 +19,21 @@
 find_package(SDL2 REQUIRED)
 find_package(Freetype REQUIRED)
 
-add_library(ppmclient STATIC text.cpp input_impls.cpp
-                             render.cpp widgets/helper.cpp
-                             widgets/Text_Box.cpp
-                             widgets/Button.cpp
+add_library(ppmclient STATIC input_impls.cpp
+                             render.cpp
                              GameStates/MenuGameState.cpp
                              GameStates/PaddleGameState.cpp
                              GameStates/OptionsMenuState.cpp
                              GameStates/MultiplayerSelectState.cpp
+                             helper.cpp
                              settings.cpp)
 
 target_link_libraries(ppmclient ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
-target_link_libraries(ppmclient ppmserv)
+target_link_libraries(ppmclient ppmserv ppmcore jsoncpp)
 target_include_directories(ppmclient PUBLIC ${SDL2_INCLUDE_DIRS}
                                             ${FREETYPE_INCLUDE_DIRS})
 
 add_executable(ppm ppm.cpp)
-target_link_libraries(ppm ppmclient)
+target_link_libraries(ppm ppmclient ppmcore)
 
 install(TARGETS ppm RUNTIME DESTINATION bin)

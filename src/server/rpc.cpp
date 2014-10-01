@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "rpc.h"
-#include "ipc.h"
+#include "core/io/ipc.h"
 #include "req.h"
 #include "common/serialize.h"
 #include "common/deserialize.h"

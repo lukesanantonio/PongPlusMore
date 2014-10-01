@@ -19,7 +19,7 @@
  */
 #include "MultiplayerSelectState.h"
 #include "common/center.hpp"
-#include "../widgets/helper.h"
+#include "../helper.h"
 namespace pong
 {
   MultiplayerSelectState::

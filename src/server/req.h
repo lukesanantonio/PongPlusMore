@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "Logger.h"
+#include "core/io/Logger.h"
 #include "Object.h"
 #include <string>
 #include <functional>

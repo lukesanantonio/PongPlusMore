@@ -29,9 +29,9 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 
-#include "sdl_cache.hpp"
+#include "client/sdl_cache.hpp"
 #include "common/vector.h"
-#include "server/Logger.h"
+#include "core/io/Logger.h"
 namespace pong { namespace text
 {
   namespace detail

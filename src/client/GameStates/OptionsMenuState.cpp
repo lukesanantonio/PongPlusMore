@@ -19,7 +19,7 @@
  */
 #include "OptionsMenuState.h"
 #include "common/center.hpp"
-#include "../widgets/helper.h"
+#include "../helper.h"
 namespace pong
 {
   OptionsMenuState::OptionsMenuState(Game& game, std::shared_ptr<GameState> rs)

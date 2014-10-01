@@ -17,12 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include <memory>
-#include "Button.h"
-#include "../Game.h"
-#include "../GameState.h"
-namespace pong
+#include "json/json.h"
+
+int main(int argc, char** argv)
 {
-  Button back_button(Game& g, std::shared_ptr<GameState> prev_state) noexcept;
+  if(argc < 2)
+  {
+  }
+
+  return 0;
 }

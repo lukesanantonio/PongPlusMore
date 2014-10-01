@@ -23,8 +23,8 @@
 #include <memory>
 #include "common/vector.h"
 #include "json/json.h"
-#include "text.h"
-#include "server/Logger.h"
+#include "core/text.h"
+#include "core/io/Logger.h"
 namespace pong
 {
   struct PluginInfo

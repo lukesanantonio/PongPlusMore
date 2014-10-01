@@ -21,7 +21,7 @@
 #include <cstdint>
 #include <memory>
 #include "GameState.h"
-#include <json/json.h>
+#include "json/json.h"
 #include "settings.h"
 namespace pong
 {

@@ -22,7 +22,7 @@
 #include <vector>
 #include "Object.h"
 #include "ObjectManager.h"
-#include "Logger.h"
+#include "core/io/Logger.h"
 #include "plugins.h"
 #include "req.h"
 namespace pong

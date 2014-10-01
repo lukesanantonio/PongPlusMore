@@ -21,7 +21,7 @@
 #include "Server.h"
 #include "Quadtree.h"
 #include <boost/signals2.hpp>
-#include "ipc.h"
+#include "core/io/ipc.h"
 namespace pong
 {
   struct ModifiedObjectReference;

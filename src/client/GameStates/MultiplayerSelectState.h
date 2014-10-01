@@ -20,8 +20,8 @@
 #pragma once
 #include "../Game.h"
 #include "../GameState.h"
-#include "../widgets/Button.h"
-#include "../widgets/Text_Box.h"
+#include "core/widgets/Button.h"
+#include "core/widgets/Text_Box.h"
 namespace pong
 {
   struct MultiplayerSelectState : public GameState

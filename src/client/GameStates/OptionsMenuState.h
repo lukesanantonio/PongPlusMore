@@ -20,9 +20,9 @@
 #pragma once
 #include <array>
 #include "../GameState.h"
-#include "../widgets/Button.h"
+#include "core/widgets/Button.h"
 #include "../Game.h"
-#include "../widgets/ButtonSwitch.h"
+#include "core/widgets/ButtonSwitch.h"
 
 namespace pong
 {
