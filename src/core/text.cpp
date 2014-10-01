@@ -123,15 +123,18 @@ namespace pong { namespace text
     *this = bitmap_metrics(begin(glyphs), end(glyphs));
   }
 
-  Unique_Surface MonoRaster::rasterize(FT_Glyph glyph,
-                                       SDL_Color color) const noexcept
+  FT_BitmapGlyph MonoRaster::make_bitmap_glyph_(FT_Glyph glyph) const noexcept
   {
     // Rasterize
     FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph) glyph;
     FT_Glyph_To_Bitmap((FT_Glyph*) &bitmap_glyph, FT_RENDER_MODE_MONO, 0, 0);
-
+    return bitmap_glyph;
+  }
+  Unique_Surface MonoRaster::rasterize_(FT_BitmapGlyph glyph,
+                                        SDL_Color color) const noexcept
+  {
     // Create surface
-    Metrics m = metrics((FT_Glyph) bitmap_glyph);
+    Metrics m = metrics((FT_Glyph) glyph);
     Unique_Surface surf(SDL_CreateRGBSurface(0, m.bitmap_extent.x,
                                              m.bitmap_extent.y, 32,
                                              0xff000000,
@@ -142,7 +145,7 @@ namespace pong { namespace text
     // Blit
     uint32_t pix_data = (color.r << 24)|(color.g << 16)|(color.b << 8)|0xff;
 
-    FT_Bitmap* bitmap = &bitmap_glyph->bitmap;
+    FT_Bitmap* bitmap = &glyph->bitmap;
     //Each pixel, a full byte, will only use it's first bit. A horrible
     //waste of memory, but I'm not sure if I can create an SDL_Surface*
     //with 8 pixels per byte.
@@ -166,15 +169,20 @@ namespace pong { namespace text
     return surf;
   }
 
-  Unique_Surface AntiAliasedRaster::rasterize(FT_Glyph glyph,
-                                              SDL_Color color) const noexcept
+  FT_BitmapGlyph
+  AntiAliasedRaster::make_bitmap_glyph_(FT_Glyph glyph) const noexcept
   {
     // Rasterize
     FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph) glyph;
     FT_Glyph_To_Bitmap((FT_Glyph*) &bitmap_glyph, FT_RENDER_MODE_NORMAL, 0, 0);
+    return bitmap_glyph;
+  }
 
+  Unique_Surface AntiAliasedRaster::rasterize_(FT_BitmapGlyph glyph,
+                                               SDL_Color color) const noexcept
+  {
     // Create surface
-    Metrics m = metrics((FT_Glyph) bitmap_glyph);
+    Metrics m = metrics((FT_Glyph) glyph);
     Unique_Surface surf(SDL_CreateRGBSurface(0, m.bitmap_extent.x,
                                              m.bitmap_extent.y,
                                              32,
@@ -184,7 +192,7 @@ namespace pong { namespace text
                                              0x000000ff));
 
     // Blit
-    FT_Bitmap* bitmap = &bitmap_glyph->bitmap;
+    FT_Bitmap* bitmap = &glyph->bitmap;
     SDL_LockSurface(surf.get());
     {
       for(int row = 0; row < surf->h; ++row)

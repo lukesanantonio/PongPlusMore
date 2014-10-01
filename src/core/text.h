@@ -166,17 +166,40 @@ namespace pong { namespace text
   struct Rasterizer
   {
     virtual ~Rasterizer() noexcept = default;
-    virtual Unique_Surface rasterize(FT_Glyph glyph,
-                                     SDL_Color color) const noexcept = 0;
+    inline Unique_Surface rasterize(FT_Glyph, SDL_Color) const noexcept;
+  private:
+    mutable std::unordered_map<FT_Glyph, FT_BitmapGlyph> cache_;
+
+    virtual FT_BitmapGlyph
+    make_bitmap_glyph_(FT_Glyph glyph) const noexcept = 0;
+
+    virtual Unique_Surface rasterize_(FT_BitmapGlyph glyph,
+                                      SDL_Color color) const noexcept = 0;
   };
+
+  inline Unique_Surface Rasterizer::rasterize(FT_Glyph glyph,
+                                              SDL_Color c) const noexcept
+  {
+    if(cache_.find(glyph) == cache_.end())
+    {
+      cache_.emplace(glyph, make_bitmap_glyph_(glyph));
+    }
+    return rasterize_(cache_[glyph], c);
+  }
+
   struct MonoRaster : Rasterizer
   {
-    Unique_Surface rasterize(FT_Glyph glyph,
+  private:
+    FT_BitmapGlyph make_bitmap_glyph_(FT_Glyph glyph) const noexcept override;
+    Unique_Surface rasterize_(FT_BitmapGlyph glyph,
                              SDL_Color color) const noexcept override;
   };
   struct AntiAliasedRaster : Rasterizer
   {
-    Unique_Surface rasterize(FT_Glyph glyph,
+  private:
+    FT_BitmapGlyph make_bitmap_glyph_(FT_Glyph glyph) const noexcept override;
+
+    Unique_Surface rasterize_(FT_BitmapGlyph glyph,
                              SDL_Color color) const noexcept override;
   };
 } }
