@@ -36,4 +36,5 @@ namespace pong
                            const Volume& v,
                            VolumeSides sides,
                            double percentage) noexcept;
+  void render_wireframe(SDL_Renderer*, Volume const&) noexcept;
 }

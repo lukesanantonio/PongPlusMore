@@ -86,4 +86,14 @@ namespace pong
       SDL_RenderFillRect(renderer, &r);
     }
   }
+
+  void render_wireframe(SDL_Renderer* r, Volume const& vol) noexcept
+  {
+    GENERATE_VOLUME_BOUNDS(vol);
+
+    SDL_RenderDrawLine(r, vol_left, vol_top, vol_right, vol_top);
+    SDL_RenderDrawLine(r, vol_right, vol_top, vol_right, vol_bottom);
+    SDL_RenderDrawLine(r, vol_right, vol_bottom, vol_left, vol_bottom);
+    SDL_RenderDrawLine(r, vol_left, vol_bottom, vol_left, vol_top);
+  }
 }

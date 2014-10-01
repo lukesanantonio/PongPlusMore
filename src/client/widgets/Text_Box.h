@@ -25,7 +25,7 @@ namespace pong
 {
   struct Text_Box
   {
-    Text_Box(Volume const& vol = Volume(), int text_size = 15,
+    Text_Box(Volume const& vol = Volume(),
              int blink_rate = 50, text::Face* face = nullptr,
              text::Rasterizer* = nullptr) noexcept;
 
@@ -34,9 +34,6 @@ namespace pong
 
     inline Volume volume() const noexcept;
     inline void volume(Volume const&) noexcept;
-
-    inline int text_size() const noexcept;
-    inline void text_size(int) noexcept;
 
     inline int cur_pos() const noexcept;
     inline void cur_pos(int) noexcept;
@@ -66,15 +63,7 @@ namespace pong
   inline void Text_Box::volume(Volume const& vol) noexcept
   {
     this->vol_ = vol;
-  }
-
-  inline int Text_Box::text_size() const noexcept
-  {
-    return this->label_.text_height();
-  }
-  inline void Text_Box::text_size(int size) noexcept
-  {
-    return this->label_.text_height(size);
+    label_.text_height(vol.height);
   }
 
   inline int Text_Box::cur_pos() const noexcept

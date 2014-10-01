@@ -18,20 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Text_Box.h"
+#include "../render.h"
+#include "common/center.hpp"
 namespace pong
 {
-  Text_Box::Text_Box(Volume const& vol, int text_size, int blink_rate,
+  Text_Box::Text_Box(Volume const& vol, int blink_rate,
                      text::Face* face, text::Rasterizer* rasterizer) noexcept
-                     : vol_(vol), cur_pos_(0), blink_rate_(blink_rate)
+                     : cur_pos_(0), blink_rate_(blink_rate)
   {
-    this->label_.position(vol.pos);
     this->label_.rasterizer(rasterizer);
     this->label_.font_face(face);
+    this->volume(vol);
   }
   void Text_Box::render(SDL_Renderer* r) const noexcept
   {
-    this->label_.position(this->vol_.pos);
+    math::vector<double> label_pos;
+    label_pos.x = vol_.pos.x + 10;
+    label_pos.y = center(vol_.pos.y, vol_.height, label_.surface_height());
+    this->label_.position(label_pos);
     this->label_.render(r);
+
+    SDL_SetRenderDrawColor(r, 0xff, 0xff, 0xff, 0xff);
+    render_wireframe(r, vol_);
   }
   void Text_Box::handle_event(const SDL_Event& e) noexcept
   {
