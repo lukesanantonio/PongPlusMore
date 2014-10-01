@@ -18,6 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "helper.h"
+#include "common/vector.h"
 namespace pong
 {
+  Button back_button(Game& g, std::shared_ptr<GameState> prev_state) noexcept
+  {
+    Button b;
+    b.text("Back");
+    b.on_click([=, &g]()
+    {
+      g.game_state = prev_state;
+    });
+    b.add_hotkey(SDL_SCANCODE_ESCAPE);
+    b.font_face(g.settings.font_face.get());
+    b.rasterizer(g.settings.font_rasterizer.get());
+
+    constexpr static int from_side = 35;
+    Volume v = {{}, 300, 75};
+    v.pos.x = from_side;
+    v.pos.y = g.settings.extent.y - v.height - from_side;
+    b.volume(v);
+
+    return b;
+  }
 }
