@@ -33,6 +33,7 @@ namespace pong
     void render(SDL_Renderer* renderer) const noexcept override;
   private:
     Text_Box addr_input_;
+    Button submit_;
     Button back_;
     Game& g_;
   };

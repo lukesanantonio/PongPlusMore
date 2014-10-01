@@ -25,17 +25,30 @@ namespace pong
   MultiplayerSelectState::
   MultiplayerSelectState(Game& g, std::shared_ptr<GameState> rs) noexcept
                                                  : g_(g),
-                                                   back_(back_button(g, rs))
+                                                   back_(back_button(g, rs)),
+                                                   submit_("Submit")
   {
     Volume vol;
-    vol.width = 650;
-    vol.height = 150;
+    vol.width = 850;
+    vol.height = 90;
     vol.pos.x = center(0, g.settings.extent.x, vol.width);
     vol.pos.y = center(0, g.settings.extent.y, vol.height);
+    vol.pos.y -= 100;
     this->addr_input_.volume(vol);
 
     this->addr_input_.font_face(g.settings.font_face.get());
     this->addr_input_.rasterizer(g.settings.font_rasterizer.get());
+
+    back_.add_hotkey(SDL_SCANCODE_ESCAPE);
+
+    Volume submit_vol = vol;
+    submit_vol.pos.y += vol.height + 25;
+    submit_.volume(submit_vol);
+    submit_.add_hotkey(SDL_SCANCODE_RETURN);
+    submit_.font_face(g.settings.font_face.get());
+    submit_.rasterizer(g.settings.font_rasterizer.get());
+
+    //submit_.onClick();
   }
   void MultiplayerSelectState::update() noexcept {}
 
@@ -44,11 +57,15 @@ namespace pong
   {
     if(event.type == SDL_QUIT) this->g_.exiting = true;
     this->addr_input_.handle_event(event);
+    this->back_.handleEvent(event);
+    this->submit_.handleEvent(event);
   }
 
   void MultiplayerSelectState::
   render(SDL_Renderer* renderer) const noexcept
   {
     this->addr_input_.render(renderer);
+    this->back_.render(renderer);
+    this->submit_.render(renderer);
   }
 }
