@@ -24,12 +24,52 @@
 #pragma once
 #include <string>
 #include "SDL.h"
-#include "client/sdl_cache.hpp"
+#include "common/Cache.h"
 #include "common/vector.h"
 #include "../text.h"
 #include "client/util.hpp"
 namespace pong
 {
+  struct Rasterized_String
+  {
+    SDL_Surface* surface;
+    int baseline;
+  };
+
+  struct Rasterized_String_Deleter
+  {
+    void operator()(Rasterized_String* str)
+    {
+      SDL_FreeSurface(str->surface);
+      delete str;
+    }
+  };
+
+  using Rasterized_String_Cache =
+              Cache_With_Deleter<Rasterized_String, Rasterized_String_Deleter>;
+
+  /*!
+   * \brief A simple deleter which frees `SDL_Texture`s - for use with smart
+   * pointers, etc.
+   */
+  struct Texture_Deleter
+  {
+    void operator()(SDL_Texture* texture)
+    {
+      SDL_DestroyTexture(texture);
+    }
+  };
+
+  using Label_Cache = Cache_With_Deleter<SDL_Texture, Texture_Deleter,
+                                         Rasterized_String_Cache,
+                                         SDL_Renderer*>;
+
+    enum class Label_Mode
+    {
+      Bitmap,
+      Baseline,
+    };
+
   /*!
    * \brief Class wrapping renderable text.
    *
@@ -46,7 +86,8 @@ namespace pong
                    math::vector<int> pos = math::vector<int>(),
                    SDL_Color text_color = {0xff, 0xff, 0xff, 0xff},
                    text::Face* face = nullptr,
-                   text::Rasterizer* rasterizer = nullptr) noexcept;
+                   text::Rasterizer* rasterizer = nullptr,
+                   Label_Mode mode = Label_Mode::Bitmap) noexcept;
 
     /*!
      * \brief Free's the text cache if necessary.
@@ -60,7 +101,6 @@ namespace pong
     Label<Data>& operator=(Label&&) noexcept;
 
     void render(SDL_Renderer* renderer) const;
-    void render(SDL_Surface* s) const;
 
     inline int surface_width() const;
     inline int surface_height() const;
@@ -82,6 +122,9 @@ namespace pong
 
     inline void rasterizer(text::Rasterizer* rasterizer) noexcept;
     inline text::Rasterizer* rasterizer() const noexcept;
+
+    inline void mode(Label_Mode) noexcept;
+    inline Label_Mode mode() const noexcept;
   private:
     /*!
      * \brief The content of the label.
@@ -115,7 +158,9 @@ namespace pong
      */
     text::Rasterizer* rasterizer_;
 
-    mutable Texture_Cache cache_;
+    Label_Mode mode_;
+
+    mutable Label_Cache cache_;
   };
 }
 

@@ -28,13 +28,16 @@ namespace pong
   {
     this->label_.rasterizer(rasterizer);
     this->label_.font_face(face);
+
+    this->label_.mode(Label_Mode::Baseline);
+
     this->volume(vol);
   }
   void Text_Box::render(SDL_Renderer* r) const noexcept
   {
     math::vector<double> label_pos;
     label_pos.x = vol_.pos.x + 10;
-    label_pos.y = center(vol_.pos.y, vol_.height, label_.surface_height());
+    label_pos.y = vol_.pos.y + (vol_.height * .8);
     this->label_.position(label_pos);
     this->label_.render(r);
 

@@ -110,28 +110,38 @@ namespace pong { namespace text
     return metrics;
   }
 
-  Bitmap_Metrics::Bitmap_Metrics(std::string const& str, int size,
-                                 Face& f) noexcept
+  Rasterizer::~Rasterizer() noexcept
   {
-    std::vector<FT_Glyph> glyphs;
-    for(char c : str)
+    for(auto& pair : cache_)
     {
-      glyphs.push_back(f.glyph(size, c));
+      FT_Done_Glyph((FT_Glyph) std::get<1>(pair));
     }
-
-    using std::begin; using std::end;
-    *this = bitmap_metrics(begin(glyphs), end(glyphs));
   }
 
-  FT_BitmapGlyph MonoRaster::make_bitmap_glyph_(FT_Glyph glyph) const noexcept
+  Rasterized_Glyph Rasterizer::rasterize(Face& face, int size, char c,
+                                         SDL_Color color) const noexcept
+  {
+    FT_Glyph glyph = face.glyph(size, c);
+    if(cache_.find(glyph) == cache_.end())
+    {
+      cache_.emplace(glyph, make_bitmap_(glyph));
+    }
+
+    Rasterized_Glyph image;
+    image.glyph = cache_[glyph];
+    image.surface = make_surface_(image.glyph, color);
+    return std::move(image);
+  }
+
+  FT_BitmapGlyph MonoRaster::make_bitmap_(FT_Glyph glyph) const noexcept
   {
     // Rasterize
     FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph) glyph;
     FT_Glyph_To_Bitmap((FT_Glyph*) &bitmap_glyph, FT_RENDER_MODE_MONO, 0, 0);
     return bitmap_glyph;
   }
-  Unique_Surface MonoRaster::rasterize_(FT_BitmapGlyph glyph,
-                                        SDL_Color color) const noexcept
+  Unique_Surface MonoRaster::make_surface_(FT_BitmapGlyph glyph,
+                                           SDL_Color color) const noexcept
   {
     // Create surface
     Metrics m = metrics((FT_Glyph) glyph);
@@ -169,8 +179,7 @@ namespace pong { namespace text
     return surf;
   }
 
-  FT_BitmapGlyph
-  AntiAliasedRaster::make_bitmap_glyph_(FT_Glyph glyph) const noexcept
+  FT_BitmapGlyph AntiAliasedRaster::make_bitmap_(FT_Glyph glyph) const noexcept
   {
     // Rasterize
     FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph) glyph;
@@ -178,8 +187,9 @@ namespace pong { namespace text
     return bitmap_glyph;
   }
 
-  Unique_Surface AntiAliasedRaster::rasterize_(FT_BitmapGlyph glyph,
-                                               SDL_Color color) const noexcept
+  Unique_Surface
+  AntiAliasedRaster::make_surface_(FT_BitmapGlyph glyph,
+                                   SDL_Color color) const noexcept
   {
     // Create surface
     Metrics m = metrics((FT_Glyph) glyph);

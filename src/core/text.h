@@ -29,7 +29,6 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 
-#include "client/sdl_cache.hpp"
 #include "common/vector.h"
 #include "core/io/Logger.h"
 namespace pong { namespace text
@@ -105,101 +104,58 @@ namespace pong { namespace text
     math::vector<int> bitmap_extent;
     int bearing, advance;
   };
+
   Metrics metrics(FT_Glyph glyph) noexcept;
 
-  struct Bitmap_Metrics
+  struct Surface_Deleter
   {
-    Bitmap_Metrics() noexcept = default;
-
-    template <class Iter>
-    inline Bitmap_Metrics(Iter begin, Iter end) noexcept;
-    Bitmap_Metrics(std::string const&, int, Face&) noexcept;
-
-    Bitmap_Metrics(Bitmap_Metrics const&) = default;
-    Bitmap_Metrics& operator=(Bitmap_Metrics const&) noexcept = default;
-    Bitmap_Metrics(Bitmap_Metrics&&) noexcept = default;
-    Bitmap_Metrics& operator=(Bitmap_Metrics&&) = default;
-
-    math::vector<int> extent = {};
-    int baseline = 0;
-  };
-
-  template <class Iter>
-  Bitmap_Metrics bitmap_metrics(Iter begin, Iter end) noexcept
-  {
-    Bitmap_Metrics bm;
-
-    int max_ascent = 0, max_descent = 0;
-    for(Iter cur = begin; cur != end; ++cur)
+    void operator()(SDL_Surface* surf) noexcept
     {
-      // Get the metrics for the current glyph
-      FT_Glyph g = *cur;
-      auto cur_metrics = metrics(g);
-
-      // Extend the image the amount the glyph needs to advance.
-      bm.extent.x += cur_metrics.advance;
-
-      // The baseline is going to be the largest ascent, which will also be
-      // the ascent that determines the minimum height of the bitmap.
-      bm.baseline = std::max(bm.baseline, cur_metrics.ascent);
-
-      // The height is the maximum height of the bitmap.
-      max_ascent = std::max(max_ascent, cur_metrics.ascent);
-      max_descent = std::max(max_descent, cur_metrics.descent);
+      SDL_FreeSurface(surf);
     }
-
-    bm.extent.y = max_ascent + max_descent;
-
-    return bm;
-  }
-
-  template <class Iter>
-  inline Bitmap_Metrics::Bitmap_Metrics(Iter begin, Iter end) noexcept
-                                : Bitmap_Metrics(bitmap_metrics(begin, end)) {}
-
+  };
   /*!
    * \brief A unique_ptr which deletes an SDL_Surface* properly.
    */
   using Unique_Surface = std::unique_ptr<SDL_Surface, Surface_Deleter>;
 
+  struct Rasterized_Glyph
+  {
+    FT_BitmapGlyph glyph;
+    Unique_Surface surface;
+  };
+
   // Rasterize me... (Doctor who anyone?)
   struct Rasterizer
   {
-    virtual ~Rasterizer() noexcept = default;
-    inline Unique_Surface rasterize(FT_Glyph, SDL_Color) const noexcept;
+    virtual ~Rasterizer() noexcept;
+
+   Rasterized_Glyph rasterize(Face&, int, char, SDL_Color) const noexcept;
   private:
+    // Creates a bitmap from a glyph.
+    virtual FT_BitmapGlyph make_bitmap_(FT_Glyph glyph) const noexcept = 0;
+
+    // Takes a bitmap and renders it
+    virtual Unique_Surface
+    make_surface_(FT_BitmapGlyph, SDL_Color) const noexcept = 0;
+
+    // The cache from glyph pointer to bitmap-glyph.
     mutable std::unordered_map<FT_Glyph, FT_BitmapGlyph> cache_;
-
-    virtual FT_BitmapGlyph
-    make_bitmap_glyph_(FT_Glyph glyph) const noexcept = 0;
-
-    virtual Unique_Surface rasterize_(FT_BitmapGlyph glyph,
-                                      SDL_Color color) const noexcept = 0;
   };
-
-  inline Unique_Surface Rasterizer::rasterize(FT_Glyph glyph,
-                                              SDL_Color c) const noexcept
-  {
-    if(cache_.find(glyph) == cache_.end())
-    {
-      cache_.emplace(glyph, make_bitmap_glyph_(glyph));
-    }
-    return rasterize_(cache_[glyph], c);
-  }
 
   struct MonoRaster : Rasterizer
   {
   private:
-    FT_BitmapGlyph make_bitmap_glyph_(FT_Glyph glyph) const noexcept override;
-    Unique_Surface rasterize_(FT_BitmapGlyph glyph,
-                             SDL_Color color) const noexcept override;
+    FT_BitmapGlyph make_bitmap_(FT_Glyph glyph) const noexcept override;
+    Unique_Surface make_surface_(FT_BitmapGlyph glyph,
+                                 SDL_Color color) const noexcept override;
   };
   struct AntiAliasedRaster : Rasterizer
   {
   private:
-    FT_BitmapGlyph make_bitmap_glyph_(FT_Glyph glyph) const noexcept override;
+    FT_BitmapGlyph make_bitmap_(FT_Glyph glyph) const noexcept override;
 
-    Unique_Surface rasterize_(FT_BitmapGlyph glyph,
-                             SDL_Color color) const noexcept override;
+    Unique_Surface make_surface_(FT_BitmapGlyph glyph,
+                                 SDL_Color color) const noexcept override;
   };
 } }

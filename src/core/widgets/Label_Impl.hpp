@@ -25,6 +25,7 @@
 #include "common/crash.hpp"
 #include <vector>
 #include <utility>
+#include "client/render.h"
 namespace pong
 {
   /*!
@@ -40,7 +41,7 @@ namespace pong
   inline int Label<Data>::surface_width() const
   {
     auto* dep = this->cache_.template grab_dependency<0>().cache();
-    if(dep) return dep->w;
+    if(dep) return dep->surface->w;
     return 0;
   }
   /*!
@@ -56,7 +57,7 @@ namespace pong
   inline int Label<Data>::surface_height() const
   {
     auto* dep = this->cache_.template grab_dependency<0>().cache();
-    if(dep) return dep->h;
+    if(dep) return dep->surface->h;
     return 0;
   }
 
@@ -185,6 +186,18 @@ namespace pong
     this->cache_.template grab_dependency<0>().invalidate();
     this->cache_.invalidate();
   }
+
+  template <class Data>
+  inline void Label<Data>::mode(Label_Mode m) noexcept
+  {
+    this->mode_ = m;
+  }
+  template <class Data>
+  inline Label_Mode Label<Data>::mode() const noexcept
+  {
+    return this->mode_;
+  }
+
   /*!
    * \brief Returns the font renderer.
    */
@@ -195,91 +208,89 @@ namespace pong
   }
 
   template <class Data>
-  Texture_Cache make_label_cache(Label<Data>& l)
+  Label_Cache make_label_cache(Label<Data>& l)
   {
-    Texture_Cache c;
-    c.gen_func([](Texture_Cache::ptr_type p,
-                  Surface_Cache& s, SDL_Renderer*& r)
+    Label_Cache c;
+    c.gen_func([](Label_Cache::ptr_type p,
+                  Rasterized_String_Cache& s, SDL_Renderer*& r)
     {
       if(p) return p;
-      p.reset(SDL_CreateTextureFromSurface(r, s.cache()));
+      p.reset(SDL_CreateTextureFromSurface(r, s.cache()->surface));
       return p;
     });
 
     c.grab_dependency<0>().gen_func(
-    [&l](Surface_Cache::ptr_type p)
+    [&l](Rasterized_String_Cache::ptr_type p)
     {
       if(p) return p;
       std::string text = boost::lexical_cast<std::string>(l.data());
 
-      // Separate the text into lines.
-      std::vector<std::string> lines;
+      // Rasterize all the glyphs first.
+      std::vector<text::Rasterized_Glyph> glyphs;
+      for(char c : text)
       {
-        using std::begin; using std::end;
-        std::string::iterator prev_found = begin(text);
-        std::string::iterator found;
-        while((found = std::find(prev_found, end(text), '\n')) != end(text))
-        {
-          lines.push_back(std::string(prev_found, found));
-          prev_found = found + 1;
-        }
-        if(prev_found != end(text))
-        {
-          lines.push_back(std::string(prev_found, end(text)));
-        }
-
-        if(lines.empty()) return Surface_Cache::ptr_type(nullptr);
+        auto glyph = l.rasterizer()->rasterize(*l.font_face(), l.text_height(),
+                                               c, l.text_color());
+        glyphs.emplace_back(std::move(glyph));
       }
 
-      // Rasterize all the glyphs but record their metrics.
-      std::vector<std::vector<std::pair<text::Metrics,
-                                        text::Unique_Surface> > > glyphs;
-      glyphs.reserve(lines.size());
-      for(std::string line : lines)
+      // Calculate bounds
+      int width = 0;
+      int height = 0;
+      int baseline = 0;
       {
-        glyphs.emplace_back();
-        glyphs.back().reserve(line.size());
-        for(char c : line)
+        int max_ascent = 0;
+        int max_descent = 0;
+        for(int glyph_indice = 0; glyph_indice < glyphs.size(); ++glyph_indice)
         {
-          auto glyph = l.font_face()->glyph(l.text_height(), c);
-          auto m = text::metrics(glyph);
-          glyphs.back().emplace_back(m,
-                             l.rasterizer()->rasterize(glyph, l.text_color()));
+          auto& glyph = glyphs[glyph_indice];
+          width += glyph.glyph->root.advance.x >> 16;
+
+          if(glyph_indice != 0)
+          {
+            width += l.font_face()->kerning(text[glyph_indice - 1],
+                                            text[glyph_indice]);
+          }
+
+          max_ascent = std::max(max_ascent, glyph.glyph->top);
+          max_descent = std::max(max_descent,
+                                 glyph.glyph->bitmap.rows - glyph.glyph->top);
         }
+        height = max_ascent + max_descent;
+        baseline = max_ascent;
       }
 
-      // Make lines
-      std::vector<text::Unique_Surface> line_surfs;
-      line_surfs.reserve(lines.size());
-      for(int i = 0; i < lines.size(); ++i)
+      // Blit the text onto the surface.
+      text::Unique_Surface line_surf(SDL_CreateRGBSurface(0, width, height,
+                                                          32,
+                                                          0xff000000,
+                                                          0x00ff0000,
+                                                          0x0000ff00,
+                                                          0x000000ff));
+
+      int pen_x = 0;
+      for(int glyph_indice = 0; glyph_indice < glyphs.size(); ++glyph_indice)
       {
-        std::string const& line = lines[i];
+        auto& glyph = glyphs[glyph_indice];
 
-        text::Bitmap_Metrics bm(line, l.text_height(), *l.font_face());
-        text::Unique_Surface line_surf(SDL_CreateRGBSurface(0,
-                                                            bm.extent.x,
-                                                            bm.extent.y,
-                                                            32,
-                                                            0xff000000,
-                                                            0x00ff0000,
-                                                            0x0000ff00,
-                                                            0x000000ff));
+        // Figure out kerning if necessary.
+        if(glyph_indice != 0)
+          pen_x += l.font_face()->kerning(text[glyph_indice- 1],
+                                          text[glyph_indice]);
 
-        int pen_x = 0;
-        for(auto& glyph : glyphs[i])
-        {
-          SDL_Rect dest;
-          dest.x = pen_x + std::get<0>(glyph).bearing;
-          dest.y = bm.baseline - std::get<0>(glyph).ascent;
-          SDL_BlitSurface(std::get<1>(glyph).get(), NULL,
-                          line_surf.get(), &dest);
+        SDL_Rect dest;
+        dest.x = pen_x + glyph.glyph->left;
+        dest.y = baseline - glyph.glyph->top;
 
-          pen_x += std::get<0>(glyph).advance;
-        }
-        line_surfs.push_back(std::move(line_surf));
+        SDL_BlitSurface(glyph.surface.get(), NULL, line_surf.get(), &dest);
+
+        pen_x += glyph.glyph->root.advance.x >> 16;
       }
 
-      return std::move(line_surfs.back());
+      Rasterized_String str;
+      str.baseline = baseline;
+      str.surface = line_surf.release();
+      return Rasterized_String_Cache::ptr_type(new Rasterized_String(str));
     });
     return c;
 
@@ -303,13 +314,15 @@ namespace pong
                      math::vector<int> pos,
                      SDL_Color text_color,
                      text::Face* face,
-                     text::Rasterizer* rasterizer) noexcept :
+                     text::Rasterizer* rasterizer,
+                     Label_Mode mode) noexcept :
                      data_(data),
                      text_height_(text_height),
                      pos_(pos),
                      text_color_(text_color),
                      font_face_(face),
                      rasterizer_(rasterizer),
+                     mode_(mode),
                      cache_(make_label_cache(*this)) {}
 
   /*!
@@ -325,7 +338,8 @@ namespace pong
                      text_color_(label.text_color_),
                      font_face_(label.font_face_),
                      rasterizer_(label.rasterizer_),
-                     cache_(label.cache_){}
+                     mode_(label.mode_),
+                     cache_(label.cache_) {}
   /*!
    * \brief Move constructor.
    *
@@ -339,6 +353,7 @@ namespace pong
                      text_color_(label.text_color_),
                      font_face_(label.font_face_),
                      rasterizer_(label.rasterizer_),
+                     mode_(label.mode_),
                      cache_(std::move(label.cache_)) {}
 
   /*!
@@ -357,6 +372,8 @@ namespace pong
     this->text_color(label.text_color_);
     this->font_face(label.font_face_);
     this->rasterizer(label.rasterizer_);
+
+    this->mode_ = label.mode_;
 
     this->cache_ = label.cache_;
 
@@ -380,6 +397,8 @@ namespace pong
     this->font_face(label.font_face_);
     this->rasterizer(label.rasterizer_);
 
+    this->mode(label.mode_);
+
     this->cache_ = std::move(label.cache_);
 
     return *this;
@@ -393,28 +412,23 @@ namespace pong
   {
     if(!renderer) return;
 
-    this->cache_.template set_dependency<1>(renderer);
+    cache_.template set_dependency<1>(renderer);
+    if(!cache_.cache()) return;
 
-    if(!this->cache_.cache()) return;
-
-    SDL_Rect dest;
-    dest.x = this->pos_.x;
-    dest.y = this->pos_.y;
-    dest.w = this->surface_width();
-    dest.h = this->surface_height();
-    SDL_RenderCopy(renderer, this->cache_.cache(), NULL, &dest);
-  }
-  template <class Data>
-  void Label<Data>::render(SDL_Surface* surface) const
-  {
-    SDL_Surface* src = this->cache_.template grab_dependency<0>().cache();
-    if(!src) return;
 
     SDL_Rect dest;
     dest.x = this->pos_.x;
     dest.y = this->pos_.y;
+
+    if(mode_ == Label_Mode::Baseline)
+    {
+      Rasterized_String* str = cache_.template grab_dependency<0>().cache();
+      if(!str) return;
+      dest.y -= str->baseline;
+    }
+
     dest.w = this->surface_width();
     dest.h = this->surface_height();
-    SDL_BlitSurface(src, NULL, surface, &dest);
+    SDL_RenderCopy(renderer, cache_.cache(), NULL, &dest);
   }
 }
