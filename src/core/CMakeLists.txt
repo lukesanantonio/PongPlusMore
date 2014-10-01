@@ -25,7 +25,8 @@ add_library(ppmcore STATIC io/external_io.cpp
                            io/net.cpp
                            widgets/Button.cpp
                            widgets/Text_Box.cpp
-                           text.cpp)
+                           text.cpp
+                           utility.cpp)
 
 target_link_libraries(ppmcore ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
 target_link_libraries(ppmcore jsoncpp)

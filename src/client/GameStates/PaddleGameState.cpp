@@ -21,7 +21,7 @@
 #include <random>
 #include <fstream>
 #include "PaddleGameState.h"
-#include "../render.h"
+#include "core/utility.h"
 #include "common/crash.hpp"
 #include "common/serialize.h"
 #include <boost/variant/get.hpp>
@@ -198,36 +198,6 @@ namespace pong
     this->server_.step();
   }
 
-  void render_box(SDL_Renderer* renderer, const Volume& v)
-  {
-    constexpr int num_points = 5;
-    SDL_Point points[num_points];
-
-    auto from_point = [](math::vector<double> pos)
-    {
-      return SDL_Point{static_cast<int>(pos.x),
-                       static_cast<int>(pos.y)};
-    };
-
-    auto pos = v.pos;
-
-    points[0] = from_point(pos);
-
-    pos.y = v.pos.y + v.height - 1;
-    points[1] = from_point(pos);
-
-    pos.x = v.pos.x + v.width - 1;
-    points[2] = from_point(pos);
-
-    pos.y = v.pos.y;
-    points[3] = from_point(pos);
-
-    pos = v.pos;
-    points[4] = from_point(pos);
-
-    SDL_RenderDrawLines(renderer, points, num_points);
-  }
-
   void PaddleGameState::render(SDL_Renderer* renderer) const
   {
     // Render the score labels.
@@ -240,10 +210,9 @@ namespace pong
       const Object& obj = this->server_.find_object(id);
       if(this->render_constraints_)
       {
-        render_box(renderer, obj.volume);
+        render_wireframe(renderer, obj.volume);
         SDL_SetRenderDrawColor(renderer, 0xff, 0x00, 0x00, 0xff);
-        render_volume_sides(renderer, obj.volume,
-                            obj.physics_options.constraints, .2);
+        render_sides(renderer, obj.volume,obj.physics_options.constraints, .2);
         SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
       }
       else
@@ -262,7 +231,7 @@ namespace pong
       }
       for(const Volume& v : vols_to_render)
       {
-        render_box(renderer, v);
+        render_wireframe(renderer, v);
       }
     }
   }

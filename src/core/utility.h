@@ -17,17 +17,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \file util.hpp
+ * \file utility.h
  * \brief Client-side utilities. SDL stuff, etc.
  *
  * Anything client specific that doesn't have a home.
  */
 #pragma once
 #include "SDL.h"
+#include "common/volume.h"
 namespace pong
 {
   inline bool operator==(const SDL_Color c1, const SDL_Color c2) noexcept
   {
     return c1.r == c2.r and c1.g == c2.g and c1.b == c2.b and c1.a == c2.a;
   }
+
+  void render(SDL_Renderer* renderer, const Volume& volume) noexcept;
+  void render_sides(SDL_Renderer*, Volume const&,
+                    VolumeSides, double) noexcept;
+  void render_wireframe(SDL_Renderer*, Volume const&) noexcept;
 }

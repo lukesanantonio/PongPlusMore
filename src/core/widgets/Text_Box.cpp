@@ -19,7 +19,7 @@
  */
 #include "Text_Box.h"
 #include "client/render.h"
-#include "common/center.hpp"
+#include "../utility.h"
 namespace pong
 {
   Text_Box::Text_Box(Volume const& vol, int blink_rate,

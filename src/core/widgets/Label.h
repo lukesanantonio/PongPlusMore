@@ -27,7 +27,7 @@
 #include "common/Cache.h"
 #include "common/vector.h"
 #include "../text.h"
-#include "client/util.hpp"
+#include "../utility.h"
 namespace pong
 {
   struct Rasterized_String

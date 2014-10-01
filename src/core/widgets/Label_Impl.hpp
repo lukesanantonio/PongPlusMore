@@ -25,7 +25,6 @@
 #include "common/crash.hpp"
 #include <vector>
 #include <utility>
-#include "client/render.h"
 namespace pong
 {
   /*!

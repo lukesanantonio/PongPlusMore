@@ -29,12 +29,4 @@
 namespace pong
 {
   void render_debug(const Game& game, SDL_Renderer* renderer) noexcept;
-
-  void render(SDL_Renderer* renderer, const Volume& volume) noexcept;
-
-  void render_volume_sides(SDL_Renderer* renderer,
-                           const Volume& v,
-                           VolumeSides sides,
-                           double percentage) noexcept;
-  void render_wireframe(SDL_Renderer*, Volume const&) noexcept;
 }
