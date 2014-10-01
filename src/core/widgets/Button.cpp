@@ -187,7 +187,7 @@ namespace pong
         if(is_in(vol_.pos.x, vol_.pos.x + vol_.width - 1, point.x) &&
            is_in(vol_.pos.y, vol_.pos.y + vol_.height - 1, point.y))
         {
-          this->on_click_();
+          if(on_click_) on_click_();
         }
       }
     }
