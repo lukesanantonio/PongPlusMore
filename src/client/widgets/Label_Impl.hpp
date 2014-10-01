@@ -39,7 +39,9 @@ namespace pong
   template <class Data>
   inline int Label<Data>::surface_width() const
   {
-    return this->cache_.template grab_dependency<0>().cache()->w;
+    auto* dep = this->cache_.template grab_dependency<0>().cache();
+    if(dep) return dep->w;
+    return 0;
   }
   /*!
    * \brief Returns the height of the cached text surface.
@@ -53,7 +55,9 @@ namespace pong
   template <class Data>
   inline int Label<Data>::surface_height() const
   {
-    return this->cache_.template grab_dependency<0>().cache()->h;
+    auto* dep = this->cache_.template grab_dependency<0>().cache();
+    if(dep) return dep->h;
+    return 0;
   }
 
   /*!
