@@ -38,6 +38,7 @@ namespace pong
   class parser;
 
   DEFINE_FUNDAMENTAL_PARSER(int, int, asInt);
+  DEFINE_FUNDAMENTAL_PARSER(unsigned int, unsigned_int, asUInt);
   DEFINE_FUNDAMENTAL_PARSER(float, float, asFloat);
   DEFINE_FUNDAMENTAL_PARSER(double, double, asDouble);
   DEFINE_FUNDAMENTAL_PARSER(bool, bool, asBool);
