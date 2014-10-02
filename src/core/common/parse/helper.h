@@ -62,4 +62,7 @@ namespace pong { namespace parse
   {
     using type = Tuple<Types...>;
   };
+
+  template <class Type>
+  using find_parser_t = typename find_parser<Type>::type;
 } }
