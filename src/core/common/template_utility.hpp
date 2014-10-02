@@ -95,4 +95,10 @@ namespace pong
     call_foreach<N+1>(f, std::forward<TupleType>(tup),
                       std::forward<Args>(args)...);
   }
+
+  template <class T, class R = void>
+  struct enable_if_type
+  {
+    using type = R;
+  };
 }
