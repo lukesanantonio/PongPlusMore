@@ -20,6 +20,7 @@
 #pragma once
 #include "json/json.h"
 #include "Value.hpp"
+#include "helper.h"
 namespace pong { namespace dump
 {
   template <class Type>
@@ -27,10 +28,6 @@ namespace pong { namespace dump
   {
     static Json::Value dump(Type const&) noexcept;
   };
-
-  template <class Type>
-  using find_dumper_t = std::conditional_t<std::is_fundamental<Type>::value,
-                                           Value<Type>, Object<Type> >;
 
   template <class Type, int N, class TupleType>
   std::enable_if_t<N >= std::tuple_size<TupleType>::value>
@@ -40,18 +37,25 @@ namespace pong { namespace dump
   std::enable_if_t<N < std::tuple_size<TupleType>::value>
   populate_json(Json::Value& json, TupleType const& tup) noexcept
   {
+    // Find the correct dumper
     using active_t = std::tuple_element_t<N, TupleType>;
     using dumper_t = find_dumper_t<active_t>;
+
+    // Do the dump
     json[Type::property_values[N]] = dumper_t::dump(std::get<N>(tup));
+
+    // And the next one!
     populate_json<Type, N+1>(json, tup);
   }
 
   template <class Type>
   Json::Value Object<Type>::dump(Type const& obj) noexcept
   {
+    // Get the property values.
     typename Type::properties_tuple t = obj.properties();
     Json::Value ret;
 
+    // Populate the json using the props.
     populate_json<Type, 0>(ret, t);
 
     return ret;

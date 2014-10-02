@@ -26,3 +26,16 @@
   {\
     return PROPERTIES_TUPLE_TYPE(__VA_ARGS__);\
   }
+
+#define DECLARE_DUMPER_TYPE(type) using dumper_type = type
+
+namespace pong { namespace dump
+{
+  template <class Type> class Object;
+  template <class Type> class Value;
+
+  template <class Type>
+  using find_dumper_t = std::conditional_t<std::is_fundamental<Type>::value,
+                                           Value<Type>,
+                                           typename Type::dumper_type >;
+} }

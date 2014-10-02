@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "../deserialize.h"
 #include "json/json.h"
 #include "util.hpp"
 namespace pong { namespace parse
@@ -43,10 +42,13 @@ namespace pong { namespace parse
   parse_tuple_element(Json::Value const& json,
                       typename Type::properties_tuple& tup)
   {
+    // Get the correct parser to use in parsing the current type in question.
     using active_type = std::tuple_element_t<N, prop_tuple_t<Type> >;
     using parser_t = typename find_parser<active_type>::type;
 
+    // Actually parse the current value of the current type.
     std::get<N>(tup) = parser_t::parse(json[Type::property_values[N]]);
+    // And the next one too!
     parse_tuple_element<Type, N+1>(json, tup);
   }
 
@@ -68,10 +70,13 @@ namespace pong { namespace parse
   template <class Type>
   Type Object<Type>::parse(Json::Value const& root) noexcept
   {
+    // Make a tuple to the store the parsed elements.
     typename Type::properties_tuple tup;
 
+    // Fill the tuple.
     parse_tuple_element<Type, 0>(root, tup);
 
+    // Construct the type in question from the values in the tuple.
     return construct_from_tuple<Type, 0>(tup);
   }
 } }

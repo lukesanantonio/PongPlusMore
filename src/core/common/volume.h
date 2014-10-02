@@ -97,6 +97,9 @@ namespace pong
            point_type width = 0, point_type height = 0)
            : pos(pos), width(width), height(height) {}
 
+    DECLARE_PARSER_TYPE(parse::Object<Volume>);
+    DECLARE_DUMPER_TYPE(dump::Object<Volume>);
+
     DECLARE_PROPERTY_VALUES(3, "Position", "Width", "Height");
     DECLARE_PROPERTIES_TUPLE(math::vector<point_type>, point_type, point_type);
     DECLARE_PROPERTIES(this->pos, this->width, this->height);

@@ -18,8 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include <array>
+#include "json/json.h"
 #include <tuple>
+#include <array>
 
 #define DECLARE_PROPERTY_VALUES(size, ...)\
   constexpr static const int property_values_size = size;\
@@ -38,3 +39,27 @@
   using properties_tuple = std::tuple<__VA_ARGS__>
 
 #define PROPERTIES_TUPLE_TYPE properties_tuple
+
+#define DECLARE_PARSER_TYPE(type) using parser_type = type;
+
+namespace pong { namespace parse
+{
+  // Forward declarations.
+  template <class Type> struct Value;
+  template <class... Types> struct Tuple;
+  template <class Type> struct Object;
+
+  template <class Type>
+  struct find_parser
+  {
+    using type = std::conditional_t<std::is_fundamental<Type>::value,
+                                    Value<Type>,
+                                    typename Type::parser_type >;
+  };
+
+  template <class... Types>
+  struct find_parser<std::tuple<Types...> >
+  {
+    using type = Tuple<Types...>;
+  };
+} }

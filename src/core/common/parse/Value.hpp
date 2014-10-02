@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "../deserialize.h"
+#include "common/deserialize.h"
 #include "json/json.h"
 namespace pong { namespace parse
 {

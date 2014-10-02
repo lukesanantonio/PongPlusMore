@@ -27,7 +27,7 @@
 #include <boost/variant/get.hpp>
 namespace pong
 {
-  void dump(std::string filename, Json::Value v) noexcept
+  void output_json(std::string filename, Json::Value v) noexcept
   {
     std::fstream file(filename, std::fstream::out | std::fstream::trunc);
     Json::StyledStreamWriter("  ").write(file, v);
@@ -160,8 +160,8 @@ namespace pong
           case SDL_SCANCODE_TAB:
           {
             // Print out the Object Manager and the quadtree.
-            dump("objectmanager.out", dump_json(this->server_));
-            dump("quadtree.out", dump_json(this->server_.quadtree()));
+            output_json("objectmanager.out", dump_json(this->server_));
+            output_json("quadtree.out", dump_json(this->server_.quadtree()));
             break;
           }
           default:
@@ -171,8 +171,8 @@ namespace pong
       }
       case SDL_QUIT:
       {
-        dump("objectmanager.out", dump_json(this->server_));
-        dump("quadtree.out", dump_json(this->server_.quadtree()));
+        output_json("objectmanager.out", dump_json(this->server_));
+        output_json("quadtree.out", dump_json(this->server_.quadtree()));
 
         // Signal game loop exit
         this->g_.exiting = true;

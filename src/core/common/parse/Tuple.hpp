@@ -27,19 +27,24 @@ namespace pong { namespace parse
   struct Tuple
   {
     using tuple_t = std::tuple<typename Types::value_t...>;
-    using value_t = tuple_t;
     static tuple_t parse(Json::Value const&) noexcept;
   };
 
-  template <int N, class Tuple_Type, class... Parsers>
-  std::enable_if_t<N >= sizeof...(Parsers)>
-  parse_element(Tuple_Type&, Json::Value const&) noexcept {}
+  template <int N, class... Types>
+  std::enable_if_t<N >= sizeof...(Types)>
+  parse_element(std::tuple<Types...>&, Json::Value const&) noexcept {}
 
-  template <int N, class Tuple_Type, class... Parsers>
-  std::enable_if_t<N < sizeof...(Parsers)>
-  parse_element(Tuple_Type& tup, Json::Value const& json) noexcept
+  template <int N, class... Types>
+  std::enable_if_t<N < sizeof...(Types)>
+  parse_element(std::tuple<Types...>& tup, Json::Value const& json) noexcept
   {
-    std::get<N>(tup) = pack_element_t<N, Parsers...>::parse(json[N]);
+    // Find the parser required to parse the type in question.
+    using active_type = pack_element_t<N, Types...>;
+    using parser_t = find_parser<active_type>::type;
+
+    // Actually do the parse.
+    std::get<N>(tup) = parser_t::parse(json[N]);
+    // And the next one!
     parse_element<N+1, Tuple_Type, Parsers...>(tup, json);
   }
 
