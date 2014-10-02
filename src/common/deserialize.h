@@ -25,15 +25,7 @@
 #include "json/json.h"
 #include "server/req.h"
 
-#define DECLARE_PARSER(type, func_suffix)\
-template <> struct parser<type> {\
-  static type parse(Json::Value const&) noexcept;\
-};\
-inline type parse_##func_suffix(Json::Value const& json) noexcept\
-{\
-  return parser<type>::parse(json);\
-}
-
+#include "core/common/parse/helper.h"
 #include "core/common/parse/impl/fundamental.h"
 
 namespace pong

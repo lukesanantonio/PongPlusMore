@@ -20,7 +20,7 @@
 #pragma once
 #include <type_traits>
 #include <tuple>
-#include "common/template_util.hpp"
+#include "../template_util.hpp"
 namespace pong { namespace parse
 {
   template <class... Types>

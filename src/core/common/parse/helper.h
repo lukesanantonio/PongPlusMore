@@ -22,6 +22,15 @@
 #include <tuple>
 #include <array>
 
+#define DECLARE_PARSER(type, func_suffix)\
+template <> struct parser<type> {\
+  static type parse(Json::Value const&) noexcept;\
+};\
+inline type parse_##func_suffix(Json::Value const& json) noexcept\
+{\
+  return parser<type>::parse(json);\
+}
+
 #define DECLARE_PROPERTY_VALUES(size, ...)\
   constexpr static const int property_values_size = size;\
   constexpr static const std::array<const char*, property_values_size>\
@@ -45,16 +54,16 @@
 namespace pong { namespace parse
 {
   // Forward declarations.
-  template <class Type> struct Value;
   template <class... Types> struct Tuple;
   template <class Type> struct Object;
+
+  template <class T> struct parser;
 
   template <class Type>
   struct find_parser
   {
     using type = std::conditional_t<std::is_fundamental<Type>::value,
-                                    Value<Type>,
-                                    typename Type::parser_type >;
+                                    parser<Type>, typename Type::parser_type >;
   };
 
   template <class... Types>

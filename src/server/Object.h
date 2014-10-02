@@ -86,8 +86,6 @@ namespace pong
       BallOptions ball_options;
     };
     VolumeSides constraints = VolumeSide::None;
-
-    DECLARE_PARSER_TYPE(parse::Value<PhysicsOptions>);
   };
 
   using id_type = uint16_t;
