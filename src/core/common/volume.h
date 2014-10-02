@@ -19,8 +19,7 @@
  */
 #pragma once
 #include "vector.h"
-#include "parse/helper.h"
-#include "dump/helper.h"
+#include "pif/helper.h"
 #include <unordered_map>
 #include <array>
 namespace pong
@@ -97,9 +96,7 @@ namespace pong
            point_type width = 0, point_type height = 0)
            : pos(pos), width(width), height(height) {}
 
-    DECLARE_DUMPER_TYPE(dump::Object<Volume>);
-
-    DECLARE_PARSED_AS_OBJECT;
+    DECLARE_FORMATTED_AS_OBJECT;
 
     DECLARE_PROPERTY_VALUES(3, "Position", "Width", "Height");
     DECLARE_PROPERTIES_TUPLE(math::vector<point_type>, point_type, point_type);

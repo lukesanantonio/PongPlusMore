@@ -18,11 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-namespace pong { namespace parse
-{
-  template <class Type, class Enable = void>
-  struct find_parser;
+#include "../helper.h"
 
-  template <class Type>
-  using find_parser_t = typename find_parser<Type>::type;
-} }
+#include <string>
+
+BEGIN_FORMATTER_SCOPE
+{
+  template <typename Type> struct formatter;
+
+  DEFINE_FUNDAMENTAL_FORMATTER(int, int, asInt);
+  DEFINE_FUNDAMENTAL_FORMATTER(unsigned int, unsigned_int, asUInt);
+  DEFINE_FUNDAMENTAL_FORMATTER(float, float, asFloat);
+  DEFINE_FUNDAMENTAL_FORMATTER(double, double, asDouble);
+  DEFINE_FUNDAMENTAL_FORMATTER(bool, bool, asBool);
+  DEFINE_FUNDAMENTAL_FORMATTER(std::string, string, asString);
+}
+END_FORMATTER_SCOPE

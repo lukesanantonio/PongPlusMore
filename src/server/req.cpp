@@ -64,7 +64,7 @@ namespace pong { namespace net { namespace req
   }
   void Log::parse_(Json::Value const& json)
   {
-    this->severity = parse_severity(json[0]);
+    this->severity = pif::parse_severity(json[0]);
     this->msg = json[1].asString();
   }
 
@@ -75,7 +75,7 @@ namespace pong { namespace net { namespace req
   }
   void CreateObject::parse_(Json::Value const& json)
   {
-    this->obj = parse_object(json[0]);
+    this->obj = pif::find_formatter_t<Object>::parse(json[0]);
   }
 
   bool DeleteObject::error_() const noexcept
@@ -115,15 +115,15 @@ namespace pong { namespace net { namespace req
     const Json::Value& data = json[1];
     if(data.isMember("Volume") && data.isMember("PhysicsOptions"))
     {
-      this->data = parse_object(data);
+      this->data = pif::find_formatter_t<Object>::parse(data);
     }
     else if(data.isMember("x") && data.isMember("y"))
     {
-      this->data = parse_volume(data);
+      this->data = pif::find_formatter_t<Volume>::parse(data);
     }
     else
     {
-      this->data = parse_physics(data);
+      this->data = pif::find_formatter_t<PhysicsOptions>::parse(data);
     }
   }
 

@@ -23,27 +23,53 @@ namespace pong
   DEFINE_PROPERTY_VALUES(PaddleOptions);
   DEFINE_PROPERTY_VALUES(BallOptions);
 
-  DEFINE_PARSER(PhysicsOptions, phys_json)
+  DEFINE_PROPERTY_VALUES(Object);
+}
+
+BEGIN_FORMATTER_SCOPE
+{
+  DEFINE_PARSER(pong::PhysicsOptions, phys_json)
   {
-    using vector_parser = parse::find_parser_t<math::vector<double> >;
+    using pong::PhysicsOptions;
+    using pong::PhysicsType;
+    using pong::PaddleOptions;
+    using pong::BallOptions;
 
     PhysicsOptions opt;
-    if(phys_json["Velocity"].isObject())
-    {
-      opt.type = PhysicsType::Ball;
-      opt.ball_options = BallOptions();
-
-      opt.ball_options.velocity = vector_parser::parse(phys_json["Velocity"]);
-    }
-    else if(phys_json["Destination"].isObject())
+    if(phys_json["Destination"].isObject())
     {
       opt.type = PhysicsType::Paddle;
-      opt.paddle_options = PaddleOptions();
-      opt.paddle_options.destination =
-                                vector_parser::parse(phys_json["Destination"]);
+      opt.paddle_options = find_formatter_t<PaddleOptions>::parse(phys_json);
+    }
+    else if(phys_json["Velocity"].isObject())
+    {
+      opt.type = PhysicsType::Ball;
+      opt.ball_options = find_formatter_t<BallOptions>::parse(phys_json);
     }
     return opt;
   }
+  DEFINE_DUMPER(pong::PhysicsOptions, phys)
+  {
+    using pong::PhysicsOptions;
+    using pong::PhysicsType;
+    using pong::PaddleOptions;
+    using pong::BallOptions;
 
-  DEFINE_PROPERTY_VALUES(Object);
+    Json::Value json;
+
+    if(phys.type == PhysicsType::Paddle)
+    {
+      using paddle_options_formatter_t = find_formatter_t<PaddleOptions>;
+      json["Destination"] =
+                         paddle_options_formatter_t::dump(phys.paddle_options);
+    }
+    else if(phys.type == PhysicsType::Ball)
+    {
+      using ball_options_formatter_t = find_formatter_t<BallOptions>;
+      json["Velocity"] = ball_options_formatter_t::dump(phys.ball_options);
+    }
+
+    return json;
+  }
 }
+END_FORMATTER_SCOPE

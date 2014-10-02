@@ -20,18 +20,20 @@
 #pragma once
 #include "json/json.h"
 #include "forward.h"
-namespace pong { namespace parse
+BEGIN_FORMATTER_SCOPE
 {
   template <class Type>
   struct Object
   {
-    using value_t = Type;
     static Type parse(Json::Value const& root) noexcept;
+    static Json::Value dump(Type const&) noexcept;
   };
 
+  // Some helper template aliases.
   template <class Type>
   using prop_tuple_t = typename Type::properties_tuple;
 
+  // Parsing code.
   template <class Type, int N>
   std::enable_if_t<N >= std::tuple_size<prop_tuple_t<Type> >::value >
   parse_tuple_element(Json::Value const& json,
@@ -43,11 +45,11 @@ namespace pong { namespace parse
                       typename Type::properties_tuple& tup)
   {
     // Get the correct parser to use in parsing the current type in question.
-    using active_type = std::tuple_element_t<N, prop_tuple_t<Type> >;
-    using parser_t = find_parser_t<active_type>;
+    using active_t = std::tuple_element_t<N, prop_tuple_t<Type> >;
+    using formatter_t = find_formatter_t<active_t>;
 
     // Actually parse the current value of the current type.
-    std::get<N>(tup) = parser_t::parse(json[Type::property_values[N]]);
+    std::get<N>(tup) = formatter_t::parse(json[Type::property_values[N]]);
     // And the next one too!
     parse_tuple_element<Type, N+1>(json, tup);
   }
@@ -71,7 +73,7 @@ namespace pong { namespace parse
   Type Object<Type>::parse(Json::Value const& root) noexcept
   {
     // Make a tuple to the store the parsed elements.
-    typename Type::properties_tuple tup;
+    prop_tuple_t<Type> tup;
 
     // Fill the tuple.
     parse_tuple_element<Type, 0>(root, tup);
@@ -79,4 +81,38 @@ namespace pong { namespace parse
     // Construct the type in question from the values in the tuple.
     return construct_from_tuple<Type, 0>(tup);
   }
-} }
+
+  // Dumping code.
+  template <class Type, int N, class Tuple_Type>
+  std::enable_if_t<N >= std::tuple_size<Tuple_Type>::value>
+  populate_json(Json::Value& json, Tuple_Type const& tup) noexcept {}
+
+  template <class Type, int N, class Tuple_Type>
+  std::enable_if_t<N < std::tuple_size<Tuple_Type>::value>
+  populate_json(Json::Value& json, Tuple_Type const& tup) noexcept
+  {
+    // Find the correct dumper
+    using active_t = std::tuple_element_t<N, Tuple_Type>;
+    using formatter_t = find_formatter_t<active_t>;
+
+    // Do the dump
+    json[Type::property_values[N]] = formatter_t::dump(std::get<N>(tup));
+
+    // And the next one!
+    populate_json<Type, N+1>(json, tup);
+  }
+
+  template <class Type>
+  Json::Value Object<Type>::dump(Type const& obj) noexcept
+  {
+    // Get the property values.
+    prop_tuple_t<Type> t = obj.properties();
+    Json::Value ret;
+
+    // Populate the json using the props.
+    populate_json<Type, 0>(ret, t);
+
+    return ret;
+  }
+}
+END_FORMATTER_SCOPE

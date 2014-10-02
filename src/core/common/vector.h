@@ -26,8 +26,7 @@
 #include <cstdint>
 #include <cmath>
 #include <iostream>
-#include "parse/helper.h"
-#include "dump/helper.h"
+#include "pif/helper.h"
 namespace pong
 {
   /*!
@@ -87,9 +86,7 @@ namespace pong
        */
       point_type y = 0;
 
-      DECLARE_DUMPER_TYPE(dump::Object<vector>);
-
-      DECLARE_PARSED_AS_OBJECT;
+      DECLARE_FORMATTED_AS_OBJECT;
 
       DECLARE_PROPERTY_VALUES(2, "x", "y");
       DECLARE_PROPERTIES_TUPLE(point_type, point_type);

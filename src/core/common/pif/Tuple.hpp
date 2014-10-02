@@ -22,15 +22,17 @@
 #include <tuple>
 #include "../template_utility.hpp"
 #include "forward.h"
-namespace pong { namespace parse
+BEGIN_FORMATTER_SCOPE
 {
   template <class... Types>
   struct Tuple
   {
     using tuple_t = std::tuple<typename Types::value_t...>;
     static tuple_t parse(Json::Value const&) noexcept;
+    static Json::Value dump(tuple_t const&) noexcept;
   };
 
+  // Parsing code.
   template <int N, class... Types>
   std::enable_if_t<N >= sizeof...(Types)>
   parse_element(std::tuple<Types...>&, Json::Value const&) noexcept {}
@@ -40,11 +42,11 @@ namespace pong { namespace parse
   parse_element(std::tuple<Types...>& tup, Json::Value const& json) noexcept
   {
     // Find the parser required to parse the type in question.
-    using active_type = pack_element_t<N, Types...>;
-    using parser_t = find_parser_t<active_type>;
+    using active_t = pong::pack_element_t<N, Types...>;
+    using formatter_t = find_formatter_t<active_t>;
 
     // Actually do the parse.
-    std::get<N>(tup) = parser_t::parse(json[N]);
+    std::get<N>(tup) = formatter_t::parse(json[N]);
     // And the next one!
     parse_element<N+1, Types...>(tup, json);
   }
@@ -56,4 +58,33 @@ namespace pong { namespace parse
     parse_element<0, tuple_t, Types...>(tup, json);
     return tup;
   }
-} }
+
+  // Dumping code.
+  template <int N, class Tuple_Type>
+  std::enable_if_t<N == std::tuple_size<Tuple_Type>::value>
+  dump_tuple_element(Json::Value&, Tuple_Type const&) noexcept {}
+
+  template <int N, class Tuple_Type>
+  std::enable_if_t<N < std::tuple_size<Tuple_Type>::value>
+  dump_tuple_element(Json::Value& json, Tuple_Type const& tup) noexcept
+  {
+    // Dump the value of the active type.
+    using active_t = std::tuple_element_t<N, Tuple_Type>;
+    using formatter_t = find_formatter_t<active_t>;
+
+    // Actually do the dump.
+    json[N] = formatter_t::dump(std::get<N>(tup));
+    // And the next one!
+    dump_tuple_element<N+1>(json, tup);
+  }
+
+  template <class... Types> Json::Value
+  Tuple<Types...>::dump(typename Tuple<Types...>::tuple_t const& tup) noexcept
+  {
+    // Make our json.
+    Json::Value json;
+    dump_tuple_element<0>(json, tup);
+    return json;
+  }
+}
+END_FORMATTER_SCOPE

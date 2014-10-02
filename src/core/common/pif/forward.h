@@ -18,24 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include <tuple>
-#include "../parse/helper.h"
 
-#define DECLARE_PROPERTIES(...)\
-  inline PROPERTIES_TUPLE_TYPE properties() const noexcept\
-  {\
-    return PROPERTIES_TUPLE_TYPE(__VA_ARGS__);\
-  }
+// Stands for pong interchange formatter.
+#define BEGIN_FORMATTER_SCOPE namespace pif
+#define END_FORMATTER_SCOPE
+#define FORMATTER_NAMESPACE pif
 
-#define DECLARE_DUMPER_TYPE(type) using dumper_type = type
-
-namespace pong { namespace dump
+BEGIN_FORMATTER_SCOPE
 {
-  template <class Type> class Object;
-  template <class Type> class Value;
+  template <class Type, class Enable = void>
+  struct find_formatter;
 
   template <class Type>
-  using find_dumper_t = std::conditional_t<std::is_fundamental<Type>::value,
-                                           Value<Type>,
-                                           typename Type::dumper_type >;
-} }
+  using find_formatter_t = typename find_formatter<Type>::type;
+}
+END_FORMATTER_SCOPE

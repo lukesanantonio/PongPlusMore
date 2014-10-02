@@ -25,18 +25,17 @@
 #include "json/json.h"
 #include "server/req.h"
 
-#include "core/common/parse/helper.h"
-#include "core/common/parse/impl/fundamental.h"
+#include "core/common/pif/helper.h"
+#include "core/common/pif/impl/fundamental.h"
+
+BEGIN_FORMATTER_SCOPE
+{
+  DECLARE_FORMATTER(pong::net::req::Request, request);
+}
+END_FORMATTER_SCOPE
 
 namespace pong
 {
-  DECLARE_PARSER(math::vector<double>, vector);
-  DECLARE_PARSER(Volume, volume);
-  DECLARE_PARSER(Object, object);
-  DECLARE_PARSER(Severity, severity);
-
-  DECLARE_PARSER(net::req::Request, request);
-
   inline std::string to_string(const Json::Value& v) noexcept
   {
     Json::FastWriter w;

@@ -20,12 +20,15 @@
 #pragma once
 #include <string>
 #include <uv.h>
+#include "../common/pif/helper.h"
 namespace pong
 {
   enum class Severity
   {
     Info, Warning, Error, Unspecified
   };
+
+
   struct Logger
   {
     Logger() noexcept;
@@ -37,3 +40,8 @@ namespace pong
     uv_loop_t* loop_;
   };
 }
+BEGIN_FORMATTER_SCOPE
+{
+  DECLARE_FORMATTER(pong::Severity, severity);
+}
+END_FORMATTER_SCOPE

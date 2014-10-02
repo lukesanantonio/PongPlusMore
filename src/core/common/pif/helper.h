@@ -22,22 +22,43 @@
 #include <tuple>
 #include <array>
 
-#define DECLARE_PARSER(type, func_suffix)\
-template <> struct parser<type> {\
-  static type parse(Json::Value const&) noexcept;\
+#define DEFINE_FUNDAMENTAL_FORMATTER(type, func_suffix, json_method)\
+template <> struct formatter<type> {\
+  inline static type parse(Json::Value const& json) noexcept\
+  {\
+    return json.json_method();\
+  }\
+  inline static Json::Value dump(type const& t) noexcept\
+  {\
+    return Json::Value(t);\
+  }\
 };\
 inline type parse_##func_suffix(Json::Value const& json) noexcept\
 {\
-  return parser<type>::parse(json);\
+  return formatter<type>::parse(json);\
+}
+
+#define DECLARE_FORMATTER(type, func_suffix)\
+template <> struct formatter<type> {\
+  static type parse(Json::Value const&) noexcept;\
+  static Json::Value dump(type const&) noexcept;\
+};\
+inline type parse_##func_suffix(Json::Value const& json) noexcept\
+{\
+  return formatter<type>::parse(json);\
 }
 
 #define DEFINE_PARSER(type, vname)\
-type parser<type>::parse(Json::Value const& vname) noexcept
+type formatter<type>::parse(Json::Value const& vname) noexcept
+
+#define DEFINE_DUMPER(type, oname)\
+Json::Value formatter<type>::dump(type const& oname) noexcept
 
 #define DECLARE_PROPERTY_VALUES(size, ...)\
   constexpr static const int property_values_size = size;\
   constexpr static const std::array<const char*, property_values_size>\
   property_values = {__VA_ARGS__}
+
 #define DEFINE_PROPERTY_VALUES(type)\
   constexpr const std::array<const char*, type::property_values_size>\
   type::property_values
@@ -52,9 +73,15 @@ type parser<type>::parse(Json::Value const& vname) noexcept
 
 #define PROPERTIES_TUPLE_TYPE properties_tuple
 
-#define DECLARE_PARSER_TYPE(type) using parser_type = type;
+#define DECLARE_PROPERTIES(...)\
+  inline PROPERTIES_TUPLE_TYPE properties() const noexcept\
+  {\
+    return PROPERTIES_TUPLE_TYPE(__VA_ARGS__);\
+  }
 
-namespace pong { namespace parse
+#include "forward.h"
+
+BEGIN_FORMATTER_SCOPE { namespace detail
 {
   // This tag is used internally to mark an object as parsed by the
   // parse::Object template.
@@ -64,52 +91,52 @@ namespace pong { namespace parse
   // parser template.
   struct as_custom {};
 } }
+END_FORMATTER_SCOPE
 
-#define DECLARE_PARSED_AS_OBJECT using parser_type = pong::parse::as_object;
-#define DECLARE_PARSED_WITH_CUSTOM_IMPL\
-  using parser_type = pong::parse::as_custom;
-
-namespace pong
-{
-  template <class T> struct parser;
-}
+#define DECLARE_FORMATTED_AS_OBJECT\
+  using formatter_type = FORMATTER_NAMESPACE::detail::as_object;
+#define DECLARE_FORMATTED_WITH_CUSTOM_IMPL\
+  using formatter_type = FORMATTER_NAMESPACE::detail::as_custom;
 
 #include "Object.hpp"
 #include "Tuple.hpp"
 
-// For find_parser_t
-#include "forward.h"
-
 // Now the client code can parse the standard types in it's custom parse impl.
 #include "impl/fundamental.h"
 
-namespace pong { namespace parse
+BEGIN_FORMATTER_SCOPE
 {
+  template <class T> struct formatter;
+
   template <class Type>
-  struct find_parser<Type, std::enable_if_t<std::is_fundamental<Type>::value> >
+  struct find_formatter<Type,
+                        std::enable_if_t<std::is_fundamental<Type>::value> >
   {
-    using type = parser<Type>;
+    // Fundamental types are implemented as a template specialization of
+    // formatter in impl/fundamental.h.
+    using type = formatter<Type>;
   };
 
   template <class Type>
-  struct find_parser<Type, std::enable_if_t<std::is_class<Type>::value> >
+  struct find_formatter<Type, std::enable_if_t<std::is_class<Type>::value> >
   {
     using type =
       // if(as_custom)
-      std::conditional_t<std::is_same<as_custom,
-                                      typename Type::parser_type>::value,
-        parser<Type>,
+      std::conditional_t<std::is_same<detail::as_custom,
+                                      typename Type::formatter_type>::value,
+        formatter<Type>,
       // else if(as_object)
-      std::conditional_t<std::is_same<as_object,
-                                      typename Type::parser_type>::value,
+      std::conditional_t<std::is_same<detail::as_object,
+                                      typename Type::formatter_type>::value,
         Object<Type>,
       // else void
         void > >; // <- Will cause an error!
   };
 
   template <class... Types>
-  struct find_parser<std::tuple<Types...>, std::true_type>
+  struct find_formatter<std::tuple<Types...>, void>
   {
     using type = Tuple<Types...>;
   };
-} }
+}
+END_FORMATTER_SCOPE

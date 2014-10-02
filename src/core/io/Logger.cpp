@@ -102,3 +102,17 @@ namespace pong
     uv_run(this->loop_, UV_RUN_NOWAIT);
   }
 }
+
+BEGIN_FORMATTER_SCOPE
+{
+  DEFINE_PARSER(pong::Severity, val)
+  {
+    using pong::Severity;
+    std::string s = val.asString();
+    if(s == "info") return Severity::Info;
+    if(s == "warning") return Severity::Warning;
+    if(s == "error") return Severity::Error;
+    return Severity::Unspecified;
+  }
+}
+END_FORMATTER_SCOPE

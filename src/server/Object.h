@@ -19,8 +19,7 @@
  */
 #pragma once
 #include "core/common/volume.h"
-#include "core/common/dump/helper.h"
-#include "core/common/parse/helper.h"
+#include "core/common/pif/helper.h"
 
 namespace pong
 {
@@ -32,11 +31,11 @@ namespace pong
   };
   struct PaddleOptions
   {
-    math::vector<double> destination;
+    using vec_t = math::vector<double>;
+    PaddleOptions(vec_t const& vec = vec_t()) noexcept : destination(vec) {}
+    vec_t destination;
 
-    DECLARE_DUMPER_TYPE(dump::Object<PaddleOptions>);
-
-    DECLARE_PARSED_AS_OBJECT;
+    DECLARE_FORMATTED_AS_OBJECT;
 
     DECLARE_PROPERTY_VALUES(1, "Destination");
     DECLARE_PROPERTIES_TUPLE(math::vector<double>);
@@ -44,11 +43,11 @@ namespace pong
   };
   struct BallOptions
   {
-    math::vector<double> velocity;
+    using vec_t = math::vector<double>;
+    BallOptions(vec_t const& vec = vec_t()) noexcept : velocity(vec) {}
+    vec_t velocity;
 
-    DECLARE_DUMPER_TYPE(dump::Object<PaddleOptions>);
-
-    DECLARE_PARSED_AS_OBJECT;
+    DECLARE_FORMATTED_AS_OBJECT;
 
     DECLARE_PROPERTY_VALUES(1, "Velocity");
     DECLARE_PROPERTIES_TUPLE(math::vector<double>);
@@ -90,10 +89,8 @@ namespace pong
     };
     VolumeSides constraints = VolumeSide::None;
 
-    DECLARE_PARSED_WITH_CUSTOM_IMPL;
+    DECLARE_FORMATTED_WITH_CUSTOM_IMPL;
   };
-
-  DECLARE_PARSER(PhysicsOptions, physics);
 
   using id_type = uint16_t;
   struct Object
@@ -105,9 +102,7 @@ namespace pong
     Volume volume;
     PhysicsOptions physics_options;
 
-    DECLARE_DUMPER_TYPE(dump::Object<Object>);
-
-    DECLARE_PARSED_AS_OBJECT;
+    DECLARE_FORMATTED_AS_OBJECT;
 
     DECLARE_PROPERTY_VALUES(2, "Volume", "PhysicsOptions");
     DECLARE_PROPERTIES_TUPLE(Volume, PhysicsOptions);
@@ -132,3 +127,9 @@ namespace pong
     return obj.physics_options.type == PhysicsType::Ball;
   }
 }
+
+BEGIN_FORMATTER_SCOPE
+{
+  DECLARE_FORMATTER(pong::PhysicsOptions, physics);
+}
+END_FORMATTER_SCOPE
