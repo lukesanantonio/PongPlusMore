@@ -18,39 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "core/common/volume.h"
-#include "server/req.h"
-#include "core/io/Logger.h"
-#include "server/Object.h"
 #include "json/json.h"
-#include "server/req.h"
 
-#define DECLARE_PARSER(type, func_suffix)\
+#define DEFINE_FUNDAMENTAL_PARSER(type, func_suffix, json_method)\
 template <> struct parser<type> {\
-  static type parse(Json::Value const&) noexcept;\
+  inline static type parse(Json::Value const& json) noexcept\
+  {\
+    return json.json_method();\
+  }\
 };\
 inline type parse_##func_suffix(Json::Value const& json) noexcept\
 {\
   return parser<type>::parse(json);\
 }
 
-#include "core/common/parse/impl/fundamental.h"
-
 namespace pong
 {
-  DECLARE_PARSER(math::vector<double>, vector);
-  DECLARE_PARSER(Volume, volume);
-  DECLARE_PARSER(PhysicsOptions, physics);
-  DECLARE_PARSER(Object, object);
-  DECLARE_PARSER(Severity, severity);
+  template <typename Type>
+  class parser;
 
-  DECLARE_PARSER(net::req::Request, request);
-
-  inline std::string to_string(const Json::Value& v) noexcept
-  {
-    Json::FastWriter w;
-    return w.write(v);
-  }
+  DEFINE_FUNDAMENTAL_PARSER(int, int, asInt);
+  DEFINE_FUNDAMENTAL_PARSER(float, float, asFloat);
+  DEFINE_FUNDAMENTAL_PARSER(double, double, asDouble);
+  DEFINE_FUNDAMENTAL_PARSER(bool, bool, asBool);
+  DEFINE_FUNDAMENTAL_PARSER(std::string, string, asString);
 }
-
-#undef DECLARE_PARSER
