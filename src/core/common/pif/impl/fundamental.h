@@ -26,11 +26,11 @@ BEGIN_FORMATTER_SCOPE
 {
   template <typename Type> struct formatter;
 
-  DEFINE_FUNDAMENTAL_FORMATTER(int, int, asInt);
-  DEFINE_FUNDAMENTAL_FORMATTER(unsigned int, unsigned_int, asUInt);
-  DEFINE_FUNDAMENTAL_FORMATTER(float, float, asFloat);
-  DEFINE_FUNDAMENTAL_FORMATTER(double, double, asDouble);
-  DEFINE_FUNDAMENTAL_FORMATTER(bool, bool, asBool);
-  DEFINE_FUNDAMENTAL_FORMATTER(std::string, string, asString);
+  DEFINE_FUNDAMENTAL_FORMATTER(int, asInt);
+  DEFINE_FUNDAMENTAL_FORMATTER(unsigned int, asUInt);
+  DEFINE_FUNDAMENTAL_FORMATTER(float, asFloat);
+  DEFINE_FUNDAMENTAL_FORMATTER(double, asDouble);
+  DEFINE_FUNDAMENTAL_FORMATTER(bool, asBool);
+  DEFINE_FUNDAMENTAL_FORMATTER(std::string, asString);
 }
 END_FORMATTER_SCOPE

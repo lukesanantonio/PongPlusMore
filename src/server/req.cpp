@@ -20,6 +20,7 @@
 #include "req.h"
 #include "common/serialize.h"
 #include "common/deserialize.h"
+#include "core/io/Logger.h"
 #include <stdexcept>
 namespace pong { namespace net { namespace req
 {
@@ -64,7 +65,7 @@ namespace pong { namespace net { namespace req
   }
   void Log::parse_(Json::Value const& json)
   {
-    this->severity = pif::parse_severity(json[0]);
+    this->severity = FORMATTER_TYPE(Severity)::parse(json[0]);
     this->msg = json[1].asString();
   }
 
@@ -75,7 +76,7 @@ namespace pong { namespace net { namespace req
   }
   void CreateObject::parse_(Json::Value const& json)
   {
-    this->obj = pif::find_formatter_t<Object>::parse(json[0]);
+    this->obj = FORMATTER_TYPE(Object)::parse(json[0]);
   }
 
   bool DeleteObject::error_() const noexcept
@@ -115,15 +116,15 @@ namespace pong { namespace net { namespace req
     const Json::Value& data = json[1];
     if(data.isMember("Volume") && data.isMember("PhysicsOptions"))
     {
-      this->data = pif::find_formatter_t<Object>::parse(data);
+      this->data = FORMATTER_TYPE(Object)::parse(data);
     }
     else if(data.isMember("x") && data.isMember("y"))
     {
-      this->data = pif::find_formatter_t<Volume>::parse(data);
+      this->data = FORMATTER_TYPE(Volume)::parse(data);
     }
     else
     {
-      this->data = pif::find_formatter_t<PhysicsOptions>::parse(data);
+      this->data = FORMATTER_TYPE(PhysicsOptions)::parse(data);
     }
   }
 

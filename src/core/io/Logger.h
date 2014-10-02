@@ -42,6 +42,6 @@ namespace pong
 }
 BEGIN_FORMATTER_SCOPE
 {
-  DECLARE_FORMATTER(pong::Severity, severity);
+  DECLARE_FORMATTER(pong::Severity);
 }
 END_FORMATTER_SCOPE

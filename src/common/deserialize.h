@@ -30,7 +30,7 @@
 
 BEGIN_FORMATTER_SCOPE
 {
-  DECLARE_FORMATTER(pong::net::req::Request, request);
+  DECLARE_FORMATTER(pong::net::req::Request);
 }
 END_FORMATTER_SCOPE
 

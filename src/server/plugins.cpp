@@ -48,7 +48,7 @@ namespace pong
     }
 
     bufs_.pop();
-    req = pif::parse_request(val);
+    req = FORMATTER_TYPE(net::req::Request)::parse(val);
     return true;
   }
 

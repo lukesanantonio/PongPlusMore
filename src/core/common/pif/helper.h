@@ -22,7 +22,7 @@
 #include <tuple>
 #include <array>
 
-#define DEFINE_FUNDAMENTAL_FORMATTER(type, func_suffix, json_method)\
+#define DEFINE_FUNDAMENTAL_FORMATTER(type, json_method)\
 template <> struct formatter<type> {\
   inline static type parse(Json::Value const& json) noexcept\
   {\
@@ -33,20 +33,12 @@ template <> struct formatter<type> {\
     return Json::Value(t);\
   }\
 };\
-inline type parse_##func_suffix(Json::Value const& json) noexcept\
-{\
-  return formatter<type>::parse(json);\
-}
 
-#define DECLARE_FORMATTER(type, func_suffix)\
+#define DECLARE_FORMATTER(type)\
 template <> struct formatter<type> {\
   static type parse(Json::Value const&) noexcept;\
   static Json::Value dump(type const&) noexcept;\
 };\
-inline type parse_##func_suffix(Json::Value const& json) noexcept\
-{\
-  return formatter<type>::parse(json);\
-}
 
 #define DEFINE_PARSER(type, vname)\
 type formatter<type>::parse(Json::Value const& vname) noexcept
@@ -108,29 +100,20 @@ BEGIN_FORMATTER_SCOPE
 {
   template <class T> struct formatter;
 
-  template <class Type>
-  struct find_formatter<Type,
-                        std::enable_if_t<std::is_fundamental<Type>::value> >
+  template <class Type, class Enable>
+  struct find_formatter
   {
-    // Fundamental types are implemented as a template specialization of
-    // formatter in impl/fundamental.h.
     using type = formatter<Type>;
   };
 
   template <class Type>
-  struct find_formatter<Type, std::enable_if_t<std::is_class<Type>::value> >
+  struct find_formatter<Type,
+           typename pong::enable_if_type<typename Type::formatter_type>::type >
   {
     using type =
-      // if(as_custom)
-      std::conditional_t<std::is_same<detail::as_custom,
-                                      typename Type::formatter_type>::value,
-        formatter<Type>,
-      // else if(as_object)
       std::conditional_t<std::is_same<detail::as_object,
                                       typename Type::formatter_type>::value,
-        Object<Type>,
-      // else void
-        void > >; // <- Will cause an error!
+                         Object<Type>, formatter<Type> >;
   };
 
   template <class... Types>

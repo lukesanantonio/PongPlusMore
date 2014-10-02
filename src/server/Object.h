@@ -130,6 +130,6 @@ namespace pong
 
 BEGIN_FORMATTER_SCOPE
 {
-  DECLARE_FORMATTER(pong::PhysicsOptions, physics);
+  DECLARE_FORMATTER(pong::PhysicsOptions);
 }
 END_FORMATTER_SCOPE
