@@ -52,6 +52,20 @@ inline type parse_##func_suffix(Json::Value const& json) noexcept\
 #define DECLARE_PARSER_TYPE(type) using parser_type = type;
 
 namespace pong { namespace parse
+  // This tag is used internally to mark an object as parsed by the
+  // parse::Object template.
+  struct as_object {};
+
+  // Likewise, but marks an object as having a custom implementation of the
+  // parser template.
+  struct as_custom {};
+} }
+
+#define DECLARE_PARSED_AS_OBJECT using parser_type = pong::parse::as_object;
+#define DECLARE_PARSED_WITH_CUSTOM_IMPL\
+  using parser_type = pong::parse::as_custom;
+
+namespace pong { namespace parse
 {
   // Forward declarations.
   template <class... Types> struct Tuple;
@@ -62,8 +76,15 @@ namespace pong { namespace parse
   template <class Type>
   struct find_parser
   {
-    using type = std::conditional_t<std::is_fundamental<Type>::value,
-                                    parser<Type>, typename Type::parser_type >;
+    using type =
+      // if(is_fundamental)
+      std::conditional_t<std::is_fundamental<Type>::value, parser<Type>,
+      // else if(as_custom)
+      std::conditional_t<std::is_same<as_custom, Type>, parser<Type>,
+      // else if(as_object)
+      std::conditional_t<std::is_same<as_object, Type>, Object<Type>,
+      // else void
+      void > > >; // <- Will cause an error!
   };
 
   template <class... Types>

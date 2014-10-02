@@ -44,7 +44,7 @@ namespace pong { namespace parse
   {
     // Get the correct parser to use in parsing the current type in question.
     using active_type = std::tuple_element_t<N, prop_tuple_t<Type> >;
-    using parser_t = typename find_parser<active_type>::type;
+    using parser_t = find_parser_t<active_type>;
 
     // Actually parse the current value of the current type.
     std::get<N>(tup) = parser_t::parse(json[Type::property_values[N]]);

@@ -87,8 +87,9 @@ namespace pong
        */
       point_type y = 0;
 
-      DECLARE_PARSER_TYPE(parse::Object<vector>);
       DECLARE_DUMPER_TYPE(dump::Object<vector>);
+
+      DECLARE_PARSED_AS_OBJECT;
 
       DECLARE_PROPERTY_VALUES(2, "x", "y");
       DECLARE_PROPERTIES_TUPLE(point_type, point_type);
