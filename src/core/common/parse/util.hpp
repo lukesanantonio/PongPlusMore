@@ -33,7 +33,7 @@ namespace pong { namespace parse
   {
     using type = std::conditional_t<std::is_fundamental<Type>::value,
                                     Value<Type>,
-                                    Object<Type> >;
+                                    typename Type::parser_type >;
   };
 
   template <class... Types>

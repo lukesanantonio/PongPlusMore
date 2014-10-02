@@ -26,8 +26,8 @@
 #include <cstdint>
 #include <cmath>
 #include <iostream>
-#include "common/parse/helper.h"
-#include "common/dump/helper.h"
+#include "parse/helper.h"
+#include "dump/helper.h"
 namespace pong
 {
   /*!

@@ -19,8 +19,8 @@
  */
 #pragma once
 #include "core/common/volume.h"
-#include "common/dump/helper.h"
-#include "common/parse/helper.h"
+#include "core/common/dump/helper.h"
+#include "core/common/parse/helper.h"
 namespace pong
 {
   enum class PhysicsType
