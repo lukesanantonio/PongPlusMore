@@ -34,8 +34,7 @@ inline type parse_##func_suffix(Json::Value const& json) noexcept\
 
 namespace pong
 {
-  template <typename Type>
-  class parser;
+  template <typename Type> struct parser;
 
   DEFINE_FUNDAMENTAL_PARSER(int, int, asInt);
   DEFINE_FUNDAMENTAL_PARSER(unsigned int, unsigned_int, asUInt);

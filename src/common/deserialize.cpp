@@ -18,8 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "deserialize.h"
-#define DEFINE_PARSER(type, vname)\
-type parser<type>::parse(Json::Value const& vname) noexcept
 
 namespace pong
 {
@@ -39,23 +37,6 @@ namespace pong
     v.height = root["Height"].asDouble();
 
     return v;
-  }
-  DEFINE_PARSER(PhysicsOptions, phys_json)
-  {
-    PhysicsOptions opt;
-    if(phys_json["Velocity"].isObject())
-    {
-      opt.type = PhysicsType::Ball;
-      opt.ball_options = BallOptions();
-      opt.ball_options.velocity = parse_vector(phys_json["Velocity"]);
-    }
-    else if(phys_json["Destination"].isObject())
-    {
-      opt.type = PhysicsType::Paddle;
-      opt.paddle_options = PaddleOptions();
-      opt.paddle_options.destination = parse_vector(phys_json["Destination"]);
-    }
-    return opt;
   }
   DEFINE_PARSER(Object, root)
   {
@@ -81,5 +62,3 @@ namespace pong
     return parser_t::parse(json);
   }
 }
-
-#undef DEFINE_PARSER

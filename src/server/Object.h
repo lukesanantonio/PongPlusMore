@@ -21,6 +21,7 @@
 #include "core/common/volume.h"
 #include "core/common/dump/helper.h"
 #include "core/common/parse/helper.h"
+
 namespace pong
 {
   enum class PhysicsType
@@ -33,8 +34,9 @@ namespace pong
   {
     math::vector<double> destination;
 
-    DECLARE_PARSER_TYPE(parse::Object<PaddleOptions>);
     DECLARE_DUMPER_TYPE(dump::Object<PaddleOptions>);
+
+    DECLARE_PARSED_AS_OBJECT;
 
     DECLARE_PROPERTY_VALUES(1, "Destination");
     DECLARE_PROPERTIES_TUPLE(math::vector<double>);
@@ -44,8 +46,9 @@ namespace pong
   {
     math::vector<double> velocity;
 
-    DECLARE_PARSER_TYPE(parse::Object<BallOptions>);
     DECLARE_DUMPER_TYPE(dump::Object<PaddleOptions>);
+
+    DECLARE_PARSED_AS_OBJECT;
 
     DECLARE_PROPERTY_VALUES(1, "Velocity");
     DECLARE_PROPERTIES_TUPLE(math::vector<double>);
@@ -86,7 +89,11 @@ namespace pong
       BallOptions ball_options;
     };
     VolumeSides constraints = VolumeSide::None;
+
+    DECLARE_PARSED_WITH_CUSTOM_IMPL;
   };
+
+  DECLARE_PARSER(PhysicsOptions, physics);
 
   using id_type = uint16_t;
   struct Object
@@ -98,8 +105,9 @@ namespace pong
     Volume volume;
     PhysicsOptions physics_options;
 
-    DECLARE_PARSER_TYPE(parse::Object<Object>);
     DECLARE_DUMPER_TYPE(dump::Object<Object>);
+
+    DECLARE_PARSED_AS_OBJECT;
 
     DECLARE_PROPERTY_VALUES(2, "Volume", "PhysicsOptions");
     DECLARE_PROPERTIES_TUPLE(Volume, PhysicsOptions);

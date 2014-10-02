@@ -20,7 +20,8 @@
 #pragma once
 #include <type_traits>
 #include <tuple>
-#include "../template_util.hpp"
+#include "../template_utility.hpp"
+#include "forward.h"
 namespace pong { namespace parse
 {
   template <class... Types>
@@ -40,12 +41,12 @@ namespace pong { namespace parse
   {
     // Find the parser required to parse the type in question.
     using active_type = pack_element_t<N, Types...>;
-    using parser_t = find_parser<active_type>::type;
+    using parser_t = find_parser_t<active_type>;
 
     // Actually do the parse.
     std::get<N>(tup) = parser_t::parse(json[N]);
     // And the next one!
-    parse_element<N+1, Tuple_Type, Parsers...>(tup, json);
+    parse_element<N+1, Types...>(tup, json);
   }
 
   template <class... Types> typename Tuple<Types...>::tuple_t

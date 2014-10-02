@@ -31,6 +31,9 @@ inline type parse_##func_suffix(Json::Value const& json) noexcept\
   return parser<type>::parse(json);\
 }
 
+#define DEFINE_PARSER(type, vname)\
+type parser<type>::parse(Json::Value const& vname) noexcept
+
 #define DECLARE_PROPERTY_VALUES(size, ...)\
   constexpr static const int property_values_size = size;\
   constexpr static const std::array<const char*, property_values_size>\
@@ -52,6 +55,7 @@ inline type parse_##func_suffix(Json::Value const& json) noexcept\
 #define DECLARE_PARSER_TYPE(type) using parser_type = type;
 
 namespace pong { namespace parse
+{
   // This tag is used internally to mark an object as parsed by the
   // parse::Object template.
   struct as_object {};
@@ -65,34 +69,47 @@ namespace pong { namespace parse
 #define DECLARE_PARSED_WITH_CUSTOM_IMPL\
   using parser_type = pong::parse::as_custom;
 
+namespace pong
+{
+  template <class T> struct parser;
+}
+
+#include "Object.hpp"
+#include "Tuple.hpp"
+
+// For find_parser_t
+#include "forward.h"
+
+// Now the client code can parse the standard types in it's custom parse impl.
+#include "impl/fundamental.h"
+
 namespace pong { namespace parse
 {
-  // Forward declarations.
-  template <class... Types> struct Tuple;
-  template <class Type> struct Object;
-
-  template <class T> struct parser;
+  template <class Type>
+  struct find_parser<Type, std::enable_if_t<std::is_fundamental<Type>::value> >
+  {
+    using type = parser<Type>;
+  };
 
   template <class Type>
-  struct find_parser
+  struct find_parser<Type, std::enable_if_t<std::is_class<Type>::value> >
   {
     using type =
-      // if(is_fundamental)
-      std::conditional_t<std::is_fundamental<Type>::value, parser<Type>,
-      // else if(as_custom)
-      std::conditional_t<std::is_same<as_custom, Type>, parser<Type>,
+      // if(as_custom)
+      std::conditional_t<std::is_same<as_custom,
+                                      typename Type::parser_type>::value,
+        parser<Type>,
       // else if(as_object)
-      std::conditional_t<std::is_same<as_object, Type>, Object<Type>,
+      std::conditional_t<std::is_same<as_object,
+                                      typename Type::parser_type>::value,
+        Object<Type>,
       // else void
-      void > > >; // <- Will cause an error!
+        void > >; // <- Will cause an error!
   };
 
   template <class... Types>
-  struct find_parser<std::tuple<Types...> >
+  struct find_parser<std::tuple<Types...>, std::true_type>
   {
     using type = Tuple<Types...>;
   };
-
-  template <class Type>
-  using find_parser_t = typename find_parser<Type>::type;
 } }
