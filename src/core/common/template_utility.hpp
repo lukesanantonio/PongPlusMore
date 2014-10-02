@@ -101,4 +101,17 @@ namespace pong
   {
     using type = R;
   };
+
+  namespace detail
+  {
+    template <typename first, typename... others>
+    constexpr bool all_of(first const& f, others const&... o) noexcept
+    {
+      return f && all_of(o...);
+    }
+  }
+
+  template <bool... vals>
+  struct all_of
+    : std::integral_constant<bool, detail::all_of(vals...) > {};
 }
