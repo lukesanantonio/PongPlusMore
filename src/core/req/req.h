@@ -59,8 +59,6 @@ namespace pong
 \
     req_id id;\
     params_type params;\
-\
-    using request = void;\
   }
 
 #include "../common/template_utility.hpp"
@@ -72,7 +70,7 @@ namespace pong
   struct is_request : std::false_type {};
 
   template <class T>
-  struct is_request<T, typename enable_if_type<typename T::request>::type>
+  struct is_request<T, typename enable_if_type<decltype(T::methodname)>::type>
    : std::true_type {};
 }
 
