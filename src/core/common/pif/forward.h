@@ -24,7 +24,7 @@
 #define END_FORMATTER_SCOPE
 #define FORMATTER_NAMESPACE pif
 
-#define FORMATTER_TYPE(type) FORMATTER_NAMESPACE::find_formatter_t<type>
+#define FORMATTER_TYPE(...) FORMATTER_NAMESPACE::find_formatter_t<__VA_ARGS__>
 
 BEGIN_FORMATTER_SCOPE
 {
