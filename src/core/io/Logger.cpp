@@ -111,6 +111,9 @@ namespace pong
 
   void Logger::log(Severity s, const std::string& msg) noexcept
   {
+    // Don't bother if we are a null logger by chance.
+    if(fd_ == -1) return;
+
     // Stringify severity
     std::string severity = stringify_severity(s);
     std::string time = format_time("%F|%T");
