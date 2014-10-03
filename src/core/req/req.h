@@ -59,13 +59,28 @@ namespace pong
 \
     req_id id;\
     params_type params;\
+\
+    using request = void;\
   }
+
+#include "../common/template_utility.hpp"
+
+// Template utility code relating to requests.
+namespace pong
+{
+  template <class T, class Enable = void>
+  struct is_request : std::false_type {};
+
+  template <class T>
+  struct is_request<T, typename enable_if_type<typename T::request>::type>
+   : std::true_type {};
+}
 
 #include <boost/variant.hpp>
 #include <tuple>
 #include "json/json.h"
 
-#include "../common/template_utility.hpp"
+#include "../common/pif/helper.h"
 
 #include <string>
 #include "../common/vector.h"
@@ -97,9 +112,6 @@ namespace pong
    */
   REQUEST(LogReq, "Core.Log", Severity, std::string);
 
-  template <typename T>
-  struct parser;
-
   /*!
    * \brief Parses for a pack of types each following the Request concept.
    */
@@ -118,9 +130,9 @@ namespace pong
   set_params(Req& r, Json::Value const& json) noexcept
   {
     // Parse the current param
-    using tuple_type = typename Req::params_type;
-    using parser_type = parser<std::tuple_element_t<N, tuple_type> >;
-    std::get<N>(r.params) = parser_type::parse(json[N]);
+    using tuple_t = typename Req::params_type;
+    using formatter_t = FORMATTER_TYPE(std::tuple_element_t<N, tuple_t>);
+    std::get<N>(r.params) = formatter_t::parse(json[N]);
 
     // Parse the next param
     set_params<N + 1, Req>(r, json);
@@ -163,5 +175,18 @@ namespace pong
     return try_parse<0, Reqs...>(json);
   }
 }
+
+BEGIN_FORMATTER_SCOPE
+{
+  template <class... Reqs>
+  struct find_formatter<boost::variant<Reqs...>,
+                       typename std::enable_if_t<
+                       pong::all_of<pong::is_request<Reqs>::value...>::value,
+                       boost::variant<Reqs...> >::type >
+  {
+    using type = pong::Request_Parser<Reqs...>;
+  };
+}
+END_FORMATTER_SCOPE
 
 #undef REQUEST
