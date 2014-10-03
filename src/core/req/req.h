@@ -38,7 +38,7 @@ namespace pong
    * that should trigger a parse of this type of request.
    *
    * types:
-   * - params_type: A type alias to a tuple of a list of parseable types. When
+   * - params_t: A type alias to a tuple of a list of parseable types. When
    * this request type is triggered with the methodname static member, these
    * types will be parsed from the params field of the json request object.
    */
