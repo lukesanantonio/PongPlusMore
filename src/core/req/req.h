@@ -110,6 +110,8 @@ namespace pong
    */
   REQUEST(LogReq, "Core.Log", Severity, std::string);
 
+  using Request = boost::variant<BadReq, NewWindowReq, AttachStateReq, LogReq>;
+
   /*!
    * \brief Parses for a pack of types each following the Request concept.
    */
