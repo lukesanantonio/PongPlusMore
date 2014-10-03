@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "ipc.h"
+#include "common.h"
 #include <string>
 #include "Logger.h"
 namespace pong
