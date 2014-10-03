@@ -64,8 +64,6 @@ namespace pong
 
     Logger log_;
 
-    std::vector<Process*> processes_;
-
     uv_loop_t* loop_;
   };
 
