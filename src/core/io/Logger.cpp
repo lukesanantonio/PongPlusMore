@@ -22,7 +22,7 @@
 #include <cstring>
 namespace pong
 {
-  Logger::Logger(Logger_Stream s) noexcept
+  Logger::Logger(Logger_Stream s) noexcept : min_severity_(Severity::Info)
   {
     this->loop_ = uv_loop_new();
 
@@ -113,6 +113,9 @@ namespace pong
   {
     // Don't bother if we are a null logger by chance.
     if(fd_ == -1) return;
+
+    // Also don't bother if our msg doesn't qualify to be sent out.
+    if(static_cast<int>(min_severity_) > static_cast<int>(s)) return;
 
     // Stringify severity
     std::string severity = stringify_severity(s);

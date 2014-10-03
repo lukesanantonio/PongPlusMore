@@ -26,7 +26,10 @@ namespace pong
 {
   enum class Severity
   {
-    Info, Warning, Error, Unspecified
+    Info = 0,
+    Warning,
+    Error,
+    Unspecified
   };
 
   enum class Logger_Stream
@@ -44,9 +47,14 @@ namespace pong
     void step() noexcept;
 
     inline int fd() const noexcept;
+
+    inline void min_severity(Severity s) noexcept;
+    inline Severity min_severity() const noexcept;
   private:
     int fd_;
     bool should_close_;
+
+    Severity min_severity_;
 
     uv_loop_t* loop_;
   };
@@ -54,6 +62,15 @@ namespace pong
   inline int Logger::fd() const noexcept
   {
     return fd_;
+  }
+
+  inline void Logger::min_severity(Severity s) noexcept
+  {
+    min_severity_ = s;
+  }
+  inline Severity Logger::min_severity() const noexcept
+  {
+    return min_severity_;
   }
 }
 BEGIN_FORMATTER_SCOPE
