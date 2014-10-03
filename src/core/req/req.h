@@ -117,8 +117,10 @@ namespace pong
   struct Request_Parser
   {
     static boost::variant<Reqs...> parse(Json::Value const&) noexcept;
+    static Json::Value dump(boost::variant<Reqs...> const&) noexcept;
   };
 
+  // Parsing code
   template <int N, class Req>
   std::enable_if_t<N == std::tuple_size<typename Req::params_type>::value>
   set_params(Req& r, Json::Value const& json) noexcept {}
@@ -171,6 +173,31 @@ namespace pong
   Request_Parser<Reqs...>::parse(Json::Value const& json) noexcept
   {
     return try_parse<0, Reqs...>(json);
+  }
+
+  // Dumping code.
+  struct Dump_Json_Visitor : public boost::static_visitor<Json::Value>
+  {
+    template <class Req_Type>
+    Json::Value operator()(Req_Type const& req) noexcept
+    {
+      Json::Value val;
+
+      val["method"] = Req_Type::methodname;
+      val["id"] = req.id;
+
+      using params_formatter_t = FORMATTER_TYPE(typename Req_Type::params_t);
+      val["params"] = params_formatter_t::parse(req.params);
+
+      return val;
+    }
+  };
+
+  template <class... Reqs>
+  Json::Value
+  Request_Parser<Reqs...>::dump(boost::variant<Reqs...> const& var) noexcept
+  {
+    return boost::apply_visitor(Dump_Json_Visitor(), var);
   }
 }
 
