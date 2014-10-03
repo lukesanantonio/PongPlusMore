@@ -22,13 +22,42 @@
 #include <cstring>
 namespace pong
 {
-  Logger::Logger() noexcept
+  Logger::Logger(Logger_Stream s) noexcept
   {
     this->loop_ = uv_loop_new();
+
+    if(s == Logger_Stream::Out) fd_ = 1;
+    else if(s == Logger_Stream::Err) fd_ = 2;
+    else fd_ = -1;
+
+    should_close_ = false;
+  }
+  Logger::Logger(std::string const& fname) noexcept : Logger()
+  {
+    uv_fs_t req;
+    int err = uv_fs_open(loop_, &req, fname.c_str(),
+                         O_APPEND | O_CREAT, 0, NULL);
+    if(err == 0)
+    {
+      fd_ = req.result;
+      should_close_ = true;
+    }
+    else
+    {
+      fd_ = -1;
+      should_close_ = false;
+    }
   }
   Logger::~Logger() noexcept
   {
     uv_run(this->loop_, UV_RUN_DEFAULT);
+
+    if(should_close_)
+    {
+      uv_fs_t req;
+      uv_fs_close(loop_, &req, fd_, NULL);
+    }
+
     uv_loop_delete(this->loop_);
   }
 
@@ -94,7 +123,7 @@ namespace pong
 
     req->buf = uv_buf_init(msg_data, final_msg.size());
 
-    uv_fs_write(this->loop_, &req->req, 1, &req->buf, 1, -1, after_write);
+    uv_fs_write(this->loop_, &req->req, fd_, &req->buf, 1, -1, after_write);
   }
 
   void Logger::step() noexcept

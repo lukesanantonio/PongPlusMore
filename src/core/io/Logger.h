@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
+#include <cstdio>
 #include <string>
 #include <uv.h>
 #include "../common/pif/helper.h"
@@ -28,17 +29,32 @@ namespace pong
     Info, Warning, Error, Unspecified
   };
 
+  enum class Logger_Stream
+  {
+    Out, Err, None
+  };
 
   struct Logger
   {
-    Logger() noexcept;
+    Logger(Logger_Stream = Logger_Stream::Out) noexcept;
+    Logger(std::string const&) noexcept;
    ~Logger() noexcept;
 
     void log(Severity s, const std::string& msg) noexcept;
     void step() noexcept;
+
+    inline int fd() const noexcept;
   private:
+    int fd_;
+    bool should_close_;
+
     uv_loop_t* loop_;
   };
+
+  inline int Logger::fd() const noexcept
+  {
+    return fd_;
+  }
 }
 BEGIN_FORMATTER_SCOPE
 {
