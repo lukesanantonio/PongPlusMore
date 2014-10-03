@@ -55,10 +55,10 @@ namespace pong
               params(std::forward<ParamArgs>(args)...) {}\
 \
     constexpr static char const* const methodname = mname;\
-    using params_type = std::tuple<__VA_ARGS__>;\
+    using params_t = std::tuple<__VA_ARGS__>;\
 \
     req_id id;\
-    params_type params;\
+    params_t params;\
   }
 
 #include "../common/template_utility.hpp"
