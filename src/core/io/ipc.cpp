@@ -20,8 +20,7 @@
 #include "ipc.h"
 #include "common.h"
 #include <string>
-#include "Logger.h"
-namespace pong
+namespace pong { namespace ipc
 {
   // Pipe initialization functions.
   Pipe* create_pipe(Process* proc) noexcept
@@ -257,4 +256,4 @@ namespace pong
     }
     delete[] buf->base;
   }
-}
+} }

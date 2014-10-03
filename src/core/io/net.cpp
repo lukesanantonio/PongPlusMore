@@ -47,7 +47,7 @@ namespace pong { namespace net
   void recieve_udp(uv_udp_t* handle, ssize_t nread, const uv_buf_t* buf,
                    const struct sockaddr* addr, unsigned flags) noexcept
   {
-    Net_Pipe* pipe = (Net_Pipe*) handle;
+    Pipe* pipe = (Pipe*) handle;
 
     // If we are given the nothing-to-read notification, flush the buffer.
     if(nread == 0 && addr == nullptr)
@@ -65,20 +65,20 @@ namespace pong { namespace net
     delete[] buf->base;
   }
 
-  Net_Pipe* create_net_pipe(uv_loop_t* loop, std::string const& bind_ip,
-                            uint16_t const port) noexcept
+  Pipe* create_pipe(uv_loop_t* loop, std::string const& bind_ip,
+                    uint16_t const port) noexcept
   {
-    Net_Pipe* self = new Net_Pipe;
-    init_net_pipe(*self, loop, bind_ip, port);
+    Pipe* self = new Pipe;
+    init_pipe(*self, loop, bind_ip, port);
     return self;
   }
-  void delete_net_pipe(Net_Pipe* self) noexcept
+  void delete_pipe(Pipe* self) noexcept
   {
-    uninit_net_pipe(*self);
+    uninit_pipe(*self);
     delete self;
   }
-  void init_net_pipe(Net_Pipe& self, uv_loop_t* loop,
-                     std::string const& bind_ip, uint16_t const port) noexcept
+  void init_pipe(Pipe& self, uv_loop_t* loop,
+                 std::string const& bind_ip, uint16_t const port) noexcept
   {
     self.user_data = nullptr;
     self.read_cb = nullptr;
@@ -97,7 +97,7 @@ namespace pong { namespace net
     uv_udp_bind(&self.in.handle, (sockaddr*) &addr, 0);
     uv_udp_recv_start(&self.in.handle, alloc, recieve_udp);
   }
-  void uninit_net_pipe(Net_Pipe& self) noexcept
+  void uninit_pipe(Pipe& self) noexcept
   {
     uv_udp_recv_stop(&self.in.handle);
 
@@ -110,7 +110,7 @@ namespace pong { namespace net
     {
       uv_udp_send_t req;
       uv_buf_t buf;
-      Net_Pipe* pipe;
+      Pipe* pipe;
     };
     void after_write(uv_udp_send_t* r, int status)
     {
@@ -119,7 +119,7 @@ namespace pong { namespace net
       delete req;
     }
   }
-  void write_buffer(Net_Pipe& p, sockaddr const* dest) noexcept
+  void write_buffer(Pipe& p, sockaddr const* dest) noexcept
   {
     Send_Req* req = new Send_Req;
     req->pipe = &p;

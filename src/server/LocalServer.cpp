@@ -29,7 +29,7 @@ namespace pong
     args.push_back((char*) "python");
     args.push_back((char*) "plugins/ppmlib.py");
     args.push_back(NULL);
-    SpawnOptions opt;
+    ipc::SpawnOptions opt;
     opt.args = &args[0];
     opt.cwd = NULL;
     this->install_plugin(make_json_plugin<ChildProcess>(opt, log_));

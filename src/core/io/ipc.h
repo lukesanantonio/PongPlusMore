@@ -20,7 +20,8 @@
 #pragma once
 #include <uv.h>
 #include <vector>
-namespace pong
+#include "Logger.h"
+namespace pong { namespace ipc
 {
   struct Process;
   struct Pipe
@@ -51,7 +52,6 @@ namespace pong
   using on_write_cb = void (*)(Pipe*);
   void write_buffer(Pipe* pipe, on_write_cb after_write = nullptr) noexcept;
 
-  struct Logger;
   struct Process
   {
     uv_process_t proc;
@@ -75,4 +75,4 @@ namespace pong
   void kill_process(Process*, int signum) noexcept;
 
   void collect_lines(uv_stream_t* s, ssize_t nread, const uv_buf_t* buf);
-};
+} };

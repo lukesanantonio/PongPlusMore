@@ -62,16 +62,17 @@ namespace pong
     err_cb_(buf);
   }
 
-  struct SpawnOptions; struct Logger;
+  namespace ipc { struct SpawnOptions; }
+  struct Logger;
   struct ChildProcess : public External_IO
   {
-    ChildProcess(SpawnOptions&, Logger&) noexcept;
+    ChildProcess(ipc::SpawnOptions&, Logger&) noexcept;
     ~ChildProcess() noexcept;
 
     void write(std::vector<char> const& buf) noexcept override;
     void step() noexcept override;
   private:
-    Process* process_;
+    ipc::Process* process_;
     uv_loop_t loop_;
   };
 
@@ -85,7 +86,7 @@ namespace pong
     void step() noexcept override;
   private:
     struct sockaddr_in write_addr_;
-    net::Net_Pipe pipe_;
+    net::Pipe pipe_;
     uv_loop_t loop_;
   };
 }

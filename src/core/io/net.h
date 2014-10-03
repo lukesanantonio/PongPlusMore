@@ -41,24 +41,24 @@ namespace pong { namespace net
   void init_udp_handle(UDP_Handle&, uv_loop_t*) noexcept;
   void uninit_udp_handle(UDP_Handle&) noexcept;
 
-  struct Net_Pipe
+  struct Pipe
   {
     UDP_Handle in;
     UDP_Handle out;
 
     void* user_data;
 
-    using action_cb = void(*)(Net_Pipe*);
+    using action_cb = void(*)(Pipe*);
     action_cb read_cb;
     action_cb write_cb;
   };
 
-  Net_Pipe* create_net_pipe(uv_loop_t*, std::string const& bind_ip,
-                            uint16_t const port) noexcept;
-  void delete_net_pipe(Net_Pipe*) noexcept;
-  void init_net_pipe(Net_Pipe&, uv_loop_t*, std::string const& bind_ip,
-                     uint16_t const port) noexcept;
-  void uninit_net_pipe(Net_Pipe&) noexcept;
+  Pipe* create_pipe(uv_loop_t*, std::string const& bind_ip,
+                    uint16_t const port) noexcept;
+  void delete_pipe(Pipe*) noexcept;
+  void init_pipe(Pipe&, uv_loop_t*, std::string const& bind_ip,
+                 uint16_t const port) noexcept;
+  void uninit_pipe(Pipe&) noexcept;
 
-  void write_buffer(Net_Pipe& p, sockaddr const* dest) noexcept;
+  void write_buffer(Pipe& p, sockaddr const* dest) noexcept;
 } }
