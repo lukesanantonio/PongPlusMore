@@ -74,19 +74,21 @@ namespace pong
   {
     Process* proc = (Process*) p;
 
-    if(sig)
+    if(proc->log)
     {
-      proc->log->log(Severity::Info,
-                     "Process killed (PID: " + std::to_string(proc->proc.pid) +
-                     ", Exit Status: " + std::to_string(exit) + ", Signal: " +
-                     std::to_string(sig) + ")");
-    }
-    else
-    {
-      proc->log->log(Severity::Info,
-                     "Process exited normally (PID: " +
-                     std::to_string(proc->proc.pid) + ", Exit Status: " +
-                     std::to_string(exit) + ")");
+      if(sig)
+      {
+        proc->log->log(Severity::Info, "Process killed (PID: " +
+                       std::to_string(proc->proc.pid) + ", Exit Status: " +
+                       std::to_string(exit) + ", Signal: " +
+                       std::to_string(sig) + ")");
+      }
+      else
+      {
+        proc->log->log(Severity::Info, "Process exited normally (PID: " +
+                       std::to_string(proc->proc.pid) + ", Exit Status: " +
+                       std::to_string(exit) + ")");
+      }
     }
 
     // Tidy up.
@@ -99,10 +101,10 @@ namespace pong
 
   Process* create_process(uv_loop_t* loop,
                           const SpawnOptions& spawn_opt,
-                          Logger& l) noexcept
+                          Logger* l) noexcept
   {
     Process* self = new Process;
-    self->log = &l;
+    self->log = l;
     self->loop = loop;
     self->running = false;
 
@@ -144,19 +146,25 @@ namespace pong
     int err = uv_spawn(loop, (uv_process_t*) self, &options);
     if(err)
     {
-      self->log->log(Severity::Error,
-                     "Failed to spawn process: '" + proc_name +"' (Error: '" +
-                     uv_strerror(err) + "')");
+      if(self->log)
+      {
+        self->log->log(Severity::Error, "Failed to spawn process: '" +
+                       proc_name +"' (Error: '" + uv_strerror(err) + "')");
+      }
+
       delete_process(self);
       return nullptr;
     }
 
     self->running = true;
 
-    self->log->log(Severity::Info,
-                   "Successfully spawned process (Process Name: '" +
-                   proc_name + "', PID: " +
-                   std::to_string(self->proc.pid) + ")");
+    if(self->log)
+    {
+      self->log->log(Severity::Info,
+                     "Successfully spawned process (Process Name: '" +
+                     proc_name + "', PID: " +
+                     std::to_string(self->proc.pid) + ")");
+    }
     return self;
   }
 
@@ -187,9 +195,12 @@ namespace pong
     int err = uv_process_kill((uv_process_t*) proc, signum);
     if(err && err != UV_ESRCH)
     {
-      proc->log->log(Severity::Error, "Failed to kill process (PID: " +
-                     std::to_string(proc->proc.pid) + ", Signal: " +
-                     std::to_string(signum) + ")");
+      if(proc->log)
+      {
+        proc->log->log(Severity::Error, "Failed to kill process (PID: " +
+                       std::to_string(proc->proc.pid) + ", Signal: " +
+                       std::to_string(signum) + ")");
+      }
     }
   }
 

@@ -36,7 +36,7 @@ namespace pong
   {
     uv_loop_init(&loop_);
 
-    process_ = create_process(&loop_, opt, l);
+    process_ = create_process(&loop_, opt, &l);
 
     process_->io.in.user_data = this;
     process_->io.in.action_cb = post_pipe_buffer;

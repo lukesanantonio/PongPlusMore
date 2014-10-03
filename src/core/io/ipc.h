@@ -70,7 +70,7 @@ namespace pong
 
   Process* create_process(uv_loop_t* loop,
                           const SpawnOptions& spawn_opt,
-                          Logger& l) noexcept;
+                          Logger* l) noexcept;
   void delete_process(Process*) noexcept;
   void kill_process(Process*, int signum) noexcept;
 
