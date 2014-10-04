@@ -32,7 +32,7 @@ template <> struct formatter<type> {\
   {\
     return Json::Value(t);\
   }\
-};\
+}
 
 #define DECLARE_FORMATTER(type)\
 template <> struct formatter<type> {\
