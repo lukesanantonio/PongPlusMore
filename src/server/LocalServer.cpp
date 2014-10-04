@@ -29,10 +29,10 @@ namespace pong
     args.push_back((char*) "python");
     args.push_back((char*) "plugins/ppmlib.py");
     args.push_back(NULL);
-    ipc::SpawnOptions opt;
+    ipc::Spawn_Options opt;
     opt.args = &args[0];
     opt.cwd = NULL;
-    this->install_plugin(make_json_plugin<ChildProcess>(opt, log_));
+    this->install_plugin(make_json_plugin<Child_Process>(opt));
 
     this->log_.log(Severity::Info, "Initializing LocalServer");
   }

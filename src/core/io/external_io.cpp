@@ -33,11 +33,11 @@ namespace pong
     io->post_error(*p->buf);
   }
 
-  ChildProcess::ChildProcess(ipc::SpawnOptions& opt, Logger& l) noexcept
+  Child_Process::Child_Process(ipc::Spawn_Options& opt) noexcept
   {
     uv_loop_init(&loop_);
 
-    process_ = ipc::create_process(&loop_, opt, &l);
+    process_ = ipc::create_process(&loop_, opt);
 
     process_->io.in.user_data = this;
     process_->io.in.action_cb = post_pipe_buffer;
@@ -51,19 +51,19 @@ namespace pong
     *process_->io.out.buf = vec_from_string("PpM");
     ipc::write_buffer(&process_->io.out);
   }
-  ChildProcess::~ChildProcess() noexcept
+  Child_Process::~Child_Process() noexcept
   {
     ipc::delete_process(process_);
 
     uv_run(&loop_, UV_RUN_DEFAULT);
     uv_loop_close(&loop_);
   }
-  void ChildProcess::write(std::vector<char> const& buf) noexcept
+  void Child_Process::write(std::vector<char> const& buf) noexcept
   {
     *process_->io.out.buf = buf;
     ipc::write_buffer(&process_->io.out);
   }
-  void ChildProcess::step() noexcept
+  void Child_Process::step() noexcept
   {
     uv_run(&loop_, UV_RUN_NOWAIT);
   }

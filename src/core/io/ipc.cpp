@@ -47,26 +47,26 @@ namespace pong { namespace ipc
     delete self.buf;
   }
 
-  // DuplexPipe initialization functions.
-  DuplexPipe* create_duplex_pipe(Process* proc) noexcept
+  // Duplex_Pipe initialization functions.
+  Duplex_Pipe* create_duplex_pipe(Process* proc) noexcept
   {
-    DuplexPipe* self = new DuplexPipe;
+    Duplex_Pipe* self = new Duplex_Pipe;
     init_duplex_pipe(*self, proc);
     return self;
   }
-  void delete_duplex_pipe(DuplexPipe* self) noexcept
+  void delete_duplex_pipe(Duplex_Pipe* self) noexcept
   {
     uninit_duplex_pipe(*self);
     delete self;
   }
 
-  void init_duplex_pipe(DuplexPipe& self, Process* proc) noexcept
+  void init_duplex_pipe(Duplex_Pipe& self, Process* proc) noexcept
   {
     // The pipes are already allocated, so we just need to initialize them.
     init_pipe(self.in, proc);
     init_pipe(self.out, proc);
   }
-  void uninit_duplex_pipe(DuplexPipe& self) noexcept
+  void uninit_duplex_pipe(Duplex_Pipe& self) noexcept
   {
     uninit_pipe(self.in);
     uninit_pipe(self.out);
@@ -84,7 +84,7 @@ namespace pong { namespace ipc
     delete_process(proc);
   }
 
-  Process* create_process(uv_loop_t* loop, const SpawnOptions& spawn_opt)
+  Process* create_process(uv_loop_t* loop, const Spawn_Options& spawn_opt)
   {
     Process* self = new Process;
     self->loop = loop;
@@ -168,7 +168,7 @@ namespace pong { namespace ipc
     }
   }
 
-  struct WriteBufReq
+  struct Write_Buf_Req
   {
     uv_write_t req;
     Pipe* pipe;
@@ -177,7 +177,7 @@ namespace pong { namespace ipc
 
   void on_write_buffer(uv_write_t* r, int status)
   {
-    WriteBufReq* req = (WriteBufReq*) r;
+    Write_Buf_Req* req = (Write_Buf_Req*) r;
     if(req->after_write) req->after_write(req->pipe);
     delete req;
   }
@@ -185,7 +185,7 @@ namespace pong { namespace ipc
   {
     uv_buf_t buf = uv_buf_init(&(*pipe->buf)[0], pipe->buf->size());
 
-    WriteBufReq* req = new WriteBufReq;
+    Write_Buf_Req* req = new Write_Buf_Req;
     req->pipe = pipe;
     req->after_write = after_write;
 

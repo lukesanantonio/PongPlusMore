@@ -62,12 +62,10 @@ namespace pong
     err_cb_(buf);
   }
 
-  namespace ipc { struct SpawnOptions; }
-  struct Logger;
-  struct ChildProcess : public External_IO
+  struct Child_Process : public External_IO
   {
-    ChildProcess(ipc::SpawnOptions&, Logger&) noexcept;
-    ~ChildProcess() noexcept;
+    Child_Process(ipc::Spawn_Options&) noexcept;
+    ~Child_Process() noexcept;
 
     void write(std::vector<char> const& buf) noexcept override;
     void step() noexcept override;

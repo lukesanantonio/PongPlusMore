@@ -38,16 +38,16 @@ namespace pong { namespace ipc
   void init_pipe(Pipe& self, Process* proc = nullptr) noexcept;
   void uninit_pipe(Pipe& self) noexcept;
 
-  struct DuplexPipe
+  struct Duplex_Pipe
   {
     Pipe in;
     Pipe out;
   };
 
-  DuplexPipe* create_duplex_pipe(Process* = nullptr) noexcept;
-  void delete_duplex_pipe(DuplexPipe* self) noexcept;
-  void init_duplex_pipe(DuplexPipe& self, Process* = nullptr) noexcept;
-  void uninit_duplex_pipe(DuplexPipe& self) noexcept;
+  Duplex_Pipe* create_duplex_pipe(Process* = nullptr) noexcept;
+  void delete_duplex_pipe(Duplex_Pipe* self) noexcept;
+  void init_duplex_pipe(Duplex_Pipe& self, Process* = nullptr) noexcept;
+  void uninit_duplex_pipe(Duplex_Pipe& self) noexcept;
 
   using on_write_cb = void (*)(Pipe*);
   void write_buffer(Pipe* pipe, on_write_cb after_write = nullptr) noexcept;
@@ -58,7 +58,7 @@ namespace pong { namespace ipc
     int sig;
   };
 
-  struct SpawnOptions
+  struct Spawn_Options
   {
     char** args;
     const char* cwd;
@@ -73,13 +73,13 @@ namespace pong { namespace ipc
   struct Process
   {
     uv_process_t proc;
-    DuplexPipe io;
+    Duplex_Pipe io;
     Pipe err;
     uv_loop_t* loop;
     bool running;
   };
 
-  Process* create_process(uv_loop_t* loop, const SpawnOptions& spawn_opt);
+  Process* create_process(uv_loop_t* loop, const Spawn_Options& spawn_opt);
   void delete_process(Process*) noexcept;
   void kill_process(Process*, int signum);
 
