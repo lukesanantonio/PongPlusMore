@@ -19,7 +19,7 @@
  */
 #include "net.h"
 #include "common.h"
-#include "ipc.h"
+
 namespace pong { namespace net
 {
   UDP_Handle* create_udp_handle(uv_loop_t* loop) noexcept
