@@ -24,7 +24,7 @@ add_library(ppmcore STATIC common/volume.cpp
                            io/ipc.cpp
                            io/Logger.cpp
                            io/net.cpp
-                           req/req.cpp
+                           plugin/req.cpp
                            widgets/Button.cpp
                            widgets/Text_Box.cpp
                            text.cpp
