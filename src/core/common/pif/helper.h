@@ -34,17 +34,33 @@ template <> struct formatter<type> {\
   }\
 }
 
-#define DECLARE_FORMATTER(type)\
-template <> struct formatter<type> {\
+#define FORMATTER_MEMBER_FUNCTIONS(type)\
   static type parse(Json::Value const&) noexcept;\
-  static Json::Value dump(type const&) noexcept;\
-};\
+  static Json::Value dump(type const&) noexcept
 
 #define DEFINE_PARSER(type, vname)\
 type formatter<type>::parse(Json::Value const& vname) noexcept
 
 #define DEFINE_DUMPER(type, oname)\
 Json::Value formatter<type>::dump(type const& oname) noexcept
+
+#define DECLARE_FORMATTER(type)\
+template <> struct formatter<type> {\
+  FORMATTER_MEMBER_FUNCTIONS(type);\
+}
+
+// User must provide the template<typename, ...> bit.
+#define DECLARE_TEMPLATE_FORMATTER(...)\
+struct formatter<__VA_ARGS__>\
+{\
+  FORMATTER_MEMBER_FUNCTIONS(__VA_ARGS__);\
+}
+
+#define DEFINE_TEMPLATE_PARSER(vname, ...)\
+__VA_ARGS__ formatter<__VA_ARGS__>::parse(Json::Value const& vname) noexcept
+
+#define DEFINE_TEMPLATE_DUMPER(oname, ...)\
+Json::Value formatter<__VA_ARGS__>::dump(__VA_ARGS__ const& oname) noexcept
 
 #define DECLARE_PROPERTY_VALUES(size, ...)\
   constexpr static const int property_values_size = size;\
