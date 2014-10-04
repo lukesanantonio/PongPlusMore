@@ -20,7 +20,7 @@
 #pragma once
 #include <uv.h>
 #include <vector>
-#include "Logger.h"
+
 namespace pong { namespace ipc
 {
   struct Process;
@@ -52,14 +52,10 @@ namespace pong { namespace ipc
   using on_write_cb = void (*)(Pipe*);
   void write_buffer(Pipe* pipe, on_write_cb after_write = nullptr) noexcept;
 
-  struct Process
+  struct Kill_Error
   {
-    uv_process_t proc;
-    DuplexPipe io;
-    Pipe err;
-    Logger* log;
-    uv_loop_t* loop;
-    bool running;
+    int pid;
+    int sig;
   };
 
   struct SpawnOptions
@@ -68,11 +64,24 @@ namespace pong { namespace ipc
     const char* cwd;
   };
 
-  Process* create_process(uv_loop_t* loop,
-                          const SpawnOptions& spawn_opt,
-                          Logger* l) noexcept;
+  struct Spawn_Error
+  {
+    Spawn_Options spawn_options;
+    int err;
+  };
+
+  struct Process
+  {
+    uv_process_t proc;
+    DuplexPipe io;
+    Pipe err;
+    uv_loop_t* loop;
+    bool running;
+  };
+
+  Process* create_process(uv_loop_t* loop, const SpawnOptions& spawn_opt);
   void delete_process(Process*) noexcept;
-  void kill_process(Process*, int signum) noexcept;
+  void kill_process(Process*, int signum);
 
   void collect_lines(uv_stream_t* s, ssize_t nread, const uv_buf_t* buf);
 } };

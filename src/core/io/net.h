@@ -23,11 +23,13 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+
 namespace pong { namespace net
 {
-  struct AddrError : public std::runtime_error
+  // Exceptions
+  struct Bind_Error
   {
-    using std::runtime_error::runtime_error;
+    const std::string& bind_address;
   };
 
   struct UDP_Handle
@@ -54,10 +56,13 @@ namespace pong { namespace net
   };
 
   Pipe* create_pipe(uv_loop_t*, std::string const& bind_ip,
-                    uint16_t const port) noexcept;
+                    uint16_t const port);
+
   void delete_pipe(Pipe*) noexcept;
+
   void init_pipe(Pipe&, uv_loop_t*, std::string const& bind_ip,
-                 uint16_t const port) noexcept;
+                 uint16_t const port);
+
   void uninit_pipe(Pipe&) noexcept;
 
   void write_buffer(Pipe& p, sockaddr const* dest) noexcept;

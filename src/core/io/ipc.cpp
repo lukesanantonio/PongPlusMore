@@ -74,23 +74,6 @@ namespace pong { namespace ipc
   {
     Process* proc = (Process*) p;
 
-    if(proc->log)
-    {
-      if(sig)
-      {
-        proc->log->log(Severity::Info, "Process killed (PID: " +
-                       std::to_string(proc->proc.pid) + ", Exit Status: " +
-                       std::to_string(exit) + ", Signal: " +
-                       std::to_string(sig) + ")");
-      }
-      else
-      {
-        proc->log->log(Severity::Info, "Process exited normally (PID: " +
-                       std::to_string(proc->proc.pid) + ", Exit Status: " +
-                       std::to_string(exit) + ")");
-      }
-    }
-
     // Tidy up.
     uv_run(proc->loop, UV_RUN_DEFAULT);
 
@@ -99,12 +82,9 @@ namespace pong { namespace ipc
     delete_process(proc);
   }
 
-  Process* create_process(uv_loop_t* loop,
-                          const SpawnOptions& spawn_opt,
-                          Logger* l) noexcept
+  Process* create_process(uv_loop_t* loop, const SpawnOptions& spawn_opt)
   {
     Process* self = new Process;
-    self->log = l;
     self->loop = loop;
     self->running = false;
 
@@ -146,25 +126,12 @@ namespace pong { namespace ipc
     int err = uv_spawn(loop, (uv_process_t*) self, &options);
     if(err)
     {
-      if(self->log)
-      {
-        self->log->log(Severity::Error, "Failed to spawn process: '" +
-                       proc_name +"' (Error: '" + uv_strerror(err) + "')");
-      }
-
+      throw Spawn_Error{spawn_opt, err};
       delete_process(self);
       return nullptr;
     }
 
     self->running = true;
-
-    if(self->log)
-    {
-      self->log->log(Severity::Info,
-                     "Successfully spawned process (Process Name: '" +
-                     proc_name + "', PID: " +
-                     std::to_string(self->proc.pid) + ")");
-    }
     return self;
   }
 
@@ -189,18 +156,13 @@ namespace pong { namespace ipc
     delete self;
   }
 
-  void kill_process(Process* proc, int signum) noexcept
+  void kill_process(Process* proc, int signum)
   {
     if(!proc->running) return;
     int err = uv_process_kill((uv_process_t*) proc, signum);
     if(err && err != UV_ESRCH)
     {
-      if(proc->log)
-      {
-        proc->log->log(Severity::Error, "Failed to kill process (PID: " +
-                       std::to_string(proc->proc.pid) + ", Signal: " +
-                       std::to_string(signum) + ")");
-      }
+      throw Kill_Error{proc->proc.pid, signum};
     }
   }
 

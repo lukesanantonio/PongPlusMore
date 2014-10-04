@@ -66,7 +66,7 @@ namespace pong { namespace net
   }
 
   Pipe* create_pipe(uv_loop_t* loop, std::string const& bind_ip,
-                    uint16_t const port) noexcept
+                    uint16_t const port)
   {
     Pipe* self = new Pipe;
     init_pipe(*self, loop, bind_ip, port);
@@ -78,7 +78,7 @@ namespace pong { namespace net
     delete self;
   }
   void init_pipe(Pipe& self, uv_loop_t* loop,
-                 std::string const& bind_ip, uint16_t const port) noexcept
+                 std::string const& bind_ip, uint16_t const port)
   {
     self.user_data = nullptr;
     self.read_cb = nullptr;
@@ -91,7 +91,7 @@ namespace pong { namespace net
     struct sockaddr_in addr;
     if(uv_ip4_addr(bind_ip.c_str(), port, &addr))
     {
-      throw AddrError("Failed to bind to address");
+      throw Bind_Error{bind_ip};
     }
 
     uv_udp_bind(&self.in.handle, (sockaddr*) &addr, 0);
