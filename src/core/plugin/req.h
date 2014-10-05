@@ -124,15 +124,15 @@ namespace pong
 
   // Parsing code
   template <int N, class Req>
-  std::enable_if_t<N == std::tuple_size<typename Req::params_type>::value>
+  std::enable_if_t<N == std::tuple_size<typename Req::params_t>::value>
   set_params(Req& r, Json::Value const& json) noexcept {}
 
   template <int N, class Req>
-  std::enable_if_t<N < std::tuple_size<typename Req::params_type>::value>
+  std::enable_if_t<N < std::tuple_size<typename Req::params_t>::value>
   set_params(Req& r, Json::Value const& json) noexcept
   {
     // Parse the current param
-    using tuple_t = typename Req::params_type;
+    using tuple_t = typename Req::params_t;
     using formatter_t = FORMATTER_TYPE(std::tuple_element_t<N, tuple_t>);
     std::get<N>(r.params) = formatter_t::parse(json[N]);
 
@@ -141,7 +141,9 @@ namespace pong
   }
 
   template <int N, class... Reqs>
-  std::enable_if_t<N == sizeof...(Reqs), boost::variant<Reqs...> >
+  std::enable_if_t<N == sizeof...(Reqs) ||
+                   !is_request<pack_element_t<N, Reqs...> >::value,
+                   boost::variant<Reqs...> >
   try_parse(Json::Value const& json) noexcept
   {
     // If the given methodname is *not* found tell the reciever of these
@@ -151,7 +153,9 @@ namespace pong
   }
 
   template <int N, class... Reqs>
-  std::enable_if_t<N < sizeof...(Reqs), boost::variant<Reqs...> >
+  std::enable_if_t<N < sizeof...(Reqs) &&
+                   is_request<pack_element_t<N, Reqs...> >::value,
+                   boost::variant<Reqs...> >
   try_parse(Json::Value const& json) noexcept
   {
     using req_type = pack_element_t<N, Reqs...>;
@@ -167,7 +171,7 @@ namespace pong
 
       return r;
     }
-    else return try_parse<N+1, Reqs...>;
+    else return try_parse<N+1, Reqs...>(json);
   }
 
   template <class... Reqs>
@@ -207,9 +211,9 @@ BEGIN_FORMATTER_SCOPE
 {
   template <class... Reqs>
   struct find_formatter<boost::variant<Reqs...>,
-                       typename std::enable_if_t<
-                       pong::all_of<pong::is_request<Reqs>::value...>::value,
-                       boost::variant<Reqs...> >::type >
+                       std::enable_if_t<
+                        std::is_same<pong::Request,
+                                     boost::variant<Reqs...> >::value > >
   {
     using type = pong::Request_Parser<Reqs...>;
   };
