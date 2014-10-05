@@ -186,7 +186,7 @@ namespace pong
   struct Dump_Json_Visitor : public boost::static_visitor<Json::Value>
   {
     template <class Req_Type>
-    Json::Value operator()(Req_Type const& req) noexcept
+    Json::Value operator()(Req_Type const& req) const noexcept
     {
       Json::Value val;
 
@@ -194,7 +194,7 @@ namespace pong
       val["id"] = req.id;
 
       using params_formatter_t = FORMATTER_TYPE(typename Req_Type::params_t);
-      val["params"] = params_formatter_t::parse(req.params);
+      val["params"] = params_formatter_t::dump(req.params);
 
       return val;
     }
