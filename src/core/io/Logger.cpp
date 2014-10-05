@@ -149,5 +149,13 @@ BEGIN_FORMATTER_SCOPE
     if(s == "error") return Severity::Error;
     return Severity::Unspecified;
   }
+  DEFINE_DUMPER(pong::Severity, sev)
+  {
+    using pong::Severity;
+    if(sev == Severity::Info) return "info";
+    if(sev == Severity::Warning) return "warning";
+    if(sev == Severity::Error) return "error";
+    return "unspecified";
+  }
 }
 END_FORMATTER_SCOPE
