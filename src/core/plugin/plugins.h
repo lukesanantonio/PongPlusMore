@@ -27,13 +27,13 @@
 #include "../io/external_io.h"
 namespace pong
 {
-  struct Server_Plugin
+  struct Plugin
   {
     virtual bool poll_request(Request& req) noexcept = 0;
     virtual void post_response(Response const& res) noexcept = 0;
   };
 
-  struct Json_Plugin : public Server_Plugin
+  struct Json_Plugin : public Plugin
   {
     Json_Plugin(std::unique_ptr<External_IO> io) noexcept;
     ~Json_Plugin() noexcept = default;
