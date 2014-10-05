@@ -90,27 +90,28 @@ namespace pong
    * Request sent to the server when there is a parse error.
    * p1: Requested method name.
    */
-  REQUEST(BadReq, "", std::string);
+  REQUEST(Bad_Req, "", std::string);
 
   /*
    * p1: Window Title
    * p2: Window size
    */
-  REQUEST(NewWindowReq, "Core.NewWindow", std::string, math::vector<int>);
+  REQUEST(New_Window_Req, "Core.New_Window", std::string, math::vector<int>);
 
   /*
    * Starts a new gamestate and connects the given process to control.
    */
-  REQUEST(AttachStateReq, "Core.AttachState");
+  REQUEST(Attach_State_Req, "Core.Attach_State");
 
   /*
    * Logs a message.
    * p1: severity
    * p2: message
    */
-  REQUEST(LogReq, "Core.Log", Severity, std::string);
+  REQUEST(Log_Req, "Core.Log", Severity, std::string);
 
-  using Request = boost::variant<BadReq, NewWindowReq, AttachStateReq, LogReq>;
+  using Request = boost::variant<Bad_Req, New_Window_Req,
+                                 Attach_State_Req, Log_Req>;
 
   /*!
    * \brief Parses for a pack of types each following the Request concept.
@@ -149,7 +150,7 @@ namespace pong
     // If the given methodname is *not* found tell the reciever of these
     // requests that an invalid method name was found. They'll handle the
     // response.
-    return BadReq(0, json["method"].asString());
+    return Bad_Req(0, json["method"].asString());
   }
 
   template <int N, class... Reqs>
