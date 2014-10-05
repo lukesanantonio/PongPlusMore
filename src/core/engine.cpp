@@ -52,16 +52,19 @@ struct State
 
 struct Request_Visitor : public boost::static_visitor<>
 {
-  Request_Visitor(State& state) noexcept : state_(state) {}
+  Request_Visitor(State& state, pong::Logger& l) noexcept
+                  : state_(state), log_(l) {}
   template <class Req_Type>
   void operator()(Req_Type const& req) const noexcept {}
 
   void operator()(pong::Exit_Req const& req) const noexcept
   {
+    log_.log(pong::Severity::Info, "Exit request recieved");
     state_.running = false;
   }
 private:
   State& state_;
+  pong::Logger& log_;
 };
 
 int main(int argc, char** argv)
@@ -99,7 +102,7 @@ int main(int argc, char** argv)
   std::unique_ptr<pong::Plugin> plugin = spawn_plugin(json);
 
   State state;
-  Request_Visitor req_visit(state);
+  Request_Visitor req_visit(state, log);
 
   while(state.running)
   {
