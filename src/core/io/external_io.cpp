@@ -19,7 +19,7 @@
  */
 #include "external_io.h"
 #include "common.h"
-#include "common/util.h"
+#include "../common/utility.h"
 namespace pong
 {
   void post_pipe_buffer(ipc::Pipe* p) noexcept

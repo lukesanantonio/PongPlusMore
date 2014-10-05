@@ -21,7 +21,7 @@
 #include <random>
 #include <fstream>
 #include "PaddleGameState.h"
-#include "core/utility.h"
+#include "core/render/utility.h"
 #include "common/crash.hpp"
 #include "common/serialize.h"
 #include <boost/variant/get.hpp>

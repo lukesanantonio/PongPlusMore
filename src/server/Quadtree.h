@@ -22,7 +22,7 @@
 #include <array>
 #include <iterator>
 #include <vector>
-#include "common/util.h"
+#include "core/common/utility.h"
 #include "ObjectManager.h"
 #include "Node.hpp"
 namespace pong

@@ -19,17 +19,18 @@
 find_package(SDL2 REQUIRED)
 find_package(Freetype REQUIRED)
 
-add_library(ppmcore STATIC common/volume.cpp
+add_library(ppmcore STATIC common/utility.cpp
+                           common/volume.cpp
                            io/external_io.cpp
                            io/ipc.cpp
                            io/Logger.cpp
                            io/net.cpp
                            plugin/req.cpp
                            plugin/response.cpp
-                           widgets/Button.cpp
-                           widgets/Text_Box.cpp
-                           text.cpp
-                           utility.cpp)
+                           render/widgets/Button.cpp
+                           render/widgets/Text_Box.cpp
+                           render/text.cpp
+                           render/utility.cpp)
 
 target_link_libraries(ppmcore ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
 target_link_libraries(ppmcore jsoncpp)

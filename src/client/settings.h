@@ -23,7 +23,7 @@
 #include <memory>
 #include "core/common/vector.h"
 #include "json/json.h"
-#include "core/text.h"
+#include "core/render/text.h"
 #include "core/io/Logger.h"
 namespace pong
 {

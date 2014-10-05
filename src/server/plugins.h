@@ -25,7 +25,7 @@
 #include "common/deserialize.h"
 #include "json/json.h"
 #include "core/io/external_io.h"
-#include "common/util.h"
+#include "core/common/utility.h"
 namespace pong
 {
   struct Server_Plugin

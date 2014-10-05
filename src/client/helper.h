@@ -19,7 +19,7 @@
  */
 #pragma once
 #include <memory>
-#include "core/widgets/Button.h"
+#include "core/render/widgets/Button.h"
 #include "Game.h"
 #include "GameState.h"
 namespace pong

@@ -19,8 +19,8 @@
  */
 #pragma once
 #include "../GameState.h"
-#include "core/widgets/Label.h"
-#include "core/widgets/Button.h"
+#include "core/render/widgets/Label.h"
+#include "core/render/widgets/Button.h"
 #include "../Game.h"
 
 namespace pong

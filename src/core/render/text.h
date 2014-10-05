@@ -29,7 +29,7 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 
-#include "common/vector.h"
+#include "../common/vector.h"
 #include "core/io/Logger.h"
 namespace pong { namespace text
 {

@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "render.h"
-#include "core/widgets/Label.h"
+#include "core/render/widgets/Label.h"
 namespace pong
 {
   void render_debug(const Game& game, SDL_Renderer* renderer) noexcept
