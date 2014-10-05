@@ -16,9 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-add_subdirectory(client)
-add_subdirectory(common)
-add_subdirectory(core)
-add_subdirectory(plugins)
-add_subdirectory(server)
+add_data_target(plugin_json ALL)
+add_target_data(plugin_json pong.json)
+
+add_executable(pong_plugin pong_plugin.cpp)
+target_link_libraries(pong_plugin plugin_core jsoncpp)

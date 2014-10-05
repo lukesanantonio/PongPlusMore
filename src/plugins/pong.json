@@ -1,0 +1,4 @@
+{
+  "cwd":"src/plugins/",
+  "plugin":["./pong_plugin"]
+}
