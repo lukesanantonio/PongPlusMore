@@ -27,6 +27,7 @@ add_library(ppmcore STATIC common/utility.cpp
                            io/net.cpp
                            plugin/req.cpp
                            plugin/response.cpp
+                           plugin/plugins.cpp
                            render/widgets/Button.cpp
                            render/widgets/Text_Box.cpp
                            render/text.cpp
