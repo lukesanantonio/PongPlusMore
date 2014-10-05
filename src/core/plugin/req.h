@@ -92,6 +92,11 @@ namespace pong
    */
   REQUEST(Bad_Req, "", std::string);
 
+  /*!
+   * Requests engine exit.
+   */
+  REQUEST(Exit_Req, "Core.Exit");
+
   /*
    * p1: Window Title
    * p2: Window size
@@ -110,7 +115,7 @@ namespace pong
    */
   REQUEST(Log_Req, "Core.Log", Severity, std::string);
 
-  using Request = boost::variant<Bad_Req, New_Window_Req,
+  using Request = boost::variant<Bad_Req, Exit_Req, New_Window_Req,
                                  Attach_State_Req, Log_Req>;
 
   /*!
