@@ -26,7 +26,8 @@ namespace pong
 {
   enum class Severity
   {
-    Info = 0,
+    Debug = 0,
+    Info,
     Warning,
     Error,
     Unspecified

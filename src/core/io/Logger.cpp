@@ -64,7 +64,8 @@ namespace pong
   std::string stringify_severity(const Severity s)
   {
     std::string severity;
-    if(s == Severity::Info) severity = "Info";
+    if(s == Severity::Debug) severity = "Debug";
+    else if(s == Severity::Info) severity = "Info";
     else if(s == Severity::Warning) severity = "Warning";
     else if(s == Severity::Error) severity = "Error";
     else severity = "Unspecified";
@@ -144,6 +145,7 @@ BEGIN_FORMATTER_SCOPE
   {
     using pong::Severity;
     std::string s = val.asString();
+    if(s == "debug") return Severity::Debug;
     if(s == "info") return Severity::Info;
     if(s == "warning") return Severity::Warning;
     if(s == "error") return Severity::Error;
@@ -152,6 +154,7 @@ BEGIN_FORMATTER_SCOPE
   DEFINE_DUMPER(pong::Severity, sev)
   {
     using pong::Severity;
+    if(sev == Severity::Debug) return "debug";
     if(sev == Severity::Info) return "info";
     if(sev == Severity::Warning) return "warning";
     if(sev == Severity::Error) return "error";
