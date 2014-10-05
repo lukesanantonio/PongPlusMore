@@ -18,3 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "response.h"
+BEGIN_FORMATTER_SCOPE
+{
+  DEFINE_PARSER(pong::Response, json)
+  {
+    pong::Response res;
+    res.id = json["id"].asUInt();
+    if(json.isMember("result"))
+    {
+      res.result = json["result"];
+      res.error = false;
+    }
+    else
+    {
+      res.result = json.get("error", 0);
+      res.error = true;
+    }
+    return res;
+  }
+
+  DEFINE_DUMPER(pong::Response, res)
+  {
+    Json::Value val;
+    val["id"] = res.id;
+    if(!res.error) val["result"] = res.result;
+    else val["error"] = res.result;
+    return val;
+  }
+}
+END_FORMATTER_SCOPE

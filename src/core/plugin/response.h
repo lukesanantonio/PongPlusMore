@@ -20,44 +20,15 @@
 #include "req.h"
 namespace pong
 {
-  template <class Result_Type>
   struct Response
   {
     req_id id;
-    Result_Type result;
+    Json::Value result;
     bool error = false;
   };
 }
 BEGIN_FORMATTER_SCOPE
 {
-  template <class Result_Type>
-  DECLARE_TEMPLATE_FORMATTER(pong::Response<Result_Type>);
-
-  template <class Result_Type>
-  DEFINE_TEMPLATE_PARSER(json, pong::Response<Result_Type>)
-  {
-    pong::Response<Result_Type> res;
-    res.id = json["id"].asUInt();
-    if(json.isMember("result"))
-    {
-      res.result = json["result"];
-      res.error = false;
-    }
-    else
-    {
-      res.result = json.get("error", 0);
-      res.error = true;
-    }
-    return res;
-  }
-
-  template <class Result_Type>
-  DEFINE_TEMPLATE_DUMPER(res, pong::Response<Result_Type>)
-  {
-    Json::Value val;
-    val["id"] = res.id;
-    if(!res.error) val["result"] = res.result;
-    else val["error"] = res.error;
-  }
+  DECLARE_FORMATTER(pong::Response);
 }
 END_FORMATTER_SCOPE
