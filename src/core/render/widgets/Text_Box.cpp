@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Text_Box.h"
-#include "client/render.h"
 #include "../utility.h"
 namespace pong
 {

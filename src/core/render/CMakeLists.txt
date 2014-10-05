@@ -16,13 +16,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_subdirectory(common)
-add_subdirectory(io)
-add_subdirectory(plugin)
-add_subdirectory(render)
+find_package(SDL2 REQUIRED)
+find_package(Freetype REQUIRED)
 
-add_executable(pong_engine engine.cpp)
-target_link_libraries(pong_engine common_core io_core plugin_core render_core)
+add_library(render_core STATIC widgets/Button.cpp
+                               widgets/Text_Box.cpp
+                               text.cpp
+                               utility.cpp)
 
-install(TARGETS pong_engine RUNTIME DESTINATION bin)
+target_link_libraries(render_core common_core)
 
+target_link_libraries(render_core ${SDL2_LIBRARIES})
+target_include_directories(render_core PUBLIC ${SDL2_INCLUDE_DIRS})
+
+target_link_libraries(render_core ${FREETYPE_LIBRARIES})
+target_include_directories(render_core PUBLIC ${FREETYPE_INCLUDE_DIRS})

@@ -29,11 +29,12 @@ add_library(ppmclient STATIC input_impls.cpp
                              settings.cpp)
 
 target_link_libraries(ppmclient ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
-target_link_libraries(ppmclient ppmserv ppmcore jsoncpp)
+target_link_libraries(ppmclient ppmserv jsoncpp)
+target_link_libraries(ppmclient render_core io_core plugin_core common_core)
 target_include_directories(ppmclient PUBLIC ${SDL2_INCLUDE_DIRS}
                                             ${FREETYPE_INCLUDE_DIRS})
 
 add_executable(ppm ppm.cpp)
-target_link_libraries(ppm ppmclient ppmcore)
+target_link_libraries(ppm ppmclient)
 
 install(TARGETS ppm RUNTIME DESTINATION bin)

@@ -16,13 +16,5 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_subdirectory(common)
-add_subdirectory(io)
-add_subdirectory(plugin)
-add_subdirectory(render)
-
-add_executable(pong_engine engine.cpp)
-target_link_libraries(pong_engine common_core io_core plugin_core render_core)
-
-install(TARGETS pong_engine RUNTIME DESTINATION bin)
-
+add_library(common_core STATIC utility.cpp volume.cpp)
+target_link_libraries(common_core jsoncpp)
