@@ -31,7 +31,7 @@ namespace pong
    * nonstatic
    * - req_id id: Id of this particular request. Should be zero if no request
    * is needed or required.
-   * - params_type params: Tuple of provided params (see params_type below).
+   * - params_t params: Tuple of provided params (see params_t below).
    *
    * static:
    * - constexpr static char const* const methodname: name of the method field
