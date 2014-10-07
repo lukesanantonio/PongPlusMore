@@ -57,6 +57,11 @@ struct Request_Visitor : public boost::static_visitor<>
   template <class Req_Type>
   void operator()(Req_Type const& req) const noexcept {}
 
+  void operator()(pong::Log_Req const& req) const noexcept
+  {
+    log_.log(std::get<0>(req.params),
+             "(Engine Mod:) " + std::get<1>(req.params));
+  }
   void operator()(pong::Exit_Req const& req) const noexcept
   {
     log_.log(pong::Severity::Info, "Exit request recieved");
