@@ -91,6 +91,36 @@ Json::Value formatter<__VA_ARGS__>::dump(__VA_ARGS__ const& oname) noexcept
 
 BEGIN_FORMATTER_SCOPE { namespace detail
 {
+  template <typename value_t>
+  struct Enum_Value
+  {
+    value_t from;
+    char const* const str;
+  };
+} }
+END_FORMATTER_SCOPE
+
+#define BEGIN_DECLARE_FORMATTABLE_ENUM(enum, underlying_type, size)\
+template <> struct Enum_Desc<enum>\
+{\
+  using enum_t = enum;\
+  using underlying_t = underlying_type;\
+  constexpr static const std::size_t names_size = size;\
+  constexpr static const std::array<\
+                                detail::Enum_Value<underlying_t>, size> names={
+
+#define ENUM_VALUE(val, str) detail::Enum_Value<underlying_t>{static_cast<underlying_t>(val), str}
+
+#define END_DECLARE_FORMATTABLE_ENUM(enum) }; };\
+
+#define DEFINE_FORMATTABLE_ENUM(enum)\
+  constexpr const std::size_t Enum_Desc<enum>::names_size;\
+  constexpr const std::array<\
+    detail::Enum_Value<typename Enum_Desc<enum>::underlying_t>,\
+                       Enum_Desc<enum>::names_size> Enum_Desc<enum>::names;
+
+BEGIN_FORMATTER_SCOPE { namespace detail
+{
   // This tag is used internally to mark an object as parsed by the
   // parse::Object template.
   struct as_object {};
@@ -108,6 +138,7 @@ END_FORMATTER_SCOPE
 
 #include "Object.hpp"
 #include "Tuple.hpp"
+#include "Enum.hpp"
 
 // Now the client code can parse the standard types in it's custom parse impl.
 #include "impl/fundamental.h"

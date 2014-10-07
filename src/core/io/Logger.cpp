@@ -138,27 +138,8 @@ namespace pong
     uv_run(this->loop_, UV_RUN_NOWAIT);
   }
 }
-
 BEGIN_FORMATTER_SCOPE
 {
-  DEFINE_PARSER(pong::Severity, val)
-  {
-    using pong::Severity;
-    std::string s = val.asString();
-    if(s == "debug") return Severity::Debug;
-    if(s == "info") return Severity::Info;
-    if(s == "warning") return Severity::Warning;
-    if(s == "error") return Severity::Error;
-    return Severity::Unspecified;
-  }
-  DEFINE_DUMPER(pong::Severity, sev)
-  {
-    using pong::Severity;
-    if(sev == Severity::Debug) return "debug";
-    if(sev == Severity::Info) return "info";
-    if(sev == Severity::Warning) return "warning";
-    if(sev == Severity::Error) return "error";
-    return "unspecified";
-  }
+  DEFINE_FORMATTABLE_ENUM(pong::Severity);
 }
 END_FORMATTER_SCOPE

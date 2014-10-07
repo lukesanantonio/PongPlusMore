@@ -76,6 +76,12 @@ namespace pong
 }
 BEGIN_FORMATTER_SCOPE
 {
-  DECLARE_FORMATTER(pong::Severity);
+  BEGIN_DECLARE_FORMATTABLE_ENUM(pong::Severity, int, 5)
+  ENUM_VALUE(pong::Severity::Debug, "debug"),
+  ENUM_VALUE(pong::Severity::Info, "info"),
+  ENUM_VALUE(pong::Severity::Warning, "warning"),
+  ENUM_VALUE(pong::Severity::Error, "error"),
+  ENUM_VALUE(pong::Severity::Unspecified, "unspecified")
+  END_DECLARE_FORMATTABLE_ENUM(pong::Severity)
 }
 END_FORMATTER_SCOPE
