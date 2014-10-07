@@ -223,6 +223,13 @@ BEGIN_FORMATTER_SCOPE
   {
     using type = pong::Request_Parser<Reqs...>;
   };
+  template <class Req>
+  struct find_formatter<Req, std::enable_if_t<pong::is_request<Req>::value> >
+  {
+    // For this specialization, parsing isn't supporting, but dumping straight
+    // request objects will work fine.
+    using type = pong::Request_Parser<Req>;
+  };
 }
 END_FORMATTER_SCOPE
 
