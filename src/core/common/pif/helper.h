@@ -139,6 +139,7 @@ END_FORMATTER_SCOPE
 #include "Object.hpp"
 #include "Tuple.hpp"
 #include "Enum.hpp"
+#include "Json_Value.hpp"
 
 // Now the client code can parse the standard types in it's custom parse impl.
 #include "impl/fundamental.h"
@@ -161,6 +162,12 @@ BEGIN_FORMATTER_SCOPE
       std::conditional_t<std::is_same<detail::as_object,
                                       typename Type::formatter_type>::value,
                          Object<Type>, formatter<Type> >;
+  };
+
+  template <>
+  struct find_formatter<Json::Value, void>
+  {
+    using type = Json_Value;
   };
 
   template <class... Types>

@@ -89,8 +89,9 @@ namespace pong
   /*
    * Request sent to the server when there is a parse error.
    * p1: Requested method name.
+   * p1: Params array.
    */
-  REQUEST(Bad_Req, "", std::string);
+  REQUEST(Bad_Req, "", std::string, Json::Value);
 
   /*!
    * Requests engine exit.
@@ -155,7 +156,7 @@ namespace pong
     // If the given methodname is *not* found tell the reciever of these
     // requests that an invalid method name was found. They'll handle the
     // response.
-    return Bad_Req(0, json["method"].asString());
+    return Bad_Req(0, json["method"].asString(), json["params"]);
   }
 
   template <int N, class... Reqs>
