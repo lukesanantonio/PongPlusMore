@@ -59,5 +59,6 @@ namespace pong
     Json::FastWriter w;
     std::string s = w.write(FORMATTER_TYPE(Response)::dump(res));
     io_->write(vec_from_string(s));
+    io_->step();
   }
 }
