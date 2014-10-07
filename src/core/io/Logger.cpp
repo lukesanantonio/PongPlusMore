@@ -22,7 +22,8 @@
 #include <cstring>
 namespace pong
 {
-  Logger::Logger(Logger_Stream s) noexcept : min_severity_(Severity::Info)
+  Logger::Logger(Logger_Stream s) noexcept
+                 : min_severity_(static_cast<Severity>(0))
   {
     this->loop_ = uv_loop_new();
 
