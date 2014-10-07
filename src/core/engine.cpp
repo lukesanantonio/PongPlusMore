@@ -50,26 +50,79 @@ struct State
   SDL_Renderer* renderer = nullptr;
 };
 
-struct Request_Visitor : public boost::static_visitor<>
+struct Request_Visitor : public boost::static_visitor<pong::Response>
 {
   Request_Visitor(State& state, pong::Logger& l) noexcept
                   : state_(state), log_(l) {}
   template <class Req_Type>
-  void operator()(Req_Type const& req) const noexcept {}
+  pong::Response operator()(Req_Type const& req) const noexcept
+  {
+    return pong::Response{req.id, "Unimplemented request", false};
+  }
 
-  void operator()(pong::Log_Req const& req) const noexcept
+  pong::Response operator()(pong::Log_Req const& req) const noexcept
   {
     log_.log(std::get<0>(req.params),
              "(Engine Mod:) " + std::get<1>(req.params));
+    return pong::Response{req.id, true, false};
   }
-  void operator()(pong::Exit_Req const& req) const noexcept
+  pong::Response operator()(pong::Exit_Req const& req) const noexcept
   {
+    if(state_.running == false)
+    {
+      // We are already in the process of exiting!
+      return pong::Response{req.id, false, false};
+    }
     log_.log(pong::Severity::Info, "Exit request recieved");
     state_.running = false;
+    // Success, we will exit soon!
+    return pong::Response{req.id, true, false};
+  }
+  pong::Response operator()(pong::New_Window_Req const& req) const noexcept
+  {
+    log_.log(pong::Severity::Info, "Creating window");
+
+    pong::math::vector<int> const& dimensions = std::get<1>(req.params);
+
+    state_.window = SDL_CreateWindow(std::get<0>(req.params).c_str(),
+                                     SDL_WINDOWPOS_UNDEFINED,
+                                     SDL_WINDOWPOS_UNDEFINED,
+                                     dimensions.x, dimensions.y, 0);
+    if(!state_.window)
+    {
+      log_.log(pong::Severity::Error, "Failed to create window (" +
+               std::to_string(dimensions.x) + "x" +
+               std::to_string(dimensions.y) + ")");
+
+      // Return a false boolean, indicating failure.
+      return pong::Response{req.id, false, false};
+    }
+
+    state_.renderer = SDL_CreateRenderer(state_.window, -1,
+                                         SDL_RENDERER_ACCELERATED);
+    if(!state_.renderer)
+    {
+      log_.log(pong::Severity::Error, "Failed to create window renderer");
+
+      // Return a false boolean, indicating failure.
+      return pong::Response{req.id, false, false};
+    }
+
+    // Success!
+    return pong::Response{req.id, true, false};
   }
 private:
   State& state_;
   pong::Logger& log_;
+};
+
+struct Request_Id_Visitor : public boost::static_visitor<pong::req_id>
+{
+  template <class Req>
+  pong::req_id operator()(Req const& req) const noexcept
+  {
+    return req.id;
+  }
 };
 
 int main(int argc, char** argv)
@@ -114,7 +167,11 @@ int main(int argc, char** argv)
     pong::Request req;
     while(plugin->poll_request(req))
     {
-      boost::apply_visitor(req_visit, req);
+      pong::Response res = boost::apply_visitor(req_visit, req);
+      if(boost::apply_visitor(Request_Id_Visitor(), req))
+      {
+        plugin->post_response(res);
+      }
     }
   }
 
