@@ -173,7 +173,7 @@ namespace pong
       r.id = json["id"].asInt();
 
       // Populate the tuple using the provided params.
-      set_params<0, req_type>(r, json);
+      set_params<0, req_type>(r, json["params"]);
 
       return r;
     }
