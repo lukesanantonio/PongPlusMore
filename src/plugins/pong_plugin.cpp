@@ -28,20 +28,20 @@
 int main(int argc, char** argv)
 {
   // Log our presence... For the hell of it!
-  pong::Request req = pong::Log_Req(0, pong::Severity::Info, "HELLO!");
+  pong::Log_Req log(0, pong::Severity::Info, "HELLO!");
   Json::FastWriter write;
 
-  std::string out = write.write(FORMATTER_TYPE(pong::Request)::dump(req));
+  std::string out = write.write(FORMATTER_TYPE(pong::Request)::dump(log));
   std::cout << out << std::flush;
 
   // Wait a couple of seconds.
   std::this_thread::sleep_for(std::chrono::seconds(2));
 
   // Make the exit request.
-  req = pong::Exit_Req(0);
+  pong::Exit_Req exit(0);
 
   // Dump the json to a string.
-  out = write.write(FORMATTER_TYPE(pong::Request)::dump(req));
+  out = write.write(FORMATTER_TYPE(pong::Request)::dump(exit));
 
   // Send that request to the engine.
   std::cout << out;
