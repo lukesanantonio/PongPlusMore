@@ -104,10 +104,27 @@ namespace pong
    */
   REQUEST(New_Window_Req, "Core.New_Window", std::string, math::vector<int>);
 
+  struct Plugin_Launch_Options
+  {
+    Plugin_Launch_Options() noexcept {}
+    Plugin_Launch_Options(std::string const& cwd,
+                          std::vector<std::string> const& args) noexcept
+                          : cwd(cwd), args(args) {};
+
+    std::string cwd;
+    std::vector<std::string> args;
+
+    DECLARE_PROPERTY_VALUES(2, "cwd", "args");
+    DECLARE_PROPERTIES_TUPLE(std::string, std::vector<std::string>);
+    DECLARE_PROPERTIES(this->cwd, this->args);
+
+    DECLARE_FORMATTED_AS_OBJECT;
+  };
+
   /*
    * Starts a new gamestate and connects the given process to control.
    */
-  REQUEST(Attach_State_Req, "Core.Attach_State");
+  REQUEST(Attach_State_Req, "Core.Attach_State", Plugin_Launch_Options);
 
   /*
    * Logs a message.

@@ -20,5 +20,5 @@
 #include "req.h"
 namespace pong
 {
-
+  DEFINE_PROPERTY_VALUES(Plugin_Launch_Options);
 }
