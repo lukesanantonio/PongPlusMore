@@ -109,7 +109,8 @@ template <> struct Enum_Desc<enum>\
   constexpr static const std::array<\
                                 detail::Enum_Value<underlying_t>, size> names={
 
-#define ENUM_VALUE(val, str) detail::Enum_Value<underlying_t>{static_cast<underlying_t>(val), str}
+#define ENUM_VALUE(val, str)\
+  detail::Enum_Value<underlying_t>{static_cast<underlying_t>(val), str}
 
 #define END_DECLARE_FORMATTABLE_ENUM(enum) }; };\
 
