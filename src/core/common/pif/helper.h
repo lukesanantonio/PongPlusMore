@@ -140,6 +140,7 @@ END_FORMATTER_SCOPE
 #include "Tuple.hpp"
 #include "Enum.hpp"
 #include "Json_Value.hpp"
+#include "Vector.hpp"
 
 // Now the client code can parse the standard types in it's custom parse impl.
 #include "impl/fundamental.h"
