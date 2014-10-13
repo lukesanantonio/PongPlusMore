@@ -26,13 +26,13 @@ BEGIN_FORMATTER_SCOPE
   struct Vector
   {
     using vector_t = std::vector<T, A>;
-    static vector_t parse(Json::Value const&) noexcept;
-    static Json::Value dump(vector_t const&) noexcept;
+    static vector_t parse(Json::Value const&);
+    static Json::Value dump(vector_t const&);
   };
 
   template <class T, class A>
   typename Vector<T, A>::vector_t
-  Vector<T, A>::parse(Json::Value const& json) noexcept
+  Vector<T, A>::parse(Json::Value const& json)
   {
     vector_t vec;
     for(Json::Value const& val : json)
@@ -42,7 +42,7 @@ BEGIN_FORMATTER_SCOPE
     return vec;
   }
   template <class T, class A>
-  Json::Value Vector<T, A>::dump(vector_t const& vec) noexcept
+  Json::Value Vector<T, A>::dump(vector_t const& vec)
   {
     Json::Value json;
     for(T const& t : vec)

@@ -25,8 +25,8 @@ BEGIN_FORMATTER_SCOPE
   template <class Type>
   struct Object
   {
-    static Type parse(Json::Value const& root) noexcept;
-    static Json::Value dump(Type const&) noexcept;
+    static Type parse(Json::Value const& root);
+    static Json::Value dump(Type const&);
   };
 
   // Some helper template aliases.
@@ -37,7 +37,7 @@ BEGIN_FORMATTER_SCOPE
   template <class Type, int N>
   std::enable_if_t<N >= std::tuple_size<prop_tuple_t<Type> >::value >
   parse_tuple_element(Json::Value const& json,
-                      typename Type::properties_tuple& tup) noexcept {}
+                      typename Type::properties_tuple& tup) {}
 
   template <class Type, int N>
   std::enable_if_t<N<std::tuple_size<prop_tuple_t<Type> >::value >
@@ -56,21 +56,21 @@ BEGIN_FORMATTER_SCOPE
 
   template <class Type, int N, class TupleType, class... Args>
   std::enable_if_t<N >= std::tuple_size<TupleType>::value, Type>
-  construct_from_tuple(TupleType&, Args&&... args) noexcept
+  construct_from_tuple(TupleType&, Args&&... args)
   {
     return Type(std::forward<Args>(args)...);
   }
 
   template <class Type, int N, class TupleType, class... Args>
   std::enable_if_t<N < std::tuple_size<TupleType>::value, Type>
-  construct_from_tuple(TupleType& tup, Args&&... args) noexcept
+  construct_from_tuple(TupleType& tup, Args&&... args)
   {
     return construct_from_tuple<Type, N+1>(tup, std::forward<Args>(args)...,
                                            std::get<N>(tup));
   }
 
   template <class Type>
-  Type Object<Type>::parse(Json::Value const& root) noexcept
+  Type Object<Type>::parse(Json::Value const& root)
   {
     // Make a tuple to the store the parsed elements.
     prop_tuple_t<Type> tup;
@@ -85,11 +85,11 @@ BEGIN_FORMATTER_SCOPE
   // Dumping code.
   template <class Type, int N, class Tuple_Type>
   std::enable_if_t<N >= std::tuple_size<Tuple_Type>::value>
-  populate_json(Json::Value& json, Tuple_Type const& tup) noexcept {}
+  populate_json(Json::Value& json, Tuple_Type const& tup) {}
 
   template <class Type, int N, class Tuple_Type>
   std::enable_if_t<N < std::tuple_size<Tuple_Type>::value>
-  populate_json(Json::Value& json, Tuple_Type const& tup) noexcept
+  populate_json(Json::Value& json, Tuple_Type const& tup)
   {
     // Find the correct dumper
     using active_t = std::tuple_element_t<N, Tuple_Type>;
@@ -103,7 +103,7 @@ BEGIN_FORMATTER_SCOPE
   }
 
   template <class Type>
-  Json::Value Object<Type>::dump(Type const& obj) noexcept
+  Json::Value Object<Type>::dump(Type const& obj)
   {
     // Get the property values.
     prop_tuple_t<Type> t = obj.properties();

@@ -27,21 +27,21 @@ BEGIN_FORMATTER_SCOPE
   template <typename Type>
   struct Enum
   {
-    static Type parse(Json::Value const&) noexcept;
-    static Json::Value dump(Type const&) noexcept;
+    static Type parse(Json::Value const&);
+    static Json::Value dump(Type const&);
   };
 
   template <int N, class Enum_Desc>
   std::enable_if_t<N == std::tuple_size<decltype(Enum_Desc::names)>::value - 1,
                    typename Enum_Desc::underlying_t>
-  find_enum_value(Json::Value const& json) noexcept
+  find_enum_value(Json::Value const& json)
   {
     return Enum_Desc::names[N].from;
   }
   template <int N, class Enum_Desc>
   std::enable_if_t<N < std::tuple_size<decltype(Enum_Desc::names)>::value - 1,
                    typename Enum_Desc::underlying_t>
-  find_enum_value(Json::Value const& json) noexcept
+  find_enum_value(Json::Value const& json)
   {
     if(json.asString() == Enum_Desc::names[N].str)
     {
@@ -51,7 +51,7 @@ BEGIN_FORMATTER_SCOPE
   }
 
   template <typename Type>
-  Type Enum<Type>::parse(Json::Value const& json) noexcept
+  Type Enum<Type>::parse(Json::Value const& json)
   {
     using desc_type = Enum_Desc<Type>;
     using enum_type = typename Enum_Desc<Type>::enum_t;
@@ -61,7 +61,7 @@ BEGIN_FORMATTER_SCOPE
   template <int N, class Enum_Desc>
   std::enable_if_t<N == std::tuple_size<decltype(Enum_Desc::names)>::value - 1,
                    Json::Value>
-  find_enum_str(typename Enum_Desc::underlying_t const& val) noexcept
+  find_enum_str(typename Enum_Desc::underlying_t const& val)
   {
     return Json::Value(Enum_Desc::names[N].str);
   }
@@ -69,7 +69,7 @@ BEGIN_FORMATTER_SCOPE
   template <int N, class Enum_Desc>
   std::enable_if_t<N < std::tuple_size<decltype(Enum_Desc::names)>::value - 1,
                    Json::Value>
-  find_enum_str(typename Enum_Desc::underlying_t const& val) noexcept
+  find_enum_str(typename Enum_Desc::underlying_t const& val)
   {
     if(Enum_Desc::names[N].from == val)
     {
@@ -79,7 +79,7 @@ BEGIN_FORMATTER_SCOPE
   }
 
   template <typename Type>
-  Json::Value Enum<Type>::dump(Type const& val) noexcept
+  Json::Value Enum<Type>::dump(Type const& val)
   {
     using desc_type = Enum_Desc<Type>;
 

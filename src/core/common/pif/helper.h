@@ -24,25 +24,25 @@
 
 #define DEFINE_FUNDAMENTAL_FORMATTER(type, json_method)\
 template <> struct formatter<type> {\
-  inline static type parse(Json::Value const& json) noexcept\
+  inline static type parse(Json::Value const& json)\
   {\
     return json.json_method();\
   }\
-  inline static Json::Value dump(type const& t) noexcept\
+  inline static Json::Value dump(type const& t)\
   {\
     return Json::Value(t);\
   }\
 }
 
 #define FORMATTER_MEMBER_FUNCTIONS(type)\
-  static type parse(Json::Value const&) noexcept;\
-  static Json::Value dump(type const&) noexcept
+  static type parse(Json::Value const&);\
+  static Json::Value dump(type const&)
 
 #define DEFINE_PARSER(type, vname)\
-type formatter<type>::parse(Json::Value const& vname) noexcept
+type formatter<type>::parse(Json::Value const& vname)
 
 #define DEFINE_DUMPER(type, oname)\
-Json::Value formatter<type>::dump(type const& oname) noexcept
+Json::Value formatter<type>::dump(type const& oname)
 
 #define DECLARE_FORMATTER(type)\
 template <> struct formatter<type> {\
@@ -57,10 +57,10 @@ struct formatter<__VA_ARGS__>\
 }
 
 #define DEFINE_TEMPLATE_PARSER(vname, ...)\
-__VA_ARGS__ formatter<__VA_ARGS__>::parse(Json::Value const& vname) noexcept
+__VA_ARGS__ formatter<__VA_ARGS__>::parse(Json::Value const& vname)
 
 #define DEFINE_TEMPLATE_DUMPER(oname, ...)\
-Json::Value formatter<__VA_ARGS__>::dump(__VA_ARGS__ const& oname) noexcept
+Json::Value formatter<__VA_ARGS__>::dump(__VA_ARGS__ const& oname)
 
 #define DECLARE_PROPERTY_VALUES(size, ...)\
   constexpr static const int property_values_size = size;\

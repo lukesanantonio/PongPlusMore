@@ -28,18 +28,18 @@ BEGIN_FORMATTER_SCOPE
   struct Tuple
   {
     using tuple_t = std::tuple<Types...>;
-    static tuple_t parse(Json::Value const&) noexcept;
-    static Json::Value dump(tuple_t const&) noexcept;
+    static tuple_t parse(Json::Value const&);
+    static Json::Value dump(tuple_t const&);
   };
 
   // Parsing code.
   template <int N, class... Types>
   std::enable_if_t<N >= sizeof...(Types)>
-  parse_element(std::tuple<Types...>&, Json::Value const&) noexcept {}
+  parse_element(std::tuple<Types...>&, Json::Value const&) {}
 
   template <int N, class... Types>
   std::enable_if_t<N < sizeof...(Types)>
-  parse_element(std::tuple<Types...>& tup, Json::Value const& json) noexcept
+  parse_element(std::tuple<Types...>& tup, Json::Value const& json)
   {
     // Find the parser required to parse the type in question.
     using active_t = pong::pack_element_t<N, Types...>;
@@ -52,7 +52,7 @@ BEGIN_FORMATTER_SCOPE
   }
 
   template <class... Types> typename Tuple<Types...>::tuple_t
-  Tuple<Types...>::parse(Json::Value const& json) noexcept
+  Tuple<Types...>::parse(Json::Value const& json)
   {
     tuple_t tup;
     parse_element<0, tuple_t, Types...>(tup, json);
@@ -63,11 +63,11 @@ BEGIN_FORMATTER_SCOPE
   template <int N, class Tuple_Type>
   std::enable_if_t<(N == std::tuple_size<Tuple_Type>::value &&
                     std::tuple_size<Tuple_Type>::value > 0)>
-  dump_tuple_element(Json::Value&, Tuple_Type const&) noexcept {}
+  dump_tuple_element(Json::Value&, Tuple_Type const&) {}
 
   template <int N, class Tuple_Type>
   std::enable_if_t<N == 0 && std::tuple_size<Tuple_Type>::value == 0>
-  dump_tuple_element(Json::Value& json, Tuple_Type const&) noexcept
+  dump_tuple_element(Json::Value& json, Tuple_Type const&)
   {
     json = Json::Value(Json::ValueType::arrayValue);
   }
@@ -75,7 +75,7 @@ BEGIN_FORMATTER_SCOPE
   template <int N, class Tuple_Type>
   std::enable_if_t<(N < std::tuple_size<Tuple_Type>::value &&
                    std::tuple_size<Tuple_Type>::value > 0)>
-  dump_tuple_element(Json::Value& json, Tuple_Type const& tup) noexcept
+  dump_tuple_element(Json::Value& json, Tuple_Type const& tup)
   {
     // Dump the value of the active type.
     using active_t = std::tuple_element_t<N, Tuple_Type>;
@@ -88,7 +88,7 @@ BEGIN_FORMATTER_SCOPE
   }
 
   template <class... Types> Json::Value
-  Tuple<Types...>::dump(typename Tuple<Types...>::tuple_t const& tup) noexcept
+  Tuple<Types...>::dump(typename Tuple<Types...>::tuple_t const& tup)
   {
     // Make our json.
     Json::Value json;

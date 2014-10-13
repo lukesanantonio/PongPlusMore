@@ -24,14 +24,14 @@ BEGIN_FORMATTER_SCOPE
 {
   struct Json_Value
   {
-    static inline Json::Value dump(Json::Value const&) noexcept;
-    static inline Json::Value parse(Json::Value const&) noexcept;
+    static inline Json::Value dump(Json::Value const&);
+    static inline Json::Value parse(Json::Value const&);
   };
-  inline Json::Value Json_Value::dump(Json::Value const& json) noexcept
+  inline Json::Value Json_Value::dump(Json::Value const& json)
   {
     return json;
   }
-  inline Json::Value Json_Value::parse(Json::Value const& json) noexcept
+  inline Json::Value Json_Value::parse(Json::Value const& json)
   {
     return json;
   }
