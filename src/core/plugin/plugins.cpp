@@ -30,27 +30,28 @@ namespace pong
       bufs_.push(buf);
     });
   }
-  bool Json_Plugin::poll_request(Request& req) noexcept
+
+  bool Json_Plugin::poll_request(Request& req)
   {
     io_->step();
     if(!bufs_.size()) return false;
 
-    Json::Value val;
-
     Json::Reader read(Json::Features::strictMode());
 
+    Json::Value val;
     using std::begin; using std::end;
-    // While the queued buffer is failing to compile.
-    while(!read.parse(std::string(begin(bufs_.front()), end(bufs_.front())),
-                      val))
-    {
-      // Ignore it and continue on.
-      bufs_.pop();
-      if(!bufs_.size()) return false;
-    }
 
+    std::string doc(begin(bufs_.front()), end(bufs_.front()));
     bufs_.pop();
-    req = FORMATTER_TYPE(Request)::parse(val);
+
+    if(read.parse(doc, val))
+    {
+      req = FORMATTER_TYPE(Request)::parse(val);
+    }
+    else
+    {
+      throw Json_Parse_Error{doc, read.getFormattedErrorMessages()};
+    }
     return true;
   }
 

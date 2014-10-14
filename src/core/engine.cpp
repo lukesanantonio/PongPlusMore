@@ -27,7 +27,7 @@
 #include "core/plugin/plugins.h"
 #include "core/io/Logger.h"
 
-std::unique_ptr<pong::Plugin> spawn_plugin(Json::Value const& json) noexcept
+pong::Json_Plugin spawn_plugin(Json::Value const& json) noexcept
 {
   std::vector<char*> args;
 
@@ -50,81 +50,77 @@ struct State
   SDL_Renderer* renderer = nullptr;
 };
 
-struct Request_Visitor : public boost::static_visitor<pong::Response>
+void step(State& state) noexcept
 {
-  Request_Visitor(State& state, pong::Logger& l) noexcept
-                  : state_(state), log_(l) {}
-  template <class Req_Type>
-  pong::Response operator()(Req_Type const& req) const noexcept
-  {
-    return pong::Response{req.id, "Unimplemented request", false};
-  }
 
-  pong::Response operator()(pong::Log_Req const& req) const noexcept
-  {
-    log_.log(std::get<0>(req.params),
-             "(Engine Mod:) " + std::get<1>(req.params));
-    return pong::Response{req.id, true, false};
-  }
-  pong::Response operator()(pong::Exit_Req const& req) const noexcept
-  {
-    if(state_.running == false)
-    {
-      // We are already in the process of exiting!
-      return pong::Response{req.id, false, false};
-    }
-    log_.log(pong::Severity::Info, "Exit request recieved");
-    state_.running = false;
-    // Success, we will exit soon!
-    return pong::Response{req.id, true, false};
-  }
-  pong::Response operator()(pong::New_Window_Req const& req) const noexcept
-  {
-    log_.log(pong::Severity::Info, "Creating window");
+}
 
-    pong::math::vector<int> const& dimensions = std::get<1>(req.params);
+bool is_null_id(pong::optional_id_t const& id)
+{
+  return !static_cast<bool>(id);
+}
 
-    state_.window = SDL_CreateWindow(std::get<0>(req.params).c_str(),
-                                     SDL_WINDOWPOS_UNDEFINED,
-                                     SDL_WINDOWPOS_UNDEFINED,
-                                     dimensions.x, dimensions.y, 0);
-    if(!state_.window)
-    {
-      log_.log(pong::Severity::Error, "Failed to create window (" +
-               std::to_string(dimensions.x) + "x" +
-               std::to_string(dimensions.y) + ")");
+struct Request_Dispatcher
+{
+  Request_Dispatcher(State& state, pong::Logger& l) noexcept
+                     : state_(state), log_(l) {}
 
-      // Return a false boolean, indicating failure.
-      return pong::Response{req.id, false, false};
-    }
-
-    state_.renderer = SDL_CreateRenderer(state_.window, -1,
-                                         SDL_RENDERER_ACCELERATED);
-    if(!state_.renderer)
-    {
-      log_.log(pong::Severity::Error, "Failed to create window renderer");
-
-      // Return a false boolean, indicating failure.
-      return pong::Response{req.id, false, false};
-    }
-
-    // Success!
-    return pong::Response{req.id, true, false};
-  }
+  pong::Response dispatch(pong::Request const& req) noexcept;
+  bool dispatch_plugin_request(pong::Plugin* plugin) noexcept;
 private:
   State& state_;
   pong::Logger& log_;
 };
 
-struct Request_Id_Visitor : public boost::static_visitor<pong::req_id>
+pong::Response Request_Dispatcher::dispatch(pong::Request const& req) noexcept
 {
-  template <class Req>
-  pong::req_id operator()(Req const& req) const noexcept
+  if(req.method == "Core.Log")
   {
-    return req.id;
-  }
-};
+    using param_t = std::tuple<pong::Severity, std::string>;
 
+    try
+    {
+      param_t params = FORMATTER_TYPE(param_t)::parse(req.params.value());
+
+      log_.log(std::get<0>(params), "(Plugin) " + std::get<1>(params));
+    }
+    catch(std::runtime_error& e)
+    {
+      return pong::Response{req.id,
+                            pong::Error_Response{-32602, "Invalid params"}};
+    }
+    catch(boost::bad_optional_access& e)
+    {
+      return pong::Response{req.id,
+                            pong::Error_Response{-32602, "Invalid params"}};
+    }
+  }
+
+  return pong::Response{req.id,
+                        pong::Error_Response{-32601, "Unknown method"}};
+}
+
+bool Request_Dispatcher::dispatch_plugin_request(pong::Plugin* plugin) noexcept
+{
+  pong::Request req;
+  if(plugin->poll_request(req))
+  {
+    pong::Response res = dispatch(req);
+
+    // Null out the id if necessary.
+    if(!res.id && is_error_response(res)) res.id = pong::null_t{};
+
+    // If the requester wanted a response give them one. Also send a respons if
+    // there is an error.
+    else if(res.id)
+    {
+      plugin->post_response(res);
+    }
+
+    return true;
+  }
+  return false;
+}
 int main(int argc, char** argv)
 {
   if(argc < 2)
@@ -157,22 +153,15 @@ int main(int argc, char** argv)
   }
 
   log.log(Severity::Info, "Spawning mod: " + json["plugin"][0].asString());
-  std::unique_ptr<pong::Plugin> plugin = spawn_plugin(json);
+  pong::Json_Plugin plugin = spawn_plugin(json);
 
   State state;
-  Request_Visitor req_visit(state, log);
+  Request_Dispatcher dispatch(state, log);
 
   while(state.running)
   {
-    pong::Request req;
-    while(plugin->poll_request(req))
-    {
-      pong::Response res = boost::apply_visitor(req_visit, req);
-      if(boost::apply_visitor(Request_Id_Visitor(), req))
-      {
-        plugin->post_response(res);
-      }
-    }
+    while(dispatch.dispatch_plugin_request(&plugin)) {}
+    step(state);
   }
 
   return 0;

@@ -21,6 +21,8 @@
 #include <memory>
 #include <queue>
 #include <vector>
+#include <boost/variant.hpp>
+#include <boost/optional.hpp>
 #include "json/json.h"
 #include "req.h"
 #include "response.h"
@@ -29,8 +31,14 @@ namespace pong
 {
   struct Plugin
   {
-    virtual bool poll_request(Request& req) noexcept = 0;
+    virtual bool poll_request(Request& req) = 0;
     virtual void post_response(Response const& res) noexcept = 0;
+  };
+
+  struct Json_Parse_Error
+  {
+    std::string json;
+    std::string err;
   };
 
   struct Json_Plugin : public Plugin
@@ -44,7 +52,7 @@ namespace pong
     Json_Plugin& operator=(Json_Plugin&&) noexcept = default;
     Json_Plugin& operator=(Json_Plugin const&) noexcept = delete;
 
-    bool poll_request(Request& req) noexcept override;
+    bool poll_request(Request& req) override;
     void post_response(Response const& req) noexcept override;
   private:
     std::unique_ptr<External_IO> io_;
@@ -52,9 +60,9 @@ namespace pong
   };
 
   template <class IO_Type, class... Args>
-  std::unique_ptr<Json_Plugin> make_json_plugin(Args&&... args) noexcept
+  Json_Plugin make_json_plugin(Args&&... args) noexcept
   {
     auto io = std::make_unique<IO_Type>(std::forward<Args>(args)...);
-    return std::make_unique<Json_Plugin>(std::move(io));
+    return Json_Plugin(std::move(io));
   }
 }

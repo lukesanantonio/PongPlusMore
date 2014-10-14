@@ -20,12 +20,44 @@
 #include "req.h"
 namespace pong
 {
+  struct Invalid_Response_Exception {};
+
+  struct Error_Response
+  {
+    Error_Response(int code = 0, std::string const& msg = "") noexcept
+                   : code(code), msg(msg) {}
+
+    int code;
+    std::string msg;
+
+    DECLARE_PROPERTY_VALUES(2, "code", "message");
+    DECLARE_PROPERTIES_TUPLE(int, std::string);
+    DECLARE_PROPERTIES(code, msg);
+    DECLARE_FORMATTED_AS_OBJECT;
+  };
+
   struct Response
   {
-    req_id id;
-    Json::Value result;
-    bool error = false;
+    optional_id_t id;
+    boost::variant<Json::Value, Error_Response> result;
   };
+
+  inline bool is_error_response(Response const& res) noexcept
+  {
+    struct Is_Error_Response_Visitor : public boost::static_visitor<bool>
+    {
+      bool operator()(Json::Value const& val) const noexcept
+      {
+        return false;
+      }
+      bool operator()(Error_Response const& res) const noexcept
+      {
+        return true;
+      }
+    };
+
+    return boost::apply_visitor(Is_Error_Response_Visitor(), res.result);
+  }
 }
 BEGIN_FORMATTER_SCOPE
 {

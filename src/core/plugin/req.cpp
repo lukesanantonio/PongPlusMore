@@ -20,5 +20,102 @@
 #include "req.h"
 namespace pong
 {
-  DEFINE_PROPERTY_VALUES(Plugin_Launch_Options);
+  struct Json_Id_Visitor : public boost::static_visitor<Json::Value>
+  {
+    template <typename Type>
+    Json::Value operator()(Type const& t) const noexcept
+    {
+      return FORMATTER_TYPE(Type)::dump(t);
+    }
+  };
 }
+BEGIN_FORMATTER_SCOPE
+{
+  DEFINE_PARSER(pong::null_t, json)
+  {
+    return pong::null_t{};
+  }
+  DEFINE_DUMPER(pong::null_t, n)
+  {
+    return Json::ValueType::nullValue;
+  }
+
+  DEFINE_PARSER(pong::req_id_t, json)
+  {
+    pong::req_id_t id;
+
+    if(json.isString())
+    {
+      id = json.asString();
+    }
+    else if(json.isIntegral())
+    {
+      id = json.asInt();
+    }
+    else if(json.isNull())
+    {
+      id = pong::null_t{};
+    }
+    else
+    {
+      throw pong::Invalid_Id_Exception{};
+    }
+
+    return id;
+  }
+  DEFINE_DUMPER(pong::req_id_t, id)
+  {
+    Json::Value val = boost::apply_visitor(pong::Json_Id_Visitor(), id);
+    return val;
+  }
+  DEFINE_PARSER(pong::Request, js)
+  {
+    // We need a method!
+    if(!js.get("method", 0).isString())
+    {
+      throw pong::Invalid_Request_Exception{};
+    }
+
+    pong::Request req;
+
+    try
+    {
+      req.id = FORMATTER_TYPE(pong::req_id_t)::parse(js["id"]);
+    }
+    catch(pong::Invalid_Id_Exception& e)
+    {
+      throw pong::Invalid_Request_Exception{};
+    }
+    // This means an id wasn't provided at all, which we can ignore.
+    catch(std::runtime_error& e) {}
+
+    req.method = js["method"].asString();
+
+    if(js.isMember("params"))
+    {
+      req.params = js["params"];
+    }
+
+    return req;
+  }
+  DEFINE_DUMPER(pong::Request, req)
+  {
+    Json::Value json;
+
+    // Only output an id if there is one.
+    if(static_cast<bool>(req.id))
+    {
+      json["id"] = FORMATTER_TYPE(pong::req_id_t)::dump(req.id.value());
+    }
+
+    json["method"] = req.method;
+
+    if(static_cast<bool>(req.params))
+    {
+      json["params"] = req.params.value();
+    }
+
+    return json;
+  }
+}
+END_FORMATTER_SCOPE

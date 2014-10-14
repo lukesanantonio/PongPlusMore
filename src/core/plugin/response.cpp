@@ -18,31 +18,65 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "response.h"
+namespace pong
+{
+  struct Json_Result_Visitor : public boost::static_visitor<Json::Value>
+  {
+    template <typename Type>
+    Json::Value operator()(Type const& t) const noexcept
+    {
+      return FORMATTER_TYPE(Type)::dump(t);
+    }
+  };
+
+  DEFINE_PROPERTY_VALUES(pong::Error_Response);
+}
 BEGIN_FORMATTER_SCOPE
 {
   DEFINE_PARSER(pong::Response, json)
   {
     pong::Response res;
-    res.id = json["id"].asUInt();
+    // If there is an id.
+    if(static_cast<bool>(res.id))
+    {
+      res.id = FORMATTER_TYPE(pong::req_id_t)::parse(json["id"]);
+    }
     if(json.isMember("result"))
     {
       res.result = json["result"];
-      res.error = false;
+    }
+    else if(json.isMember("error"))
+    {
+      res.result = FORMATTER_TYPE(pong::Error_Response)::parse(json["error"]);
     }
     else
     {
-      res.result = json.get("error", 0);
-      res.error = true;
+      throw pong::Invalid_Response_Exception{};
     }
+
     return res;
   }
 
   DEFINE_DUMPER(pong::Response, res)
   {
     Json::Value val;
-    val["id"] = res.id;
-    if(!res.error) val["result"] = res.result;
-    else val["error"] = res.result;
+
+    if(static_cast<bool>(res.id))
+    {
+      val["id"] = FORMATTER_TYPE(pong::req_id_t)::dump(res.id.value());
+    }
+
+    std::string key;
+    if(is_error_response(res))
+    {
+      key = "error";
+    }
+    else
+    {
+      key = "result";
+    }
+    val[key] = boost::apply_visitor(pong::Json_Result_Visitor(), res.result);
+
     return val;
   }
 }

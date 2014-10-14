@@ -17,7 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include <iostream>
+#include <chrono>
+#include <thread>
 int main(int argc, char** argv)
 {
+  std::this_thread::sleep_for(std::chrono::seconds(2));
+  std::cout << "{\"id\":\"eh\", \"method\":\"Core.Log\", \"params\":[\"info\", \"Hello!\"]}" << std::endl;
 }
