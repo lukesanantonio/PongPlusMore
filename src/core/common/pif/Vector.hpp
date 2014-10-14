@@ -51,11 +51,5 @@ BEGIN_FORMATTER_SCOPE
     }
     return json;
   }
-
-  template <class T, class A>
-  struct find_formatter<std::vector<T, A> >
-  {
-    using type = Vector<T, A>;
-  };
 }
 END_FORMATTER_SCOPE
