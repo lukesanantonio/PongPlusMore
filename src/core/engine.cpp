@@ -55,11 +55,6 @@ void step(State& state) noexcept
 
 }
 
-bool is_null_id(pong::optional_id_t const& id)
-{
-  return !static_cast<bool>(id);
-}
-
 struct Request_Dispatcher
 {
   Request_Dispatcher(State& state, pong::Logger& l) noexcept
