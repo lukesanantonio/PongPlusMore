@@ -27,6 +27,8 @@
 #include "core/plugin/plugins.h"
 #include "core/io/Logger.h"
 
+#include "core/plugin/Req_Dispatcher.h"
+
 pong::Json_Plugin spawn_plugin(Json::Value const& json) noexcept
 {
   std::vector<char*> args;
