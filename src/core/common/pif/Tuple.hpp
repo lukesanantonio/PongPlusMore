@@ -55,7 +55,7 @@ BEGIN_FORMATTER_SCOPE
   Tuple<Types...>::parse(Json::Value const& json)
   {
     tuple_t tup;
-    parse_element<0, tuple_t, Types...>(tup, json);
+    parse_element<0, Types...>(tup, json);
     return tup;
   }
 
