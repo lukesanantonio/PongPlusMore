@@ -45,25 +45,6 @@ namespace pong
   struct has_equality : public
                std::integral_constant<bool, detail::has_equality<T>::value> {};
 
-  template <int N, class F, class... Types, class... Args>
-  inline auto call(typename std::enable_if<
-                     !(N < std::tuple_size< std::tuple<Types...> >::value), F>
-                   ::type /* F */ f,
-                   std::tuple<Types...>& t,
-                   Args&&... args) noexcept -> decltype(auto)
-  {
-    return f(std::forward<Args>(args)...);
-  }
-  template <int N, class F, class... Types, class... Args>
-  inline auto call(typename std::enable_if<
-                         N < std::tuple_size< std::tuple<Types...> >::value, F>
-                   ::type /* F */ f,
-                   std::tuple<Types...>& t,
-                   Args&&... args) noexcept -> decltype(auto)
-  {
-    return call<N+1, F>(f, t, std::forward<Args>(args)..., std::get<N>(t));
-  }
-
   template <int N, typename... Params>
   struct pack_element
   {
@@ -72,6 +53,32 @@ namespace pong
 
   template <int N, typename... Params>
   using pack_element_t = typename pack_element<N, Params...>::type;
+
+  template <int N, class F, class Tuple_Type, class... Args>
+  inline auto
+  call_impl(std::enable_if_t<N == std::tuple_size<Tuple_Type>::value, F> f,
+            Tuple_Type& tup, Args&&... args) -> decltype(auto)
+  {
+    return f(std::forward<Args>(args)...);
+  }
+
+  template <int N, class F, class Tuple_Type, class... Args>
+  inline auto
+  call_impl(std::enable_if_t<N < std::tuple_size<Tuple_Type>::value, F> f,
+            Tuple_Type& tup, Args&&... args) -> decltype(auto)
+  {
+    return
+    call_impl<N + 1, F, Tuple_Type, Args...>(f, tup,
+                                             std::forward<Args>(args)...,
+                                             std::get<N>(tup));
+  }
+
+
+  template <class F, class Tuple_Type, class... Args>
+  inline auto call(F f, Tuple_Type& tup, Args&&... args) ->decltype(auto)
+  {
+    return call_impl<0, F, Tuple_Type>(f, tup, std::forward<Args>(args)...);
+  }
 
   template <class, template <class...> class>
   struct wrap_types {};

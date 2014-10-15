@@ -178,8 +178,7 @@ namespace pong
   template <typename T, class D, class... Depends>
   inline auto Cache_Impl<T, D, Depends...>::generate() -> bool
   {
-    this->cache_ = call<0, gen_func_type>(this->gen_func_, this->deps_,
-                                          std::move(this->cache_));
+    this->cache_ = call(this->gen_func_, this->deps_, std::move(this->cache_));
     return static_cast<bool>(this->cache_);
   }
 
