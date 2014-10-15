@@ -28,8 +28,9 @@
 
 namespace pong
 {
-  struct Invalid_Id_Exception {};
-  struct Invalid_Request_Exception {};
+  struct Invalid_Req_Parse {};
+  struct Invalid_Id_Exception : Invalid_Req_Parse {};
+  struct Invalid_Request_Exception : Invalid_Req_Parse {};
 
   struct null_t {};
 
