@@ -46,10 +46,10 @@ namespace pong
     Json_Plugin(std::unique_ptr<External_IO> io) noexcept;
     ~Json_Plugin() noexcept = default;
 
-    Json_Plugin(Json_Plugin&&) noexcept = default;
+    Json_Plugin(Json_Plugin&&) = default;
     Json_Plugin(Json_Plugin const&) noexcept = delete;
 
-    Json_Plugin& operator=(Json_Plugin&&) noexcept = default;
+    Json_Plugin& operator=(Json_Plugin&&) = default;
     Json_Plugin& operator=(Json_Plugin const&) noexcept = delete;
 
     bool poll_request(Request& req) override;
