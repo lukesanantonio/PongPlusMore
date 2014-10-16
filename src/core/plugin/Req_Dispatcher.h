@@ -21,30 +21,51 @@
 #include <tuple>
 #include "json/json.h"
 #include "../common/template_utility.hpp"
+
+#include <functional>
 namespace pong
 {
   struct Invalid_Params_Exception {};
 
   struct Req_Method_Base
   {
-    virtual void call(Json::Value const&) const = 0;
+    virtual std::string method() const noexcept = 0;
+    virtual pong::Response call(Json::Value const&) const = 0;
   };
 
-  template <class> struct Req_Method;
+  template <class... Params>
+  using method_t = std::function<Response(Params...)>;
 
-  template <class Ret, class... Params>
-  struct Req_Method<Ret(Params...)> : public Req_Method_Base
+  template <class... Params>
+  struct Req_Method : public Req_Method_Base
   {
-    using function_t = std::function<Ret(Params...)>;
+    using function_t = method_t<Params...>;
 
-    Req_Method(function_t func) noexcept : f_(func) {}
-    void call(Json::Value const&) const override;
+    Req_Method(std::string const& method, function_t func) noexcept :
+               method_(method), f_(func) {}
+
+    /*!
+     * \brief Returns the method that a request needs to call this function.
+     */
+    inline std::string method() const noexcept override { return method_; }
+
+    /*!
+     * \brief Calls the given function by converting the json 'params' object
+     * to arguments for the function.
+
+     * \throws Invalid_Params_Exception if parsing the parameters fails for
+     * some reason.
+
+     * Will rethrow any exception thrown resulting from the function call.
+     */
+    pong::Response call(Json::Value const&) const override;
   private:
+    std::string method_;
     function_t f_;
   };
 
-  template <class Ret, class... Params>
-  void Req_Method<Ret(Params...)>::call(Json::Value const& json) const
+  template <class... Params>
+  pong::Response Req_Method<Params...>::call(Json::Value const& json) const
   {
     // Parse the parameters.
     using tuple_t = std::tuple<Params...>;
@@ -59,6 +80,43 @@ namespace pong
       throw Invalid_Params_Exception{};
     }
 
-    call(f_, params);
+    return pong::call(f_, params);
+  }
+
+  struct Req_Dispatcher
+  {
+    template <class... Params, class F>
+    void add_method(std::string const& method, F f) noexcept;
+
+    inline pong::Response dispatch(Request const& req);
+  private:
+    std::vector<std::unique_ptr<Req_Method_Base> > methods_;
+  };
+
+  template <class... Params, class F>
+  void Req_Dispatcher::add_method(std::string const& method, F f) noexcept
+  {
+    methods_.push_back(std::make_unique<Req_Method<Params...> >(method, f));
+  }
+
+  inline pong::Response Req_Dispatcher::dispatch(Request const& req)
+  {
+    for(auto& ptr : methods_)
+    {
+      if(req.method == ptr->method())
+      {
+        pong::Response res;
+        if(req.params) res = ptr->call(req.params.value());
+        else res = ptr->call(Json::ValueType::arrayValue);
+
+        // The method didn't know about the id, show whatever it is it's
+        // meaningless, replace it with what we know *is* the id.
+        res.id = req.id;
+        return res;
+      }
+    }
+
+    // Unknown method!
+    return pong::Response{req.id, Error_Response{-32601, "Unknown method"} };
   }
 }
