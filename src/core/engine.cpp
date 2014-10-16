@@ -57,67 +57,6 @@ void step(State& state) noexcept
 
 }
 
-struct Request_Dispatcher
-{
-  Request_Dispatcher(State& state, pong::Logger& l) noexcept
-                     : state_(state), log_(l) {}
-
-  pong::Response dispatch(pong::Request const& req) noexcept;
-  bool dispatch_plugin_request(pong::Plugin* plugin) noexcept;
-private:
-  State& state_;
-  pong::Logger& log_;
-};
-
-pong::Response Request_Dispatcher::dispatch(pong::Request const& req) noexcept
-{
-  if(req.method == "Core.Log")
-  {
-    using param_t = std::tuple<pong::Severity, std::string>;
-
-    try
-    {
-      param_t params = FORMATTER_TYPE(param_t)::parse(req.params.value());
-
-      log_.log(std::get<0>(params), "(Plugin) " + std::get<1>(params));
-    }
-    catch(std::runtime_error& e)
-    {
-      return pong::Response{req.id,
-                            pong::Error_Response{-32602, "Invalid params"}};
-    }
-    catch(boost::bad_optional_access& e)
-    {
-      return pong::Response{req.id,
-                            pong::Error_Response{-32602, "Invalid params"}};
-    }
-  }
-
-  return pong::Response{req.id,
-                        pong::Error_Response{-32601, "Unknown method"}};
-}
-
-bool Request_Dispatcher::dispatch_plugin_request(pong::Plugin* plugin) noexcept
-{
-  pong::Request req;
-  if(plugin->poll_request(req))
-  {
-    pong::Response res = dispatch(req);
-
-    // Null out the id if necessary.
-    if(!res.id && is_error_response(res)) res.id = pong::null_t{};
-
-    // If the requester wanted a response give them one. Also send a respons if
-    // there is an error.
-    else if(res.id)
-    {
-      plugin->post_response(res);
-    }
-
-    return true;
-  }
-  return false;
-}
 int main(int argc, char** argv)
 {
   if(argc < 2)
@@ -153,11 +92,37 @@ int main(int argc, char** argv)
   pong::Json_Plugin plugin = spawn_plugin(json);
 
   State state;
-  Request_Dispatcher dispatch(state, log);
+  pong::Req_Dispatcher dispatch;
+
+  // Populate the dispatcher!
+
+  dispatch.add_method<pong::Severity, std::string>("Core.Log",
+  [&log](pong::Severity s, std::string msg)
+  {
+    log.log(s, "(Plugin) " + msg);
+    return pong::Response{0, Json::Value(true)};
+  });
 
   while(state.running)
   {
-    while(dispatch.dispatch_plugin_request(&plugin)) {}
+    pong::Request req;
+    while(plugin.poll_request(req))
+    {
+      pong::Response res = dispatch.dispatch(req);
+
+      // Null out the id if necessary.
+      if(!res.id && is_error_response(res)) res.id = pong::null_t{};
+
+      // If the requester wanted a response give them one. Also send a respons
+      // if there is an error.
+      else if(res.id)
+      {
+        plugin.post_response(res);
+      }
+
+      return true;
+    }
+
     step(state);
   }
 
