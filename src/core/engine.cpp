@@ -17,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "engine.h"
+
 #include <iostream>
 #include <memory>
 #include <fstream>
@@ -29,32 +31,23 @@
 
 #include "core/plugin/Req_Dispatcher.h"
 
-pong::Json_Plugin spawn_plugin(Json::Value const& json) noexcept
+namespace engine
 {
-  std::vector<char*> args;
-
-  for(Json::Value const& array_element : json["plugin"])
+  pong::Json_Plugin spawn_plugin(Json::Value const& json) noexcept
   {
-    args.push_back((char*) array_element.asCString());
+    std::vector<char*> args;
+
+    for(Json::Value const& array_element : json["plugin"])
+    {
+      args.push_back((char*) array_element.asCString());
+    }
+    args.push_back(NULL);
+
+    pong::ipc::Spawn_Options opts;
+    opts.args = &args[0];
+    opts.cwd = NULL;
+    return pong::make_json_plugin<pong::Child_Process>(opts);
   }
-  args.push_back(NULL);
-
-  pong::ipc::Spawn_Options opts;
-  opts.args = &args[0];
-  opts.cwd = NULL;
-  return pong::make_json_plugin<pong::Child_Process>(opts);
-}
-
-struct State
-{
-  bool running = true;
-  SDL_Window* window = nullptr;
-  SDL_Renderer* renderer = nullptr;
-};
-
-void step(State& state) noexcept
-{
-
 }
 
 int main(int argc, char** argv)
@@ -89,19 +82,13 @@ int main(int argc, char** argv)
   }
 
   log.log(Severity::Info, "Spawning mod: " + json["plugin"][0].asString());
-  pong::Json_Plugin plugin = spawn_plugin(json);
+  pong::Json_Plugin plugin = engine::spawn_plugin(json);
 
-  State state;
+  engine::State state;
   pong::Req_Dispatcher dispatch;
 
   // Populate the dispatcher!
-
-  dispatch.add_method<pong::Severity, std::string>("Core.Log",
-  [&log](pong::Severity s, std::string msg)
-  {
-    log.log(s, "(Plugin) " + msg);
-    return pong::Response{0, Json::Value(true)};
-  });
+  engine::add_core_methods(dispatch, state, log);
 
   while(state.running)
   {
@@ -123,7 +110,7 @@ int main(int argc, char** argv)
       return true;
     }
 
-    step(state);
+    engine::step(state);
   }
 
   return 0;

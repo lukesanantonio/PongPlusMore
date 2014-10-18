@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#pragma once
 #include "req.h"
 namespace pong
 {
@@ -36,10 +37,12 @@ namespace pong
     DECLARE_FORMATTED_AS_OBJECT;
   };
 
+  using response_result = boost::variant<Json::Value, Error_Response>;
+
   struct Response
   {
     optional_id_t id;
-    boost::variant<Json::Value, Error_Response> result;
+    response_result result;
   };
 
   inline bool is_error_response(Response const& res) noexcept

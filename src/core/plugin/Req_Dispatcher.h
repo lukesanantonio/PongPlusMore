@@ -21,6 +21,7 @@
 #include <tuple>
 #include "json/json.h"
 #include "../common/template_utility.hpp"
+#include "response.h"
 
 #include <functional>
 namespace pong
@@ -30,11 +31,11 @@ namespace pong
   struct Req_Method_Base
   {
     virtual std::string method() const noexcept = 0;
-    virtual pong::Response call(Json::Value const&) const = 0;
+    virtual response_result call(Json::Value const&) const = 0;
   };
 
   template <class... Params>
-  using method_t = std::function<Response(Params...)>;
+  using method_t = std::function<response_result(Params...)>;
 
   template <class... Params>
   struct Req_Method : public Req_Method_Base
@@ -58,14 +59,14 @@ namespace pong
 
      * Will rethrow any exception thrown resulting from the function call.
      */
-    pong::Response call(Json::Value const&) const override;
+    response_result call(Json::Value const&) const override;
   private:
     std::string method_;
     function_t f_;
   };
 
   template <class... Params>
-  pong::Response Req_Method<Params...>::call(Json::Value const& json) const
+  response_result Req_Method<Params...>::call(Json::Value const& json) const
   {
     // Parse the parameters.
     using tuple_t = std::tuple<Params...>;
@@ -105,14 +106,11 @@ namespace pong
     {
       if(req.method == ptr->method())
       {
-        pong::Response res;
+        response_result res;
         if(req.params) res = ptr->call(req.params.value());
         else res = ptr->call(Json::ValueType::arrayValue);
 
-        // The method didn't know about the id, show whatever it is it's
-        // meaningless, replace it with what we know *is* the id.
-        res.id = req.id;
-        return res;
+        return pong::Response{req.id, res};
       }
     }
 
