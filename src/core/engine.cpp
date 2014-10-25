@@ -97,13 +97,11 @@ int main(int argc, char** argv)
     {
       pong::Response res = dispatch.dispatch(req);
 
-      // Null out the id if necessary.
-      if(!res.id && is_error_response(res)) res.id = pong::null_t{};
-
-      // If the requester wanted a response give them one. Also send a respons
-      // if there is an error.
-      else if(res.id)
+      // If the id is valid it means the requester wants a response back.
+      if(res.id)
       {
+        // The id we know is going to be true, so we can forget about the
+        // exception that is thrown when it isn't.
         plugin.post_response(res);
       }
 
