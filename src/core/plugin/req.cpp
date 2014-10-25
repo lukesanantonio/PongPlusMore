@@ -70,12 +70,6 @@ BEGIN_FORMATTER_SCOPE
   }
   DEFINE_PARSER(pong::Request, js)
   {
-    // We need a method!
-    if(!js.get("method", 0).isString())
-    {
-      throw pong::Invalid_Request_Exception{};
-    }
-
     pong::Request req;
 
     try
@@ -84,11 +78,18 @@ BEGIN_FORMATTER_SCOPE
     }
     catch(pong::Invalid_Id_Exception& e)
     {
+      // This means there is a bad id value, maybe it's floating point for
+      // instance.
       throw pong::Invalid_Request_Exception{};
     }
     // This means an id wasn't provided at all, which we can ignore.
     catch(std::runtime_error& e) {}
 
+    // We need a method!
+    if(!js.get("method", 0).isString())
+    {
+      throw pong::Invalid_Request_Exception{req.id};
+    }
     req.method = js["method"].asString();
 
     if(js.isMember("params"))
@@ -103,14 +104,14 @@ BEGIN_FORMATTER_SCOPE
     Json::Value json;
 
     // Only output an id if there is one.
-    if(static_cast<bool>(req.id))
+    if(req.id)
     {
       json["id"] = FORMATTER_TYPE(pong::req_id_t)::dump(req.id.value());
     }
 
     json["method"] = req.method;
 
-    if(static_cast<bool>(req.params))
+    if(req.params)
     {
       json["params"] = req.params.value();
     }

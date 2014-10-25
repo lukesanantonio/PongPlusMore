@@ -28,14 +28,20 @@
 
 namespace pong
 {
-  struct Invalid_Req_Parse {};
-  struct Invalid_Id_Exception : Invalid_Req_Parse {};
-  struct Invalid_Request_Exception : Invalid_Req_Parse {};
-
   struct null_t {};
 
   using req_id_t = boost::variant<null_t, int, std::string>;
   using optional_id_t = boost::optional<req_id_t>;
+
+  struct Invalid_Req_Parse {};
+  struct Invalid_Id_Exception : Invalid_Req_Parse {};
+  struct Invalid_Request_Exception : Invalid_Req_Parse
+  {
+    Invalid_Request_Exception() noexcept {}
+    explicit Invalid_Request_Exception(optional_id_t id) noexcept
+                                       : parsed_id(id) {}
+    optional_id_t parsed_id;
+  };
 
   struct Request
   {

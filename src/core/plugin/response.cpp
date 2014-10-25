@@ -37,9 +37,16 @@ BEGIN_FORMATTER_SCOPE
   {
     pong::Response res;
     // If there is an id.
-    if(static_cast<bool>(res.id))
+    if(json.isMember("id"))
     {
-      res.id = FORMATTER_TYPE(pong::req_id_t)::parse(json["id"]);
+      try
+      {
+        res.id = FORMATTER_TYPE(pong::req_id_t)::parse(json["id"]);
+      }
+      catch(pong::Invalid_Id_Exception& e)
+      {
+        throw pong::Invalid_Response_Exception{};
+      }
     }
     if(json.isMember("result"))
     {
@@ -61,9 +68,14 @@ BEGIN_FORMATTER_SCOPE
   {
     Json::Value val;
 
-    if(static_cast<bool>(res.id))
+    if(res.id)
     {
       val["id"] = FORMATTER_TYPE(pong::req_id_t)::dump(res.id.value());
+    }
+    else
+    {
+      // The response needs an id!
+      throw pong::Invalid_Response_Exception{};
     }
 
     std::string key;
