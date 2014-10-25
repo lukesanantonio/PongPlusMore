@@ -73,7 +73,10 @@ namespace pong
     catch(Invalid_Request_Exception& e)
     {
       Response err_res;
-      err_res.id = e.parsed_id;
+
+      if(e.parsed_id) err_res.id = e.parsed_id;
+      else err_res.id = null_t{};
+
       err_res.result = Error_Response{-32600, "Invalid request"};
       post_response(err_res);
     }
