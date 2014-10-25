@@ -51,13 +51,13 @@ namespace engine
                                       SDL_WINDOWPOS_UNDEFINED,
                                       SDL_WINDOWPOS_UNDEFINED,
                                       extent.x, extent.y, 0);
+
+      state.renderer = SDL_CreateRenderer(state.window, -1,
+                                          SDL_RENDERER_ACCELERATED);
       if(!state.window)
       {
         return Error_Response{2, "Failed to create window"};
       }
-
-      state.renderer = SDL_CreateRenderer(state.window, -1,
-                                          SDL_RENDERER_ACCELERATED);
 
       return Json::Value(true);
     });
