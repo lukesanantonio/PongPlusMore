@@ -41,6 +41,8 @@ namespace pong
     std::string err;
   };
 
+  // Implements the jsonrpc 2.0 spec. Everything as far as error handling goes
+  // and generating the correct responses at that time should be in here.
   struct Json_Plugin : public Plugin
   {
     Json_Plugin(std::unique_ptr<External_IO> io) noexcept;

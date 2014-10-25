@@ -26,6 +26,9 @@
 #include "net.h"
 namespace pong
 {
+  /*!
+   * \brief Manages and connects client code to some arbitrary io source.
+   */
   struct External_IO
   {
     using read_cb = std::function<void (std::vector<char> const&)>;
