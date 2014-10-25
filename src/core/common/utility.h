@@ -84,4 +84,13 @@ namespace pong
   {
     return std::vector<char>(s.begin(), s.end());
   }
+
+  namespace literals
+  {
+    inline std::vector<char>
+    operator "" _buf(char const* str, std::size_t size) noexcept
+    {
+      return std::vector<char>(str, str + size);
+    }
+  }
 }
