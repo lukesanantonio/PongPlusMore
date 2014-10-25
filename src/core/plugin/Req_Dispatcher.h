@@ -107,14 +107,22 @@ namespace pong
       if(req.method == ptr->method())
       {
         response_result res;
-        if(req.params) res = ptr->call(req.params.value());
-        else res = ptr->call(Json::ValueType::arrayValue);
+        try
+        {
+          if(req.params) res = ptr->call(req.params.value());
+          else res = ptr->call(Json::ValueType::arrayValue);
+        }
+        catch(Invalid_Params_Exception& e)
+        {
+          return pong::Response{req.id,
+                                Error_Response{-32602, "Invalid params"}};
+        }
 
         return pong::Response{req.id, res};
       }
     }
 
     // Unknown method!
-    return pong::Response{req.id, Error_Response{-32601, "Unknown method"} };
+    return Response{req.id, Error_Response{-32601, "Unknown method"}};
   }
 }
