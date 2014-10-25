@@ -105,4 +105,53 @@ namespace pong
   {
     uv_run(&loop_, UV_RUN_NOWAIT);
   }
+
+  Pipe_IO::Pipe_IO() noexcept
+  {
+    // Construct the counterpart and point it to us.
+    cp_ = new Pipe_IO(*this);
+  }
+
+  struct Reference_Visitor : public boost::static_visitor<Pipe_IO&>
+  {
+    Pipe_IO& operator()(std::unique_ptr<Pipe_IO>& pipe) const noexcept
+    {
+      return *pipe;
+    }
+    Pipe_IO& operator()(Pipe_IO* pipe) const noexcept
+    {
+      return *pipe;
+    }
+  };
+
+  Pipe_IO& Pipe_IO::counterpart() noexcept
+  {
+    return boost::apply_visitor(Reference_Visitor(), cp_);
+  }
+
+  void Pipe_IO::write(std::vector<char> const& buf) noexcept
+  {
+    // Write to the counterpart's input.
+    counterpart().input_.push(buf);
+  }
+  void Pipe_IO::step() noexcept
+  {
+    step_(true);
+  }
+  void Pipe_IO::step_(bool recursive) noexcept
+  {
+    // Read our pending input.
+    while(!input_.empty())
+    {
+      std::vector<char> const& buf = input_.front();
+      post(buf);
+      input_.pop();
+    }
+
+    // Let our counterpart do the same.
+    if(recursive)
+    {
+      counterpart().step_(false);
+    }
+  }
 }

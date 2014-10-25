@@ -18,23 +18,16 @@
 
 # Add the executable which runs every test.
 add_executable(PpM_Tests EXCLUDE_FROM_ALL
-               server/LocalServer_Tests.cpp
-               common/Vector_Tests.cpp
-               common/IDManager_Tests.cpp
-               common/Cache_Tests.cpp
-               common/Dump_Tests.cpp
-               common/Parse_Tests.cpp
-               common/Util_Tests.cpp
-               common/Volume_Tests.cpp
-               server/Node_Tests.cpp
-               server/Quadtree_Tests.cpp
+               core/io/Pipe_IO_Tests.cpp
                ${CMAKE_CURRENT_SOURCE_DIR}/../gtest/gtest/gtest_main.cc)
 
 # Make sure it has the entirety of the pong support library.
 # gtest headers come built-in when linking to the gtest target.
 target_include_directories(PpM_Tests PUBLIC
                            ${CMAKE_CURRENT_SOURCE_DIR}/../src)
-target_link_libraries(PpM_Tests ppmserv gtest)
+
+target_link_libraries(PpM_Tests gtest)
+target_link_libraries(PpM_Tests common_core io_core plugin_core render_core)
 
 # Now, add a check target which will automagically build the run-all testing
 # executable if it has too.
