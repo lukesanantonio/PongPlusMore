@@ -41,18 +41,44 @@ namespace pong
     Json::Value val;
     using std::begin; using std::end;
 
-    std::string doc(begin(bufs_.front()), end(bufs_.front()));
+    // While we have a failing buffer.
+    while(!read.parse({begin(bufs_.front()), end(bufs_.front())}, val))
+    {
+      // Tell the client there was a parse error.
+      {
+        Response err_res;
+        err_res.id = null_t{};
+        err_res.result = Error_Response{-32700, "Parse error"};
+        post_response(err_res);
+      }
+
+      // Remove that data from the buffer vector.
+      bufs_.pop();
+      // Welp I guess we don't have anything more.
+      if(bufs_.empty())
+      {
+        return false;
+      }
+    }
+
     bufs_.pop();
 
-    if(read.parse(doc, val))
+    // Try to make sense of that parsed Json now.
+    try
     {
       req = FORMATTER_TYPE(Request)::parse(val);
     }
-    else
+    // Bad request, tell the plugin about this particular one. Then continue
+    // if possible.
+    catch(Invalid_Request_Exception& e)
     {
-      throw Json_Parse_Error{doc, read.getFormattedErrorMessages()};
+      Response err_res;
+      err_res.id = e.parsed_id;
+      err_res.result = Error_Response{-32600, "Invalid request"};
+      post_response(err_res);
     }
-    return true;
+
+    return bufs_.size();
   }
 
   void Json_Plugin::post_response(Response const& res) noexcept
