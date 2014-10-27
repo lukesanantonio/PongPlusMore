@@ -56,10 +56,22 @@ namespace pong
 
     bool poll_request(Request& req) override;
     void post_response(Response const& req) noexcept override;
+
+    inline External_IO& io() noexcept;
+    inline External_IO const& io() const noexcept;
   private:
     std::unique_ptr<External_IO> io_;
     std::queue<std::vector<char> > bufs_;
   };
+
+  inline External_IO& Json_Plugin::io() noexcept
+  {
+    return *this->io_;
+  }
+  inline External_IO const& Json_Plugin::io() const noexcept
+  {
+    return *this->io_;
+  }
 
   template <class IO_Type, class... Args>
   Json_Plugin make_json_plugin(Args&&... args) noexcept
