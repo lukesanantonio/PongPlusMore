@@ -67,6 +67,7 @@ namespace pong
     try
     {
       req = FORMATTER_TYPE(Request)::parse(val);
+      return true;
     }
     // Bad request, tell the plugin about this particular one. Then continue
     // if possible.
@@ -79,9 +80,8 @@ namespace pong
 
       err_res.result = Error_Response{-32600, "Invalid request"};
       post_response(err_res);
+      return false;
     }
-
-    return bufs_.size();
   }
 
   void Json_Plugin::post_response(Response const& res) noexcept
