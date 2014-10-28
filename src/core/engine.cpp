@@ -104,8 +104,6 @@ int main(int argc, char** argv)
         // exception that is thrown when it isn't.
         plugin.post_response(res);
       }
-
-      return true;
     }
 
     engine::step(state);
