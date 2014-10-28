@@ -19,6 +19,7 @@
 # Add the executable which runs every test.
 add_executable(PpM_Tests EXCLUDE_FROM_ALL
                core/io/Pipe_IO_Tests.cpp
+               core/plugins/Json_Plugin_Tests.cpp
                ${CMAKE_CURRENT_SOURCE_DIR}/../gtest/gtest/gtest_main.cc)
 
 # Make sure it has the entirety of the pong support library.
