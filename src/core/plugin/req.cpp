@@ -20,6 +20,29 @@
 #include "req.h"
 namespace pong
 {
+  struct Is_Null_Visitor : public boost::static_visitor<bool>
+  {
+    bool operator()(null_t) const noexcept
+    {
+      return true;
+    }
+    template <typename T>
+    bool operator()(T const&) const noexcept
+    {
+      return false;
+    }
+  };
+
+  bool is_null(req_id_t const& id) noexcept
+  {
+    return boost::apply_visitor(Is_Null_Visitor(), id);
+  }
+  bool is_null(optional_id_t const& id) noexcept
+  {
+    if(id) return is_null(id.value());
+    return false;
+  }
+
   struct Json_Id_Visitor : public boost::static_visitor<Json::Value>
   {
     template <typename Type>
