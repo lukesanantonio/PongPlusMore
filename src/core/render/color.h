@@ -1,7 +1,8 @@
 /*
  * PpM - Pong Plus More - A pong clone full of surprises written with C++11.
  * Copyright (C) 2013  Luke San Antonio
- * * You can contact me (Luke San Antonio) at lukesanantonio@gmail.com!
+ *
+ * You can contact me (Luke San Antonio) at lukesanantonio@gmail.com!
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
