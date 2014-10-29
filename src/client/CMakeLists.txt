@@ -16,25 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-find_package(SDL2 REQUIRED)
-find_package(Freetype REQUIRED)
+add_data_target(plugin_json ALL)
+add_target_data(plugin_json pong.json)
 
-add_library(ppmclient STATIC input_impls.cpp
-                             render.cpp
-                             GameStates/MenuGameState.cpp
-                             GameStates/PaddleGameState.cpp
-                             GameStates/OptionsMenuState.cpp
-                             GameStates/MultiplayerSelectState.cpp
-                             helper.cpp
-                             settings.cpp)
-
-target_link_libraries(ppmclient ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
-target_link_libraries(ppmclient ppmserv jsoncpp)
-target_link_libraries(ppmclient render_core io_core plugin_core common_core)
-target_include_directories(ppmclient PUBLIC ${SDL2_INCLUDE_DIRS}
-                                            ${FREETYPE_INCLUDE_DIRS})
-
-add_executable(ppm ppm.cpp)
-target_link_libraries(ppm ppmclient)
-
-install(TARGETS ppm RUNTIME DESTINATION bin)
+add_executable(pong_plugin pong_plugin.cpp)
+target_link_libraries(pong_plugin plugin_core jsoncpp)
