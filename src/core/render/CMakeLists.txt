@@ -21,6 +21,7 @@ find_package(Freetype REQUIRED)
 
 add_library(render_core STATIC widgets/Button.cpp
                                widgets/Text_Box.cpp
+                               color.cpp
                                text.cpp
                                utility.cpp)
 
