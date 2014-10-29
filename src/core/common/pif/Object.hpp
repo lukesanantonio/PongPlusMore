@@ -58,7 +58,7 @@ BEGIN_FORMATTER_SCOPE
   std::enable_if_t<N >= std::tuple_size<TupleType>::value, Type>
   construct_from_tuple(TupleType&, Args&&... args)
   {
-    return Type(std::forward<Args>(args)...);
+    return Type{std::forward<Args>(args)...};
   }
 
   template <class Type, int N, class TupleType, class... Args>
