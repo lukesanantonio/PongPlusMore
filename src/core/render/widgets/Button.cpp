@@ -22,7 +22,7 @@
  * \brief Contains definitions for the Button class.
  */
 #include "Button.h"
-#include "common/center.hpp"
+#include "../../common/center.hpp"
 namespace pong
 {
   /*!

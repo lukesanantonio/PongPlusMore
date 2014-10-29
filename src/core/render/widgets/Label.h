@@ -24,7 +24,7 @@
 #pragma once
 #include <string>
 #include "SDL.h"
-#include "common/Cache.h"
+#include "../../common/Cache.h"
 #include "../../common/vector.h"
 #include "../text.h"
 #include "../utility.h"

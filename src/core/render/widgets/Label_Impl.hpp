@@ -22,7 +22,7 @@
  * \brief Contains definitions for the Label class.
  */
 #include <boost/lexical_cast.hpp>
-#include "common/crash.hpp"
+#include "../../common/crash.hpp"
 #include <vector>
 #include <utility>
 namespace pong
