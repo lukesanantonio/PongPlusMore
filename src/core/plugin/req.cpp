@@ -95,18 +95,20 @@ BEGIN_FORMATTER_SCOPE
   {
     pong::Request req;
 
-    try
+    // Only if there is an id, none is okay too.
+    if(js.isMember("id"))
     {
-      req.id = FORMATTER_TYPE(pong::req_id_t)::parse(js["id"]);
+      try
+      {
+        req.id = FORMATTER_TYPE(pong::req_id_t)::parse(js["id"]);
+      }
+      catch(pong::Invalid_Id_Exception& e)
+      {
+        // This means there is a bad id value, maybe it's floating point for
+        // instance.
+        throw pong::Invalid_Request_Exception{};
+      }
     }
-    catch(pong::Invalid_Id_Exception& e)
-    {
-      // This means there is a bad id value, maybe it's floating point for
-      // instance.
-      throw pong::Invalid_Request_Exception{};
-    }
-    // This means an id wasn't provided at all, which we can ignore.
-    catch(std::runtime_error& e) {}
 
     // We need a method!
     if(!js.get("method", 0).isString())
