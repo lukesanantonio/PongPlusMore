@@ -19,6 +19,7 @@
 #include "engine.h"
 
 #include "common/vector.h"
+#include "render/color.h"
 namespace engine
 {
   void add_core_methods(pong::Req_Dispatcher& dispatch, State& state,
@@ -77,5 +78,25 @@ namespace engine
 
       return Json::Value(true);
     });
+
+    dispatch.add_method<pong::Color>("Core.SetClearColor",
+    [&state](pong::Color const& c) -> res_t
+    {
+      state.clear_color = c;
+      return Json::Value(true);
+    });
+    dispatch.add_method<>("Core.EnableClear",
+    [&state]() -> res_t
+    {
+      state.clear_screen = true;
+      return Json::Value(true);
+    });
+    dispatch.add_method<>("Core.DisableClear",
+    [&state]() -> res_t
+    {
+      state.clear_screen = false;
+      return Json::Value(true);
+    });
+
   }
 }

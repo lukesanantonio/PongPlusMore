@@ -26,6 +26,8 @@
 #include "plugin/plugins.h"
 #include "plugin/Req_Dispatcher.h"
 
+#include "render/color.h"
+
 namespace engine
 {
   struct State
@@ -33,6 +35,9 @@ namespace engine
     bool running = true;
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
+
+    bool clear_screen = true;
+    pong::Color clear_color{0xff, 0xff, 0xff, 0xff};
   };
 
   inline void step(State& state) noexcept {}
