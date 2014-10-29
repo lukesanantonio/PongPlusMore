@@ -40,7 +40,7 @@ namespace engine
     // Error codes: 1 - Engine already started.
     // Error codes: 2 - Window creation failure.
     dispatch.add_method<math::vector<int>, std::string>("Core.Start",
-    [&state, &log](math::vector<int> extent, std::string const& title) -> res_t
+    [&state](math::vector<int> extent, std::string const& title) -> res_t
     {
       if(state.window)
       {
@@ -54,12 +54,26 @@ namespace engine
 
       state.renderer = SDL_CreateRenderer(state.window, -1,
                                           SDL_RENDERER_ACCELERATED);
-      if(!state.window)
+      if(!state.window || !state.renderer)
       {
         return Error_Response{2, "Failed to create window"};
       }
 
       return Json::Value(true);
+    });
+
+    // Error code: 3 - engine now started.
+    dispatch.add_method<>("Core.Exit",
+    [&state]()
+    {
+      if(!state.renderer || !state.renderer)
+      {
+        return Error_Response{3, "Engine not started"};
+      }
+
+      SDL_DestroyRenderer(state.renderer);
+      SDL_DestroyWindow(state.window);
+      state.running = false;
     });
   }
 }
