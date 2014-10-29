@@ -17,8 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-add_subdirectory(client)
 add_subdirectory(common)
 add_subdirectory(core)
 add_subdirectory(plugins)
-add_subdirectory(server)
