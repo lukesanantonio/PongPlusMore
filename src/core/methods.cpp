@@ -64,7 +64,7 @@ namespace engine
 
     // Error code: 3 - engine now started.
     dispatch.add_method<>("Core.Exit",
-    [&state]()
+    [&state]() -> res_t
     {
       if(!state.renderer || !state.renderer)
       {
@@ -74,6 +74,8 @@ namespace engine
       SDL_DestroyRenderer(state.renderer);
       SDL_DestroyWindow(state.window);
       state.running = false;
+
+      return Json::Value(true);
     });
   }
 }
