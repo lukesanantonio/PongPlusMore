@@ -81,6 +81,7 @@ namespace pong { namespace ipc
 
     // Close the process then uninitialize.
     uv_close((uv_handle_t*) proc, NULL);
+    proc->running = false;
     delete_process(proc);
   }
 
@@ -166,6 +167,7 @@ namespace pong { namespace ipc
     {
       throw Kill_Error{proc->proc.pid, signum};
     }
+    proc->running = false;
   }
 
   struct Write_Buf_Req

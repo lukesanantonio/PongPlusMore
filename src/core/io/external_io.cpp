@@ -60,6 +60,8 @@ namespace pong
   }
   void Child_Process::write(std::vector<char> const& buf) noexcept
   {
+    step();
+    if(!process_->running) return;
     *process_->io.out.buf = buf;
     ipc::write_buffer(&process_->io.out);
   }
