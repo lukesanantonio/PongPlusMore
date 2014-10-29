@@ -220,4 +220,4 @@ namespace pong
     this->invalidate();
     this->gen_func_ = f;
   }
-};
+}
