@@ -21,7 +21,7 @@ add_subdirectory(io)
 add_subdirectory(plugin)
 add_subdirectory(render)
 
-add_executable(pong_engine engine.cpp methods.cpp)
+add_executable(pong_engine engine.cpp methods.cpp widget_methods.cpp)
 target_link_libraries(pong_engine common_core io_core plugin_core render_core)
 
 install(TARGETS pong_engine RUNTIME DESTINATION bin)

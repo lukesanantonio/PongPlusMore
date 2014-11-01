@@ -98,5 +98,6 @@ namespace engine
       return Json::Value(true);
     });
 
+    add_widget_methods(dispatch, state, log);
   }
 }

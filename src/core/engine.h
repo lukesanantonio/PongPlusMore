@@ -21,11 +21,14 @@
 
 #include "json/json.h"
 
+#include "common/ID_Map.hpp"
+
 #include "io/Logger.h"
 
 #include "plugin/plugins.h"
 #include "plugin/Req_Dispatcher.h"
 
+#include "render/widgets/Label.h"
 #include "render/color.h"
 
 namespace engine
@@ -38,6 +41,8 @@ namespace engine
 
     bool clear_screen = true;
     pong::Color clear_color{0xff, 0xff, 0xff, 0xff};
+
+    pong::ID_Map<pong::Label<std::string> > labels_;
   };
 
   inline void step(State& state) noexcept {}
@@ -46,4 +51,7 @@ namespace engine
 
   void add_core_methods(pong::Req_Dispatcher& dispatch, State& state,
                         pong::Logger& log);
+
+  void add_widget_methods(pong::Req_Dispatcher& dispatch, State& state,
+                          pong::Logger& log);
 }
