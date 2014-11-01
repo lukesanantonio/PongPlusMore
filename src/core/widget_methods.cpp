@@ -18,75 +18,81 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "engine.h"
-#define CHECK_VALID_ID(map, id)\
-try\
-{\
-  map.find(id);\
-}\
-catch(std::out_of_range& e)\
-{\
-  return Error_Response{4, "Invalid id"};\
-}
 
 namespace engine
 {
+  template <class Member, class Object, class Fn>
+  void add_set_method(std::string const& method,
+                      pong::Req_Dispatcher& dispatch,
+                      pong::ID_Map<Object>& map,
+                      Fn const& fn)
+  {
+    dispatch.add_method<pong::id_type, Member>(method,
+    [&map, &fn](pong::id_type id, Member const& t) -> pong::response_result
+    {
+      try
+      {
+        fn(map.find(id), t);
+      }
+      catch(std::out_of_range& e)
+      {
+        return pong::Error_Response{4, "Invalid id"};
+      }
+      return Json::Value(true);
+    });
+  }
+  template <class Member, class Object, class Fn>
+  void add_get_method(std::string const& method,
+                      pong::Req_Dispatcher& dispatch,
+                      pong::ID_Map<Object> const& map,
+                      Fn const& fn)
+  {
+    dispatch.add_method<pong::id_type>(method,
+    [&map, &fn](pong::id_type id) -> pong::response_result
+    {
+      try
+      {
+        auto const& value = fn(map.find(id));
+        return FORMATTER_TYPE(Member)::dump(value);
+      }
+      catch(std::out_of_range& e)
+      {
+        return pong::Error_Response{4, "Invalid id"};
+      }
+    });
+  }
+
   void add_label_methods(pong::Req_Dispatcher& dispatch, State& state,
                          pong::Logger& log)
   {
-    using res_t = pong::response_result;
     using pong::id_type;
-
     namespace math = pong::math;
 
-    using pong::Error_Response;
-
     dispatch.add_method<>("Label.Create_Label",
-    [&state]() -> res_t
+    [&state]() -> pong::response_result
     {
       pong::id_type id = state.labels_.insert(pong::Label<std::string>{});
       return Json::Value(id);
     });
-    // Error codes: 4 - Invalid id.
-    dispatch.add_method<id_type, std::string>("Label.Set_String",
-    [&state](id_type id, std::string const& str) -> res_t
-    {
-      CHECK_VALID_ID(state.labels_, id);
-      state.labels_.find(id).data(str);
-      return Json::Value(true);
-    });
-    dispatch.add_method<id_type>("Label.Get_String",
-    [&state](id_type id) -> res_t
-    {
-      CHECK_VALID_ID(state.labels_, id);
-      return state.labels_.find(id).data();
-    });
-    dispatch.add_method<id_type, math::vector<double> >("Label.Set_Position",
-    [&state](id_type id, math::vector<double> const& pos) -> res_t
-    {
-      CHECK_VALID_ID(state.labels_, id);
-      state.labels_.find(id).position(pos);
-      return Json::Value(true);
-    });
-    dispatch.add_method<id_type>("Label.Get_Position",
-    [&state](id_type id) -> res_t
-    {
-      CHECK_VALID_ID(state.labels_, id);
-      auto const& pos = state.labels_.find(id).position();
-      return FORMATTER_TYPE(math::vector<double>)::dump(pos);
-    });
-    dispatch.add_method<id_type>("Label.Get_Text_Height",
-    [&state](id_type id ) -> res_t
-    {
-      CHECK_VALID_ID(state.labels_, id);
-      return Json::Value(state.labels_.find(id).text_height());
-    });
-    dispatch.add_method<id_type, int>("Label.Set_Text_Height",
-    [&state](id_type id, int size) -> res_t
-    {
-      CHECK_VALID_ID(state.labels_, id);
-      state.labels_.find(id).text_height(size);
-      return Json::Value(true);
-    });
+
+    add_set_method<std::string>("Label.Set_String", dispatch, state.labels_,
+                   [](auto& l, std::string const& str){ l.data(str); });
+    add_get_method<std::string>("Label.Get_String", dispatch, state.labels_,
+                   [](auto& l){ return l.data(); });
+
+    add_set_method<math::vector<double> >("Label.Set_Position",
+                                          dispatch, state.labels_,
+    [](auto& l, math::vector<double> const& pos)
+    { l.position(pos); });
+
+    add_get_method<math::vector<double> >("Label.Get_Position", dispatch,
+                                          state.labels_,
+    [](auto& l) { return l.position(); });
+
+    add_set_method<int>("Label.Set_Text_Height", dispatch, state.labels_,
+                  [](auto& l, int size){ l.text_height(size); });
+    add_get_method<int>("Label.Get_Text_Height", dispatch, state.labels_,
+                  [](auto& l){ return l.text_height(); });
   }
 
   void add_widget_methods(pong::Req_Dispatcher& dispatch, State& state,
