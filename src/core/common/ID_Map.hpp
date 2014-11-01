@@ -20,26 +20,26 @@
 #pragma once
 #include <unordered_map>
 #include <queue>
-#include "common/IDManager.hpp"
-#include "Object.h"
-#include "common/Cache.h"
+#include "IDManager.hpp"
+#include "Cache.h"
 
 namespace pong
 {
-  struct Server;
-
   using id_type = uint16_t;
-  using map_type = std::unordered_map<id_type, Object>;
-  struct ObjectManager
-  {
-    using iterator = map_type::iterator;
-    using const_iterator = map_type::const_iterator;
-    using value_type = map_type::value_type;
-    using key_type = map_type::key_type;
-    using size_type = map_type::size_type;
-    using id_type = pong::id_type;
 
-    inline ObjectManager() noexcept
+  template <typename T>
+  struct ID_Map
+  {
+    using map_type = std::unordered_map<id_type, T>;
+
+    using iterator = typename map_type::iterator;
+    using const_iterator = typename map_type::const_iterator;
+    using value_type = typename map_type::value_type;
+    using key_type = typename map_type::key_type;
+    using size_type = typename map_type::size_type;
+    using id_type = typename pong::id_type;
+
+    inline ID_Map() noexcept
     {
       this->ids_cache_.gen_func([this](auto ptr)
       {
@@ -51,12 +51,11 @@ namespace pong
         return ids;
       });
     }
-    ObjectManager(const Server& s) noexcept;
+    inline id_type insert(T const& obj) noexcept;
 
-    inline id_type insert(const Object& obj) noexcept;
-
-    inline const Object& find_object(id_type) const;
-    inline void set_object(id_type, const Object&);
+    inline T const& find(id_type) const;
+    inline T& find(id_type);
+    inline void set(id_type, T const&);
 
     inline iterator erase(const_iterator pos);
     inline iterator erase(const_iterator first, const_iterator last);
@@ -80,7 +79,8 @@ namespace pong
     mutable Cache<std::vector<id_type> > ids_cache_;
   };
 
-  inline id_type ObjectManager::insert(const Object& obj) noexcept
+  template <class T>
+  inline id_type ID_Map<T>::insert(T const& obj) noexcept
   {
     id_type id = this->id_counter_.get();
     if(!id) return 0;
@@ -90,7 +90,8 @@ namespace pong
     return id;
   }
 
-  inline auto ObjectManager::erase(const_iterator pos) -> iterator
+  template <class T>
+  inline auto ID_Map<T>::erase(const_iterator pos) -> iterator
   {
     using std::end;
     if(pos != end(this->objs_)) this->id_counter_.remove(pos->first);
@@ -98,8 +99,9 @@ namespace pong
     this->ids_cache_.invalidate();
     return this->objs_.erase(pos);
   }
-  inline auto ObjectManager::erase(const_iterator first,
-                                   const_iterator last) -> iterator
+  template <class T>
+  inline auto ID_Map<T>::erase(const_iterator first,
+                               const_iterator last) -> iterator
   {
     const_iterator orig_first = first;
     for(; first != last; ++first) this->id_counter_.remove(first->first);
@@ -107,7 +109,8 @@ namespace pong
     this->ids_cache_.invalidate();
     return this->objs_.erase(orig_first, last);
   }
-  inline auto ObjectManager::erase(key_type id) -> size_type
+  template <class T>
+  inline auto ID_Map<T>::erase(key_type id) -> size_type
   {
     using std::end;
     if(this->objs_.find(id) != end(this->objs_))
@@ -121,32 +124,27 @@ namespace pong
    * \brief Returns a const reference to the object with the passed in id.
    * \throws std::out_of_range if the id doesn't correlate with any Object.
    */
-  const Object& ObjectManager::find_object(id_type id) const
+  template <class T>
+  inline T const& ID_Map<T>::find(id_type id) const
   {
     return objs_.at(id);
   }
-  void ObjectManager::set_object(id_type id, const Object& obj)
+
+  template <class T>
+  inline T& ID_Map<T>::find(id_type id)
+  {
+    return this->objs_.at(id);
+  }
+
+  template <class T>
+  inline void ID_Map<T>::set(id_type id, T const& obj)
   {
     this->objs_.at(id) = obj;
   }
 
-  inline std::vector<id_type> ObjectManager::ids() const noexcept
+  template <class T>
+  inline std::vector<id_type> ID_Map<T>::ids() const noexcept
   {
     return *this->ids_cache_.cache();
-  }
-
-  /*!
-   * \brief Returns whether or not the id is of an object that is a paddle.
-   */
-  inline bool isPaddle(const ObjectManager& objs, id_type id)
-  {
-    return isPaddle(objs.find_object(id));
-  }
-  /*!
-   * \brief Returns whether or not the id is of an object that is a ball.
-   */
-  inline bool isBall(const ObjectManager& objs, id_type id)
-  {
-    return isBall(objs.find_object(id));
   }
 }
