@@ -49,12 +49,14 @@ namespace client
   namespace detail
   {
     template <class Type>
-    void make_params_impl(Json::Value& val, Type const& t)
+    inline void make_params_impl(Json::Value& val, Type const& t)
     {
       val.append(FORMATTER_TYPE(Type)::dump(t));
     }
     template <class Type, class... Types>
-    void make_params_impl(Json::Value& val, Type const& t1, Types&&... params)
+    inline void make_params_impl(Json::Value& val,
+                                 Type const& t1,
+                                 Types&&... params)
     {
       // Append the first one first,
       make_params_impl(val, t1);
@@ -63,9 +65,9 @@ namespace client
     }
   }
   template <class... Types>
-  Json::Value make_params(Types&&... params)
+  inline Json::Value make_params(Types&&... params)
   {
-    Json::Value val(Json::ValueType::arrayValue);;
+    Json::Value val(Json::ValueType::arrayValue);
     detail::make_params_impl(val, std::forward<Types>(params)...);
     return val;
   }
