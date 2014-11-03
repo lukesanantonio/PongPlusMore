@@ -32,7 +32,8 @@ namespace pong
 
   inline bool operator==(null_t n1, null_t n2) noexcept { return true; }
 
-  using req_id_t = boost::variant<null_t, int, std::string>;
+  using id_num_t = int;
+  using req_id_t = boost::variant<null_t, id_num_t, std::string>;
   using optional_id_t = boost::optional<req_id_t>;
 
   bool is_null(req_id_t const& id) noexcept;
@@ -54,6 +55,14 @@ namespace pong
     std::string method;
     boost::optional<Json::Value> params;
   };
+
+  namespace literals
+  {
+    inline req_id_t operator "" _id(const unsigned long long int id)
+    {
+      return req_id_t(id);
+    }
+  }
 
   inline bool operator==(Request const& r1, Request const& r2) noexcept
   {
