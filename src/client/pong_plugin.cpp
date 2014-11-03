@@ -41,28 +41,6 @@ namespace client
   {
     Launch_State run_state = Launch_State::Not_Running;
   };
-
-  template <class Type>
-  void make_params_impl(Json::Value& val, Type const& t)
-  {
-    val.append(FORMATTER_TYPE(Type)::dump(t));
-  }
-  template <class Type, class... Types>
-  void make_params_impl(Json::Value& val, Type const& t1, Types&&... params)
-  {
-    // Append the first one first,
-    make_params_impl(val, t1);
-    // Then the others.
-    make_params_impl(val, std::forward<Types>(params)...);
-  }
-
-  template <class... Types>
-  Json::Value make_params(Types&&... params)
-  {
-    Json::Value val(Json::ValueType::arrayValue);;
-    make_params_impl(val, std::forward<Types>(params)...);
-    return val;
-  }
 }
 
 int main(int argc, char** argv)

@@ -43,4 +43,28 @@ namespace client
     std::deque<pong::Request> reqs_;
     std::vector<std::pair<pong::req_id_t, cb_t> > cbs_;
   };
+
+  namespace detail
+  {
+    template <class Type>
+    void make_params_impl(Json::Value& val, Type const& t)
+    {
+      val.append(FORMATTER_TYPE(Type)::dump(t));
+    }
+    template <class Type, class... Types>
+    void make_params_impl(Json::Value& val, Type const& t1, Types&&... params)
+    {
+      // Append the first one first,
+      make_params_impl(val, t1);
+      // Then the others.
+      make_params_impl(val, std::forward<Types>(params)...);
+    }
+  }
+  template <class... Types>
+  Json::Value make_params(Types&&... params)
+  {
+    Json::Value val(Json::ValueType::arrayValue);;
+    detail::make_params_impl(val, std::forward<Types>(params)...);
+    return val;
+  }
 }
