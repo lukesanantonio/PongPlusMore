@@ -18,111 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <iostream>
-#include <vector>
-#include <deque>
 #include <chrono>
 #include <thread>
 #include <functional>
 
-#include "core/plugin/req.h"
-#include "core/plugin/response.h"
-#include "core/common/vector.h"
+#include "support.h"
+
 #include "core/common/pif/helper.h"
+#include "core/common/vector.h"
 #include "core/common/Timer.hpp"
 
 namespace client
 {
-  struct Client
-  {
-    using cb_t = std::function<void(pong::Response const&)>;
-
-    bool poll_request(pong::Request& req) noexcept;
-
-    void post_request(pong::Request const& req) noexcept;
-    void post_request(pong::Request const& req, cb_t callback) noexcept;
-
-    void step() noexcept;
-  private:
-    std::deque<pong::Request> reqs_;
-    std::vector<std::pair<pong::req_id_t, cb_t> > cbs_;
-  };
-
-  bool Client::poll_request(pong::Request& req) noexcept
-  {
-    // Do we have any requests waiting?
-    if(reqs_.size())
-    {
-      req = reqs_.front();
-      reqs_.pop_front();
-      return true;
-    }
-    return false;
-  }
-  void Client::post_request(pong::Request const& req) noexcept
-  {
-    // Dump the json to stdout.
-    Json::Value value = FORMATTER_TYPE(pong::Request)::dump(req);
-    Json::FastWriter fw;
-    std::cout << fw.write(value) << std::flush;
-  }
-  void Client::post_request(pong::Request const& req, cb_t callback) noexcept
-  {
-    post_request(req);
-
-    // Only track the response if we have a valid id.
-    if(req.id)
-    {
-      cbs_.push_back({req.id.value(), callback});
-    }
-  }
-
-  void Client::step() noexcept
-  {
-    std::string input;
-    std::getline(std::cin, input);
-
-    // Make sure the input is valid json.
-    Json::Reader read{Json::Features::strictMode()};
-    Json::Value val;
-    if(!read.parse(input, val)) return;
-
-    // We have valid json. Now try to parse it as a response, then as a
-    // request if that fails.
-    try
-    {
-      pong::Response res = FORMATTER_TYPE(pong::Response)::parse(val);
-
-      // Could we be tracking this id?
-      if(res.id)
-      {
-        using std::begin; using std::end;
-        auto loc = std::find_if(begin(cbs_), end(cbs_),
-        [&res](auto const& pair)
-        {
-          return res.id.value() == std::get<0>(pair);
-        });
-        if(loc != end(cbs_))
-        {
-          std::get<1>(*loc)(res);
-          cbs_.erase(loc);
-        }
-      }
-
-      // We found and successfully parsed a response. Our job is done for now.
-      return;
-    }
-    catch(pong::Invalid_Response_Exception& e) {}
-
-    try
-    {
-      // Valid request?
-      pong::Request req = FORMATTER_TYPE(pong::Request)::parse(val);
-      // Queue it up!
-      reqs_.push_back(req);
-    }
-    catch(pong::Invalid_Request_Exception& e) {}
-  }
-
   enum class Launch_State
   {
     Not_Running,

@@ -19,5 +19,5 @@
 add_data_target(plugin_json ALL)
 add_target_data(plugin_json pong.json)
 
-add_executable(pong_plugin pong_plugin.cpp)
+add_executable(pong_plugin pong_plugin.cpp support.cpp)
 target_link_libraries(pong_plugin plugin_core jsoncpp)
