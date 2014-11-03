@@ -61,6 +61,20 @@ namespace pong
 
     return boost::apply_visitor(Is_Error_Response_Visitor(), res.result);
   }
+
+  struct Not_Error_Response_Exception {};
+
+  inline Error_Response const& get_error_response(Response const& res)
+  {
+    try
+    {
+      return boost::get<Error_Response>(res.result);
+    }
+    catch(boost::bad_get& e)
+    {
+      throw Not_Error_Response_Exception{};
+    }
+  }
 }
 BEGIN_FORMATTER_SCOPE
 {
