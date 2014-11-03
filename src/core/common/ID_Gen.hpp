@@ -22,7 +22,7 @@
 namespace pong
 {
   template <typename id_type>
-  struct IDManager
+  struct ID_Gen
   {
     using queue_type = std::queue<id_type>;
 
@@ -39,7 +39,7 @@ namespace pong
    * \returns 0 if there are no ids available.
    */
   template <typename id_type>
-  id_type IDManager<id_type>::get() noexcept
+  id_type ID_Gen<id_type>::get() noexcept
   {
     if(!removed_id_queue.empty())
     {
@@ -60,7 +60,7 @@ namespace pong
   }
 
   template <typename id_type>
-  void IDManager<id_type>::remove(id_type id) noexcept
+  void ID_Gen<id_type>::remove(id_type id) noexcept
   {
     this->removed_id_queue.push(id);
   }

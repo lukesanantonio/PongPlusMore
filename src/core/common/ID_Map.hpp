@@ -20,7 +20,7 @@
 #pragma once
 #include <unordered_map>
 #include <queue>
-#include "IDManager.hpp"
+#include "ID_Gen.hpp"
 #include "Cache.h"
 
 namespace pong
@@ -74,7 +74,7 @@ namespace pong
     inline std::vector<id_type> ids() const noexcept;
   private:
     map_type objs_;
-    IDManager<id_type> id_counter_;
+    ID_Gen<id_type> id_counter_;
 
     mutable Cache<std::vector<id_type> > ids_cache_;
   };
