@@ -19,11 +19,13 @@
  */
 #pragma once
 
+#include <string>
 #include <vector>
 #include <deque>
 #include <functional>
 #include <utility>
 
+#include "core/io/Logger.h"
 #include "core/plugin/req.h"
 #include "core/plugin/response.h"
 
@@ -67,4 +69,6 @@ namespace client
     detail::make_params_impl(val, std::forward<Types>(params)...);
     return val;
   }
+
+  void log_message(Client&, pong::Severity, std::string const&) noexcept;
 }
