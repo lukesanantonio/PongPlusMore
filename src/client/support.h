@@ -26,6 +26,7 @@
 #include <utility>
 
 #include "core/io/Logger.h"
+#include "core/common/ID_Map.hpp"
 #include "core/plugin/req.h"
 #include "core/plugin/response.h"
 
@@ -70,6 +71,18 @@ namespace client
     Json::Value val(Json::ValueType::arrayValue);
     detail::make_params_impl(val, std::forward<Types>(params)...);
     return val;
+  }
+
+  template <class T>
+  void set_member(Client& c,
+                  pong::req_id_t request_id,
+                  std::string const& set_method,
+                  pong::id_type id,
+                  T const& member,
+                  Client::cb_t callback) noexcept
+  {
+    c.post_request({request_id, set_method, make_params(id, member)},
+                   callback);
   }
 
   void log_message(Client&, pong::Severity, std::string const&) noexcept;
