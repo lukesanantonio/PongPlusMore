@@ -62,17 +62,20 @@ int main(int argc, char** argv)
 
   auto const& params = make_params(vector<int>(1000, 1000), "Pong Plus More"s);
   c.post_request({1_id, "Core.Start", params},
-  [&state](pong::Response const& res)
+  [&state, &c](pong::Response const& res)
   {
     // If we have an error on our hands...
     if(pong::is_error_response(res))
     {
-      // TODO Log: err.msg + " (Error code: " + res.code + ")"
+      pong::Error_Response err = pong::get_error_response(res);
+      client::log_message(c, pong::Severity::Error,
+                          err.msg + " (Error code: " +
+                          std::to_string(err.code) + ")");
       state.run_state = Launch_State::Error;
     }
-    // Successful start!
     else
     {
+      // Successful start!
       state.run_state = Launch_State::Running;
     }
   });
@@ -89,16 +92,23 @@ int main(int argc, char** argv)
     {
       case Launch_State::Not_Running:
       {
-        // No connection to engine. TODO log this message.
+        client::log_message(c, pong::Severity::Error,
+                            "Timed out waiting for starting confirmation.");
         return EXIT_FAILURE;
       }
       case Launch_State::Error:
       {
-        // Failed to launch for some reason. TODO log this.
+        // Failed to launch for some reason. Already being logged in the
+        // request callback.
         return EXIT_FAILURE;
       }
       // If the engine started successfully let control continue.
-      case Launch_State::Running: break;
+      case Launch_State::Running:
+      {
+        // Log the success!
+        client::log_message(c, pong::Severity::Error,
+                            "Successful engine start");
+      }
     }
   }
 
