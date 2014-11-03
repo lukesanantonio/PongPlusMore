@@ -67,7 +67,7 @@ namespace engine
     dispatch.add_method<>("Core.Exit",
     [&state]() -> res_t
     {
-      if(!state.renderer || !state.renderer)
+      if(!state.window || !state.renderer)
       {
         return Error_Response{3, "Engine not started"};
       }
