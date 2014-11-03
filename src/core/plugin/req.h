@@ -64,6 +64,11 @@ namespace pong
     }
   }
 
+  inline req_id_t as_id(id_num_t id)
+  {
+    return req_id_t(id);
+  }
+
   inline bool operator==(Request const& r1, Request const& r2) noexcept
   {
     return r1.id == r2.id && r1.method == r2.method && r1.params == r2.params;
