@@ -79,22 +79,17 @@ namespace engine
       return Json::Value(true);
     });
 
-    dispatch.add_method<pong::Color>("Core.SetClearColor",
+    dispatch.add_method<pong::Color>("Core.Set_Clear_Color",
     [&state](pong::Color const& c) -> res_t
     {
       state.clear_color = c;
       return Json::Value(true);
     });
-    dispatch.add_method<>("Core.EnableClear",
-    [&state]() -> res_t
+
+    dispatch.add_method<bool>("Core.Set_Freeze",
+    [&state](bool freeze) -> res_t
     {
-      state.clear_screen = true;
-      return Json::Value(true);
-    });
-    dispatch.add_method<>("Core.DisableClear",
-    [&state]() -> res_t
-    {
-      state.clear_screen = false;
+      state.freeze = freeze;
       return Json::Value(true);
     });
 

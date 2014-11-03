@@ -39,8 +39,8 @@ namespace engine
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
 
-    bool clear_screen = true;
     pong::Color clear_color{0xff, 0xff, 0xff, 0xff};
+    bool freeze = false;
 
     pong::ID_Map<pong::Label<std::string> > labels_;
   };

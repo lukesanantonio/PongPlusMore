@@ -51,12 +51,15 @@ namespace engine
 
   void step(State& state) noexcept
   {
-    if(clear_screen)
+    if(state.freeze) return;
+
     {
-      pong::Color c;
-      SDL_SetRenderClearColor(state.renderer, c.r, c.g, c.b, c.a);
-      SDL_RenderClear(state.renderer);
+      auto col = state.clear_color;
+      SDL_SetRenderDrawColor(state.renderer, col.r, col.g, col.b, col.a);
     }
+
+    SDL_RenderClear(state.renderer);
+
     for(auto const& label_pair : state.labels_)
     {
       pong::Label<std::string> const& label = std::get<1>(label_pair);
