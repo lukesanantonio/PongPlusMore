@@ -48,6 +48,23 @@ namespace engine
     opts.cwd = NULL;
     return pong::make_json_plugin<pong::Child_Process>(opts);
   }
+
+  void step(State& state) noexcept
+  {
+    if(clear_screen)
+    {
+      pong::Color c;
+      SDL_SetRenderClearColor(state.renderer, c.r, c.g, c.b, c.a);
+      SDL_RenderClear(state.renderer);
+    }
+    for(auto const& label_pair : state.labels_)
+    {
+      pong::Label<std::string> const& label = std::get<1>(label_pair);
+      label.render(state.renderer);
+    }
+
+    SDL_RenderPresent(state.renderer);
+  }
 }
 
 int main(int argc, char** argv)

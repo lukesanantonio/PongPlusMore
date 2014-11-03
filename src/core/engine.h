@@ -45,7 +45,7 @@ namespace engine
     pong::ID_Map<pong::Label<std::string> > labels_;
   };
 
-  inline void step(State& state) noexcept {}
+  void step(State& state) noexcept;
 
   pong::Json_Plugin spawn_plugin(Json::Value const& json) noexcept;
 
