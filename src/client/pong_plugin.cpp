@@ -134,28 +134,28 @@ namespace client
   {
     Launch_State run_state = Launch_State::Not_Running;
   };
-}
 
-template <class Type>
-void make_params_impl(Json::Value& val, Type const& t)
-{
-  val.append(FORMATTER_TYPE(Type)::dump(t));
-}
-template <class Type, class... Types>
-void make_params_impl(Json::Value& val, Type const& t1, Types&&... params)
-{
-  // Append the first one first,
-  make_params_impl(val, t1);
-  // Then the others.
-  make_params_impl(val, std::forward<Types>(params)...);
-}
+  template <class Type>
+  void make_params_impl(Json::Value& val, Type const& t)
+  {
+    val.append(FORMATTER_TYPE(Type)::dump(t));
+  }
+  template <class Type, class... Types>
+  void make_params_impl(Json::Value& val, Type const& t1, Types&&... params)
+  {
+    // Append the first one first,
+    make_params_impl(val, t1);
+    // Then the others.
+    make_params_impl(val, std::forward<Types>(params)...);
+  }
 
-template <class... Types>
-Json::Value make_params(Types&&... params)
-{
-  Json::Value val(Json::ValueType::arrayValue);;
-  make_params_impl(val, std::forward<Types>(params)...);
-  return val;
+  template <class... Types>
+  Json::Value make_params(Types&&... params)
+  {
+    Json::Value val(Json::ValueType::arrayValue);;
+    make_params_impl(val, std::forward<Types>(params)...);
+    return val;
+  }
 }
 
 int main(int argc, char** argv)
@@ -173,6 +173,8 @@ int main(int argc, char** argv)
 
   // Start the engine with 1000x1000 window.
   using pong::math::vector;
+  using client::make_params;
+
   auto const& params = make_params(vector<int>(1000, 1000), "Pong Plus More"s);
   c.post_request({1_id, "Core.Start", params},
   [&state](pong::Response const& res)
