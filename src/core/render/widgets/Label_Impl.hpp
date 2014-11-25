@@ -207,20 +207,22 @@ namespace pong
   }
 
   template <class Data>
-  Label_Cache make_label_cache(Label<Data>& l)
+  Label_Cache<Data> make_label_cache()
   {
-    Label_Cache c;
-    c.gen_func([](Label_Cache::ptr_type p,
-                  Rasterized_String_Cache& s, SDL_Renderer*& r)
+    Label_Cache<Data> c;
+    c.gen_func([](typename Label_Cache<Data>::ptr_type p,
+                  Rasterized_String_Cache<Data>& s, SDL_Renderer*& r)
     {
       if(p) return p;
       p.reset(SDL_CreateTextureFromSurface(r, s.cache()->surface));
       return p;
     });
 
-    c.grab_dependency<0>().gen_func(
-    [&l](Rasterized_String_Cache::ptr_type p)
+    c.template grab_dependency<0>().gen_func(
+    [](typename Rasterized_String_Cache<Data>::ptr_type p, auto label)
     {
+      Label<Data>& l = *label;
+
       if(p) return p;
       std::string text = boost::lexical_cast<std::string>(l.data());
 
@@ -289,7 +291,8 @@ namespace pong
       Rasterized_String str;
       str.baseline = baseline;
       str.surface = line_surf.release();
-      return Rasterized_String_Cache::ptr_type(new Rasterized_String(str));
+      return typename
+        Rasterized_String_Cache<Data>::ptr_type(new Rasterized_String(str));
     });
     return c;
 
@@ -322,7 +325,7 @@ namespace pong
                      font_face_(face),
                      rasterizer_(rasterizer),
                      mode_(mode),
-                     cache_(make_label_cache(*this)) {}
+                     cache_(make_label_cache<Data>()) {}
 
   /*!
    * \brief Copy constructor.
@@ -338,7 +341,11 @@ namespace pong
                      font_face_(label.font_face_),
                      rasterizer_(label.rasterizer_),
                      mode_(label.mode_),
-                     cache_(label.cache_) {}
+                     cache_(label.cache_)
+  {
+    this->cache_.template grab_dependency<0>()
+                .template grab_dependency<0>() = this;
+  }
   /*!
    * \brief Move constructor.
    *
@@ -353,7 +360,11 @@ namespace pong
                      font_face_(label.font_face_),
                      rasterizer_(label.rasterizer_),
                      mode_(label.mode_),
-                     cache_(std::move(label.cache_)) {}
+                     cache_(std::move(label.cache_))
+  {
+    this->cache_.template grab_dependency<0>()
+                .template grab_dependency<0>() = this;
+  }
 
   /*!
    * \brief Copy assignment operator.
@@ -375,6 +386,8 @@ namespace pong
     this->mode_ = label.mode_;
 
     this->cache_ = label.cache_;
+    this->cache_.template grab_dependency<0>()
+                .template grab_dependency<0>() = this;
 
     return *this;
   }
@@ -399,6 +412,8 @@ namespace pong
     this->mode(label.mode_);
 
     this->cache_ = std::move(label.cache_);
+    this->cache_.template grab_dependency<0>()
+                .template grab_dependency<0>() = this;
 
     return *this;
   }

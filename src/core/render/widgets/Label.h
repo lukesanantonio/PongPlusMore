@@ -45,8 +45,12 @@ namespace pong
     }
   };
 
+  template <class Data> class Label;
+
+  template <class Data>
   using Rasterized_String_Cache =
-              Cache_With_Deleter<Rasterized_String, Rasterized_String_Deleter>;
+    Cache_With_Deleter<Rasterized_String, Rasterized_String_Deleter,
+                       Label<Data>*>;
 
   /*!
    * \brief A simple deleter which frees `SDL_Texture`s - for use with smart
@@ -60,8 +64,9 @@ namespace pong
     }
   };
 
+  template <class Data>
   using Label_Cache = Cache_With_Deleter<SDL_Texture, Texture_Deleter,
-                                         Rasterized_String_Cache,
+                                         Rasterized_String_Cache<Data>,
                                          SDL_Renderer*>;
 
     enum class Label_Mode
@@ -160,7 +165,7 @@ namespace pong
 
     Label_Mode mode_;
 
-    mutable Label_Cache cache_;
+    mutable Label_Cache<Data> cache_;
   };
 }
 
