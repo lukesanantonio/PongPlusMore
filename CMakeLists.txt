@@ -17,8 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Init CMake stuff.
-cmake_minimum_required(VERSION 2.8)
-project(PpM)
+cmake_minimum_required(VERSION 3.4)
+project(PpM VERSION 0.0 LANGUAGES C CXX)
+
+# Use C++1y
+set(CMAKE_CXX_STANDARD 14)
 
 # Make sure to show our FindSDL2.cmake some love.
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
