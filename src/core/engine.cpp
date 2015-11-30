@@ -33,7 +33,7 @@
 
 namespace engine
 {
-  pong::Json_Plugin spawn_plugin(Json::Value const& json) noexcept
+  pong::Json_Plugin spawn_plugin(Json::Value const& json)
   {
     std::vector<char*> args;
 
@@ -45,8 +45,17 @@ namespace engine
 
     pong::ipc::Spawn_Options opts;
     opts.args = &args[0];
-    opts.cwd = NULL;
-    return pong::make_json_plugin<pong::Child_Process>(opts);
+    opts.cwd = ".";
+    try
+    {
+      auto json_plugin = pong::make_json_plugin<pong::Child_Process>(opts);
+      return json_plugin;
+    }
+    catch(pong::ipc::Spawn_Error& e)
+    {
+      std::cerr << uv_strerror(e.err) << std::endl;
+      throw;
+    }
   }
 
   void step(State& state) noexcept

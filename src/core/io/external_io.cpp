@@ -33,7 +33,7 @@ namespace pong
     io->post_error(*p->buf);
   }
 
-  Child_Process::Child_Process(ipc::Spawn_Options& opt) noexcept
+  Child_Process::Child_Process(ipc::Spawn_Options& opt)
   {
     uv_loop_init(&loop_);
 

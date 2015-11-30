@@ -69,7 +69,7 @@ namespace pong
 
   struct Child_Process : public External_IO
   {
-    Child_Process(ipc::Spawn_Options&) noexcept;
+    Child_Process(ipc::Spawn_Options&);
     ~Child_Process() noexcept;
 
     void write(std::vector<char> const& buf) noexcept override;

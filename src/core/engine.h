@@ -47,7 +47,7 @@ namespace engine
 
   void step(State& state) noexcept;
 
-  pong::Json_Plugin spawn_plugin(Json::Value const& json) noexcept;
+  pong::Json_Plugin spawn_plugin(Json::Value const& json);
 
   void add_core_methods(pong::Req_Dispatcher& dispatch, State& state,
                         pong::Logger& log);

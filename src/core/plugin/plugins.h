@@ -74,7 +74,7 @@ namespace pong
   }
 
   template <class IO_Type, class... Args>
-  Json_Plugin make_json_plugin(Args&&... args) noexcept
+  Json_Plugin make_json_plugin(Args&&... args)
   {
     auto io = std::make_unique<IO_Type>(std::forward<Args>(args)...);
     return Json_Plugin(std::move(io));
