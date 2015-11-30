@@ -241,7 +241,7 @@ namespace pong
       int baseline = 0;
       {
         int max_ascent = 0;
-        int max_descent = 0;
+        unsigned int max_descent = 0;
         for(int glyph_indice = 0; glyph_indice < glyphs.size(); ++glyph_indice)
         {
           auto& glyph = glyphs[glyph_indice];
