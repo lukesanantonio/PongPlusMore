@@ -47,6 +47,11 @@ macro(add_target_directory target dirname)
   install(DIRECTORY ${dirname} DESTINATION share/PpM)
 endmacro()
 
+# Include cereal, rapidjson and catch.
+include_directories(${CMAKE_SOURCE_DIR}/cereal/include
+                    ${CMAKE_SOURCE_DIR}/cereal/include/external
+                    ${CMAKE_SOURCE_DIR}/catch)
+
 # Actually build our project, or at least declare it.
 add_subdirectory(gtest)
 add_subdirectory(jsoncpp)
