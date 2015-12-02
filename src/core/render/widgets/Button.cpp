@@ -33,7 +33,7 @@ namespace pong
    * \param enabled Whether or not the button should be clickable.
    */
   Button::Button(const std::string& text,
-                 Volume vol,
+                 Volume<int> vol,
                  bool enabled,
                  text::Face* face,
                  text::Rasterizer* rasterizer,
@@ -155,7 +155,7 @@ namespace pong
                                      prev_color.a);
 
     // Find out where to render the label!
-    math::vector<int> label_pos;
+    Vec<int> label_pos;
     label_pos.x = center(this->vol_.pos.x, this->vol_.width,
                          this->label_.surface_width());
     label_pos.y = center(this->vol_.pos.y, this->vol_.height,
@@ -180,7 +180,7 @@ namespace pong
     {
       if(event.button.button == SDL_BUTTON_LEFT)
       {
-        math::vector<int> point;
+        Vec<int> point;
         point.x = event.button.x;
         point.y = event.button.y;
 

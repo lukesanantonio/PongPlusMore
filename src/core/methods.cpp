@@ -26,8 +26,9 @@ namespace engine
                         pong::Logger& log)
   {
     using pong::Severity;
-    namespace math = pong::math;
     using pong::Error_Response;
+
+    using pong::Vec;
 
     using res_t = pong::response_result;
 
@@ -40,8 +41,8 @@ namespace engine
 
     // Error codes: 1 - Engine already started.
     // Error codes: 2 - Window creation failure.
-    dispatch.add_method<math::vector<int>, std::string>("Core.Start",
-    [&state](math::vector<int> extent, std::string const& title) -> res_t
+    dispatch.add_method<Vec<int>, std::string>("Core.Start",
+    [&state](Vec<int> extent, std::string const& title) -> res_t
     {
       if(state.window)
       {

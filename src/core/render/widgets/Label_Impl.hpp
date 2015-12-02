@@ -116,7 +116,7 @@ namespace pong
    * Does not invalidate the surface.
    */
   template <class Data>
-  inline void Label<Data>::position(math::vector<int> pos) noexcept
+  inline void Label<Data>::position(Vec<int> pos) noexcept
   {
     this->pos_ = pos;
   }
@@ -126,7 +126,7 @@ namespace pong
    * \returns Label::pos_
    */
   template <class Data>
-  inline math::vector<int> Label<Data>::position() const noexcept
+  inline Vec<int> Label<Data>::position() const noexcept
   {
     return this->pos_;
   }
@@ -313,7 +313,7 @@ namespace pong
   template <class Data>
   Label<Data>::Label(const Data& data,
                      int text_height,
-                     math::vector<int> pos,
+                     Vec<int> pos,
                      SDL_Color text_color,
                      text::Face* face,
                      text::Rasterizer* rasterizer,

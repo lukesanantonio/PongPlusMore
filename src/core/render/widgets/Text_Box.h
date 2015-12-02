@@ -25,15 +25,15 @@ namespace pong
 {
   struct Text_Box
   {
-    Text_Box(Volume const& vol = Volume(),
+    Text_Box(Volume<int> const& vol = Volume<int>(),
              int blink_rate = 50, text::Face* face = nullptr,
              text::Rasterizer* = nullptr) noexcept;
 
     void handle_event(const SDL_Event& e) noexcept;
     void render(SDL_Renderer* r) const noexcept;
 
-    inline Volume volume() const noexcept;
-    inline void volume(Volume const&) noexcept;
+    inline Volume<int> volume() const noexcept;
+    inline void volume(Volume<int> const&) noexcept;
 
     inline int cur_pos() const noexcept;
     inline void cur_pos(int) noexcept;
@@ -50,17 +50,17 @@ namespace pong
     inline text::Rasterizer* rasterizer() const noexcept;
     inline void rasterizer(text::Rasterizer*) noexcept;
   private:
-    Volume vol_;
+    Volume<int> vol_;
     int cur_pos_;
     int blink_rate_;
     mutable Label<std::string> label_;
   };
 
-  inline Volume Text_Box::volume() const noexcept
+  inline Volume<int> Text_Box::volume() const noexcept
   {
     return this->vol_;
   }
-  inline void Text_Box::volume(Volume const& vol) noexcept
+  inline void Text_Box::volume(Volume<int> const& vol) noexcept
   {
     this->vol_ = vol;
     label_.text_height(vol.height);

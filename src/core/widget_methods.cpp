@@ -66,7 +66,7 @@ namespace engine
                          pong::Logger& log)
   {
     using pong::id_type;
-    namespace math = pong::math;
+    using pong::Vec;
 
     dispatch.add_method<>("Label.Create_Label",
     [&state]() -> pong::response_result
@@ -80,12 +80,12 @@ namespace engine
     add_get_method<std::string>("Label.Get_String", dispatch, state.labels_,
                    [](auto& l){ return l.data(); });
 
-    add_set_method<math::vector<double> >("Label.Set_Position",
+    add_set_method<Vec<double> >("Label.Set_Position",
                                           dispatch, state.labels_,
-    [](auto& l, math::vector<double> const& pos)
+    [](auto& l, Vec<double> const& pos)
     { l.position(pos); });
 
-    add_get_method<math::vector<double> >("Label.Get_Position", dispatch,
+    add_get_method<Vec<double> >("Label.Get_Position", dispatch,
                                           state.labels_,
     [](auto& l) { return l.position(); });
 

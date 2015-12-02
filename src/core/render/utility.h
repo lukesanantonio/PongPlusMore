@@ -32,8 +32,67 @@ namespace pong
     return c1.r == c2.r and c1.g == c2.g and c1.b == c2.b and c1.a == c2.a;
   }
 
-  void render(SDL_Renderer* renderer, const Volume& volume) noexcept;
-  void render_sides(SDL_Renderer*, Volume const&,
-                    VolumeSides, double) noexcept;
-  void render_wireframe(SDL_Renderer*, Volume const&) noexcept;
+  template <class T>
+  void render(SDL_Renderer* renderer, const Volume<T>& volume) noexcept
+  {
+    SDL_Rect rect;
+    rect.x = volume.pos.x;
+    rect.y = volume.pos.y;
+    rect.w = volume.width;
+    rect.h = volume.height;
+    SDL_RenderFillRect(renderer, &rect);
+  }
+  template <class T>
+  void render_sides(SDL_Renderer* renderer, Volume<T> const& v,
+                    VolumeSides sides, double percentage) noexcept
+  {
+    if(sides & VolumeSide::Left)
+    {
+      SDL_Rect r;
+      r.x = v.pos.x;
+      r.y = v.pos.y;
+      r.w = v.width * percentage;
+      r.h = v.height;
+      SDL_RenderFillRect(renderer, &r);
+    }
+    if(sides & VolumeSide::Right)
+    {
+      SDL_Rect r;
+      auto right = v.pos.x + v.width;
+      r.x = right - v.width * percentage;
+      r.y = v.pos.y;
+      r.w = std::ceil(right - r.x);
+      r.h = v.height;
+      SDL_RenderFillRect(renderer, &r);
+    }
+    if(sides & VolumeSide::Top)
+    {
+      SDL_Rect r;
+      r.x = v.pos.x;
+      r.y = v.pos.y;
+      r.w = v.width;
+      r.h = v.height * percentage;
+      SDL_RenderFillRect(renderer, &r);
+    }
+    if(sides & VolumeSide::Bottom)
+    {
+      SDL_Rect r;
+      auto bottom = v.pos.y + v.height;
+      r.x = v.pos.x;
+      r.y = bottom - v.height * percentage;
+      r.w = v.width;
+      r.h = std::ceil(bottom - r.y);
+      SDL_RenderFillRect(renderer, &r);
+    }
+  }
+  template <class T>
+  void render_wireframe(SDL_Renderer* r, const Volume<T>& vol) noexcept
+  {
+    GENERATE_VOLUME_BOUNDS(vol);
+
+    SDL_RenderDrawLine(r, vol_left, vol_top, vol_right, vol_top);
+    SDL_RenderDrawLine(r, vol_right, vol_top, vol_right, vol_bottom);
+    SDL_RenderDrawLine(r, vol_right, vol_bottom, vol_left, vol_bottom);
+    SDL_RenderDrawLine(r, vol_left, vol_bottom, vol_left, vol_top);
+  }
 }

@@ -16,5 +16,5 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_library(common_core STATIC utility.cpp volume.cpp)
+add_library(common_core STATIC utility.cpp)
 target_link_libraries(common_core jsoncpp)

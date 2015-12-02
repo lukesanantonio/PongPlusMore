@@ -26,8 +26,8 @@
 #include "SDL.h"
 #include "Label.h"
 #include "../text.h"
-#include "core/common/vector.h"
-#include "core/common/volume.h"
+#include "../../common/vector.h"
+#include "../../common/volume.h"
 namespace pong
 {
   /*!
@@ -40,7 +40,7 @@ namespace pong
 
   public:
     explicit Button(const std::string& text = "",
-                    Volume vol = {{0,0},0,0},
+                    Volume<int> vol = {{0,0},0,0},
                     bool enabled = true,
                     text::Face* face = nullptr,
                     text::Rasterizer* rasterizer = nullptr,
@@ -67,8 +67,8 @@ namespace pong
     inline void text(const std::string& text);
     inline std::string text() const;
 
-    inline void volume(const Volume& vol) noexcept;
-    inline Volume volume() const noexcept;
+    inline void volume(const Volume<int>& vol) noexcept;
+    inline Volume<int> volume() const noexcept;
 
     inline void text_color(SDL_Color col) noexcept;
     inline SDL_Color text_color() const noexcept;
@@ -104,7 +104,7 @@ namespace pong
     /*!
      * \brief The volume of the Button.
      */
-    Volume vol_;
+    Volume<int> vol_;
 
     /*!
      * \brief The background color of the button when it is enabled.
@@ -148,14 +148,14 @@ namespace pong
   /*!
    * \brief Sets the Volume of the Button.
    */
-  inline void Button::volume(const Volume& vol) noexcept
+  inline void Button::volume(const Volume<int>& vol) noexcept
   {
     // The text height may need to be updated.
     this->label_.text_height(vol.height);
 
     this->vol_ = vol;
   }
-  inline Volume Button::volume() const noexcept
+  inline Volume<int> Button::volume() const noexcept
   {
     return this->vol_;
   }

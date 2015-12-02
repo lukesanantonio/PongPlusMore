@@ -57,10 +57,9 @@ int main(int argc, char** argv)
   using client::Launch_State;
 
   // Start the engine with 1000x1000 window.
-  using pong::math::vector;
   using client::make_params;
 
-  auto const& params = make_params(vector<int>(1000, 1000), "Pong Plus More"s);
+  auto const& params = make_params(pong::Vec<int>(1000, 1000), "Pong Plus More"s);
   c.post_request({1_id, "Core.Start", params},
   [&state, &c](pong::Response const& res)
   {

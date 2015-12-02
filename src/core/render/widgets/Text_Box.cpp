@@ -21,7 +21,7 @@
 #include "../utility.h"
 namespace pong
 {
-  Text_Box::Text_Box(Volume const& vol, int blink_rate,
+  Text_Box::Text_Box(Volume<int> const& vol, int blink_rate,
                      text::Face* face, text::Rasterizer* rasterizer) noexcept
                      : cur_pos_(0), blink_rate_(blink_rate)
   {
@@ -34,7 +34,7 @@ namespace pong
   }
   void Text_Box::render(SDL_Renderer* r) const noexcept
   {
-    math::vector<double> label_pos;
+    Vec<double> label_pos;
     label_pos.x = vol_.pos.x + 10;
     label_pos.y = vol_.pos.y + (vol_.height * .8);
     this->label_.position(label_pos);

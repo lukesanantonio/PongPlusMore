@@ -88,7 +88,7 @@ namespace pong
   public:
     explicit Label(const Data& data = Data(),
                    int text_height = 24,
-                   math::vector<int> pos = math::vector<int>(),
+                   Vec<int> pos = Vec<int>(),
                    SDL_Color text_color = {0xff, 0xff, 0xff, 0xff},
                    text::Face* face = nullptr,
                    text::Rasterizer* rasterizer = nullptr,
@@ -116,8 +116,8 @@ namespace pong
     inline void text_height(int text_height) noexcept;
     inline int text_height() const noexcept;
 
-    inline void position(math::vector<int> pos) noexcept;
-    inline math::vector<int> position() const noexcept;
+    inline void position(Vec<int> pos) noexcept;
+    inline Vec<int> position() const noexcept;
 
     inline void text_color(SDL_Color text_color) noexcept;
     inline SDL_Color text_color() const noexcept;
@@ -150,7 +150,7 @@ namespace pong
      *
      * \sa Label::cached_surface_
      */
-    math::vector<int> pos_;
+    Vec<int> pos_;
 
     /*!
      * \brief The color of the text in the SDL_Surface generated of the text.

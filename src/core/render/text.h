@@ -101,7 +101,7 @@ namespace pong { namespace text
   struct Metrics
   {
     int ascent, descent;
-    math::vector<int> bitmap_extent;
+    Vec<int> bitmap_extent;
     int bearing, advance;
   };
 
