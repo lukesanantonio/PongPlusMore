@@ -18,169 +18,167 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////
 
-= 'Mo Pong - Pong Plus More (PpM)
+= Server RPC
 
-A pong clone full of surprises written with C++11
+== RPC interface
 
-Pong Plus More isn't just any pong clone. It will feature fairly funny easter
-eggs and trolls, paddles that have a mind of their own, and a multiplayer mode
-which supports all of this. It is released under the GPL so you'll be able to
-play PpM for free, though I haven't got an alpha out yet, so you'll just have
-to wait.
+.Built-in core methods (client and server)
+[cols="1,3,5,4,9a"]
+|===
+| ID | Name | Param(s) | Return value(s) | Description
 
-Thanks for your interest!
+| 0
+| NotifyResponse
+| None
+| None
+| Indicates a response is ready. Any call to this function without a request id
+is to be ignored.
 
-I am also managing the development with Trello, so if you want you can find my
-board https://trello.com/b/6kkfz2kJ/pong-plus-more[here].
+| 1
+| NotifyError
+| None
+| None
+| Indicates an error occured. Any call to this function without a request id is
+to be ignored.
 
--
-Luke, '13
+|===
 
-== Changelog
+.Built-in server methods
+[cols="1,3,5,4,9a"]
+|===
 
-=== v0.1
+| 2
+| Log
+| Msg: string +
+Severity: uint (optional)
+| None
+| Logs a message. Severity should be chosen based on the following
+* <= 20 - Info
+* <= 30 - Warning
+* <= 40 - Error
+* <= 50 - Fatal
 
-The Alpha is out. It includes:
+| 3
+| InitNewPlugin
+| Name: string
+| None
+| Notifies the server of a new plugin and queues the calling client for any
+initialization method calls.
 
-- Singleplayer against an AI that doesn't mess up.
+| 4
+| RegisterFunction
+| Name: string
+| Id: id
+| Registers a function with some name (to help other plugins find it),
+returning the id.
 
-Supported command line options:
+| 5
+| RemoveFunction
+| Id: id
+| None
+| Removes a previously registered function with a given id. If that function
+was not registered by th current plugin, it is an error.
 
-    --render-debug | Enable rendering of debug stats in the bottom-right corner
-                     of the screen at all times.
+|===
 
-== Planned Features
+.Built-in client methods
+[cols="1,3,5,4,9a"]
+|===
+| ID | Name | Param(s) | Return value(s) | Description
 
-I hope Pong Plus More could someday be the go-to pong game for everyone! I plan
-to add:
+| 6
+| NotifyNewFunction
+| Name: string +
+Id: id
+| None
+| Informs the client of a new function. Any number of these methods will be
+called on a client immediately after the client notifies the server of it's
+presence with Server.InitNewPlugin.
 
-* Scripting to control arbitrary paddles and a "Level Editor" to go with that!
-** The maps and scripts can be bundled into a package and distributed as a
-   gamemode.
-*** Don't know about any particular scripting language... Most likely Python.
-** Complete Network Transparency. The scripting API will do the best job it can
-   in allowing the developer to avoid special cases involved when a player
-   abstraction isn't that great...
-** Some other stuff that I can't remember at the moment.
-** Awesome Portability, Compatibility, and Configurability.
-*** I at least want Pong Plus More to run on my Raspberry Pi so I can get it
-    on my TV.
-*** It would be pretty cool to work with the Wii remote tilt function.
-*** Joystick/Controller support is a must.
-*** What the hell, why not have it run in a terminal, while playing against a
-    friend, I don't discriminate.
+| 7
+| NotifyRemoveFunction
+| Id: id
+| None
+| Informs the client that a function with a given id is no longer callable.
 
-== Roadmap
+|===
 
-=== Alpha v0.1 "Pong for the masses."
-This will be the first alpha, including a Single player game mode with an AI.
+=== Error codes
 
-=== Alpha v0.2 "The Plugin Update."
-This update will bring a plugin system similar to that of the new fangled
-https://github.com/neovim/neovim#new-plugin-architecture[neovim].
+For every function call, the following errors could occur.
 
-That is, a control system based on asynchronous JSON-RPC communication between
-the program and an arbitrary executable (interpreter!) and PpM. All this can
-go through stdout and stdin using the async functions in Boost.Asio.
+.Error codes
+|===
+| Id | Name | Description
 
-This idea starts to get *really* interesting when you think of the options you
-have in printing to stdout. You could write a plugin in a language from Linux
-assembly and C to http://www.dangermouse.net/esoteric/piet.html[Piet], Java and
-Python. On that note I will be providing an API for Python so that there is no
-need to learn the protocol.
+| 1 | Missing function | A function that doesn't exist was called.
 
-=== Alpha v0.3 "Socially Viable!"
-This update will introduce a multiplayer mode!
+|===
 
-=== Beta v1.0 "'Dat Beta."
-This will just bring general stability and hopefully some useful and exciting
-plugins.
+== Wire format
 
-Also included will be an extension to my idea of "Awesome Portability,
-Compatibility, and Configurability." That is, this update will bring the
-crazy stuff like Wiimote/Joystick/Controller integration and Raspberry Pi
-support. That being said, if you're lucky I'll even add a terminal interface
-(ncurses), we'll see how that turns out.
+The wire format is just a series of message pack objects with a structure
+matching the following json.
 
-== Building
+    [function_id, [params, ...], request_id]
 
-Probably the biggest thing that might be a problem when building is the
-C++14 support required. (I am trying to cut down in the interest of
-portability across compilers).
+Function id is an id from the above table, params is an array to pass to the
+function, request id is optional and will indicate to the server that the
+calling client wants a response.
 
-Here's how you do it:
+Response objects have the following structure:
 
-=== Prerequisites
-On Arch:
+    [0, [values, ...], request_id]
 
-    $ sudo pacman -S --needed base-devel cmake sdl2 git
+Where values are any number of return values.
 
-Arch should have no problem with the (really) recent C++14 code as
-this is the system I do development on.
+Error objects have the following structure:
 
-These distributions may have a problem, just because I can't test building on
-them. Eventually, once I cut down on the C++14 code I'll set up
-Travis for continuous integration, so the support for building on these systems
-should get better.
+    [1, [values, ...], request_id]
 
-On Dpkg-Based systems (Debian, Ubuntu) - Debian Squeeze (oldstable) and Wheezy
-(stable) may or may not work as the clang is old and gcc is at 4.7, which I'm
-pretty sure won't work. Ubuntu should work fine though.
+Where values are any number of error values. These are mostly defined by the
+function except for the standardized missing function error.
 
-    $ sudo apt-get install build-essential cmake libsdl2-dev git
+Requests can be sent all at once to be executed as a batch by sending to the
+server an array of these request "objects".
 
-On Yum-Based systems (Fedora) - Fedora should compile it fine, but I'm not
-sure about Red Hat.
+    [[id0, [params00, ...]], ..., [idn, [paramsn0]]
 
-    $ sudo yum install gcc gcc-c++ make cmake SDL2-devel git
+=== Example communication
 
-=== Compiling
+Most plugins will start off communicating with the server in the following way:
 
-==== Linux:
-Get the source:
+Our plugin notifies the server of our presence.
 
-    $ mkdir -p ~/build/PpM
-    $ cd ~/build/PpM
-    $ git clone https://github.com/thee-l/PongPlusMore
+   Server <-- [2, ["MyHelloWorldPlugin"]] (MyHelloWorldPlugin)
 
-Build it:
+The server notifies this plugin that there is a function `SayHelloWorld` that
+OtherPlugin registered.
 
-    $ mkdir build && cd build
-    $ cmake ../PongPlusMore/
-    $ make -j4
+   Server --> [5, ["OtherPlugin.SayHelloWorld", 7]] (MyHelloWorldPlugin)
 
-Enjoy it:
+The client calls this function given its id with the desired string. The
+interfaces provided by plugins are completely unknown to our client so we must
+know it before hand or add in some sort of reflection system.
 
-    $ ./src/client/ppm
+   Server <-- [7, ["Hello, world!"], 1] (MyHelloWorldPlugin)
 
-==== Mac OS X:
-Soon, I'll add a http://brew.sh/[Homebrew] formula for PpM so you can install
-it right from your terminal. For now though, just use it to install
-dependencies and follow the Linux compiling constructions above.
+The request is forwarded to OtherPlugin.
 
-==== Windows:
-Pfft. Have fun man!
+   Server --> [7, ["Hello, world!"], 1] (OtherPlugin)
 
-No, that's not it. When the game is actually worth downloading I'll have a
-prebuilt binary uploaded. The only reason it can't be built in Visual Studio
-is because of the compiler and its lack of support for C++11/14. Soon
-enough, I will try to minimize the C++14 usage and hopefully support
-compilation on this compiler.
+We'll just make an assumption here that OtherPlugin has control of stdout. It
+can do any number of things, but in this case it prints to stdout:
 
-It might be possible to use MinGW since they have g++ 4.8.1 ported. But no
-guarantees.
+   Hello, world!
 
-==== Prebuilt Binaries
-Coming Soon. - Luke
+OtherPlugin tells the server that request #1 was successful.
 
-=== FAQ
+   Server <-- [0, [true], 1] (OtherPlugin)
 
-====  Why Pong, Luke? It's Pong! Who cares about Pong!
-This game is basically a learning experience. If I happen to make a great pong
-clone in the process, then awesome!
+And the server forwards this back to our original MyHelloWorldPlugin.
 
-==== Why the GPL?
-I thought about the MIT license and the BSD license, but my conclusion was
-that even though those license are great for libraries, for PpM I really
-do think that any changes to should benefit everyone. That's why the GPL was
-chosen!
+   Server --> [0, [true], 1] (MyHelloWorldPlugin)
+
+Note that the return status or error code will only be returned if a request id
+is given in the original method call to the server.
