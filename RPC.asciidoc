@@ -1,5 +1,5 @@
 ////
- PpM - Pong Plus More - A pong clone full of surprises written with C++11.
+ uGlue - Glue many languages together into a whole with ukernel-inspired RPC.
  Copyright (C) 2013  Luke San Antonio
 
  You can contact me (Luke San Antonio) at lukesanantonio@gmail.com!
@@ -18,40 +18,167 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////
 
-= RPC Interface
+= Server RPC
 
-== Plugin architecture
+== RPC interface
 
-A plugin is merely a child process communicating with PpM using IPC. The two
-processes communicate using a slightly limited variant of jsonrpc 2.0. *
+.Built-in core methods (client and server)
+[cols="1,3,5,4,9a"]
+|===
+| ID | Name | Param(s) | Return value(s) | Description
 
-+*+ Specifically arrays of requests are not implemented, in addition request ids
-must always be integers. Also a "jsonrpc":"2.0" member is not required and
-therefore will be ignored. Every "params" member should be an array regardless
-of the number of arguments required/provided.
+| 0
+| NotifyResponse
+| None
+| None
+| Indicates a response is ready. Any call to this function without a request id
+is to be ignored.
 
-== Available commands
+| 1
+| NotifyError
+| None
+| None
+| Indicates an error occured. Any call to this function without a request id is
+to be ignored.
 
-    Server.CreateObject
+|===
 
-Spawns an object given it's volume and physics properties.
+.Built-in server methods
+[cols="1,3,5,4,9a"]
+|===
 
-Param 1: An Object
+| 2
+| Log
+| Msg: string +
+Severity: uint (optional)
+| None
+| Logs a message. Severity should be chosen based on the following
+* <= 20 - Info
+* <= 30 - Warning
+* <= 40 - Error
+* <= 50 - Fatal
 
-Optional Response (if ID member is provided in request): A boolean. Whether or
-not the object was created successfully.
+| 3
+| InitNewPlugin
+| Name: string
+| None
+| Notifies the server of a new plugin and queues the calling client for any
+initialization method calls.
 
-    Server.DeleteObject
+| 4
+| RegisterFunction
+| Name: string
+| Id: id
+| Registers a function with some name (to help other plugins find it),
+returning the id.
 
-Deletes an object given an id.
+| 5
+| RemoveFunction
+| Id: id
+| None
+| Removes a previously registered function with a given id. If that function
+was not registered by th current plugin, it is an error.
 
-Param 1: An integer (id)
+|===
 
-Optional Response (if ID member is provided in request): A boolean. Whether or
-not the object was deleted successfully.
+.Built-in client methods
+[cols="1,3,5,4,9a"]
+|===
+| ID | Name | Param(s) | Return value(s) | Description
 
-    Server.Log
+| 6
+| NotifyNewFunction
+| Name: string +
+Id: id
+| None
+| Informs the client of a new function. Any number of these methods will be
+called on a client immediately after the client notifies the server of it's
+presence with Server.InitNewPlugin.
 
-Logs a message given a severity and string.
+| 7
+| NotifyRemoveFunction
+| Id: id
+| None
+| Informs the client that a function with a given id is no longer callable.
 
-No response; ID member will be ignored.
+|===
+
+=== Error codes
+
+For every function call, the following errors could occur.
+
+.Error codes
+|===
+| Id | Name | Description
+
+| 1 | Missing function | A function that doesn't exist was called.
+
+|===
+
+== Wire format
+
+The wire format is just a series of message pack objects with a structure
+matching the following json.
+
+    [function_id, [params, ...], request_id]
+
+Function id is an id from the above table, params is an array to pass to the
+function, request id is optional and will indicate to the server that the
+calling client wants a response.
+
+Response objects have the following structure:
+
+    [0, [values, ...], request_id]
+
+Where values are any number of return values.
+
+Error objects have the following structure:
+
+    [1, [values, ...], request_id]
+
+Where values are any number of error values. These are mostly defined by the
+function except for the standardized missing function error.
+
+Requests can be sent all at once to be executed as a batch by sending to the
+server an array of these request "objects".
+
+    [[id0, [params00, ...]], ..., [idn, [paramsn0]]
+
+=== Example communication
+
+Most plugins will start off communicating with the server in the following way:
+
+Our plugin notifies the server of our presence.
+
+   Server <-- [2, ["MyHelloWorldPlugin"]] (MyHelloWorldPlugin)
+
+The server notifies this plugin that there is a function `SayHelloWorld` that
+OtherPlugin registered.
+
+   Server --> [5, ["OtherPlugin.SayHelloWorld", 7]] (MyHelloWorldPlugin)
+
+The client calls this function given its id with the desired string. The
+interfaces provided by plugins are completely unknown to our client so we must
+know it before hand or add in some sort of reflection system.
+
+   Server <-- [7, ["Hello, world!"], 1] (MyHelloWorldPlugin)
+
+The request is forwarded to OtherPlugin.
+
+   Server --> [7, ["Hello, world!"], 1] (OtherPlugin)
+
+We'll just make an assumption here that OtherPlugin has control of stdout. It
+can do any number of things, but in this case it prints to stdout:
+
+   Hello, world!
+
+OtherPlugin tells the server that request #1 was successful.
+
+   Server <-- [0, [true], 1] (OtherPlugin)
+
+And the server forwards this back to our original MyHelloWorldPlugin.
+
+   Server --> [0, [true], 1] (MyHelloWorldPlugin)
+
+Note that the return status or error code will only be returned if a request id
+is given in the original method call to the server.
