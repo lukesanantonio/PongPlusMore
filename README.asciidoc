@@ -1,5 +1,5 @@
 ////
- PpM - Pong Plus More - A pong clone full of surprises written with C++11.
+ uGlue - Glue many languages together into a whole with ukernel-inspired RPC.
  Copyright (C) 2013  Luke San Antonio
 
  You can contact me (Luke San Antonio) at lukesanantonio@gmail.com!
