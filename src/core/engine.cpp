@@ -23,6 +23,9 @@
 #include <memory>
 #include <fstream>
 #include <uv.h>
+
+#include <msgpack.hpp>
+
 #include "SDL.h"
 #include "json/json.h"
 
@@ -83,59 +86,38 @@ int main(int argc, char** argv)
 {
   if(argc < 2)
   {
-    std::cerr << "usage: " << argv[0] << " <game-decl>" << std::endl;
+    std::cerr << "usage: " << argv[0] << " <plugin>" << std::endl;
     return EXIT_FAILURE;
   }
 
-  Json::Reader read(Json::Features::strictMode());
-  std::ifstream file(argv[1]);
+  pong::Scoped_Log_Init log_init{};
 
-  Json::Value json;
-  read.parse(file, json);
+  PONG_LOG_I("Spawning mod: %", argv[1]);
+  //pong::Json_Plugin plugin = engine::spawn_plugin(json);
 
-  using pong::Logger; using pong::Logger_Stream; using pong::Severity;
-  Logger log(Logger_Stream::Err);
-
-  std::string cwd = json.get("cwd", "").asString();
-  if(cwd.size())
-  {
-    log.log(Severity::Info, "Changing directory: '" + cwd + "'");
-    uv_chdir(json.get("cwd", "").asString().c_str());
-  }
-
-  // Spawn the main plugin.
-  if(!json.isMember("plugin"))
-  {
-    log.log(Severity::Error, "No mod specified in game decl spec");
-    return EXIT_FAILURE;
-  }
-
-  log.log(Severity::Info, "Spawning mod: " + json["plugin"][0].asString());
-  pong::Json_Plugin plugin = engine::spawn_plugin(json);
-
-  engine::State state;
-  pong::Req_Dispatcher dispatch;
+  //engine::State state;
+  //pong::Req_Dispatcher dispatch;
 
   // Populate the dispatcher!
-  engine::add_core_methods(dispatch, state, log);
+  //engine::add_core_methods(dispatch, state, log);
 
-  while(state.running)
+  //while(state.running)
   {
-    pong::Request req;
-    while(plugin.poll_request(req))
+    //pong::Request req;
+    //while(plugin.poll_request(req))
     {
-      pong::Response res = dispatch.dispatch(req);
+      //pong::Response res = dispatch.dispatch(req);
 
       // If the id is valid it means the requester wants a response back.
-      if(res.id)
+      //if(res.id)
       {
         // The id we know is going to be true, so we can forget about the
         // exception that is thrown when it isn't.
-        plugin.post_response(res);
+        //plugin.post_response(res);
       }
     }
 
-    engine::step(state);
+    //engine::step(state);
   }
 
   return 0;
