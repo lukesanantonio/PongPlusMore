@@ -18,7 +18,6 @@
 
 add_library(io_core STATIC external_io.cpp
                            ipc.cpp
-                           Logger.cpp
                            net.cpp)
 
 target_link_libraries(io_core common_core ${LIBUV_LIBRARIES})

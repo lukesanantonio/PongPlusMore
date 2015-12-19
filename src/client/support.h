@@ -25,10 +25,10 @@
 #include <functional>
 #include <utility>
 
-#include "core/io/Logger.h"
 #include "core/common/ID_Map.hpp"
 #include "core/plugin/req.h"
 #include "core/plugin/response.h"
+#include "core/common/log.h"
 
 namespace client
 {
@@ -85,5 +85,5 @@ namespace client
                    callback);
   }
 
-  void log_message(Client&, pong::Severity, std::string const&) noexcept;
+  void log_message(Client&, pong::Log_Severity, std::string const&) noexcept;
 }

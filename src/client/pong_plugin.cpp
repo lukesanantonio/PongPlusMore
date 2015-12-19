@@ -67,7 +67,7 @@ int main(int argc, char** argv)
     if(pong::is_error_response(res))
     {
       pong::Error_Response err = pong::get_error_response(res);
-      client::log_message(c, pong::Severity::Error,
+      client::log_message(c, pong::Log_Severity::Error,
                           err.msg + " (Error code: " +
                           std::to_string(err.code) + ")");
       state.run_state = Launch_State::Error;
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
     {
       case Launch_State::Not_Running:
       {
-        client::log_message(c, pong::Severity::Error,
+        client::log_message(c, pong::Log_Severity::Error,
                             "Timed out waiting for starting confirmation.");
         return EXIT_FAILURE;
       }
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
       case Launch_State::Running:
       {
         // Log the success!
-        client::log_message(c, pong::Severity::Error,
+        client::log_message(c, pong::Log_Severity::Error,
                             "Successful engine start");
       }
     }

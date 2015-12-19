@@ -27,7 +27,7 @@
 #include "json/json.h"
 
 #include "core/plugin/plugins.h"
-#include "core/io/Logger.h"
+#include "core/common/log.h"
 
 #include "core/plugin/Req_Dispatcher.h"
 

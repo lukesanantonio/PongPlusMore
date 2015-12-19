@@ -62,8 +62,7 @@ namespace engine
     });
   }
 
-  void add_label_methods(pong::Req_Dispatcher& dispatch, State& state,
-                         pong::Logger& log)
+  void add_label_methods(pong::Req_Dispatcher& dispatch, State& state)
   {
     using pong::id_type;
     using pong::Vec;
@@ -95,9 +94,8 @@ namespace engine
                   [](auto& l){ return l.text_height(); });
   }
 
-  void add_widget_methods(pong::Req_Dispatcher& dispatch, State& state,
-                          pong::Logger& log)
+  void add_widget_methods(pong::Req_Dispatcher& dispatch, State& state)
   {
-    add_label_methods(dispatch, state, log);
+    add_label_methods(dispatch, state);
   }
 }

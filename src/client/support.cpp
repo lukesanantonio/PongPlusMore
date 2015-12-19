@@ -101,7 +101,7 @@ namespace client
     catch(pong::Invalid_Request_Exception& e) {}
   }
 
-  void log_message(Client& c, pong::Severity s, std::string const& m) noexcept
+  void log_message(Client& c, pong::Log_Severity s, std::string const& m) noexcept
   {
     c.post_request({boost::none_t{}, "Core.Log", make_params(s, m)});
   }

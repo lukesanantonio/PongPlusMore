@@ -1,6 +1,6 @@
 /*
  * uGlue - Glue many languages together into a whole with ukernel-inspired RPC.
- * Copyright (C) 2013  Luke San Antonio
+ * Copyright (C) 2015 Luke San Antonio
  *
  * You can contact me (Luke San Antonio) at lukesanantonio@gmail.com!
  *
@@ -17,40 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include "SDL.h"
-
-#include "json/json.h"
-
-#include "common/ID_Map.hpp"
-
-#include "common/log.h"
-
-#include "plugin/plugins.h"
-#include "plugin/Req_Dispatcher.h"
-
-#include "render/widgets/Label.h"
-#include "render/color.h"
-
-namespace engine
+#include "translate.h"
+namespace pong
 {
-  struct State
+  Lang language_;
+
+  void set_lang(Lang const& lang) noexcept
   {
-    bool running = true;
-    SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
-
-    pong::Color clear_color{0xff, 0xff, 0xff, 0xff};
-    bool freeze = false;
-
-    pong::ID_Map<pong::Label<std::string> > labels_;
-  };
-
-  void step(State& state) noexcept;
-
-  pong::Json_Plugin spawn_plugin(Json::Value const& json);
-
-  void add_core_methods(pong::Req_Dispatcher& dispatch, State& state);
-
-  void add_widget_methods(pong::Req_Dispatcher& dispatch, State& state);
+    language_ = lang;
+  }
+  Lang get_lang() noexcept
+  {
+    return language_;
+  }
 }

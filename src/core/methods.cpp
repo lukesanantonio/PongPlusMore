@@ -21,22 +21,23 @@
 
 #include "common/vector.h"
 #include "render/color.h"
+
+#include "common/log.h"
 namespace engine
 {
-  void add_core_methods(pong::Req_Dispatcher& dispatch, State& state,
-                        pong::Logger& log)
+  void add_core_methods(pong::Req_Dispatcher& dispatch, State& state)
   {
-    using pong::Severity;
+    using pong::Log_Severity;
     using pong::Error_Response;
 
     using pong::Vec;
 
     using res_t = pong::response_result;
 
-    dispatch.add_method<Severity, std::string>("Core.Log",
-    [&log](Severity s, std::string msg) -> res_t
+    dispatch.add_method<Log_Severity, std::string>("Core.Log",
+    [](Log_Severity s, std::string msg) -> res_t
     {
-      log.log(s, "(Plugin) " + msg);
+      log(s, "(Plugin) " + msg);
       return Json::Value(true);
     });
 
@@ -95,6 +96,6 @@ namespace engine
       return Json::Value(true);
     });
 
-    add_widget_methods(dispatch, state, log);
+    add_widget_methods(dispatch, state);
   }
 }

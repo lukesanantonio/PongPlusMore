@@ -30,7 +30,6 @@
 #include FT_GLYPH_H
 
 #include "../common/vector.h"
-#include "core/io/Logger.h"
 namespace pong { namespace text
 {
   namespace detail
@@ -76,7 +75,7 @@ namespace pong { namespace text
   }
   struct Face
   {
-    Face(std::string const&, Logger*) noexcept;
+    Face(std::string const&) noexcept;
     ~Face() noexcept = default;
 
     Face(Face const&) noexcept = delete;
@@ -94,8 +93,6 @@ namespace pong { namespace text
     detail::Unique_Face face_;
 
     detail::Glyph_Cache cache_;
-
-    Logger* log_;
   };
 
   struct Metrics

@@ -20,6 +20,8 @@
 #include "text.h"
 #include <vector>
 #include <algorithm>
+
+#include "../common/log.h"
 namespace pong { namespace text
 {
   namespace detail
@@ -62,17 +64,17 @@ namespace pong { namespace text
     }
   }
 
-  Face::Face(std::string const& filename, Logger* l) noexcept
+  Face::Face(std::string const& filename) noexcept
              : library_(new FT_Library), face_(new FT_Face),
-               cache_(face_.get()), log_(l)
+               cache_(face_.get())
   {
     if(FT_Init_FreeType(library_.get()))
     {
-      if(log_) log_->log(Severity::Error, "Failed to init freetype library");
+      log_e("Failed to init freetype library");
     }
     if(FT_New_Face(*library_, filename.c_str(), 0, face_.get()))
     {
-      if(log_) log_->log(Severity::Error, "Failed to init font face object");
+      log_e("Failed to init font face object");
     }
   }
 

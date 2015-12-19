@@ -1,6 +1,6 @@
 /*
  * uGlue - Glue many languages together into a whole with ukernel-inspired RPC.
- * Copyright (C) 2013  Luke San Antonio
+ * Copyright (C) 2015 Luke San Antonio
  *
  * You can contact me (Luke San Antonio) at lukesanantonio@gmail.com!
  *
@@ -18,39 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-#include "SDL.h"
-
-#include "json/json.h"
-
-#include "common/ID_Map.hpp"
-
-#include "common/log.h"
-
-#include "plugin/plugins.h"
-#include "plugin/Req_Dispatcher.h"
-
-#include "render/widgets/Label.h"
-#include "render/color.h"
-
-namespace engine
-{
-  struct State
-  {
-    bool running = true;
-    SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
-
-    pong::Color clear_color{0xff, 0xff, 0xff, 0xff};
-    bool freeze = false;
-
-    pong::ID_Map<pong::Label<std::string> > labels_;
-  };
-
-  void step(State& state) noexcept;
-
-  pong::Json_Plugin spawn_plugin(Json::Value const& json);
-
-  void add_core_methods(pong::Req_Dispatcher& dispatch, State& state);
-
-  void add_widget_methods(pong::Req_Dispatcher& dispatch, State& state);
-}
+#if defined(__GNUC__) || defined(__MINGW32__) || defined(__clang__)
+  #define PONG_THREAD_LOCAL __thread
+#elif defined(_MSC_VER)
+  #define PONG_THREAD_LOCAL __declspec(thread)
+#endif
