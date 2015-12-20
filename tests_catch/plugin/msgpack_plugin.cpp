@@ -23,7 +23,7 @@
 #include "rpc/plugins.h"
 #include "common/utility.h"
 
-TEST_CASE("Msgpack plugin", "[plugin_core]")
+TEST_CASE("Msgpack plugin", "[rpclib]")
 {
   auto out_pipe = std::make_unique<ug::Pipe_IO>();
   auto& write_pipe = out_pipe->counterpart();

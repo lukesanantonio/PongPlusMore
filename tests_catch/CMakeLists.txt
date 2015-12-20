@@ -9,7 +9,7 @@ macro(add_tests subdirectory)
 endmacro()
 
 add_tests(common cache.cpp idgen.cpp utility.cpp vector.cpp volume.cpp)
-add_tests(plugin req_dispatcher.cpp)
+add_tests(plugin msgpack_plugin.cpp)
 add_executable(run_all_tests main.cpp ${UGLUE_TEST_FILES})
 
 target_include_directories(run_all_tests PUBLIC ${CMAKE_SOURCE_DIR}
