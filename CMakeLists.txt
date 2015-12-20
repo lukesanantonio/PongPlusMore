@@ -59,6 +59,7 @@ add_subdirectory(plugins)
 add_subdirectory(resources)
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(tests_catch)
 
 # Set up a custom 'doc' target.
 find_package(Doxygen)
