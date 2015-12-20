@@ -52,7 +52,8 @@ namespace ug
     inline External_IO const& io() const noexcept { return *this->io_; }
   private:
     std::unique_ptr<External_IO> io_;
-    msgpack::unpacker unpacker;
+    msgpack::unpacker unpacker_;
+    std::queue<msgpack::object_handle> raw_reqs_;
   };
 
   template <class IO_Type, class... Args>

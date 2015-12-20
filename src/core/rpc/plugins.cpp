@@ -29,8 +29,15 @@ namespace ug
   {
     io_->set_read_callback([this](const std::vector<char>& buf)
     {
-      unpacker.reserve_buffer(buf.size());
-      std::memcpy(unpacker.nonparsed_buffer(), &buf[0], buf.size());
+      unpacker_.reserve_buffer(buf.size());
+      std::memcpy(unpacker_.buffer(), &buf[0], buf.size());
+      unpacker_.buffer_consumed(buf.size());
+
+      msgpack::unpacked unpacked;
+      while(unpacker_.next(&unpacked))
+      {
+        raw_reqs_.push(std::move(unpacked));
+      }
     });
   }
 
@@ -130,19 +137,25 @@ namespace ug
   {
     io_->step();
 
-    msgpack::unpacked unpacked;
-
     // If we have one...
-    if(unpacker.next(&unpacked))
+    if(raw_reqs_.size())
     {
       // make sense of it and try to return it.
-      msgpack::object obj = unpacked.get();
+      msgpack::object obj = raw_reqs_.front().get();
 
-      if(*try_make_request(req, obj).ok())
+      bool ret = false;
+
+      auto req_res = try_make_request(req, obj);
+      // Can we guarantee that the second condition will not be evaluated as
+      // long as the first one is false?
+      if(req_res.ok() && *req_res.ok())
       {
-        return true;
+        ret = true;
       }
-      return false;
+
+      // Don't forget to pop the front object!
+      raw_reqs_.pop();
+      return ret;
     }
 
     // Otherwise just bail out
