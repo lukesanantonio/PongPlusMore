@@ -23,7 +23,8 @@
 #include <unordered_map>
 #include "utility.h"
 namespace ug
-{ struct Lang
+{
+  struct Lang
   {
     std::unordered_map<std::string, std::string> dict;
   };
