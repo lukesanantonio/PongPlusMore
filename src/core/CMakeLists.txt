@@ -20,11 +20,11 @@ find_package(LibUV)
 
 add_subdirectory(common)
 add_subdirectory(io)
-add_subdirectory(plugin)
 add_subdirectory(render)
+add_subdirectory(rpc)
 
-add_executable(pong_engine engine.cpp)
-target_link_libraries(pong_engine common_core io_core plugin_core render_core)
+add_executable(uglue_engine engine.cpp)
+target_link_libraries(uglue_engine commonlib iolib rpclib renderlib)
 
-install(TARGETS pong_engine RUNTIME DESTINATION bin)
+install(TARGETS uglue_engine RUNTIME DESTINATION bin)
 

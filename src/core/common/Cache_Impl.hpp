@@ -24,7 +24,7 @@
  * to be put in the header. This is just for the sake of separation.
  */
 #pragma once
-#include "core/common/utility.h"
+#include "utility.h"
 namespace ug
 {
   /*!

@@ -26,8 +26,8 @@
 
 #include "common/log.h"
 
-#include "plugin/plugins.h"
-#include "plugin/Req_Dispatcher.h"
+#include "rpc/plugins.h"
+#include "rpc/Req_Dispatcher.h"
 
 #include "render/widgets/Label.h"
 #include "render/color.h"

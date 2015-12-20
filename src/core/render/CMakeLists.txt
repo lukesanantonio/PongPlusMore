@@ -19,15 +19,13 @@
 find_package(SDL2 REQUIRED)
 find_package(Freetype REQUIRED)
 
-add_library(render_core STATIC widgets/Button.cpp
-                               widgets/Text_Box.cpp
-                               color.cpp
-                               text.cpp)
+add_library(renderlib STATIC widgets/Button.cpp widgets/Text_Box.cpp
+                             color.cpp text.cpp)
 
-target_link_libraries(render_core common_core)
+target_link_libraries(renderlib commonlib)
 
-target_link_libraries(render_core ${SDL2_LIBRARIES})
-target_include_directories(render_core PUBLIC ${SDL2_INCLUDE_DIRS})
+target_link_libraries(renderlib ${SDL2_LIBRARIES})
+target_include_directories(renderlib PUBLIC ${SDL2_INCLUDE_DIRS})
 
-target_link_libraries(render_core ${FREETYPE_LIBRARIES})
-target_include_directories(render_core PUBLIC ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(renderlib ${FREETYPE_LIBRARIES})
+target_include_directories(renderlib PUBLIC ${FREETYPE_INCLUDE_DIRS})

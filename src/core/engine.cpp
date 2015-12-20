@@ -29,10 +29,10 @@
 #include "SDL.h"
 #include "json/json.h"
 
-#include "core/plugin/plugins.h"
-#include "core/common/log.h"
+#include "rpc/plugins.h"
+#include "rpc/Req_Dispatcher.h"
 
-#include "core/plugin/Req_Dispatcher.h"
+#include "common/log.h"
 
 namespace engine
 {
