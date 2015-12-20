@@ -22,7 +22,7 @@
 #include <boost/optional.hpp>
 #include "req.h"
 #include "../common/result.h"
-#include "../common/template_utility.hpp"
+#include "../common/utility.h"
 
 #include <functional>
 namespace ug
