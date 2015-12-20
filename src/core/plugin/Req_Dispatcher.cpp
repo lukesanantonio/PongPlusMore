@@ -17,34 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
-#include "SDL.h"
-
-#include "json/json.h"
-
-#include "common/ID_Map.hpp"
-
-#include "common/log.h"
-
-#include "plugin/plugins.h"
-#include "plugin/Req_Dispatcher.h"
-
-#include "render/widgets/Label.h"
-#include "render/color.h"
-
-namespace engine
+#include "Req_Dispatcher.h"
+namespace pong
 {
-  struct State
+  Run_Context::Run_Context() noexcept : type(Ret)
   {
-    bool running = true;
-    SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
+    params_.zone = msgpack::zone();
+    params_.object = msgpack::object(std::vector<msgpack::object>(),
+                                     params_.zone);
+  }
+  void Run_Context::set_ret(Params&& p) noexcept
+  {
+    type = Ret;
+    params_ = std::move(p);
+  }
+  void Run_Context::set_err(Params&& p) noexcept
+  {
+    type = Err;
+    params_ = std::move(p);
+  }
 
-    pong::Color clear_color{0xff, 0xff, 0xff, 0xff};
-    bool freeze = false;
-
-    pong::ID_Map<pong::Label<std::string> > labels_;
-  };
-
-  void step(State& state) noexcept;
+  bool Run_Context::is_ret() const noexcept
+  {
+    return type == Ret;
+  }
+  bool Run_Context::is_err() const noexcept
+  {
+    return type == Err;
+  }
 }

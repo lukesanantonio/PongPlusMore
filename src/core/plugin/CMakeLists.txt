@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_library(plugin_core STATIC plugins.cpp
-                               req.cpp
-                               response.cpp)
+add_library(plugin_core STATIC plugins.cpp req.cpp Req_Dispatcher.cpp)
 
 target_link_libraries(plugin_core common_core io_core)

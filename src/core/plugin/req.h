@@ -19,66 +19,43 @@
  */
 #pragma once
 
-#include <boost/optional.hpp>
-#include <boost/variant.hpp>
 #include <string>
-#include "json/json.h"
-
-#include "../common/pif/helper.h"
+#include <boost/optional.hpp>
+#include <msgpack.hpp>
 
 namespace pong
 {
-  struct null_t {};
+  using boost::optional;
 
-  inline bool operator==(null_t n1, null_t n2) noexcept { return true; }
+  // Functions and ids just happen to have the same type for now.
+  using fn_t = uint16_t;
+  using id_t = uint16_t;
 
-  using id_num_t = int;
-  using req_id_t = boost::variant<null_t, id_num_t, std::string>;
-  using optional_id_t = boost::optional<req_id_t>;
-
-  bool is_null(req_id_t const& id) noexcept;
-  bool is_null(optional_id_t const& id) noexcept;
-
-  struct Invalid_Req_Parse {};
-  struct Invalid_Id_Exception : Invalid_Req_Parse {};
-  struct Invalid_Request_Exception : Invalid_Req_Parse
+  // We need to keep the msgpack zone around to keep the memory alive so be it.
+  struct Params
   {
-    Invalid_Request_Exception() noexcept {}
-    explicit Invalid_Request_Exception(optional_id_t id) noexcept
-                                       : parsed_id(id) {}
-    optional_id_t parsed_id;
+    Params() noexcept;
+    Params(msgpack::object&& obj, msgpack::zone&& zone) noexcept;
+
+    Params(Params const& p) noexcept;
+    Params(Params&& p) noexcept;
+
+    Params& operator=(Params const& p) noexcept;
+    Params& operator=(Params&& p) noexcept;
+
+    msgpack::zone zone;
+    msgpack::object object;
   };
 
   struct Request
   {
-    optional_id_t id;
-    std::string method;
-    boost::optional<Json::Value> params;
+    // Every request has a function,
+    fn_t fn;
+
+    // an optional id to track the response,
+    optional<id_t> id;
+
+    // and parameters.
+    optional<Params> params;
   };
-
-  namespace literals
-  {
-    inline req_id_t operator "" _id(const unsigned long long int id)
-    {
-      return req_id_t(id);
-    }
-  }
-
-  inline req_id_t as_id(id_num_t id)
-  {
-    return req_id_t(id);
-  }
-
-  inline bool operator==(Request const& r1, Request const& r2) noexcept
-  {
-    return r1.id == r2.id && r1.method == r2.method && r1.params == r2.params;
-  }
 }
-
-BEGIN_FORMATTER_SCOPE
-{
-  DECLARE_FORMATTER(pong::null_t);
-  DECLARE_FORMATTER(pong::req_id_t);
-  DECLARE_FORMATTER(pong::Request);
-}
-END_FORMATTER_SCOPE

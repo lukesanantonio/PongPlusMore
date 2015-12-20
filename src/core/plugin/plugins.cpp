@@ -19,76 +19,167 @@
  */
 #include "plugins.h"
 #include "../common/utility.h"
-#include "../common/pif/helper.h"
+#include "../common/result.h"
+
+#include <msgpack.hpp>
 namespace pong
 {
-  Json_Plugin::Json_Plugin(std::unique_ptr<External_IO> io) noexcept
-                           : io_(std::move(io))
+  Msgpack_Plugin::Msgpack_Plugin(std::unique_ptr<External_IO> io) noexcept
+                                 : io_(std::move(io))
   {
     io_->set_read_callback([this](const std::vector<char>& buf)
     {
-      bufs_.push(buf);
+      unpacker.reserve_buffer(buf.size());
+      std::memcpy(unpacker.nonparsed_buffer(), &buf[0], buf.size());
     });
   }
 
-  bool Json_Plugin::poll_request(Request& req)
+  enum class Req_Err
   {
-    io_->step();
-    if(!bufs_.size()) return false;
+    NoArray,
+    InvalidArraySize,
+    BadFnType,
+    BadParamsType,
+    BadIdType,
+    Unknown
+  };
 
-    Json::Reader read(Json::Features::strictMode());
-
-    Json::Value val;
-    using std::begin; using std::end;
-
-    // While we have a failing buffer.
-    while(!read.parse({begin(bufs_.front()), end(bufs_.front())}, val))
+  Result<bool, Req_Err>
+    try_make_request(Request& req, msgpack::object const& obj) noexcept
+  {
+    if(obj.type != msgpack::type::ARRAY)
     {
-      // Tell the client there was a parse error.
-      {
-        Response err_res;
-        err_res.id = null_t{};
-        err_res.result = Error_Response{-32700, "Parse error"};
-        post_response(err_res);
-      }
-
-      // Remove that data from the buffer vector.
-      bufs_.pop();
-      // Welp I guess we don't have anything more.
-      if(bufs_.empty())
-      {
-        return false;
-      }
+      return err(Req_Err::NoArray);
     }
 
-    bufs_.pop();
-
-    // Try to make sense of that parsed Json now.
-    try
+    // So far so good, we have an array. It must have between 1 and 3 elements
+    // (inclusive).
+    if(obj.via.array.size < 1 || 3 < obj.via.array.size)
     {
-      req = FORMATTER_TYPE(Request)::parse(val);
-      return true;
+      return err(Req_Err::InvalidArraySize);
     }
-    // Bad request, tell the plugin about this particular one. Then continue
-    // if possible.
-    catch(Invalid_Request_Exception& e)
+
+    // The first element must be an unsigned, positive integer.
+
+    if(obj.via.array.ptr[0].type != msgpack::type::POSITIVE_INTEGER)
     {
-      Response err_res;
+      return err(Req_Err::BadFnType);
+    }
+    fn_t fn = obj.via.array.ptr[0].via.u64;
 
-      if(e.parsed_id) err_res.id = e.parsed_id;
-      else err_res.id = null_t{};
+    // If we have a second parameter
+    if(obj.via.array.size >= 2)
+    {
+      // The second element must either be an array or an id
+      if(obj.via.array.ptr[1].type == msgpack::type::ARRAY)
+      {
+        Params p;
+        p.object = msgpack::object(obj.via.array.ptr[1], p.zone);
 
-      err_res.result = Error_Response{-32600, "Invalid request"};
-      post_response(err_res);
-      return false;
+        // Do we have a third parameter?
+        if(obj.via.array.size >= 3)
+        {
+          if(obj.via.array.ptr[2].type != msgpack::type::POSITIVE_INTEGER)
+          {
+            return err(Req_Err::BadIdType);
+          }
+
+          req.fn = fn;
+          req.id = obj.via.array.ptr[2].via.u64;
+
+          req.params = std::move(p);
+          return ok(true);
+        }
+        else
+        {
+          // That's that, no request id
+          req.fn = fn;
+          req.id = boost::none;
+          req.params = std::move(p);
+          return ok(true);
+        }
+      }
+      else if(obj.via.array.ptr[1].type == msgpack::type::POSITIVE_INTEGER)
+      {
+        // Get the id then we are done, the client can't put params after the
+        // id.
+
+        req.fn = fn;
+        req.id = obj.via.array.ptr[1].via.u64;
+        req.params = boost::none;
+        return ok(true);
+      }
+      else
+      {
+        return err(Req_Err::BadParamsType);
+      }
+    }
+    // Just use the function id and assume no parameters, etc.
+    else
+    {
+      req.fn = fn;
+      req.id = boost::none;
+      req.params = boost::none;
+      // This is a little redundant since we know if there wasn't an error that
+      // it was successful. That's alright for now, I feel.
+      return ok(true);
     }
   }
 
-  void Json_Plugin::post_response(Response const& res) noexcept
+  bool Msgpack_Plugin::poll_request(Request& req)
   {
-    Json::FastWriter w;
-    std::string s = w.write(FORMATTER_TYPE(Response)::dump(res));
-    io_->write(vec_from_string(s));
+    io_->step();
+
+    msgpack::unpacked unpacked;
+
+    // If we have one...
+    if(unpacker.next(&unpacked))
+    {
+      // make sense of it and try to return it.
+      msgpack::object obj = unpacked.get();
+
+      if(*try_make_request(req, obj).ok())
+      {
+        return true;
+      }
+      return false;
+    }
+
+    // Otherwise just bail out
+    return false;
+  }
+
+  void Msgpack_Plugin::post_request(Request const& res) noexcept
+  {
+    std::ostringstream buf;
+    msgpack::packer<std::ostringstream> packer(buf);
+
+    if(res.params && res.id)
+    {
+      packer.pack_array(3);
+      packer.pack(res.fn);
+      packer.pack(res.params->object);
+      packer.pack(*res.id);
+    }
+    else if(res.params && !res.id)
+    {
+      packer.pack_array(2);
+      packer.pack(res.fn);
+      packer.pack(res.params->object);
+    }
+    else if(!res.params && res.id)
+    {
+      packer.pack_array(2);
+      packer.pack(res.fn);
+      packer.pack(*res.id);
+    }
+    // They both must be missing
+    else
+    {
+      packer.pack_array(1);
+      packer.pack(res.fn);
+    }
+    io_->write(vec_from_string(buf.str()));
     io_->step();
   }
 }

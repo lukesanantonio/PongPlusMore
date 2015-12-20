@@ -27,7 +27,6 @@
 
 #include "core/common/ID_Map.hpp"
 #include "core/plugin/req.h"
-#include "core/plugin/response.h"
 #include "core/common/log.h"
 
 namespace client

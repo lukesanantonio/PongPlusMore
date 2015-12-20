@@ -19,110 +19,113 @@
  */
 #pragma once
 #include <tuple>
-#include "json/json.h"
+#include <boost/optional.hpp>
+#include "req.h"
+#include "../common/result.h"
 #include "../common/template_utility.hpp"
-#include "response.h"
 
 #include <functional>
 namespace pong
 {
-  struct Invalid_Params_Exception {};
+  using boost::optional;
+  struct Run_Context
+  {
+    Run_Context() noexcept;
+
+    void set_ret(Params&& p) noexcept;
+    void set_err(Params&& p) noexcept;
+
+    bool is_ret() const noexcept;
+    bool is_err() const noexcept;
+    inline Params& params() noexcept { return params_; }
+
+  private:
+    enum ret_t
+    {
+      Ret, Err
+    } type;
+    Params params_;
+  };
 
   struct Req_Method_Base
   {
-    virtual std::string method() const noexcept = 0;
-    virtual response_result call(Json::Value const&) const = 0;
+    virtual void call(Run_Context& r, optional<Params> const&) const = 0;
   };
 
   template <class... Params>
-  using method_t = std::function<response_result(Params...)>;
+  using method_t = std::function<Request(Params...)>;
 
-  template <class... Params>
+  template <class... P_T>
   struct Req_Method : public Req_Method_Base
   {
-    using function_t = method_t<Params...>;
+    using fn_t = std::function<void(P_T...)>;
 
-    Req_Method(std::string const& method, function_t func) noexcept :
-               method_(method), f_(func) {}
-
-    /*!
-     * \brief Returns the method that a request needs to call this function.
-     */
-    inline std::string method() const noexcept override { return method_; }
+    Req_Method(fn_t func) noexcept : f_(func) {}
 
     /*!
-     * \brief Calls the given function by converting the json 'params' object
-     * to arguments for the function.
-
-     * \throws Invalid_Params_Exception if parsing the parameters fails for
-     * some reason.
-
-     * Will rethrow any exception thrown resulting from the function call.
+     * \brief Calls the given function by converting the msgpack 'params'
+     * object to arguments for the function.
      */
-    response_result call(Json::Value const&) const override;
+    void call(Run_Context& r, optional<Params> const&) const override;
   private:
-    std::string method_;
-    function_t f_;
+    fn_t f_;
   };
 
-  template <class... Params>
-  response_result Req_Method<Params...>::call(Json::Value const& json) const
+  template <class... P_T>
+  void Req_Method<P_T...>::call(Run_Context& r,
+                                optional<Params> const& params) const
   {
-    // Parse the parameters.
-    using tuple_t = std::tuple<Params...>;
+    // Convert parameters
 
-    std::tuple<Params...> params;
-    try
-    {
-      params = FORMATTER_TYPE(tuple_t)::parse(json);
-    }
-    catch(std::runtime_error& e)
-    {
-      throw Invalid_Params_Exception{};
-    }
+    auto vals = params->object.as<std::tuple<P_T...> >();
 
-    return pong::call(f_, params);
+    // Handle failure with the run context
+    // Pass parameters to function
+
+    call(f_, vals);
   }
 
   struct Req_Dispatcher
   {
     template <class... Params, class F>
-    void add_method(std::string const& method, F f) noexcept;
+    void push_method(F f) noexcept;
 
-    inline pong::Response dispatch(Request const& req);
+    inline pong::Request dispatch(Request const& req);
   private:
     std::vector<std::unique_ptr<Req_Method_Base> > methods_;
   };
 
   template <class... Params, class F>
-  void Req_Dispatcher::add_method(std::string const& method, F f) noexcept
+  void Req_Dispatcher::push_method(F f) noexcept
   {
-    methods_.push_back(std::make_unique<Req_Method<Params...> >(method, f));
+    methods_.push_back(std::make_unique<Req_Method<Params...> >(f));
   }
 
-  inline pong::Response Req_Dispatcher::dispatch(Request const& req)
+  inline pong::Request Req_Dispatcher::dispatch(Request const& req)
   {
-    for(auto& ptr : methods_)
+    // TODO: Handle invalid method
+
+    Run_Context run;
+    methods_[req.fn]->call(run, req.params);
+
+    // For now generate the response no matter what.
+    // Check the run context
+    // No result
+    if(run.is_ret())
     {
-      if(req.method == ptr->method())
-      {
-        response_result res;
-        try
-        {
-          if(req.params) res = ptr->call(req.params.value());
-          else res = ptr->call(Json::ValueType::arrayValue);
-        }
-        catch(Invalid_Params_Exception& e)
-        {
-          return pong::Response{req.id,
-                                Error_Response{-32602, "Invalid params"}};
-        }
-
-        return pong::Response{req.id, res};
-      }
+      Request ret;
+      ret.fn = 0;
+      ret.id = req.id;
+      ret.params = std::move(run.params());
+      return ret;
     }
-
-    // Unknown method!
-    return Response{req.id, Error_Response{-32601, "Unknown method"}};
+    else
+    {
+      Request ret;
+      ret.fn = 1;
+      ret.id = req.id;
+      ret.params = std::move(run.params());
+      return ret;
+    }
   }
 }
