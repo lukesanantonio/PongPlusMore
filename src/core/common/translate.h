@@ -22,7 +22,7 @@
 #include <type_traits>
 #include <unordered_map>
 #include "template_utility.hpp"
-namespace pong
+namespace ug
 { struct Lang
   {
     std::unordered_map<std::string, std::string> dict;

@@ -19,7 +19,7 @@
  */
 #pragma once
 #include <queue>
-namespace pong
+namespace ug
 {
   template <typename id_type>
   struct ID_Gen

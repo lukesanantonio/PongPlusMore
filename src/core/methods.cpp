@@ -25,14 +25,14 @@
 #include "common/log.h"
 namespace engine
 {
-  void add_core_methods(pong::Req_Dispatcher& dispatch, State& state)
+  void add_core_methods(ug::Req_Dispatcher& dispatch, State& state)
   {
-    using pong::Log_Severity;
-    using pong::Error_Response;
+    using ug::Log_Severity;
+    using ug::Error_Response;
 
-    using pong::Vec;
+    using ug::Vec;
 
-    using res_t = pong::response_result;
+    using res_t = ug::response_result;
 
     dispatch.add_method<Log_Severity, std::string>("Core.Log",
     [](Log_Severity s, std::string msg) -> res_t
@@ -82,8 +82,8 @@ namespace engine
       return Json::Value(true);
     });
 
-    dispatch.add_method<pong::Color>("Core.Set_Clear_Color",
-    [&state](pong::Color const& c) -> res_t
+    dispatch.add_method<ug::Color>("Core.Set_Clear_Color",
+    [&state](ug::Color const& c) -> res_t
     {
       state.clear_color = c;
       return Json::Value(true);

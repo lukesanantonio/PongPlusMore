@@ -23,7 +23,7 @@
 #include <array>
 #include "vector.h"
 #include "pif/helper.h"
-namespace pong
+namespace ug
 {
   using VolumeSides = unsigned short;
   namespace VolumeSide

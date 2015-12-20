@@ -19,7 +19,7 @@
  */
 #pragma once
 #if defined(__GNUC__) || defined(__MINGW32__) || defined(__clang__)
-  #define PONG_THREAD_LOCAL __thread
+  #define UG_THREAD_LOCAL __thread
 #elif defined(_MSC_VER)
-  #define PONG_THREAD_LOCAL __declspec(thread)
+  #define UG_THREAD_LOCAL __declspec(thread)
 #endif

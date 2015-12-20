@@ -23,7 +23,7 @@
 #include "ID_Gen.hpp"
 #include "Cache.h"
 
-namespace pong
+namespace ug
 {
   using id_type = uint16_t;
 
@@ -37,7 +37,7 @@ namespace pong
     using value_type = typename map_type::value_type;
     using key_type = typename map_type::key_type;
     using size_type = typename map_type::size_type;
-    using id_type = typename pong::id_type;
+    using id_type = typename ug::id_type;
 
     inline ID_Map() noexcept
     {

@@ -20,7 +20,7 @@
 #include "net.h"
 #include "common.h"
 
-namespace pong { namespace net
+namespace ug { namespace net
 {
   UDP_Handle* create_udp_handle(uv_loop_t* loop) noexcept
   {

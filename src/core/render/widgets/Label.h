@@ -28,7 +28,7 @@
 #include "../../common/vector.h"
 #include "../text.h"
 #include "../utility.h"
-namespace pong
+namespace ug
 {
   struct Rasterized_String
   {

@@ -25,7 +25,7 @@
 #include "../../common/crash.hpp"
 #include <vector>
 #include <utility>
-namespace pong
+namespace ug
 {
   /*!
    * \brief Returns the width of the cached text surface.

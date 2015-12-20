@@ -23,7 +23,7 @@
  */
 #include "Button.h"
 #include "../../common/center.hpp"
-namespace pong
+namespace ug
 {
   /*!
    * \brief Initializes the button.

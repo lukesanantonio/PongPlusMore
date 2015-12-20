@@ -49,7 +49,7 @@ namespace engine
 
     for(auto const& label_pair : state.labels_)
     {
-      pong::Label<std::string> const& label = std::get<1>(label_pair);
+      ug::Label<std::string> const& label = std::get<1>(label_pair);
       label.render(state.renderer);
     }
 
@@ -65,9 +65,9 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  pong::Scoped_Log_Init log_init{};
+  ug::Scoped_Log_Init log_init{};
 
-  PONG_LOG_I("Spawning mod: %", argv[1]);
+  UG_LOG_I("Spawning mod: %", argv[1]);
   //pong::Json_Plugin plugin = engine::spawn_plugin(json);
 
   //engine::State state;

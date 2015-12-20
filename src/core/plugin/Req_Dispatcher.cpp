@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Req_Dispatcher.h"
-namespace pong
+namespace ug
 {
   Run_Context::Run_Context() noexcept : type(Ret)
   {

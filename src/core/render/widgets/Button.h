@@ -28,7 +28,7 @@
 #include "../text.h"
 #include "../../common/vector.h"
 #include "../../common/volume.h"
-namespace pong
+namespace ug
 {
   /*!
    * \brief Class wrapping a clickable button.

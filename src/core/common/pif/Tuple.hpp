@@ -1,5 +1,5 @@
 /*
- * PpM - Pong Plus More - A pong clone full of surprises written with C++11.
+ * PpM - ug Plus More - A ug clone full of surprises written with C++11.
  * Copyright (C) 2013  Luke San Antonio
  *
  * You can contact me (Luke San Antonio) at lukesanantonio@gmail.com!
@@ -42,7 +42,7 @@ BEGIN_FORMATTER_SCOPE
   parse_element(std::tuple<Types...>& tup, Json::Value const& json)
   {
     // Find the parser required to parse the type in question.
-    using active_t = pong::pack_element_t<N, Types...>;
+    using active_t = ug::pack_element_t<N, Types...>;
     using formatter_t = find_formatter_t<active_t>;
 
     // Actually do the parse.

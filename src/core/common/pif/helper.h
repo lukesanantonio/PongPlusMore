@@ -1,5 +1,5 @@
 /*
- * PpM - Pong Plus More - A pong clone full of surprises written with C++11.
+ * PpM - ug Plus More - A ug clone full of surprises written with C++11.
  * Copyright (C) 2013  Luke San Antonio
  *
  * You can contact me (Luke San Antonio) at lukesanantonio@gmail.com!
@@ -158,7 +158,7 @@ BEGIN_FORMATTER_SCOPE
 
   template <class Type>
   struct find_formatter<Type,
-           typename pong::enable_if_type<typename Type::formatter_type>::type >
+           typename ug::enable_if_type<typename Type::formatter_type>::type >
   {
     using type =
       std::conditional_t<std::is_same<detail::as_object,

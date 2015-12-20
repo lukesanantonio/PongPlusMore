@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "color.h"
-namespace pong
+namespace ug
 {
   DEFINE_PROPERTY_VALUES(Color);
 }

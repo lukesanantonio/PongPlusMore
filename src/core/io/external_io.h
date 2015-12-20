@@ -26,7 +26,7 @@
 #include <boost/variant.hpp>
 #include "ipc.h"
 #include "net.h"
-namespace pong
+namespace ug
 {
   /*!
    * \brief Manages and connects client code to some arbitrary io source.

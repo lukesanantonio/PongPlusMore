@@ -25,7 +25,7 @@
 #include "../common/template_utility.hpp"
 
 #include <functional>
-namespace pong
+namespace ug
 {
   using boost::optional;
   struct Run_Context
@@ -90,7 +90,7 @@ namespace pong
     template <class... Params, class F>
     void push_method(F f) noexcept;
 
-    inline pong::Request dispatch(Request const& req);
+    inline ug::Request dispatch(Request const& req);
   private:
     std::vector<std::unique_ptr<Req_Method_Base> > methods_;
   };
@@ -101,7 +101,7 @@ namespace pong
     methods_.push_back(std::make_unique<Req_Method<Params...> >(f));
   }
 
-  inline pong::Request Req_Dispatcher::dispatch(Request const& req)
+  inline ug::Request Req_Dispatcher::dispatch(Request const& req)
   {
     // TODO: Handle invalid method
 

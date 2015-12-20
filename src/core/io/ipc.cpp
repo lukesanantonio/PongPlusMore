@@ -22,7 +22,7 @@
 #include <string>
 #include "common.h"
 
-namespace pong { namespace ipc
+namespace ug { namespace ipc
 {
   // Pipe initialization functions.
   Pipe* create_pipe(Process* proc) noexcept

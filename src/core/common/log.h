@@ -25,23 +25,23 @@
 // We make this a macro so we can just not do it should it become something we
 // don't want to be doing for some reason. Performance or IO bottleneck for
 // example.
-#ifndef PONG_DISABLE_LOGGING
-  #define PONG_LOG_ATTEMPT_INIT() init_log()
+#ifndef UG_DISABLE_LOGGING
+  #define UG_LOG_ATTEMPT_INIT() init_log()
 
-  #define PONG_LOG_E(...) pong::log_e(__VA_ARGS__)
-  #define PONG_LOG_W(...) pong::log_w(__VA_ARGS__)
-  #define PONG_LOG_I(...) pong::log_i(__VA_ARGS__)
-  #define PONG_LOG_D(...) pong::log_d(__VA_ARGS__)
+  #define UG_LOG_E(...) ug::log_e(__VA_ARGS__)
+  #define UG_LOG_W(...) ug::log_w(__VA_ARGS__)
+  #define UG_LOG_I(...) ug::log_i(__VA_ARGS__)
+  #define UG_LOG_D(...) ug::log_d(__VA_ARGS__)
 #else
-  #define PONG_LOG_ATTEMPT_INIT() ((void*)0)
+  #define UG_LOG_ATTEMPT_INIT() ((void*)0)
 
-  #define PONG_LOG_E ((void*)0)
-  #define PONG_LOG_W ((void*)0)
-  #define PONG_LOG_I ((void*)0)
-  #define PONG_LOG_D ((void*)0)
+  #define UG_LOG_E ((void*)0)
+  #define UG_LOG_W ((void*)0)
+  #define UG_LOG_I ((void*)0)
+  #define UG_LOG_D ((void*)0)
 #endif
 
-namespace pong
+namespace ug
 {
   struct Scoped_Log_Init
   {
@@ -102,11 +102,11 @@ namespace pong
 }
 BEGIN_FORMATTER_SCOPE
 {
-  BEGIN_DECLARE_FORMATTABLE_ENUM(pong::Log_Severity, unsigned int, 4)
+  BEGIN_DECLARE_FORMATTABLE_ENUM(ug::Log_Severity, unsigned int, 4)
     ENUM_VALUE(0, "debug"),
     ENUM_VALUE(1, "info"),
     ENUM_VALUE(2, "warning"),
     ENUM_VALUE(3, "error")
-  END_DECLARE_FORMATTABLE_ENUM(pong::Log_Severity)
+  END_DECLARE_FORMATTABLE_ENUM(ug::Log_Severity)
 }
 END_FORMATTER_SCOPE

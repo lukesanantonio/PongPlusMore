@@ -23,12 +23,12 @@ namespace engine
 {
   template <class Member, class Object, class Fn>
   void add_set_method(std::string const& method,
-                      pong::Req_Dispatcher& dispatch,
-                      pong::ID_Map<Object>& map,
+                      ug::Req_Dispatcher& dispatch,
+                      ug::ID_Map<Object>& map,
                       Fn const& fn)
   {
-    dispatch.add_method<pong::id_type, Member>(method,
-    [&map, &fn](pong::id_type id, Member const& t) -> pong::response_result
+    dispatch.add_method<ug::id_type, Member>(method,
+    [&map, &fn](ug::id_type id, Member const& t) -> ug::response_result
     {
       try
       {
@@ -36,19 +36,19 @@ namespace engine
       }
       catch(std::out_of_range& e)
       {
-        return pong::Error_Response{4, "Invalid id"};
+        return ug::Error_Response{4, "Invalid id"};
       }
       return Json::Value(true);
     });
   }
   template <class Member, class Object, class Fn>
   void add_get_method(std::string const& method,
-                      pong::Req_Dispatcher& dispatch,
-                      pong::ID_Map<Object> const& map,
+                      ug::Req_Dispatcher& dispatch,
+                      ug::ID_Map<Object> const& map,
                       Fn const& fn)
   {
-    dispatch.add_method<pong::id_type>(method,
-    [&map, &fn](pong::id_type id) -> pong::response_result
+    dispatch.add_method<ug::id_type>(method,
+    [&map, &fn](ug::id_type id) -> ug::response_result
     {
       try
       {
@@ -57,20 +57,20 @@ namespace engine
       }
       catch(std::out_of_range& e)
       {
-        return pong::Error_Response{4, "Invalid id"};
+        return ug::Error_Response{4, "Invalid id"};
       }
     });
   }
 
-  void add_label_methods(pong::Req_Dispatcher& dispatch, State& state)
+  void add_label_methods(ug::Req_Dispatcher& dispatch, State& state)
   {
-    using pong::id_type;
-    using pong::Vec;
+    using ug::id_type;
+    using ug::Vec;
 
     dispatch.add_method<>("Label.Create_Label",
-    [&state]() -> pong::response_result
+    [&state]() -> ug::response_result
     {
-      pong::id_type id = state.labels_.insert(pong::Label<std::string>{});
+      ug::id_type id = state.labels_.insert(ug::Label<std::string>{});
       return Json::Value(id);
     });
 
@@ -94,7 +94,7 @@ namespace engine
                   [](auto& l){ return l.text_height(); });
   }
 
-  void add_widget_methods(pong::Req_Dispatcher& dispatch, State& state)
+  void add_widget_methods(ug::Req_Dispatcher& dispatch, State& state)
   {
     add_label_methods(dispatch, state);
   }

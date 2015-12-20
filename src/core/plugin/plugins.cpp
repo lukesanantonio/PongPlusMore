@@ -22,7 +22,7 @@
 #include "../common/result.h"
 
 #include <msgpack.hpp>
-namespace pong
+namespace ug
 {
   Msgpack_Plugin::Msgpack_Plugin(std::unique_ptr<External_IO> io) noexcept
                                  : io_(std::move(io))

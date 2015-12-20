@@ -40,10 +40,10 @@ namespace engine
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
 
-    pong::Color clear_color{0xff, 0xff, 0xff, 0xff};
+    ug::Color clear_color{0xff, 0xff, 0xff, 0xff};
     bool freeze = false;
 
-    pong::ID_Map<pong::Label<std::string> > labels_;
+    ug::ID_Map<ug::Label<std::string> > labels_;
   };
 
   void step(State& state) noexcept;

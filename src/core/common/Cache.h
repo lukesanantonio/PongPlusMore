@@ -24,7 +24,7 @@
 #include <memory>
 #include <functional>
 #include <tuple>
-namespace pong
+namespace ug
 {
   /*!
    * \brief Implements a caching system for arbitrary pointers.

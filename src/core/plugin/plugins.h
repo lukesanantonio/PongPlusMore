@@ -26,7 +26,7 @@
 #include <msgpack.hpp>
 #include "req.h"
 #include "../io/external_io.h"
-namespace pong
+namespace ug
 {
   struct Plugin
   {

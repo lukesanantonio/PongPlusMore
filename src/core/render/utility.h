@@ -25,7 +25,7 @@
 #pragma once
 #include "SDL.h"
 #include "../common/volume.h"
-namespace pong
+namespace ug
 {
   inline bool operator==(const SDL_Color c1, const SDL_Color c2) noexcept
   {

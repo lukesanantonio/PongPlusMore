@@ -23,7 +23,7 @@
 #include <cstring>
 #include <uv.h>
 #include "thread_local.h"
-namespace pong
+namespace ug
 {
   Scoped_Log_Init::Scoped_Log_Init() noexcept
   {
@@ -34,7 +34,7 @@ namespace pong
     uninit_log();
   }
 
-  PONG_THREAD_LOCAL uv_loop_t* loop_ = nullptr;
+  UG_THREAD_LOCAL uv_loop_t* loop_ = nullptr;
   Log_Severity out_level_ = Log_Severity::Info;
 
   void init_log() noexcept
@@ -179,6 +179,6 @@ namespace pong
 }
 BEGIN_FORMATTER_SCOPE
 {
-  DEFINE_FORMATTABLE_ENUM(pong::Log_Severity)
+  DEFINE_FORMATTABLE_ENUM(ug::Log_Severity)
 }
 END_FORMATTER_SCOPE

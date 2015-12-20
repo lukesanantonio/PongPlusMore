@@ -19,7 +19,7 @@
  */
 #include "Text_Box.h"
 #include "../utility.h"
-namespace pong
+namespace ug
 {
   Text_Box::Text_Box(Volume<int> const& vol, int blink_rate,
                      text::Face* face, text::Rasterizer* rasterizer) noexcept

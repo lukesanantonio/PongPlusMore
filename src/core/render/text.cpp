@@ -22,7 +22,7 @@
 #include <algorithm>
 
 #include "../common/log.h"
-namespace pong { namespace text
+namespace ug { namespace text
 {
   namespace detail
   {

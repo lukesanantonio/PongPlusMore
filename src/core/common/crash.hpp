@@ -21,7 +21,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-namespace pong
+namespace ug
 {
   /*!
    * \brief Calls std::abort after displaying the message passed in!

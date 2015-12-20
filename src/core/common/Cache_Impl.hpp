@@ -25,7 +25,7 @@
  */
 #pragma once
 #include "core/common/template_utility.hpp"
-namespace pong
+namespace ug
 {
   /*!
    * \brief Move constructor, moves the cache!

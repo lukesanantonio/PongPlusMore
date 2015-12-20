@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-namespace pong
+namespace ug
 {
   /*!
    * \brief Gets the point which should be the location of an object of

@@ -23,7 +23,7 @@
 #include <boost/optional.hpp>
 #include <msgpack.hpp>
 
-namespace pong
+namespace ug
 {
   using boost::optional;
 

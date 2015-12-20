@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "req.h"
-namespace pong
+namespace ug
 {
   Params::Params() noexcept : object(zone) {}
   Params::Params(msgpack::object&& obj, msgpack::zone&& zone) noexcept

@@ -24,7 +24,7 @@
 #include <string>
 #include <cstdint>
 
-namespace pong { namespace net
+namespace ug { namespace net
 {
   // Exceptions
   struct Bind_Error

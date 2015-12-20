@@ -30,7 +30,7 @@
 #include FT_GLYPH_H
 
 #include "../common/vector.h"
-namespace pong { namespace text
+namespace ug { namespace text
 {
   namespace detail
   {

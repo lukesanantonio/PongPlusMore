@@ -23,7 +23,7 @@
 #pragma once
 #include <tuple>
 #include <type_traits>
-namespace pong
+namespace ug
 {
   namespace detail
   {

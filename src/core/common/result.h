@@ -20,7 +20,7 @@
 #pragma once
 #include <type_traits>
 #include <boost/variant.hpp>
-namespace pong
+namespace ug
 {
   template <class T>
   struct Ok_Wrap

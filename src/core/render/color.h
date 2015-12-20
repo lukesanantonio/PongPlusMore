@@ -20,7 +20,7 @@
 #pragma once
 #include <cstdint>
 #include "core/common/pif/helper.h"
-namespace pong
+namespace ug
 {
   struct Color
   {

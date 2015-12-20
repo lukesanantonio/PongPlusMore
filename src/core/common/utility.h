@@ -22,7 +22,7 @@
 #include <functional>
 #include <vector>
 #include <string>
-namespace pong
+namespace ug
 {
   namespace detail
   {

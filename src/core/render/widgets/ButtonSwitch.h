@@ -22,7 +22,7 @@
 #include <unordered_map>
 #include <string>
 #include <functional>
-namespace pong
+namespace ug
 {
   template <class ValueType>
   struct ButtonSwitch

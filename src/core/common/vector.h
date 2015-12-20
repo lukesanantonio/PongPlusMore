@@ -27,7 +27,7 @@
 #include <cmath>
 #include <iostream>
 #include "pif/helper.h"
-namespace pong
+namespace ug
 {
   /*!
    * \brief Return whether or not check is inside (inclusively) a range.

@@ -19,7 +19,7 @@
  */
 #pragma once
 #include <chrono>
-namespace pong
+namespace ug
 {
   template <class Clock_Type = std::chrono::high_resolution_clock>
   class Timer

@@ -21,7 +21,7 @@
 #include "../../common/volume.h"
 #include <string>
 #include "Label.h"
-namespace pong
+namespace ug
 {
   struct Text_Box
   {

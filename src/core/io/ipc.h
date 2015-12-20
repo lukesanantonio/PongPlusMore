@@ -21,7 +21,7 @@
 #include <uv.h>
 #include <vector>
 
-namespace pong { namespace ipc
+namespace ug { namespace ipc
 {
   struct Process;
   struct Pipe
