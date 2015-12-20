@@ -18,12 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
+#include <type_traits>
+#include <boost/variant.hpp>
 namespace pong
 {
-  // The purpose of the wrapper structure and functions is to allow for the
-  // situation where Ok_T and Err_T are either the same type or are similar
-  // enough to cause a template ambiguity.
-
   template <class T>
   struct Ok_Wrap
   {
@@ -36,56 +34,73 @@ namespace pong
     T obj;
   };
 
-  // Stores the type information
   template <class T>
-  Ok_Wrap<T> make_ok_result(T const& t) noexcept
+  inline Ok_Wrap<T> ok(T const& t) noexcept
   {
     return {t};
   }
   template <class T>
-  Err_Wrap<T> make_err_result(T const& t) noexcept
+  inline Ok_Wrap<T> ok(T&& t) noexcept
+  {
+    return {std::move(t)};
+  }
+
+  template <class T>
+  inline Err_Wrap<T> err(T const& t) noexcept
   {
     return {t};
+  }
+  template <class T>
+  inline Err_Wrap<T> err(T&& t) noexcept
+  {
+    return {std::move(t)};
   }
 
   template <class Ok_T, class Err_T>
   struct Result
   {
-    enum res_t {
-      Ok, Err
-    } type;
-
-    boost::variant<Ok_T, Err_T> res;
-
-    Result(Ok_T const& t) noexcept : type(Ok), res(t) {}
-    Result(Err_T const& t) noexcept : type(Err), res(t) {}
+    boost::variant<Ok_Wrap<Ok_T>, Err_Wrap<Err_T> > res;
 
     template <class T>
-    Result(Ok_Wrap<T> const& t) noexcept : type(Ok), res(t.obj) {}
+    Result(Ok_Wrap<T> const& t) noexcept : res(t) {}
 
     template <class T>
-    Result(Err_Wrap<T> const& t) noexcept : type(Err), res(t.obj) {}
+    Result(Err_Wrap<T> const& t) noexcept : res(t) {}
 
-    optional<Ok_T> ok() const noexcept;
-    optional<Err_T> err() const noexcept;
+    template <class T>
+    Result& operator=(Ok_Wrap<T> const& t) noexcept
+    {
+      res = t;
+      return *this;
+    }
+
+    template <class T>
+    Result& operator=(Err_Wrap<T> const& t) noexcept
+    {
+      res = t;
+      return *this;
+    }
+
+    Ok_T const* ok() const noexcept;
+    Err_T const* err() const noexcept;
   };
 
   template <class Ok_T, class Err_T>
-  optional<Ok_T> Result<Ok_T, Err_T>::ok() const noexcept
+  Ok_T const* Result<Ok_T, Err_T>::ok() const noexcept
   {
-    if(type == Ok)
+    if(res.which() == 0)
     {
-      return boost::get<Ok_T>(res);
+      return &boost::get<Ok_Wrap<Ok_T> >(res).obj;
     }
-    return boost::none;
+    return nullptr;
   }
   template <class Ok_T, class Err_T>
-  optional<Err_T> Result<Ok_T, Err_T>::err() const noexcept
+  Err_T const* Result<Ok_T, Err_T>::err() const noexcept
   {
-    if(type == Err)
+    if(res.which() == 1)
     {
-      return boost::get<Err_T>(res);
+      return &boost::get<Err_Wrap<Err_T> >(res).obj;
     }
-    return boost::none;
+    return nullptr;
   }
 }
