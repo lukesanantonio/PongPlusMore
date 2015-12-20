@@ -23,7 +23,7 @@
 #include <string>
 #include <functional>
 #include <queue>
-#include <boost/variant.hpp>
+#include "../common/maybe_owned.hpp"
 #include "ipc.h"
 #include "net.h"
 namespace ug
@@ -113,10 +113,10 @@ namespace ug
     void step_(bool recursive) noexcept;
 
     // Counterpart mode. Counter part is pointed to, not owned.
-    Pipe_IO(Pipe_IO& cp) noexcept : cp_(&cp) {}
+    Pipe_IO(Pipe_IO& cp) noexcept;
 
     // Represents a Pipe_IO object that is maybe owned.
-    boost::variant<std::unique_ptr<Pipe_IO>, Pipe_IO*> cp_;
+    Maybe_Owned<Pipe_IO> cp_;
 
     std::queue<std::vector<char> > input_;
   };

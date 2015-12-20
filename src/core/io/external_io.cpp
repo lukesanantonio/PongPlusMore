@@ -109,26 +109,14 @@ namespace ug
   }
 
   Pipe_IO::Pipe_IO() noexcept
-  {
-    // Construct the counterpart and point it to us.
-    cp_ = new Pipe_IO(*this);
-  }
+    : cp_(make_owned_maybe(new Pipe_IO(*this))) {}
 
-  struct Reference_Visitor : public boost::static_visitor<Pipe_IO&>
-  {
-    Pipe_IO& operator()(std::unique_ptr<Pipe_IO>& pipe) const noexcept
-    {
-      return *pipe;
-    }
-    Pipe_IO& operator()(Pipe_IO* pipe) const noexcept
-    {
-      return *pipe;
-    }
-  };
+  Pipe_IO::Pipe_IO(Pipe_IO& io) noexcept
+    : cp_(&io, false) {}
 
   Pipe_IO& Pipe_IO::counterpart() noexcept
   {
-    return boost::apply_visitor(Reference_Visitor(), cp_);
+    return *cp_;
   }
 
   void Pipe_IO::write(std::vector<char> const& buf) noexcept
