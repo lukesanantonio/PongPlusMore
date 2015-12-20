@@ -20,22 +20,22 @@
 #include "req.h"
 namespace ug
 {
-  Params::Params() noexcept : object(zone) {}
-  Params::Params(msgpack::object&& obj, msgpack::zone&& zone) noexcept
-    : zone(std::move(zone)), object(std::move(obj)) {}
+  Params::Params() noexcept {}
+  Params::Params(msgpack::object_handle&& obj) noexcept
+    : object(std::move(obj)) {}
 
-  Params::Params(Params const& p) noexcept : object(p.object, zone) {}
-  Params::Params(Params&& p) noexcept :
-    zone(std::move(p.zone)), object(std::move(p.object)) {}
+  Params::Params(Params const& p) noexcept
+    : object(msgpack::clone(p.object.get())) {}
+  Params::Params(Params&& p) noexcept
+    : object(std::move(p.object)) {}
 
   Params& Params::operator=(Params const& p) noexcept
   {
-    this->object = msgpack::object(p.object, zone);
+    this->object = msgpack::clone(p.object.get());
     return *this;
   }
   Params& Params::operator=(Params&& p) noexcept
   {
-    this->zone = std::move(p.zone);
     this->object = std::move(p.object);
     return *this;
   }

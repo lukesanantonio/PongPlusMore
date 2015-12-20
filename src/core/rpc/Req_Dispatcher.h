@@ -77,7 +77,7 @@ namespace ug
   {
     // Convert parameters
 
-    auto vals = params->object.as<std::tuple<P_T...> >();
+    auto vals = params->object.get().as<std::tuple<P_T...> >();
 
     // Handle failure with the run context
     // Pass parameters to function

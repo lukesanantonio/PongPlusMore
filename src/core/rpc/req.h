@@ -35,7 +35,7 @@ namespace ug
   struct Params
   {
     Params() noexcept;
-    Params(msgpack::object&& obj, msgpack::zone&& zone) noexcept;
+    Params(msgpack::object_handle&& obj) noexcept;
 
     Params(Params const& p) noexcept;
     Params(Params&& p) noexcept;
@@ -43,8 +43,7 @@ namespace ug
     Params& operator=(Params const& p) noexcept;
     Params& operator=(Params&& p) noexcept;
 
-    msgpack::zone zone;
-    msgpack::object object;
+    msgpack::object_handle object;
   };
 
   struct Request

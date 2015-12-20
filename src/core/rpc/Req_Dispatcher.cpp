@@ -22,9 +22,8 @@ namespace ug
 {
   Run_Context::Run_Context() noexcept : type(Ret)
   {
-    params_.zone = msgpack::zone();
-    params_.object = msgpack::object(std::vector<msgpack::object>(),
-                                     params_.zone);
+    msgpack::object obj{std::vector<msgpack::object>()};
+    params_.object = msgpack::clone(obj);
   }
   void Run_Context::set_ret(Params&& p) noexcept
   {

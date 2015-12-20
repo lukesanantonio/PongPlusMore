@@ -74,7 +74,7 @@ namespace ug
       if(obj.via.array.ptr[1].type == msgpack::type::ARRAY)
       {
         Params p;
-        p.object = msgpack::object(obj.via.array.ptr[1], p.zone);
+        p.object = msgpack::clone(obj.via.array.ptr[1]);
 
         // Do we have a third parameter?
         if(obj.via.array.size >= 3)
@@ -158,14 +158,14 @@ namespace ug
     {
       packer.pack_array(3);
       packer.pack(res.fn);
-      packer.pack(res.params->object);
+      packer.pack(res.params->object.get());
       packer.pack(*res.id);
     }
     else if(res.params && !res.id)
     {
       packer.pack_array(2);
       packer.pack(res.fn);
-      packer.pack(res.params->object);
+      packer.pack(res.params->object.get());
     }
     else if(!res.params && res.id)
     {
