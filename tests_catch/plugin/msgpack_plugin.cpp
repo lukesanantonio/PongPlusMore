@@ -21,6 +21,7 @@
 #include "catch/catch.hpp"
 #include "io/external_io.h"
 #include "rpc/plugins.h"
+#include "rpc/dispatch.h"
 #include "common/utility.h"
 
 TEST_CASE("Msgpack plugin", "[rpclib]")
@@ -92,4 +93,39 @@ TEST_CASE("Msgpack plugin", "[rpclib]")
   CHECK(req.fn == 3);
   CHECK(req.id);
   CHECK_FALSE(req.params);
+}
+TEST_CASE("Request dispatcher", "[rpclib]")
+{
+  int var0 = 0;
+  int var1 = 0;
+
+  auto func0 = [&var0](auto* run_context, auto& params)
+  {
+    var0 = 5;
+  };
+  auto func1 = [&var1](auto* run_context, auto& params)
+  {
+    ++var1;
+  };
+
+  std::vector<ug::method_t> methods{func0, func1};
+
+  auto in = 5;
+  ug::Request req;
+  req.fn = 0;
+  req.params = ug::Params{};
+
+  msgpack::zone zone;
+  std::vector<int> in_params{in};
+  req.params->object = msgpack::clone(msgpack::object(in_params, zone));
+
+  ug::dispatch(methods, req);
+  REQUIRE(var0 == in);
+
+  req.fn = 1;
+  req.params = boost::none;
+
+  ug::dispatch(methods, req);
+  ug::dispatch(methods, req);
+  REQUIRE(var1 == 2);
 }
