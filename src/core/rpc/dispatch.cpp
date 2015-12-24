@@ -17,31 +17,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Req_Dispatcher.h"
+#include "dispatch.h"
 namespace ug
 {
-  Run_Context::Run_Context() noexcept : type(Ret)
+  void dispatch(std::vector<method_t>& methods, Request req,
+                Run_Context* ctx) noexcept
   {
-    msgpack::object obj{std::vector<msgpack::object>()};
-    params_.object = msgpack::clone(obj);
-  }
-  void Run_Context::set_ret(Params&& p) noexcept
-  {
-    type = Ret;
-    params_ = std::move(p);
-  }
-  void Run_Context::set_err(Params&& p) noexcept
-  {
-    type = Err;
-    params_ = std::move(p);
-  }
+    if(req.fn >= methods.size())
+    {
+      // Get the hell outta here before we jump to mysterious code.
+      return;
+    }
 
-  bool Run_Context::is_ret() const noexcept
-  {
-    return type == Ret;
-  }
-  bool Run_Context::is_err() const noexcept
-  {
-    return type == Err;
+    if(!req.params)
+    {
+      msgpack::object obj;
+      obj.type = msgpack::type::ARRAY;
+      obj.via.array.size = 0;
+      obj.via.array.ptr = nullptr;
+
+      req.params = Params{msgpack::clone(obj)};
+    }
+    (methods[req.fn])(ctx, *req.params);
   }
 }

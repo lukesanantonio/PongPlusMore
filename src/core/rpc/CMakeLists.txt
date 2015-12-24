@@ -16,6 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_library(rpclib STATIC plugins.cpp req.cpp Req_Dispatcher.cpp)
+add_library(rpclib STATIC plugins.cpp req.cpp dispatch.cpp)
 
 target_link_libraries(rpclib commonlib iolib)
