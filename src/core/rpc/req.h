@@ -35,6 +35,8 @@ namespace ug
   struct Params
   {
     Params() noexcept;
+    Params(msgpack::object const& obj,
+           std::unique_ptr<msgpack::zone> zone) noexcept;
     Params(msgpack::object_handle&& obj) noexcept;
 
     Params(Params const& p) noexcept;

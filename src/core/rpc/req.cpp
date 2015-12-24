@@ -20,7 +20,13 @@
 #include "req.h"
 namespace ug
 {
+  // I believe msgpack::object_handle has implicit move constructors which
+  // scare me but okay.
+
   Params::Params() noexcept {}
+  Params::Params(msgpack::object const& obj,
+                 std::unique_ptr<msgpack::zone> zone) noexcept
+    : object(obj, std::move(zone)) {}
   Params::Params(msgpack::object_handle&& obj) noexcept
     : object(std::move(obj)) {}
 
