@@ -18,3 +18,5 @@
 
 add_library(commonlib STATIC log.cpp translate.cpp)
 target_link_libraries(commonlib jsoncpp)
+
+target_include_directories(commonlib PUBLIC ${CMAKE_SOURCE_DIR}/msgpack/include)
