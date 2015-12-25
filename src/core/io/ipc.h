@@ -19,7 +19,6 @@
  */
 #pragma once
 #include <uv.h>
-#include <vector>
 #include "buffer.h"
 
 namespace ug { namespace ipc
@@ -28,7 +27,7 @@ namespace ug { namespace ipc
   struct Pipe
   {
     uv_pipe_t pipe;
-    std::vector<uchar>* buf;
+    buf_t* buf;
     Process* proc;
     void (*action_cb)(Pipe* p);
     void* user_data;

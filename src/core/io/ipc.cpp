@@ -37,7 +37,7 @@ namespace ug { namespace ipc
   }
   void init_pipe(Pipe& self, Process* proc) noexcept
   {
-    self.buf = new std::vector<uchar>();
+    self.buf = new buf_t();
     self.proc = proc;
   }
 

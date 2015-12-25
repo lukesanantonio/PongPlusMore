@@ -35,7 +35,7 @@ namespace ug { namespace net
   }
   void init_udp_handle(UDP_Handle& self, uv_loop_t* loop) noexcept
   {
-    self.buf = new std::vector<uchar>();
+    self.buf = new buf_t();
     uv_udp_init(loop, &self.handle);
   }
   void uninit_udp_handle(UDP_Handle& self) noexcept

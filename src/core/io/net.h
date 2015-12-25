@@ -20,7 +20,6 @@
 #pragma once
 #include <uv.h>
 #include <stdexcept>
-#include <vector>
 #include <string>
 #include <cstdint>
 #include "buffer.h"
@@ -36,7 +35,7 @@ namespace ug { namespace net
   struct UDP_Handle
   {
     uv_udp_t handle;
-    std::vector<uchar>* buf;
+    buf_t* buf;
   };
 
   UDP_Handle* create_udp_handle(uv_loop_t*) noexcept;
