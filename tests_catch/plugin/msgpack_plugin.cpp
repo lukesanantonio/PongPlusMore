@@ -150,16 +150,12 @@ TEST_CASE("Msgpack plugin post_request", "[rpclib]")
 
   // [1, [3]]
   req.id = boost::none;
-  std::vector<int> in_params = {3};
-
-  msgpack::zone zone;
-  req.params = ug::Params{msgpack::clone(msgpack::object(in_params, zone))};
+  req.params = ug::make_params(3);
   plugin.post_request(req);
   REQUIRE("\x92\x01\x91\x03"_buf == read_bytes(4));
 
   // [1, [5, 2, 5]]
-  in_params = {5, 2, 5};
-  req.params = ug::Params{msgpack::clone(msgpack::object(in_params, zone))};
+  req.params = ug::make_params(5, 2, 5);
   plugin.post_request(req);
   REQUIRE("\x92\x01\x93\x05\x02\x05"_buf == read_bytes(6));
 
@@ -192,12 +188,7 @@ TEST_CASE("Request dispatcher", "[rpclib]")
   auto in = 5;
   ug::Request req;
   req.fn = 0;
-  req.params = ug::Params{};
-
-  msgpack::zone zone;
-  std::vector<int> in_params{in};
-  req.params->object = msgpack::clone(msgpack::object(in_params, zone));
-
+  req.params = ug::make_params(5);
   ug::dispatch(methods, req);
   REQUIRE(var0 == in);
 
