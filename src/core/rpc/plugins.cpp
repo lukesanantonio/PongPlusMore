@@ -199,7 +199,7 @@ namespace ug
       packer.pack_array(1);
       packer.pack(res.fn);
     }
-    io_->write(vec_from_string(buf.str()));
+    io_->write(buf_from_string(buf.str()));
     io_->step();
   }
 }

@@ -20,7 +20,7 @@
 #pragma once
 #include <uv.h>
 #include <vector>
-#include "common.h"
+#include "buffer.h"
 
 namespace ug { namespace ipc
 {

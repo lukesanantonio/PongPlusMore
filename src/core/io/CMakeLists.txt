@@ -16,5 +16,5 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_library(iolib STATIC external_io.cpp ipc.cpp net.cpp)
+add_library(iolib STATIC external_io.cpp ipc.cpp net.cpp buffer.cpp)
 target_link_libraries(iolib commonlib ${LIBUV_LIBRARIES})

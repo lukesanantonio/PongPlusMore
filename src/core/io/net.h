@@ -23,7 +23,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
-#include "common.h"
+#include "buffer.h"
 
 namespace ug { namespace net
 {

@@ -48,7 +48,7 @@ namespace ug
     uv_read_start((uv_stream_t*) &process_->err, alloc, ipc::collect_lines);
 
     // Start the boll rollin'!
-    *process_->io.out.buf = vec_from_string("PpM");
+    *process_->io.out.buf = buf_from_string("PpM");
     ipc::write_buffer(&process_->io.out);
   }
   Child_Process::~Child_Process() noexcept
