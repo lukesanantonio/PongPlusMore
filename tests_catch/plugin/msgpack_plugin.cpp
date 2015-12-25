@@ -24,7 +24,7 @@
 #include "rpc/dispatch.h"
 #include "common/utility.h"
 
-TEST_CASE("Msgpack plugin", "[rpclib]")
+TEST_CASE("Msgpack plugin poll_request", "[rpclib]")
 {
   auto out_pipe = std::make_unique<ug::Pipe_IO>();
   auto& write_pipe = out_pipe->counterpart();
@@ -93,6 +93,85 @@ TEST_CASE("Msgpack plugin", "[rpclib]")
   CHECK(req.fn == 3);
   CHECK(req.id);
   CHECK_FALSE(req.params);
+}
+TEST_CASE("Msgpack plugin post_request", "[rpclib]")
+{
+  auto plugin_pipe = std::make_unique<ug::Pipe_IO>();
+  auto& read_pipe = plugin_pipe->counterpart();
+
+  std::vector<ug::uchar> buf_recieved_;
+  size_t where = 0;
+
+  read_pipe.set_read_callback([&](auto const& buf)
+  {
+    for(ug::uchar c : buf)
+    {
+      buf_recieved_.push_back(c);
+    }
+  });
+
+  auto read_bytes = [&](size_t count) -> std::vector<ug::uchar>
+  {
+    read_pipe.step();
+
+    REQUIRE(where + count <= buf_recieved_.size());
+
+    auto begin = std::begin(buf_recieved_) + where;
+    auto end = begin + count;
+    where += count;
+
+    return std::vector<ug::uchar>(begin, end);
+  };
+
+  using namespace ug::literals;
+
+  ug::Msgpack_Plugin plugin{std::move(plugin_pipe)};
+
+  // [0]
+  ug::Request req;
+  req.fn = 0;
+  plugin.post_request(req);
+  REQUIRE("\x91\x00"_buf == read_bytes(2));
+
+  // [1]
+  req.fn = 1;
+  plugin.post_request(req);
+  REQUIRE("\x91\x01"_buf == read_bytes(2));
+
+  // [1, 5]
+  req.id = 5;
+  plugin.post_request(req);
+  REQUIRE("\x92\x01\x05"_buf == read_bytes(3));
+
+  // [1, 6]
+  req.id = 6;
+  plugin.post_request(req);
+  REQUIRE("\x92\x01\x06"_buf == read_bytes(3));
+
+  // [1, [3]]
+  req.id = boost::none;
+  std::vector<int> in_params = {3};
+
+  msgpack::zone zone;
+  req.params = ug::Params{msgpack::clone(msgpack::object(in_params, zone))};
+  plugin.post_request(req);
+  REQUIRE("\x92\x01\x91\x03"_buf == read_bytes(4));
+
+  // [1, [5, 2, 5]]
+  in_params = {5, 2, 5};
+  req.params = ug::Params{msgpack::clone(msgpack::object(in_params, zone))};
+  plugin.post_request(req);
+  REQUIRE("\x92\x01\x93\x05\x02\x05"_buf == read_bytes(6));
+
+  // [1, [5, 2, 5], 7]
+  req.id = 7;
+  plugin.post_request(req);
+  REQUIRE("\x93\x01\x93\x05\x02\x05\x07"_buf == read_bytes(7));
+
+  // [1, [5, 2, 5], 2]
+  req.id = 2;
+  plugin.post_request(req);
+  REQUIRE("\x93\x01\x93\x05\x02\x05\x02"_buf == read_bytes(7));
 }
 TEST_CASE("Request dispatcher", "[rpclib]")
 {
