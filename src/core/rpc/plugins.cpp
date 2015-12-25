@@ -20,6 +20,7 @@
 #include "plugins.h"
 #include "../common/utility.h"
 #include "../common/result.h"
+#include "../common/log.h"
 
 #include <msgpack.hpp>
 namespace ug
@@ -169,6 +170,12 @@ namespace ug
 
     if(res.params && res.id)
     {
+      if(res.params->object.get().type != msgpack::type::ARRAY)
+      {
+        // What do we do?
+        UG_LOG_E("Response object with id % has bad params object.");
+      }
+
       packer.pack_array(3);
       packer.pack(res.fn);
       packer.pack(res.params->object.get());
