@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "net.h"
-#include "common.h"
 
 namespace ug { namespace net
 {
@@ -35,7 +34,7 @@ namespace ug { namespace net
   }
   void init_udp_handle(UDP_Handle& self, uv_loop_t* loop) noexcept
   {
-    self.buf = new std::vector<char>();
+    self.buf = new std::vector<uchar>();
     uv_udp_init(loop, &self.handle);
   }
   void uninit_udp_handle(UDP_Handle& self) noexcept
@@ -124,7 +123,8 @@ namespace ug { namespace net
     Send_Req* req = new Send_Req;
     req->pipe = &p;
 
-    req->buf.base = p.out.buf->data();
+    // Why is this such an issue?
+    req->buf.base = reinterpret_cast<char*>(p.out.buf->data());
     req->buf.len = p.out.buf->size();
 
     uv_udp_send(&req->req, &p.out.handle, &req->buf, 1, dest, after_write);

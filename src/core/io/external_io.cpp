@@ -58,7 +58,7 @@ namespace ug
     uv_run(&loop_, UV_RUN_DEFAULT);
     uv_loop_close(&loop_);
   }
-  void Child_Process::write(std::vector<char> const& buf) noexcept
+  void Child_Process::write(std::vector<uchar> const& buf) noexcept
   {
     step();
     if(!process_->running) return;
@@ -98,7 +98,7 @@ namespace ug
     uv_loop_close(&loop_);
   }
 
-  void Net_IO::write(std::vector<char> const& buf) noexcept
+  void Net_IO::write(std::vector<uchar> const& buf) noexcept
   {
     *pipe_.out.buf = buf;
     net::write_buffer(pipe_, (struct sockaddr*) &write_addr_);
@@ -119,7 +119,7 @@ namespace ug
     return *cp_;
   }
 
-  void Pipe_IO::write(std::vector<char> const& buf) noexcept
+  void Pipe_IO::write(std::vector<uchar> const& buf) noexcept
   {
     // Write to the counterpart's input.
     counterpart().input_.push(buf);
@@ -133,7 +133,7 @@ namespace ug
     // Read our pending input.
     while(!input_.empty())
     {
-      std::vector<char> const& buf = input_.front();
+      std::vector<uchar> const& buf = input_.front();
       post(buf);
       input_.pop();
     }

@@ -27,7 +27,7 @@ namespace ug
   Msgpack_Plugin::Msgpack_Plugin(std::unique_ptr<External_IO> io) noexcept
                                  : io_(std::move(io))
   {
-    io_->set_read_callback([this](const std::vector<char>& buf)
+    io_->set_read_callback([this](const std::vector<uchar>& buf)
     {
       unpacker_.reserve_buffer(buf.size());
       std::memcpy(unpacker_.buffer(), &buf[0], buf.size());

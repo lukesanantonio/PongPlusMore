@@ -20,7 +20,6 @@
 #include "ipc.h"
 
 #include <string>
-#include "common.h"
 
 namespace ug { namespace ipc
 {
@@ -38,7 +37,7 @@ namespace ug { namespace ipc
   }
   void init_pipe(Pipe& self, Process* proc) noexcept
   {
-    self.buf = new std::vector<char>();
+    self.buf = new std::vector<uchar>();
     self.proc = proc;
   }
 
@@ -185,7 +184,9 @@ namespace ug { namespace ipc
   }
   void write_buffer(Pipe* pipe, on_write_cb after_write) noexcept
   {
-    uv_buf_t buf = uv_buf_init(&(*pipe->buf)[0], pipe->buf->size());
+    // I don't think the reinterpret cast will cause too many issues.
+    uv_buf_t buf = uv_buf_init(reinterpret_cast<char*>(&(*pipe->buf)[0]),
+                               pipe->buf->size());
 
     Write_Buf_Req* req = new Write_Buf_Req;
     req->pipe = pipe;

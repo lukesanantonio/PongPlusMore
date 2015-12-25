@@ -33,17 +33,17 @@ namespace ug
    */
   struct External_IO
   {
-    using read_cb = std::function<void (std::vector<char> const&)>;
+    using read_cb = std::function<void (std::vector<uchar> const&)>;
 
     External_IO(read_cb r_cb = nullptr, read_cb e_cb = nullptr) noexcept
                 : read_cb_(r_cb), err_cb_(e_cb) {}
 
     inline void set_read_callback(read_cb cb) noexcept;
     inline void set_error_callback(read_cb cb) noexcept;
-    inline void post(std::vector<char> const& buf) noexcept;
-    inline void post_error(std::vector<char> const& err) noexcept;
+    inline void post(std::vector<uchar> const& buf) noexcept;
+    inline void post_error(std::vector<uchar> const& err) noexcept;
 
-    virtual void write(std::vector<char> const& buf) noexcept = 0;
+    virtual void write(std::vector<uchar> const& buf) noexcept = 0;
     virtual void step() noexcept = 0;
   private:
     read_cb read_cb_;
@@ -58,11 +58,11 @@ namespace ug
   {
     err_cb_ = cb;
   }
-  inline void External_IO::post(std::vector<char> const& buf) noexcept
+  inline void External_IO::post(std::vector<uchar> const& buf) noexcept
   {
     read_cb_(buf);
   }
-  inline void External_IO::post_error(std::vector<char> const& buf) noexcept
+  inline void External_IO::post_error(std::vector<uchar> const& buf) noexcept
   {
     err_cb_(buf);
   }
@@ -72,7 +72,7 @@ namespace ug
     Child_Process(ipc::Spawn_Options&);
     ~Child_Process() noexcept;
 
-    void write(std::vector<char> const& buf) noexcept override;
+    void write(std::vector<uchar> const& buf) noexcept override;
     void step() noexcept override;
   private:
     ipc::Process* process_;
@@ -85,7 +85,7 @@ namespace ug
            std::string const& write_ip, uint16_t const write_port) noexcept;
     ~Net_IO() noexcept;
 
-    void write(std::vector<char> const& buf) noexcept override;
+    void write(std::vector<uchar> const& buf) noexcept override;
     void step() noexcept override;
   private:
     struct sockaddr_in write_addr_;
@@ -105,7 +105,7 @@ namespace ug
     Pipe_IO& counterpart() noexcept;
 
     // Queue a write to the counterpart.
-    void write(std::vector<char> const& buf) noexcept override;
+    void write(std::vector<uchar> const& buf) noexcept override;
 
     // Read from the counterpart and send queued buffers.
     void step() noexcept override;
@@ -118,6 +118,6 @@ namespace ug
     // Represents a Pipe_IO object that is maybe owned.
     Maybe_Owned<Pipe_IO> cp_;
 
-    std::queue<std::vector<char> > input_;
+    std::queue<std::vector<uchar> > input_;
   };
 }

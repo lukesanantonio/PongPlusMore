@@ -22,6 +22,9 @@
 
 namespace ug
 {
+  using uchar = unsigned char;
+  using buf_t = std::vector<uchar>;
+
   // libuv allocator.
   inline void alloc(uv_handle_t* handle, size_t ssize, uv_buf_t* buf)
   {

@@ -23,6 +23,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include "common.h"
 
 namespace ug { namespace net
 {
@@ -35,7 +36,7 @@ namespace ug { namespace net
   struct UDP_Handle
   {
     uv_udp_t handle;
-    std::vector<char>* buf;
+    std::vector<uchar>* buf;
   };
 
   UDP_Handle* create_udp_handle(uv_loop_t*) noexcept;

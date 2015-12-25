@@ -176,17 +176,24 @@ namespace ug
     return vector_cast<Dest>(v, [](const SP& p) { return p.get(); });
   }
 
-  inline std::vector<char> vec_from_string(const std::string& s) noexcept
+  inline std::vector<unsigned char> vec_from_string(const std::string& s) noexcept
   {
-    return std::vector<char>(s.begin(), s.end());
+    return std::vector<unsigned char>(s.begin(), s.end());
+  }
+
+  inline bool operator==(std::vector<unsigned char> const& buf1,
+                         std::vector<unsigned char> const& buf2) noexcept
+  {
+    if(buf1.size() != buf2.size()) return false;
+    return std::equal(buf1.begin(), buf1.end(), buf2.end());
   }
 
   namespace literals
   {
-    inline std::vector<char>
+    inline std::vector<unsigned char>
     operator "" _buf(char const* str, std::size_t size) noexcept
     {
-      return std::vector<char>(str, str + size);
+      return std::vector<unsigned char>(str, str + size);
     }
   }
 }
