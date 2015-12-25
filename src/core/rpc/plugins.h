@@ -55,11 +55,4 @@ namespace ug
     msgpack::unpacker unpacker_;
     std::queue<msgpack::object_handle> raw_reqs_;
   };
-
-  template <class IO_Type, class... Args>
-  Msgpack_Plugin make_json_plugin(Args&&... args)
-  {
-    auto io = std::make_unique<IO_Type>(std::forward<Args>(args)...);
-    return Msgpack_Plugin(std::move(io));
-  }
 }
